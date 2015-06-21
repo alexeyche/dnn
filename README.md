@@ -1,4 +1,4 @@
-# dnn
+# DNN lib and tools
 Library of Dynamic Neural Networks for time series related tasks
 Main library consist of multithreaded simulator of recurrent spiking (impulse) neural networks dynamics written in C++. It contains variety components which can be connected with each other in different combinations
 * Neurons:
