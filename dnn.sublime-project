@@ -1,0 +1,11 @@
+{
+	"folders":
+	[
+		{
+			"path": "sources"
+		},
+		{
+			"path": "r_package/Rdnn/src"
+		}
+	]
+}
