@@ -6,8 +6,8 @@ set -x
 pushd $packagename
 Rscript -e 'Rcpp::compileAttributes()'
 popd
-DNN_INCLUDE=~/dnn/include
-DNN_LIB=~/dnn/lib
+DNN_INCLUDE=${DNN_INCLUDE:-~/dnn/include}
+DNN_LIB=${DNN_LIB:-~/dnn/lib}
 R CMD build $packagename
 R CMD INSTALL --build ${packagename}_${ver}.tar.gz --configure-args="--with-dnn-include=$DNN_INCLUDE --with-dnn-lib=$DNN_LIB"
 popd
