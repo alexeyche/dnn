@@ -14,7 +14,7 @@ public:
 		assert(_ptr);
 		return _ptr;
 	}
-	inline T& ref() {
+	inline T& ref() const {
 		assert(_ptr);
 		return *_ptr;
 	}

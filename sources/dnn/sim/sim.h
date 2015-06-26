@@ -8,26 +8,42 @@
 
 #include "builder.h"
 #include "network.h"
+#include "global_ctx.h"
 
 namespace dnn {
 
+/*@GENERATE_PROTO@*/
+struct SimInfo : public Serializable<Protos::SimInfo>  {
+	SimInfo() : pastTime(0.0) {}
+
+	void serial_process() {
+		begin() << "pastTime: " << pastTime << Self::end;
+	}
+
+	double pastTime;
+};
+
 class Sim : public Printable {
 public:
-	Sim(const Constants &_c) : c(_c), duration(0.0) {}
+	Sim(const Constants &_c) : c(_c), duration(0.0) {
+		GlobalCtx::inst().init(sim_info, c);
+	}
 	
 	void build(Stream* input_stream = nullptr) {
 		Builder b(c);
 		if(input_stream) {
+			input_stream->readObject<SimInfo>(&sim_info);
 			b.setInputModelStream(input_stream);
 		}
 		neurons = b.buildNeurons();			
 		for(auto &n: neurons) {
 			duration = std::max(duration, n.ref().getSimDuration());
-		}
+		}		
 		net = uptr<Network>(new Network(neurons));
 	}
 	
 	void serialize(Stream &output_stream) {
+		output_stream.writeObject(&sim_info);
 		for(auto &n : neurons) {
 			output_stream.writeObject(n.ptr());
 		}
@@ -113,8 +129,9 @@ public:
 				throw;
 			}
 		}
-		
+		sim_info.pastTime += duration;
 	}
+	
 	void setMaxDuration(const double Tmax) {
 		if(fabs(duration) < 0.00001) {
 			throw dnnException() << "Setting max duration for empty sim\n";
@@ -127,6 +144,8 @@ public:
 	}
 
 protected:
+
+	SimInfo sim_info;
 	double duration;
 	const Constants &c;
 	vector<InterfacedPtr<SpikeNeuronBase>> neurons;

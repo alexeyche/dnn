@@ -4,20 +4,32 @@
 
 class SRMMethods {
 public:
-    static inline double LLH(SpikeNeuronBase *n) {
-		return LLH_formula(n->fired(), n->getFiringProbability());
+    static inline double LLH(const SRMNeuron &n) {
+		return LLH_formula(n.fired(), n.getFiringProbability());
     }
 
-    static inline double LLH_given_Y(SpikeNeuronBase *n, const double &fired) {
-		return LLH_formula(fired, n->getFiringProbability());
+    static inline double LLH_given_Y(const SRMNeuron &n, const double &fired) {
+		return LLH_formula(fired, n.getFiringProbability());
     }
 
-    static inline double dLLH_dw(SpikeNeuronBase *n, Synapse *syn) {
-    	return dLLH_dw_formula(n->getFiringProbability(), n->act_rt.probDeriv(n->y), n->M, n->fired, syn->x);
+    static inline double dLLH_dw(const SRMNeuron &n, Synapse *syn) {
+    	return dLLH_dw_formula(
+    		n.getFiringProbability()
+    	  , n.act_r.ifc().probDeriv(n.y)
+    	  , n.getProbabilityModulation()
+    	  , n.fired()
+    	  , syn.getMembranePotential()
+    	);
     }
 
-    static inline double dLLH_dw_given_Y(SpikeNeuronBase *n, Synapse *syn, const double &fired) {
-		return dLLH_dw_formula(n->p, n->act_rt.probDeriv(n->y), n->M, fired, syn->x);
+    static inline double dLLH_dw_given_Y(const SRMNeuron &n, Synapse &syn, const double &fired) {
+		return dLLH_dw_formula(
+			n.getFiringProbability()
+		  , n.act_f.ifc().probDeriv(n.y)
+		  , n.getProbabilityModulation()
+		  , n.fired()
+		  , syn.getMembranePotential()
+		 );
     }
 private:
 	static inline double LLH_formula(const double &fired, const double &p) {

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-DST=${DST:-~/dnn_test}
+DST=${DST:-~/dnn}
 if [ -n "$1" ]; then
     DST=$1
 fi
@@ -12,27 +12,29 @@ PYTHON_LIBS="lib/python2.7/site-packages/libdnn" # in DST
 RUNS_DIR="runs"
 DATASETS_DIR="datasets"
 
-DATASETS=${DATASETS:-1}
+DATASETS=${DATASETS:-0}
 RPACKAGE=${RPACKAGE:-1}
 BUILD=${BUILD:-1}
-
+CMAKE=${CMAKE:-1}
+ASKDST=${ASKDST:-1}
 
 declare -A DATASETS_URLS
 #DATASETS_URLS["bci2000"] = ""  # it's around 2gb, uncomment if need
-DATASETS_URLS["riken"] = ""
-DATASETS_URLS["ucr"] = ""
+DATASETS_URLS["riken"]="https://yadi.sk/d/pXLH31CIhNzre"
+DATASETS_URLS["ucr"]="https://yadi.sk/d/lNyOoeU2hNvhV"
 
-while true; do
-    read -p "Installation will be perfomed in $DST (y/n/another_dir, default: y):" choice
-    if [ "$choice" == "y" ] || [ "$choice" == "" ]; then 
-        break;
-    elif [ "$choice" == "n" ]; then
-        echo "Write destination dir you prefer"
-    else 
-        DST="$choice"
-    fi
-done
-
+if [ $ASKDST -eq 1 ]; then
+    while true; do
+        read -p "Installation will be perfomed in $DST (y/n/another_dir, default: y):" choice
+        if [ "$choice" == "y" ] || [ "$choice" == "" ]; then 
+            break;
+        elif [ "$choice" == "n" ]; then
+            echo "Write destination dir you prefer"
+        else 
+            DST="$choice"
+        fi
+    done
+fi
 #if [ -d $DST ]; then
 #    while true; do
 #        read -p "$DST is already exists, delete it? (y/n):" choice
@@ -55,44 +57,58 @@ function qpushd {
 function qpopd {
     popd &>/dev/null
 }
+function qmkdir {
+    mkdir $@ &> /dev/null
+}
 
-set -ex
-mkdir -p $DST
+qmkdir -p $DST
 
 qpushd $DST
     if [ $BUILD -eq 1 ]; then
-        mkdir $BUILD_DIR
+        qmkdir $BUILD_DIR
         qpushd $BUILD_DIR 
-            cmake -DDEBUG=$DEBUG -DCMAKE_INSTALL_PREFIX=$DST $CURDIR/sources/
+            if [ $CMAKE -eq 1 ]; then
+                cmake -DDEBUG=$DEBUG -DCMAKE_INSTALL_PREFIX=$DST $CURDIR/sources/
+            fi
             make -j $CPUNUM
             make install
         qpopd #BUILD_DIR
-        mkdir $BIN_DIR
+        qmkdir $BIN_DIR
         for f in $(find $BUILD_DIR/bin/ -type f); do
-            ln -s $(readlink -f $f) $BIN_DIR
+            [ -f $BIN_DIR/$(basename $f) ] || ln -s $(readlink -f $f) $BIN_DIR
         done
-        mkdir -p $PYTHON_LIBS
+        qmkdir -p $PYTHON_LIBS
         protoc --python_out=$PYTHON_LIBS --proto_path $CURDIR/sources/dnn/protos $CURDIR/sources/dnn/protos/*.proto
         for d in $(find $PYTHON_LIBS -type d); do
             touch $d/__init__.py
         done
     fi        
-    cp -r $CURDIR/scripts $DST/scripts
+    rm -rf $DST/scripts
+    #cp -r $CURDIR/scripts $DST/scripts
+    ln -s $CURDIR/scripts $DST/scripts
+
+    rm -rf $DST/r_scripts
+    #cp -r $CURDIR/r_package/r_scripts $DST/r_scripts
+    ln -s $CURDIR/r_package/r_scripts $DST/r_scripts
+
+    #cp -r $CURDIR/*.json $DST
+    rm -rf $DST/*.json
+    ln -s $CURDIR/*.json $DST
+
     if [ $RPACKAGE -eq 1 ]; then
         DNN_LIB=$DST/lib DNN_INCLUDE=$DST/include $CURDIR/r_package/build.sh
     fi
 
-    mkdir $RUNS_DIR
-    mkdir $RUNS_DIR/sim
-    mkdir $RUNS_DIR/mpl
+    qmkdir $RUNS_DIR
+    qmkdir $RUNS_DIR/sim
+    qmkdir $RUNS_DIR/mpl
     if [ $DATASETS -eq 1 ]; then
-        mkdir $DATASETS_DIR
+        echo "You can download datasets from urls manually:"
+
+        qmkdir $DATASETS_DIR
         qpushd $DATASETS_DIR
             for key in ${!DATASETS_URLS[@]}; do
-                echo "Downloading dataset ${key}..."
-                mkdir $key 
-                wget -O ${key}.tar.gz ${DATASETS_URLS[${key}]}
-                tar -xf ${key}.tar.gz -C $key
+                echo "${key}: ${DATASETS_URLS[${key}]}"
             done
         qpopd
     fi        

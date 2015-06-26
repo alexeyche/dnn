@@ -10,6 +10,7 @@ library(methods)
 require(Rdnn)
 require(rjson)
 
+
 PIC_TOOL = "eog -f"
 
 EP = convNum(Sys.getenv('EP'), -1)
@@ -19,7 +20,7 @@ T1 = convNum(Sys.getenv('T1'), 1000)
 
 args <- commandArgs(trailingOnly = FALSE)
 if(length(grep("RStudio", args))>0) {
-    WD = sprintf("~/dnn/runs/%s", system("ls -t ~/dnn/runs | head -n 1", intern=TRUE))
+    WD = sprintf("~/dnn/runs/sim/%s", system("ls -t ~/dnn/runs/sim | head -n 1", intern=TRUE))
     EP=1
     T1=1000
 }

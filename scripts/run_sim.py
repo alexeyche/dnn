@@ -9,6 +9,7 @@ from contextlib import contextmanager
 import logging
 import subprocess as sub
 import shutil
+from os.path import join as pj
 
 def add_coloring_to_emit_ansi(fn):
     # add methods we need to the class
@@ -49,10 +50,11 @@ THIS_FILE = os.path.realpath(__file__)
 class DnnSim(object):
     JOBS = multiprocessing.cpu_count()
     EPOCHS = 1
-    RUNS_DIR = os.getenv("RUNS_DIR", os.path.expanduser("~/dnn/runs"))
-    CONST_JSON = os.path.join(os.path.dirname(THIS_FILE), "../", "const.json")
-    DNN_SIM_BIN = os.path.join(os.path.dirname(THIS_FILE), "../build/bin", "dnn_sim")
-    INSP_SCRIPT = os.path.join(os.path.dirname(THIS_FILE), "../r_package/r_scripts", "insp.R")
+    HOME = os.getenv("DNN_HOME", os.path.expanduser("~/dnn"))
+    RUNS_DIR = pj(HOME, "runs", "sim")
+    CONST_JSON = pj(HOME, "const.json")
+    DNN_SIM_BIN = pj(HOME, "bin", "dnn_sim")
+    INSP_SCRIPT = pj(HOME, "r_scripts", "insp.R")
 
     def __init__(self, **kwargs):
         self.current_epoch = 1

@@ -1,9 +1,11 @@
 
 require(Rdnn)
-setwd("~/prog/alexeyche-junk/cns/cpp/r_package/r_scripts")
-source("ucr_ts.R")
 
-ts_dir = "~/prog/ts"
+setwd(path.expand("~/dnn/r_scripts"))
+source("ucr_ts.R")
+source("env.R")
+
+ts_dir = pj(DATASETS_PLACE, "ucr")
 sample_size = 60
 data_name = synth
 c(data_train, data_test) := read_ts_file(data_name, sample_size, ts_dir)
@@ -52,8 +54,8 @@ for(data_part in names(data_complect)) {
     spikes_complect[[data_part]] = sp
 }
 
-dst_dir= "/home/alexeyche/dnn/spikes"
-ts_dst_dir= "/home/alexeyche/dnn/ts"
+dst_dir= SPIKES_PLACE
+ts_dst_dir= TS_PLACE
 dir.create(dst_dir, FALSE, TRUE)
 dir.create(ts_dst_dir, FALSE, TRUE)
 for(data_part in names(spikes_complect)) {
@@ -78,4 +80,5 @@ for(data_part in names(spikes_complect)) {
     fname = sprintf("%s/%s_%s_len_%s_classes_%s.pb", ts_dst_dir, data_name, length(sel), length(labs), data_part)
     RProto$new(fname)$write(ts_out, "TimeSeries")
 }
+
 prast(spikes_complect[["train"]]$values,T0=0,Tmax=1000)

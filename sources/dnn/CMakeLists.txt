@@ -26,6 +26,7 @@ set(DIRS
     contrib
     neurons
     inputs
+    sim
 )
 
 foreach(dir ${DIRS})

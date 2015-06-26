@@ -94,7 +94,7 @@
     "sim_configuration" : {
         "layers" : [
             {
-                "size" : 336,
+                "size" : 100,
                 "neuron" : "SpikeSequenceNeuron",
                 "axon_delay" : 0
             },
@@ -128,7 +128,7 @@
         },
         "dt" : 1.0,
         "seed" : -1,
-        "neurons_to_listen" : [366],
+        "neurons_to_listen" : [100],
         "files" : {
             "InputTimeSeries" : { 
                 "filename" : "@pb-input"

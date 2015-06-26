@@ -88,10 +88,7 @@ public:
         stat.add("M", s.M);
         stat.add("ga", s.ga);
     }
-   
-    const double& getFiringProbability() {
-        return s.p;
-    }
+    
     const double& getProbabilityModulation() {
         return s.M;
     }

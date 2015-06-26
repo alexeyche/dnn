@@ -18,7 +18,6 @@ namespace dnn {
 struct SpikeNeuronInterface {
 	calculateNeuronDynamicsDelegate calculateDynamics;
 	propSynSpikeDelegate propagateSynapseSpike;
-	getDoubleDelegate getFiringProbability;	
 };
 extern size_t global_neuron_index;
 
@@ -72,7 +71,6 @@ public:
 	template <typename T>
 	void provideInterface(SpikeNeuronInterface &i) {
         i.calculateDynamics = MakeDelegate(static_cast<T*>(this), &T::calculateDynamics);        
-        i.getFiringProbability = MakeDelegate(static_cast<T*>(this), &T::getFiringProbability);
         i.propagateSynapseSpike = MakeDelegate(static_cast<T*>(this), &T::propagateSynapseSpike);
         ifc = i;
 	}
@@ -93,7 +91,6 @@ public:
         lrule.ifc().propagateSynapseSpike(sp);
     }
 	virtual void calculateDynamics(const Time& t, const double &Iinput, const double &Isyn) = 0;
-	virtual const double& getFiringProbability() = 0;	
 
 
 	static void __calculateDynamicsDefault(const Time &t, const double &Iinput, const double &Isyn) {
@@ -102,13 +99,9 @@ public:
 	static void __propagateSynapseSpikeDefault(const SynSpike &s) {
 		throw dnnException()<< "Calling inapropriate default interface function\n";
 	}
-	static const double& __getFiringProbabilityDefault() {
-		throw dnnException()<< "Calling inapropriate default interface function\n";
-	}
 	
 	static void provideDefaultInterface(SpikeNeuronInterface &i) {
 		i.calculateDynamics = &SpikeNeuronBase::__calculateDynamicsDefault;
-		i.getFiringProbability = &SpikeNeuronBase::__getFiringProbabilityDefault;
 		i.propagateSynapseSpike =  &SpikeNeuronBase::__propagateSynapseSpikeDefault;
 	}
 
@@ -338,6 +331,12 @@ public:
 		}
 		(*this) << Self::end;
 	}
+	const double& getFiringProbability() {
+        return s.p;
+    }
+    const double& getMembrane() {
+        return s.u;
+    }
 
 protected:
 	State s;

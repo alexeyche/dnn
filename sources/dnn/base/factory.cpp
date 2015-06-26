@@ -17,6 +17,7 @@
 #include <dnn/util/spikes_list.h>
 #include <dnn/learning_rules/stdp.h>
 #include <dnn/learning_rules/stdp_time.h>
+#include <dnn/sim/sim.h>
 
 #include <dnn/connections/stochastic.h>
 #include <dnn/connections/difference_of_gaussians.h>
@@ -50,6 +51,7 @@ Factory& Factory::inst() {
 Factory::Factory() : registration_is_on(true) {
 	REG_TYPE(SpikeNeuronInfo);
 	REG_TYPE(SynapseInfo);
+	REG_TYPE(SimInfo);
 	
 	REG_TYPE_WITH_STATE_AND_CONST(LeakyIntegrateAndFire);
 	REG_TYPE_WITH_STATE_AND_CONST(AdaptIntegrateAndFire);
