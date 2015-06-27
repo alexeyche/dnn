@@ -89,7 +89,7 @@ public:
         stat.add("ga", s.ga);
     }
     
-    const double& getProbabilityModulation() {
+    const double& getProbabilityModulation() const {
         return s.M;
     }
 };

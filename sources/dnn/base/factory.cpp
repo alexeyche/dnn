@@ -16,6 +16,7 @@
 #include <dnn/mpl/mpl.h>
 #include <dnn/util/spikes_list.h>
 #include <dnn/learning_rules/stdp.h>
+#include <dnn/learning_rules/optimal_stdp.h>
 #include <dnn/learning_rules/stdp_time.h>
 #include <dnn/sim/sim.h>
 

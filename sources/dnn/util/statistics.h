@@ -109,11 +109,14 @@ public:
 	const bool&	on() const {
 		return _on;
 	}
-	inline void add(const string &name, size_t sub_ind, const double &v) {
-		add(name + std::to_string(sub_ind), v);
+	inline void add(const char* name, size_t sub_ind, const double &v) {
+		if(!_on) return;
+		std::string name_with_idx = std::string(name) + std::to_string(sub_ind);
+		add(name_with_idx.c_str(), v);
 	}
-	inline void add(const string &name, const double &v) {
+	inline void add(const char* name_cptr, const double &v) {
 		if (!_on) return;
+		string name(name_cptr);
 		if (stats.find(name) == stats.end()) {
 			Stat s;
 			s.low_lim = low_lim;

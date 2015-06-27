@@ -83,6 +83,9 @@ int main(int argc, char **argv) {
 	} else {
 		s.build();
 	}
+	if(!sopt.out_stat_file.empty()) {
+		s.turnOnStatistics();
+	}
 	if(sopt.Tmax>0.0) {
 		s.setMaxDuration(sopt.Tmax);
 	}
@@ -105,3 +108,4 @@ int main(int argc, char **argv) {
 	}
 	return 0;
 }
+ 

@@ -9,19 +9,10 @@
 #include "builder.h"
 #include "network.h"
 #include "global_ctx.h"
+#include "sim_info.h"
 
 namespace dnn {
 
-/*@GENERATE_PROTO@*/
-struct SimInfo : public Serializable<Protos::SimInfo>  {
-	SimInfo() : pastTime(0.0) {}
-
-	void serial_process() {
-		begin() << "pastTime: " << pastTime << Self::end;
-	}
-
-	double pastTime;
-};
 
 class Sim : public Printable {
 public:
@@ -84,7 +75,9 @@ public:
 		}
 		barrier.wait();
 	}
-
+	void turnOnStatistics() {
+		Builder::turnOnStatistics(neurons, c.sim_conf.neurons_to_listen);
+	}
 	static void runWorker(Sim &s, size_t from, size_t to, SpinningBarrier &barrier, std::exception_ptr &eptr) {
 		try {
 			runWorkerRoutine(s, from, to, barrier);		

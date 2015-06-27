@@ -24,13 +24,15 @@ public:
 	SynapseBase() : _fired(false) {}
 	typedef SynapseInterface interface;
 
-	inline const size_t& idPre() { 
+	inline const size_t& idPre() const { 
 		return _idPre;
 	}
-	inline size_t& mutIdPre() { return _idPre; }
+	inline size_t& mutIdPre() { 
+		return _idPre; 
+	}
 
 	virtual void propagateSpike() = 0;
-	virtual double getMembranePotential() = 0;
+	virtual double getMembranePotential() const = 0;
 	virtual void calculateDynamics(const Time &t) = 0;
 	virtual void reset() = 0;
 		
@@ -67,7 +69,7 @@ public:
 	inline double& mutWeight() {
 		return _weight;
 	}
-	inline const double& weight() {
+	inline const double& weight() const {
 		return _weight;
 	}
 	inline const double& dendriteDelay() {
