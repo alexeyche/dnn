@@ -61,8 +61,13 @@ public:
 		(*this) << "State: " << s << Self::end;
 	}
 
-	void linkWithNeuron(Neuron &_n) {
-		n.set(_n);
+	void linkWithNeuron(SpikeNeuronBase &_n) {
+		try {
+			Neuron &nc = static_cast<Neuron&>(_n);
+			n.set(nc);
+		} catch(std::bad_cast exp) {
+			throw dnnException() << "Can't cast neuron for learning rule " << name() << "\n";
+		}
 	}
 protected:
 	Ptr<Neuron> n;

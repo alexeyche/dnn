@@ -6,7 +6,7 @@ source("ucr_ts.R")
 source("env.R")
 
 ts_dir = pj(DATASETS_PLACE, "ucr")
-sample_size = 60
+sample_size = 1000
 data_name = synth
 c(data_train, data_test) := read_ts_file(data_name, sample_size, ts_dir)
 
@@ -25,9 +25,9 @@ gap_between_patterns = 100
 intercept = seq(min_val, max_val, length.out=N)
 
 #sel = c(1:10)
-#sel = c(1:10, 51:60, 101:110, 151:160)
+sel = c(1:10, 51:60, 101:110, 151:160)
 #sel = c(1:length(data_train))
-sel = c(151:200)
+#sel = c(151:200)
 data_complect = list(train=data_train, test=data_test)
 spikes_complect = list()
 

@@ -10,6 +10,7 @@
 #include <dnn/neurons/srm_neuron.h>
 #include <dnn/sim/global_ctx.h>
 #include <dnn/sim/sim_info.h>
+#include <dnn/util/fastapprox/fastpow.h>
 
 namespace dnn {
 
@@ -73,44 +74,56 @@ public:
     void reset() {
         s.B = 0.0;
         s.C.resize(n->getSynapses().size());
-        fill(s.C.begin(), s.C.end(), 0.0);
-        s.p_mean = 0.0;        
+        fill(s.C.begin(), s.C.end(), 0.0);        
     }
 
     void propagateSynapseSpike(const SynSpike &sp) {
-        s.C[sp.syn_id] += SRMMethods::dLLH_dw(*n, n->getSynapses().get(sp.syn_id).ref());
+        s.C.makeActive(sp.syn_id);
     }
     
     inline double B_calc() const {
+        // cout << s.p_mean << "\n";
         if( fabs(s.p_mean) < 0.00001 ) return(0);
-        return                        (( n->fired() * log(n->getFiringProbability()/s.p_mean) - (n->getFiringProbability() - s.p_mean)) -  \
-                c.target_rate_factor * ( n->fired() * log(s.p_mean/c.__target_rate) - (s.p_mean - c.__target_rate)) );
+        // cout << (double)n->fired() << " * " << log(n->getFiringProbability()/s.p_mean) << " - (" << n->getFiringProbability() << " - " << s.p_mean << ")\n"; 
+        return                        (( (double)n->fired() * log(n->getFiringProbability()/s.p_mean) - (n->getFiringProbability() - s.p_mean)) -  \
+                c.target_rate_factor * ( (double)n->fired() * log(s.p_mean/c.__target_rate) - (s.p_mean - c.__target_rate)) );
 
     }
     
     void calculateDynamics(const Time& t) {
-        s.p_mean += (-s.p_mean + 1.0 ? n->fired() : 0.0)/c.tau_mean;
+        s.p_mean += (-s.p_mean + (double)n->fired())/c.tau_mean;
         stat.add("p_mean", s.p_mean);
-        if(GlobalCtx::inst().getSimInfo().pastTime < c.tau_mean) { 
+        if(GlobalCtx::inst().getSimInfo().pastTime < 10*c.tau_mean) { 
             return;
         }
 
+        s.B = B_calc();
         auto &syns = n->getMutSynapses();
         
         auto C_id_it = s.C.ibegin();
-        while(C_id_it != s.C.iend()) {            
+        while(C_id_it != s.C.iend()) {
+            const size_t &syn_id = *C_id_it;
+            auto &syn = syns.get(syn_id).ref();
+
+            s.C[C_id_it] += SRMMethods::dLLH_dw(*n, syn);  // not in propagateSpike because we need information about firing of neuron
+            
+            double wp = fastpow(syn.weight(), 4.0);
+            double cwp = fastpow(0.2, 4.0);            
+            double dw = (wp/(wp+cwp)) * c.learning_rate * ( s.C[C_id_it] * s.B - c.weight_decay * syn.fired() * syn.weight());
+            
+
+            syn.mutWeight() += dw;
+
+            s.C[C_id_it] += - s.C[C_id_it]/c.tau_c;
+
             if(fabs(s.C[C_id_it]) < 0.0001) {
                 s.C.setInactive(C_id_it);
             } else {
-                const size_t &syn_id = *C_id_it;
-                auto &syn = syns.get(syn_id).ref();
-                
-                s.C[C_id_it] += - s.C[C_id_it]/c.tau_c;
                 ++C_id_it;
             }
         }
 
-        if(stat.on()) {
+        if(stat.on()) {            
             size_t i=0; 
             for(auto &syn: syns) {
                 stat.add("C", i, s.C.get(i));

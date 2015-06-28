@@ -67,6 +67,7 @@ Factory::Factory() : registration_is_on(true) {
 	REG_TYPE_WITH_STATE_AND_CONST(InputTimeSeries);
 	REG_TYPE_WITH_STATE_AND_CONST(Stdp);
 	REG_TYPE_WITH_STATE_AND_CONST(StdpTime);
+	REG_TYPE_WITH_STATE_AND_CONST(OptimalStdp);
 	
 	REG_TYPE(Statistics);
 	REG_TYPE(StatisticsInfo);

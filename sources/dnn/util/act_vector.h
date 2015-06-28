@@ -11,10 +11,13 @@ template<typename T>
 class ActVector : private vector<T> {
 public:
 	inline T& operator[] (const size_t &i) {
+		makeActive(i);
+		return vector<T>::operator[](i);
+	}
+	void makeActive(const size_t &i) {
 		if(act_indices.find(i) == act_indices.end()) {
 			act_indices.insert(i);
 		}
-		return vector<T>::operator[](i);
 	}
 	inline T& operator[](const unordered_set<size_t>::iterator &i) {
 		return vector<T>::operator[](*i);	

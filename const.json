@@ -78,6 +78,14 @@
             "learning_rate" : 0.1,
             "w_max" : 1.0,
             "w_min" : 0.0
+        },
+        "OptimalStdp" : {
+            "tau_c" : 100.0,
+            "tau_mean" : 10000.0,
+            "target_rate" : 5.0,
+            "target_rate_factor" : 0.0,
+            "weight_decay" : 0.046,
+            "learning_rate" : 0.001
         }
     },
     "connections" : {
@@ -103,7 +111,7 @@
                 "neuron" : "SRMNeuron",
                 "act_function" : "ExpThreshold",
                 "axon_delay" : 0,
-                "learning_rule" : "Stdp"
+                "learning_rule" : "OptimalStdp"
             }
         ],
         "conn_map" : {
@@ -111,7 +119,7 @@
                 { 
                     "type" : "Stochastic", 
                     "dendrite_delay" : "Exp(0,0)",
-                    "start_weight" : 0.05,
+                    "start_weight" : 0.15,
                     "synapse" : "StaticSynapse"
                 }
             ]
