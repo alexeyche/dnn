@@ -1,7 +1,7 @@
 
 require(Rdnn)
-
 setwd(path.expand("~/dnn/r_scripts"))
+
 source("ucr_ts.R")
 source("env.R")
 

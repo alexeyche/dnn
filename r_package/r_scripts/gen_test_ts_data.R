@@ -33,7 +33,7 @@ normalize = function(x, min_val, max_val) {
 
 
 require(Rsnn)
-
+sourc
 dest_file = "/home/alexeyche/prog/sim/test_data.2_classes.pb"
 pr = RProto$new(dest_file) 
 

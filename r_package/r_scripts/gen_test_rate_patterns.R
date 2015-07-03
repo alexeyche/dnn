@@ -1,5 +1,5 @@
 
-require(Rsnn)
+require(Rdnn)
 
 alpha = 0.2
 beta = 0.8
@@ -40,7 +40,7 @@ for( i in sample(length(spikes_set))) {
     lsl$timeline = c(lsl$timeline, acc_time)
 }
 
-prw = RProto$new("/home/alexeyche/prog/sim/test_rate_patterns.pb")
-prw$write("LabeledSpikesList", lsl)
+#prw = RProto$new("/home/alexeyche/prog/sim/test_rate_patterns.pb")
+#prw$write("LabeledSpikesList", lsl)
 
 prast(lsl$spikes_list,T0=0,Tmax=2000)

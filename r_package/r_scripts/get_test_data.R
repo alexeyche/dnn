@@ -1,9 +1,11 @@
 
 require(Rdnn)
+setwd(path.expand("~/dnn/r_scripts"))
 
-SPIKES_DIR = "/home/alexeyche/dnn/spikes"
+source("env.R")
 
-fname = sprintf("%s/test_spikes.pb", SPIKES_DIR)
+
+fname = sprintf("%s/test_spikes.pb", SPIKES_PLACE)
 
 num_of_patterns = 100
 N = 100
