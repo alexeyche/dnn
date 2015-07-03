@@ -2,15 +2,10 @@
 import os
 import sys
 import numpy as np
-try:
-    sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../build/py/sources"))
+sys.path.insert(0, os.path.expanduser("~/dnn/lib/python2.7/site-packages"))
 
-    from dnn.protos import generated_pb2 as gen
-    from dnn.protos import base_pb2 as base
-except Exception as err:
-    print str(err)
-    print "\n\n"
-    print "Need generated protos my make_py_protos.sh"
+from libdnn import generated_pb2 as gen
+from libdnn import base_pb2 as base
 
 from google.protobuf.internal import encoder
 

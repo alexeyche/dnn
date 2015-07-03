@@ -80,7 +80,7 @@ public:
         if(n.ref().fired()) {
             s.y = t.t;
         }
-        auto &syns = n.ref().getSynapses();
+        auto &syns = n.ref().getMutSynapses();
         
         auto x_id_it = s.x.ibegin();
         //if((n.ref().id() == 101)&&(t.t>=2500)) cout << "StdpTime: ";

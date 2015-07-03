@@ -97,7 +97,6 @@ public:
 		for (auto &l : layers) {
 			neurons.insert(neurons.end(), l.neurons.begin(), l.neurons.end());
 		}
-		turnOnStatistics(neurons, c.sim_conf.neurons_to_listen);
 		return neurons;
 	}
 

@@ -21,7 +21,8 @@ T1 = convNum(Sys.getenv('T1'), 1000)
 args <- commandArgs(trailingOnly = FALSE)
 if(length(grep("RStudio", args))>0) {
     WD = sprintf("~/dnn/runs/sim/%s", system("ls -t ~/dnn/runs/sim | head -n 1", intern=TRUE))
-    EP=1
+    system(sprintf("ls -t %s | head -n 1", WD))
+    EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
     T1=1000
 }
 
@@ -81,11 +82,11 @@ if(file.exists(CONST_FNAME)) {
 pic_files = NULL
 
 if(file.exists(SPIKES_FNAME)) {
-    net = RProto$new(SPIKES_FNAME)$read()
+    net = RProto$new(SPIKES_FNAME)$read()$values
+    
     spikes_pic = sprintf("%s/1_%s", tmp_d, pfx_f("spikes.png"))
     if(SAVE_PIC_IN_FILES) png(spikes_pic, width=SP_PIX0, height=SP_PIX1)
-    pspikes = prast(net$values, T0=T0,Tmax=T1)
-    
+    pspikes = prast(net, T0=T0,Tmax=T1)
     
     print(pspikes)
     
@@ -156,7 +157,7 @@ if ( (!is.null(input))&&(!is.null(model))&&(!is.null(net)) ) {
         li = input$ts_info$labels_ids[lt_i]
         lab = input$ts_info$unique_labels[li+1]
         patterns[[lt_i]] = list()
-        patterns[[lt_i]]$values = blank_net(length(net$values))
+        patterns[[lt_i]]$values = blank_net(length(net))
         patterns[[lt_i]]$label_id = li
         for(ni in 1:length(net$values)) {
             sp = net$values[[ni]]

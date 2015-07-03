@@ -47,7 +47,7 @@ public:
         s.x -= t.dt * s.x/c.psp_decay;   
     }
 
-    double getMembranePotential() {
+    double getMembranePotential() const {
         return weight() * s.x;
     }
 

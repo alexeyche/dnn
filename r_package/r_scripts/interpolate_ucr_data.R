@@ -1,12 +1,15 @@
 
-
+setwd(path.expand("~/dnn/r_scripts"))
 require(Rdnn)
-source('./ucr_ts.R')
-source('./interpolate_ts.R')
+source('ucr_ts.R')
+source('interpolate_ts.R')
+source("env.R")
 
-ts_dir = '~/prog/ts'
+ts_dir = path.expand('~/dnn/datasets/ucr')
 
-sample_size = 60
+ts_dir = pj(DATASETS_PLACE, "ucr")
+
+sample_size = 1000
 
 data = synth # synthetic control
 #data = starlight_curves

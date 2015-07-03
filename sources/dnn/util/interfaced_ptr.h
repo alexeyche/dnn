@@ -22,6 +22,12 @@ public:
 	inline T& ref() {
 		return *_ptr;
 	}
+	inline const T* ptr() const {
+		return _ptr;
+	}
+	inline const T& ref() const {
+		return *_ptr;
+	}
 	void set(T *ptr_to_set) {
 		_ptr = ptr_to_set;
 		_ptr->template provideInterface<T>(i);
@@ -31,7 +37,7 @@ public:
 		return _ptr ? true : false;
 	}
 
-	typename T::interface& ifc() {
+	const typename T::interface& ifc() const {
 		return i;
 	}
 

@@ -25,9 +25,9 @@ BOUNDS = (0, 10)
 CMA_JOBS = 4
 VERBOSE = True
 
-RUNS_DIR = eu("~/dnn/mpl/cma_runs")
-MPL_BIN = eu("~/cpp/build/bin/mpl")
-MPL_CONF_JSON = eu("~/cpp/mpl.json")
+RUNS_DIR = eu("~/dnn/runs/mpl")
+MPL_BIN = eu("~/dnn/bin/mpl")
+MPL_CONF_JSON = eu("~/dnn/mpl.json")
 MPL_TEST_DATA = eu("~/dnn/ts/riken_14chan_3LRR.pb")
 MPL_DIM = 0
 

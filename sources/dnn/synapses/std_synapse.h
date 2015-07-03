@@ -60,7 +60,7 @@ public:
         s.res += (1 - s.res)/c.tau_d;
     }
 
-    double getMembranePotential() {
+    double getMembranePotential() const {
         return weight() * s.x;
     }
 };

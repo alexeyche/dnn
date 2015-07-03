@@ -83,13 +83,13 @@ public:
         s.gr += - s.gr/c.tau_refr;
         s.ga += - s.ga/c.tau_adapt;
         
-        stat.add("u", s.u);
+        // stat.add("u", s.u);
         stat.add("p", s.p);
-        stat.add("M", s.M);
-        stat.add("ga", s.ga);
+        // stat.add("M", s.M);
+        // stat.add("ga", s.ga);
     }
     
-    const double& getProbabilityModulation() {
+    const double& getProbabilityModulation() const {
         return s.M;
     }
 };

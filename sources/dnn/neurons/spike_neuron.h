@@ -112,6 +112,9 @@ public:
 	void setActFunction(ActFunctionBase *_act_f) { 
 		act_f.set(_act_f);
 	}
+	const InterfacedPtr<ActFunctionBase>& getActFunction() const {
+		return act_f;
+	}
 
 	void setInput(InputBase *_input) { input.set(_input); }
 	bool inputIsSet() {
@@ -127,7 +130,11 @@ public:
 	void addSynapse(InterfacedPtr<SynapseBase> syn) {
 		syns.push_back(syn);
 	}
-	inline ActVector<InterfacedPtr<SynapseBase>>& getSynapses() {
+	
+	inline const ActVector<InterfacedPtr<SynapseBase>>& getSynapses() const {
+		return syns;
+	}
+	inline ActVector<InterfacedPtr<SynapseBase>>& getMutSynapses() {
 		return syns;
 	}
 	Statistics getStat() {
@@ -331,10 +338,10 @@ public:
 		}
 		(*this) << Self::end;
 	}
-	const double& getFiringProbability() {
+	const double& getFiringProbability() const {
         return s.p;
     }
-    const double& getMembrane() {
+    const double& getMembranePotential() const {
         return s.u;
     }
 

@@ -23,7 +23,7 @@ public:
 	Network(vector<InterfacedPtr<SpikeNeuronBase>>& neurons) : spikes_list(neurons.size()) {
 		conn_map.resize(neurons.size());
 		for(auto &n: neurons) {
-			ActVector<InterfacedPtr<SynapseBase>>& syns = n.ref().getSynapses();
+			const ActVector<InterfacedPtr<SynapseBase>>& syns = n.ref().getSynapses();
             size_t con_i = 0;
             for(auto &s: syns) {
             	conn_map[ s.ref().idPre() ].push_back(

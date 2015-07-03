@@ -14,7 +14,16 @@ public:
 		assert(_ptr);
 		return _ptr;
 	}
-	inline T& ref() const {
+	inline const T* ptr() const {
+		assert(_ptr);
+		return _ptr;
+	}
+	inline T& ref() {
+		assert(_ptr);
+		return *_ptr;
+	}
+	
+	inline const T& ref() const {
 		assert(_ptr);
 		return *_ptr;
 	}
@@ -24,11 +33,16 @@ public:
 	void set(T &ptr_to_set) {
 		_ptr = &ptr_to_set;		
 	}
-	T& operator -> () {
-		assert(_ptr);
+	
+	const T* operator -> () const {
+		return ptr();
+	}
+	T* operator -> () {
+		return ptr();
+	}
+	const T& operator * () const {
 		return ref();
 	}
-	
 	bool isSet() {
 		return _ptr ? true : false;
 	}

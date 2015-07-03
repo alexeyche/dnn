@@ -65,7 +65,7 @@ public:
 
     void reset() {
         s.y = 0;
-        s.x.resize(n.ref().getSynapses().size());
+        s.x.resize(n->getSynapses().size());
         for(auto &v: s.x) {
             v = 0;
         }
@@ -79,7 +79,7 @@ public:
         if(n.ref().fired()) {
             s.y += 1;
         }
-        auto &syns = n.ref().getSynapses();
+        auto &syns = n->getMutSynapses();
         
         auto x_id_it = s.x.ibegin();
         //if((n.ref().id() == 101)&&(t.t>=2500)) cout << "Stdp: ";

@@ -177,7 +177,7 @@ class DnnSim(object):
             sys.exit(-1)
 
     def run(self):
-        for self.current_epoch in xrange(self.current_epoch, self.epochs+1):
+        for self.current_epoch in xrange(self.current_epoch, self.current_epoch+self.epochs):
             logging.info("Running epoch {}:".format(self.current_epoch))
             self.run_proc(**self.construct_cmd())
             if self.inspection:
