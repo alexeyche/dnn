@@ -111,7 +111,7 @@ public:
 	}
 	inline void add(const char* name, size_t sub_ind, const double &v) {
 		if(!_on) return;
-		std::string name_with_idx = std::string(name) + std::to_string(sub_ind);
+		std::string name_with_idx = std::string(name) + "_" + std::to_string(sub_ind);
 		add(name_with_idx.c_str(), v);
 	}
 	inline void add(const char* name_cptr, const double &v) {

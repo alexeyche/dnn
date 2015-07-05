@@ -22,13 +22,11 @@ struct StaticSynapseC : public Serializable<Protos::StaticSynapseC>  {
 
 /*@GENERATE_PROTO@*/
 struct StaticSynapseState : public Serializable<Protos::StaticSynapseState>  {
-    StaticSynapseState() : x(0.0) {}
+    StaticSynapseState() {}
 
     void serial_process() {
-        begin() << "x: " << x << Self::end;
+        begin() << Self::end;
     }
-
-    double x;
 };
 
 class StaticSynapse : public Synapse<StaticSynapseC, StaticSynapseState> {
@@ -37,21 +35,15 @@ public:
         return "StaticSynapse";
     }
     void reset() {
-        s.x = 0;
+        mutPotential() = 0;
     }
     void propagateSpike() {
-        s.x += c.amp;
+        mutPotential() += c.amp;
     }
     void calculateDynamics(const Time &t) {
-        stat.add("x", s.x);
-        s.x -= t.dt * s.x/c.psp_decay;   
+        stat.add("x", potential());
+        mutPotential() += - t.dt * potential()/c.psp_decay;
     }
-
-    double getMembranePotential() const {
-        return weight() * s.x;
-    }
-
-
 };
 
 

@@ -131,7 +131,6 @@ message StaticSynapseC {
 }
 
 message StaticSynapseState {
-    required double x = 1;
 }
 
 message STDSynapseC {
@@ -142,14 +141,14 @@ message STDSynapseC {
 }
 
 message STDSynapseState {
-    required double x = 1;
-    required double res = 2;
+    required double res = 1;
 }
 
 message SynapseInfo {
     required uint32 idPre = 1;
     required double dendriteDelay = 2;
     required double weight = 3;
+    required double potential = 4;
 }
 
 message SimInfo {

@@ -1,12 +1,12 @@
 
 require(Rdnn)
+setwd(path.expand("~/dnn/r_scripts"))
+source("env.R")
 
-SPIKES_DIR = "/home/alexeyche/dnn/spikes"
+fname = sprintf("%s/test_spikes.pb", SPIKES_PLACE)
 
-fname = sprintf("%s/test_spikes.pb", SPIKES_DIR)
-
-num_of_patterns = 100
-N = 100
+num_of_patterns = 101
+N = 50
 patt_len = 500
 gap_between_patterns = 100
 
