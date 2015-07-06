@@ -9,7 +9,6 @@ namespace dnn {
 struct SynapseInterface {
 	stateDelegate propagateSpike;
 	calculateDynamicsDelegate calculateDynamics;
-	retDoubleDelegate getMembranePotential;
 };
 
 class Network;
@@ -21,7 +20,7 @@ friend class Network;
 friend class SpikeNeuronBase;
 friend class Builder;
 public:
-	SynapseBase() : _fired(false) {}
+	SynapseBase() : _fired(false), _potential(0.0), _weight(0.0), _dendriteDelay(0.0) {}
 	typedef SynapseInterface interface;
 
 	inline const size_t& idPre() const { 
@@ -32,7 +31,6 @@ public:
 	}
 
 	virtual void propagateSpike() = 0;
-	virtual double getMembranePotential() const = 0;
 	virtual void calculateDynamics(const Time &t) = 0;
 	virtual void reset() = 0;
 		
@@ -40,7 +38,6 @@ public:
 	void provideInterface(SynapseInterface &i) {
         i.propagateSpike = MakeDelegate(static_cast<T*>(this), &T::propagateSpike);
         i.calculateDynamics = MakeDelegate(static_cast<T*>(this), &T::calculateDynamics);
-        i.getMembranePotential = MakeDelegate(static_cast<T*>(this), &T::getMembranePotential);
     }
 	static void __defaultPropagateSpike() { 
 		throw dnnException() << "Calling inapropriate default interface function\n";
@@ -48,14 +45,10 @@ public:
 	static void __defaultCalculateDynamics(const Time &t) { 
 		throw dnnException() << "Calling inapropriate default interface function\n";
 	}
-	static double __defaultGetMembranePotential() { 
-		throw dnnException() << "Calling inapropriate default interface function\n";
-	}
-
+	
 	static void provideDefaultInterface(SynapseInterface &i) {
 		i.propagateSpike = &SynapseBase::__defaultPropagateSpike;
-        i.calculateDynamics = &SynapseBase::__defaultCalculateDynamics;
-        i.getMembranePotential = &SynapseBase::__defaultGetMembranePotential;
+        i.calculateDynamics = &SynapseBase::__defaultCalculateDynamics;        
 	}
 	Statistics& getStat() {
 		return stat; 
@@ -78,11 +71,20 @@ public:
 	inline double& mutDendriteDelay() { 
 		return _dendriteDelay; 
 	}
-
+	inline const double& potential() const {
+		return _potential;
+	}
+	inline double& mutPotential() {
+		return _potential;
+	}
+	inline double getWeightedPotential() const {
+		return weight() * potential();
+	}
 protected:
 	size_t _idPre;
 	double _dendriteDelay;
 	double _weight;
+	double _potential;
 	bool _fired;
 
 	Statistics stat;
@@ -94,11 +96,13 @@ struct SynapseInfo : public Serializable<Protos::SynapseInfo> {
 	void serial_process() {
 		begin() << "idPre: " 		  << idPre 		<< ", " \
 		        << "dendriteDelay: " << dendriteDelay << ", " \
-		        << "weight: " 		  << weight 		<< Self::end;
+		        << "weight: " 		  << weight 	  << ", " \
+		        << "potential: " << potential	<< Self::end;
 	}
 	size_t idPre;
 	double dendriteDelay;
 	double weight;
+	double potential;
 };
 
 
@@ -112,6 +116,7 @@ public:
 		info.idPre = _idPre;
 		info.dendriteDelay = _dendriteDelay;
 		info.weight = _weight;
+		info.potential = _potential;
 		return info;
 	}
 
@@ -140,6 +145,7 @@ public:
 			_weight = info.weight;
 			_idPre = info.idPre;
 			_dendriteDelay = info.dendriteDelay;
+			_potential = info.potential;
 		}
 
 		(*this) << Self::end;

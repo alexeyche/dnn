@@ -27,6 +27,7 @@ set(DIRS
     neurons
     inputs
     sim
+    learning_rules
 )
 
 foreach(dir ${DIRS})

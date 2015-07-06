@@ -20,7 +20,7 @@ public:
     	  , n.getActFunction().ifc().probDeriv(n.getMembranePotential())
     	  , n.getProbabilityModulation()
     	  , (double)n.fired()
-    	  , syn.getMembranePotential()
+    	  , syn.potential()
     	);
     }
 
@@ -30,7 +30,7 @@ public:
 		  , n.getActFunction().ifc().probDeriv(n.getMembranePotential())
 		  , n.getProbabilityModulation()
 		  , (double)n.fired()
-		  , syn.getMembranePotential()
+		  , syn.potential()
 		 );
     }
 private:

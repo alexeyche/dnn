@@ -46,9 +46,11 @@ LAYER_MAP = convStr(Sys.getenv('LAYER_MAP'), NULL)
 SAVE_PIC_IN_FILES = convStr(Sys.getenv('SAVE_PIC_IN_FILES'), "yes") %in% c("yes", "1", "True", "true")
 
 if(length(grep("RStudio", args))>0) {
-    STAT_SYN_ID=40
+    STAT_SYN_ID=NULL
     LAYER_MAP=NULL #"1:7:7"
     SAVE_PIC_IN_FILES = FALSE
+    STAT_ID = 2
+    T1=1000
 }
 
 setwd(WD)
@@ -234,3 +236,6 @@ if(COPY_PICS) {
 if((length(pic_files)>0)&&(OPEN_PIC)) {
     open_pic(pic_files[1])
 }
+
+
+

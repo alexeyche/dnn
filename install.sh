@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
+
 DST=${DST:-~/dnn}
-if [ -n "$1" ]; then
-    DST=$1
-fi
 BUILD_DIR="build"
 BIN_DIR="bin"
 DEBUG=${DEBUG:-0}
@@ -17,6 +15,20 @@ RPACKAGE=${RPACKAGE:-1}
 BUILD=${BUILD:-1}
 CMAKE=${CMAKE:-1}
 ASKDST=${ASKDST:-1}
+
+if [ ! -z "$@" ] && ( [ "$@" == '--help' ] || [ "$@" == '-h' ]); then
+   (echo -e "Variables to set: "
+    echo -e "====|name|=====\t=====|default|====="
+    echo -e "DST\t$DST"
+    echo -e "DEBUG\t$DEBUG"
+    echo -e "RPACKAGE\t$RPACKAGE"
+    echo -e "CMAKE\t$CMAKE"
+    echo -e "ASKDST\t$ASKDST") | column -t -s'	'
+    exit 0
+fi
+if [ -n "$1" ]; then
+    DST=$1
+fi
 
 declare -A DATASETS_URLS
 #DATASETS_URLS["bci2000"] = ""  # it's around 2gb, uncomment if need

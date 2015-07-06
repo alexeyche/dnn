@@ -520,18 +520,10 @@
 	"buffers":
 	[
 		{
-			"file": "sources/dnn/neurons/leaky_integrate_and_fire.h",
-			"settings":
-			{
-				"buffer_size": 2238,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "sources/dnn/learning_rules/stdp.h",
 			"settings":
 			{
-				"buffer_size": 3344,
+				"buffer_size": 3337,
 				"line_ending": "Unix"
 			}
 		},
@@ -564,14 +556,6 @@
 			"settings":
 			{
 				"buffer_size": 3506,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "r_package/Rdnn/src/RProto.h",
-			"settings":
-			{
-				"buffer_size": 12210,
 				"line_ending": "Unix"
 			}
 		}
@@ -608,6 +592,8 @@
 	},
 	"file_history":
 	[
+		"/home/alexeyche/prog/dnn/sources/dnn/neurons/leaky_integrate_and_fire.h",
+		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RProto.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/synapses/static_synapse.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/base/factory.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/learning_rules/srm_methods.h",
@@ -733,9 +719,7 @@
 		"/home/alexeyche/prog/junk/min_ci/server/templates/header.html",
 		"/home/alexeyche/prog/junk/min_ci/server/templates/index.html",
 		"/home/alexeyche/prog/junk/min_ci/server.py",
-		"/home/alexeyche/prog/junk/min_ci/server/static/css/styles.css",
-		"/home/alexeyche/prog/junk/min_ci/server/templates/node_details.html",
-		"/home/alexeyche/prog/junk/min_ci/nodes.py"
+		"/home/alexeyche/prog/junk/min_ci/server/static/css/styles.css"
 	],
 	"find":
 	{
@@ -946,43 +930,15 @@
 	"groups":
 	[
 		{
-			"selected": 6,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "sources/dnn/neurons/leaky_integrate_and_fire.h",
-					"settings":
-					{
-						"buffer_size": 2238,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2236,
-								2236
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1052.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
 					"file": "sources/dnn/learning_rules/stdp.h",
 					"settings":
 					{
-						"buffer_size": 3344,
+						"buffer_size": 3337,
 						"regions":
 						{
 						},
@@ -1006,7 +962,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 1,
 					"file": "sources/dnn/neurons/spike_neuron.h",
 					"settings":
 					{
@@ -1033,7 +989,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 2,
 					"file": "sources/dnn/synapses/synapse.h",
 					"settings":
 					{
@@ -1060,7 +1016,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 3,
 					"file": "sources/dnn/sim/sim.h",
 					"settings":
 					{
@@ -1087,7 +1043,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 4,
 					"file": "sources/dnn/base/factory.cpp",
 					"settings":
 					{
@@ -1109,34 +1065,6 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 1756.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "r_package/Rdnn/src/RProto.h",
-					"settings":
-					{
-						"buffer_size": 12210,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5914,
-								5914
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2808.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

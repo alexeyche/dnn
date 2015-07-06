@@ -1,6 +1,7 @@
 
 require(Rdnn)
 setwd(path.expand("~/dnn/r_scripts"))
+<<<<<<< HEAD
 
 source("env.R")
 
@@ -9,6 +10,14 @@ fname = sprintf("%s/test_spikes.pb", SPIKES_PLACE)
 
 num_of_patterns = 100
 N = 100
+=======
+source("env.R")
+
+fname = sprintf("%s/test_spikes.pb", SPIKES_PLACE)
+
+num_of_patterns = 101
+N = 50
+>>>>>>> 06f066f2d325d0e9b4be3238de9640c603faf90d
 patt_len = 500
 gap_between_patterns = 100
 

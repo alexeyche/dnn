@@ -26,14 +26,12 @@ struct STDSynapseC : public Serializable<Protos::STDSynapseC>  {
 
 /*@GENERATE_PROTO@*/
 struct STDSynapseState : public Serializable<Protos::STDSynapseState>  {
-    STDSynapseState() : x(0.0), res(1.0) {}
+    STDSynapseState() : res(1.0) {}
 
     void serial_process() {
-        begin() << "x: "    << x   << ", "
-                << "res: "  << res << Self::end;
+        begin() << "res: "  << res << Self::end;
     }
 
-    double x;
     double res;
 };
 
@@ -44,24 +42,20 @@ public:
     }
     
     void reset() {
-        s.x = 0.0;
+        mutPotential() = 0.0;
         s.res = 1.0;
     }
 
     void propagateSpike() {
-        s.x += c.amp * s.res;
+        mutPotential() += c.amp * s.res;
         s.res -= (1 - c.gamma) * s.res;
     }
     void calculateDynamics(const Time &t) {
-        stat.add("x", s.x);
+        stat.add("x", potential());
         stat.add("res", s.res);
         
-        s.x += - t.dt * s.x/c.psp_decay;   
+        mutPotential() += - t.dt * potential()/c.psp_decay;   
         s.res += (1 - s.res)/c.tau_d;
-    }
-
-    double getMembranePotential() const {
-        return weight() * s.x;
     }
 };
 

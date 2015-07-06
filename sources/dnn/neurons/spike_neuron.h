@@ -12,6 +12,8 @@
 #include <dnn/util/act_vector.h>
 #include <dnn/util/spikes_list.h>
 
+
+
 namespace dnn {
 
 
@@ -34,39 +36,29 @@ public:
 
 	typedef SpikeNeuronInterface interface;
 
-	inline const size_t& id() const {
-		return _id;
-	}
-	inline void setCoordinates(size_t xi, size_t yi, size_t colSize) {
-		_xi = xi;
-		_yi = yi;
-		_colSize = colSize;
-	}
-	inline const size_t localId() const {
-		return xi() + colSize()*yi();
-	}
-	inline const size_t& xi() const {
-		return _xi;
-	}
-	inline const size_t& yi() const {
-		return _yi;
-	}
-	inline const size_t& colSize() const {
-		return _colSize;
-	}
-	inline const double& axonDelay() const {
-		return _axonDelay;
-	}
-	inline double& mutAxonDelay() {
-		return _axonDelay;
-	}
-	inline const bool& fired() const {
-		return _fired;
-	}
+	const size_t& id() const;
+	void setCoordinates(size_t xi, size_t yi, size_t colSize);
+	const size_t localId() const;
+	const size_t& xi() const;
+	const size_t& yi() const;
+	const size_t& colSize() const;
+	const double& axonDelay() const;
+	double& mutAxonDelay();
+	const bool& fired() const;
 	
-	inline void setFired(const bool& f) {
-		_fired = f;
-	}
+	void setFired(const bool& f);
+
+	void setLearningRule(LearningRuleBase *_lrule);
+	void setActFunction(ActFunctionBase *_act_f);
+	const InterfacedPtr<ActFunctionBase>& getActFunction() const;
+
+	void setInput(InputBase *_input);
+	bool inputIsSet();
+	InputBase& getInput();
+	void addSynapse(InterfacedPtr<SynapseBase> syn);
+	const ActVector<InterfacedPtr<SynapseBase>>& getSynapses() const;
+	ActVector<InterfacedPtr<SynapseBase>>& getMutSynapses();
+	double getSimDuration();
 
 	template <typename T>
 	void provideInterface(SpikeNeuronInterface &i) {
@@ -74,25 +66,6 @@ public:
         i.propagateSynapseSpike = MakeDelegate(static_cast<T*>(this), &T::propagateSynapseSpike);
         ifc = i;
 	}
-	inline void resetInternal() {
-		reset();
-		if(lrule.isSet()) {
-			lrule.ref().reset();
-		}
-		for(auto &s: syns) {
-			s.ref().reset();
-		}
-	}
-	virtual void reset() = 0;
-
-	// runtime	
-	virtual void propagateSynapseSpike(const SynSpike &sp) {
-        syns[ sp.syn_id ].ifc().propagateSpike();
-        lrule.ifc().propagateSynapseSpike(sp);
-    }
-	virtual void calculateDynamics(const Time& t, const double &Iinput, const double &Isyn) = 0;
-
-
 	static void __calculateDynamicsDefault(const Time &t, const double &Iinput, const double &Isyn) {
 		throw dnnException()<< "Calling inapropriate default interface function\n";
 	}
@@ -105,128 +78,20 @@ public:
 		i.propagateSynapseSpike =  &SpikeNeuronBase::__propagateSynapseSpikeDefault;
 	}
 
-	void setLearningRule(LearningRuleBase *_lrule) { 
-		lrule.set(_lrule); 
-		lrule.ref().linkWithNeuron(*this);
-	}
-	void setActFunction(ActFunctionBase *_act_f) { 
-		act_f.set(_act_f);
-	}
-	const InterfacedPtr<ActFunctionBase>& getActFunction() const {
-		return act_f;
-	}
-
-	void setInput(InputBase *_input) { input.set(_input); }
-	bool inputIsSet() {
-		return input.isSet();
-	}
-	InputBase& getInput() {
-		if(!input.isSet()) {
-			throw dnnException() << "Trying to get input which is not set\n";
-		}
-		return input.ref();
-	}
+	void resetInternal();
+	virtual void reset() = 0;
 	
-	void addSynapse(InterfacedPtr<SynapseBase> syn) {
-		syns.push_back(syn);
-	}
+	virtual void calculateDynamics(const Time& t, const double &Iinput, const double &Isyn) = 0;
+	virtual void propagateSynapseSpike(const SynSpike &sp);
 	
-	inline const ActVector<InterfacedPtr<SynapseBase>>& getSynapses() const {
-		return syns;
-	}
-	inline ActVector<InterfacedPtr<SynapseBase>>& getMutSynapses() {
-		return syns;
-	}
-	Statistics getStat() {
-		Statistics statc = stat;
-		auto& rstat = statc.getStats();
-		auto it = rstat.begin();
-		while(it != rstat.end()) {
-			if(!strStartsWith(it->first, name())) {
-				rstat[name() + "_" + it->first ] = it->second;
-				it = rstat.erase(it);
-			} else {
-				++it;
-			}
-		}
+	Statistics getStat();
 
-		size_t syn_id = 0;
-		for(auto &s: syns) {
-			if(s.ref().getStat().on()) {
-				Statistics& syn_st = s.ref().getStat();
-				for(auto it=syn_st.getStats().begin(); it != syn_st.getStats().end(); ++it) {
-					rstat[s.ref().name() + "_" +  it->first + std::to_string(syn_id)] = it->second;	
-				}						
-			}
-			++syn_id;
-		}
-		if((lrule.isSet())&&(lrule.ref().getStat().on())) {
-			Statistics &lrule_st = lrule.ref().getStat();
-			for(auto it=lrule_st.getStats().begin(); it != lrule_st.getStats().end(); ++it) {
-				rstat[ lrule.ref().name() + "_" + it->first ] = it->second;
-			}
-		}
-		return statc;
-	}
+	void enqueueSpike(const SynSpike && sp);
 
-	inline void enqueueSpike(const SynSpike && sp) {
-		while (input_queue_lock.test_and_set(std::memory_order_acquire));
-		input_spikes.push(sp);
-		input_queue_lock.clear(std::memory_order_release);
-	}
-
-	inline void readInputSpikes(const Time &t) {
-		while (input_queue_lock.test_and_set(std::memory_order_acquire)) {}
-        while(!input_spikes.empty()) {
-            const SynSpike& sp = input_spikes.top();
-            if(sp.t >= t.t) break;
-            auto &s = syns[sp.syn_id];
-            s.ref().setFired(true);
-            ifc.propagateSynapseSpike(sp);
-            input_spikes.pop();   
-        }
-        input_queue_lock.clear(std::memory_order_release);        
-	}
-	inline void calculateDynamicsInternal(const Time &t) {
-        readInputSpikes(t);
-
-        const double& Iinput = input.ifc().getValue(t);
-
-		double Isyn = 0.0;
-        auto syn_id_it = syns.ibegin();
-        while(syn_id_it != syns.iend()) {
-            auto &s = syns[syn_id_it];
-            double x = s.ifc().getMembranePotential();
-            if(fabs(x) < 0.0001) {
-            	syns.setInactive(syn_id_it);
-            } else {
-            	Isyn += x;
-	        	++syn_id_it;	
-            }
-        }
-        ifc.calculateDynamics(t, Iinput, Isyn);
-        
-        lrule.ifc().calculateDynamics(t);
-        if(stat.on()) {
-       		for(auto &s: syns) {
-       			s.ifc().calculateDynamics(t);
-            	s.ref().setFired(false);	
-       		}
-        } else {
-	        for(auto syn_id_it = syns.ibegin(); syn_id_it != syns.iend(); ++syn_id_it) {
-	            auto &s = syns[syn_id_it];
-	            s.ifc().calculateDynamics(t);
-	            s.ref().setFired(false);
-	        }
-	    }
-	}
+	void readInputSpikes(const Time &t);
+	void calculateDynamicsInternal(const Time &t);
 	
-	double getSimDuration() {
-		if(input.isSet()) {
-			return input.ref().getSimDuration();
-		}
-		return 0.0;
-	}
+	
 
 protected:
 	bool _fired;
@@ -345,7 +210,7 @@ public:
         return s.u;
     }
 
-protected:
+//protected:
 	State s;
 	Constants c;
 };
