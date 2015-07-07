@@ -84,8 +84,20 @@
             "tau_mean" : 10000.0,
             "target_rate" : 5.0,
             "target_rate_factor" : 0.0,
-            "weight_decay" : 0.0,
+            "weight_decay" : 0.01,
             "learning_rate" : 0.04
+        }
+    },
+    "weight_normalizations" : {
+        "MinMax" : {
+            "max_weight" : 1.0,
+            "min_weight" : 0.0
+        },
+        "PowMinMax" : {
+            "power" : 4.0,
+            "mean_weight" : 0.2,
+            "max_weight" : 1.0,
+            "min_weight" : 0.0
         }
     },
     "connections" : {
@@ -111,7 +123,8 @@
                 "neuron" : "SRMNeuron",
                 "act_function" : "ExpThreshold",
                 "axon_delay" : 0,
-                "learning_rule" : "OptimalStdp"
+                "learning_rule" : "OptimalStdp",
+                "weight_normalization" : "MinMax"
             }
         ],
         "conn_map" : {

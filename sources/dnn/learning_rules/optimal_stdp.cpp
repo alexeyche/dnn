@@ -32,7 +32,7 @@ void OptimalStdp::calculateDynamics(const Time& t) {
     size_t i=0;             
     for(auto &syni: syns) {
         auto &syn = syni.ref();
-        
+        const double &w = syn.weight();
         // stat.add("C0", i, 
         //     n->getActFunction().ifc().probDeriv(n->getMembranePotential())/(
         //         n->getFiringProbability()/n->getProbabilityModulation()
@@ -44,12 +44,10 @@ void OptimalStdp::calculateDynamics(const Time& t) {
         
         s.C.get(i) += SRMMethods::dLLH_dw(*n, syn);  // not in propagateSpike because we need information about firing of neuron
         
-        double wp = fastpow(syn.weight(), 4.0);
-        double cwp = fastpow(0.2, 4.0);            
         double decay_part = c.weight_decay * syn.fired() * syn.weight();
-        
-        //double dw =  (wp/(wp+cwp)) *  c.learning_rate * ( s.C.get(i) * s.B - decay_part);
-        double dw =  c.learning_rate * ( s.C.get(i) * s.B - decay_part);
+        double dw = norm.ifc().derivativeModulation(w) * c.learning_rate * ( 
+            s.C.get(i) * s.B * norm.ifc().ltp(w) - decay_part * norm.ifc().ltd(w)
+        );
         
         stat.add("C", i, s.C.get(i));
         stat.add("decay_part", i, decay_part);

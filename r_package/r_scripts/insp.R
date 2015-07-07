@@ -49,7 +49,7 @@ if(length(grep("RStudio", args))>0) {
     STAT_SYN_ID=NULL
     LAYER_MAP=NULL #"1:7:7"
     SAVE_PIC_IN_FILES = FALSE
-    STAT_ID = 2
+    STAT_ID = 1
     T1=1000
 }
 

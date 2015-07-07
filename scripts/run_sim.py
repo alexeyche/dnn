@@ -184,6 +184,7 @@ class DnnSim(object):
                 logging.info("inspecting ... ")
                 with pushd(self.working_dir):
                     self.run_proc(**self.construct_inspect_cmd())
+        logging.info("Done")
 
     def continue_in_wd(self):
         max_ep = 0

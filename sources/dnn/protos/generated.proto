@@ -1,5 +1,9 @@
 package Protos;
 
+message LearningRuleInfo {
+    required bool weight_normalization_is_set = 1;
+}
+
 message StdpTimeC {
     required double tau_plus = 1;
     required double tau_minus = 2;
@@ -233,5 +237,20 @@ message ExpThresholdC {
 
 message DetermC {
     required double treshold = 1;
+}
+
+message EmptyState {
+}
+
+message PowMinMaxC {
+    required double power = 1;
+    required double mean_weight = 2;
+    required double min_weight = 3;
+    required double max_weight = 4;
+}
+
+message MinMaxC {
+    required double min_weight = 1;
+    required double max_weight = 2;
 }
 
