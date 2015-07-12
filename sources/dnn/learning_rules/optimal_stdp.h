@@ -23,6 +23,7 @@ struct OptimalStdpC : public Serializable<Protos::OptimalStdpC> {
     , target_rate_factor(1.0)
     , weight_decay(0.0026)
     , learning_rate(0.01)
+    , tau_mi_stat(30000.0)
     {}
 
     void serial_process() {
@@ -32,8 +33,9 @@ struct OptimalStdpC : public Serializable<Protos::OptimalStdpC> {
             "target_rate: " << target_rate << ", " <<
             "target_rate_factor: " << target_rate_factor << ", " <<
             "learning_rate: " << learning_rate << ", " <<
-            "weight_decay: " << weight_decay  <<  Self::end;
-        __target_rate = target_rate/1000.0;
+            "weight_decay: " << weight_decay  << ", " <<
+            "tau_mi_stat: " << tau_mi_stat << Self::end;
+        __target_rate = target_rate/1000.0;        
     }
 
     double tau_c;
@@ -43,24 +45,26 @@ struct OptimalStdpC : public Serializable<Protos::OptimalStdpC> {
     double target_rate_factor;
     double weight_decay;
     double learning_rate;
+    double tau_mi_stat;
 };
 
 
 /*@GENERATE_PROTO@*/
 struct OptimalStdpState : public Serializable<Protos::OptimalStdpState>  {
     OptimalStdpState() 
-    : B(0.0), p_mean(0.0)
+    : B(0.0), p_mean(0.0), mi_stat(0.0)
     {}
 
     void serial_process() {
         begin() << "p_mean: " << p_mean << ", " 
                 << "C: " << C << ", " 
-                << "B: " << B << Self::end;
+                << "B: " << B << ", "
+                << "mi_stat: " << mi_stat << Self::end;
     }
     double p_mean;
     ActVector<double> C;
     double B;
-
+    double mi_stat;
 };
 
 
@@ -76,9 +80,7 @@ public:
         fill(s.C.begin(), s.C.end(), 0.0);        
     }
 
-    void propagateSynapseSpike(const SynSpike &sp) {
-        s.C.makeActive(sp.syn_id);
-    }
+    void propagateSynapseSpike(const SynSpike &sp);
     
     inline double B_calc();    
     void calculateDynamics(const Time& t);

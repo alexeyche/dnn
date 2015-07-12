@@ -41,7 +41,7 @@ public:
         mutPotential() += c.amp;
     }
     void calculateDynamics(const Time &t) {
-        stat.add("x", potential());
+        // stat.add("x", potential());
         mutPotential() += - t.dt * potential()/c.psp_decay;
     }
 };

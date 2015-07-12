@@ -224,3 +224,13 @@ plot_stat = function(stat, synid=NULL, T0=0, T1=1000) {
     }
     
 }
+
+accum_from_epochs = function(stname, epochs, f_template) {
+    st_acc = NULL
+    for(ep in epochs) { 
+        s = RProto$new(sprintf(f_template, ep))$rawRead()
+        st = rowMeans(sapply(1:length(s), function(i) s[[i]][[stname]]))
+        st_acc = c(st_acc, st) 
+    }
+    return(st_acc)
+}

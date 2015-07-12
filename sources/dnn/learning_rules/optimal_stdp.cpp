@@ -4,6 +4,11 @@
 
 namespace dnn {
 
+void OptimalStdp::propagateSynapseSpike(const SynSpike &sp) {
+    s.C.makeActive(sp.syn_id);
+}
+
+
 inline double OptimalStdp::B_calc() {
     // cout << s.p_mean << "\n";
     if( fabs(s.p_mean) < 0.00001 ) return(0);
@@ -16,19 +21,26 @@ inline double OptimalStdp::B_calc() {
 }
 
 void OptimalStdp::calculateDynamics(const Time& t) {
-    s.p_mean += (-s.p_mean + (double)n->fired())/c.tau_mean;
-    stat.add("p_mean", s.p_mean);
+    s.p_mean += (-s.p_mean + (double)n->fired())/c.tau_mean;    
+    s.mi_stat += (
+        -s.mi_stat +
+        (
+            SRMMethods::LLH_formula(n->fired(), n->getFiringProbability()) - 
+            SRMMethods::LLH_formula(n->fired(), s.p_mean)
+        )
+    )/c.tau_mi_stat;
+    stat.add("mi_stat", s.mi_stat);
+
+    //stat.add("p_mean", s.p_mean);
     if(GlobalCtx::inst().getSimInfo().pastTime < c.tau_mean) { 
         return;
     }
 
     s.B = B_calc();
-    stat.add("B", s.B);
+    // stat.add("B", s.B);
     
     auto &syns = n->getMutSynapses();
     
-    if(n->s.p<(1.0/1000.0)) n->s.p = 1.0/1000;
-
     size_t i=0;             
     for(auto &syni: syns) {
         auto &syn = syni.ref();
@@ -44,15 +56,15 @@ void OptimalStdp::calculateDynamics(const Time& t) {
         
         s.C.get(i) += SRMMethods::dLLH_dw(*n, syn);  // not in propagateSpike because we need information about firing of neuron
         
-        double decay_part = c.weight_decay * syn.fired() * syn.weight();
+        double decay_part = c.weight_decay * syn.fired() * syn.weight(); //* (s.p_mean*1000.0) * (s.p_mean*1000.0);
         double dw = norm.ifc().derivativeModulation(w) * c.learning_rate * ( 
-            s.C.get(i) * s.B * norm.ifc().ltp(w) - decay_part * norm.ifc().ltd(w)
+            s.C.get(i) * s.B * norm.ifc().ltp(w) - decay_part * norm.ifc().ltd(w) 
         );
         
-        stat.add("C", i, s.C.get(i));
-        stat.add("decay_part", i, decay_part);
+        // stat.add("C", i, s.C.get(i));
+        // stat.add("decay_part", i, decay_part);
         // stat.add("dw", i, dw);
-        stat.add("w", i, syn.weight());
+        // stat.add("w", i, syn.weight());
 
         syn.mutWeight() += dw;
 
@@ -60,6 +72,7 @@ void OptimalStdp::calculateDynamics(const Time& t) {
         ++i;
     }
 
+    
     // auto C_id_it = s.C.ibegin();
     // while(C_id_it != s.C.iend()) {
     //     const size_t &syn_id = *C_id_it;

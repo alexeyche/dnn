@@ -19,11 +19,12 @@ T0 = convNum(Sys.getenv('T0'), 0)
 T1 = convNum(Sys.getenv('T1'), 1000)
 
 args <- commandArgs(trailingOnly = FALSE)
-if(length(grep("RStudio", args))>0) {
+if(length(grep("RStudio", args))>0) {    
     WD = sprintf("~/dnn/runs/sim/%s", system("ls -t ~/dnn/runs/sim | head -n 1", intern=TRUE))
+    
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
-    T1=1000
+
 }
 
 pfx_f = function(s) s
@@ -46,11 +47,10 @@ LAYER_MAP = convStr(Sys.getenv('LAYER_MAP'), NULL)
 SAVE_PIC_IN_FILES = convStr(Sys.getenv('SAVE_PIC_IN_FILES'), "yes") %in% c("yes", "1", "True", "true")
 
 if(length(grep("RStudio", args))>0) {
-    STAT_SYN_ID=NULL
-    LAYER_MAP=NULL #"1:7:7"
+    STAT_SYN_ID=10
+    LAYER_MAP=NULL #"1:1:1"
     SAVE_PIC_IN_FILES = FALSE
-    STAT_ID = 1
-    T1=1000
+    STAT_ID = 1    
 }
 
 setwd(WD)
@@ -139,7 +139,11 @@ if (file.exists(STAT_FNAME)) {
     stat_pic = sprintf("%s/3_%s", tmp_d, pfx_f("stat.png"))
     if(SAVE_PIC_IN_FILES) png(stat_pic, width=1024, height=768*6)
     
-    plot_stat(stat[[STAT_ID]], STAT_SYN_ID, T0, T1)
+    if(length(stat)>=STAT_ID) {
+        plot_stat(stat[[STAT_ID]], STAT_SYN_ID, T0, T1)
+    } else {
+        warning("STAT_ID is out of bounds")
+    }
     if(SAVE_PIC_IN_FILES) {
         dev.off()
         cat("Stat pic filename: ", stat_pic, "\n")
@@ -236,6 +240,10 @@ if(COPY_PICS) {
 if((length(pic_files)>0)&&(OPEN_PIC)) {
     open_pic(pic_files[1])
 }
+
+
+
+
 
 
 

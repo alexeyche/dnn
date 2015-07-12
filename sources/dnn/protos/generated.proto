@@ -26,12 +26,14 @@ message OptimalStdpC {
     required double target_rate_factor = 4;
     required double weight_decay = 5;
     required double learning_rate = 6;
+    required double tau_mi_stat = 7;
 }
 
 message OptimalStdpState {
     required double p_mean = 1;
     repeated double C = 2;
     required double B = 3;
+    required double mi_stat = 4;
 }
 
 message StdpC {

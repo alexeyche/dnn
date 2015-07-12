@@ -33,12 +33,13 @@ public:
 		  , syn.potential()
 		 );
     }
-private:
+
 	static inline double LLH_formula(const double &fired, const double &p) {
-		return fired*log(p) + (1 - fired) * log(1-p);
+		if(p<0.00001) return 0;
+        return fired*log(p) + (1 - fired) * log(1-p);
 	}
 	static inline double dLLH_dw_formula(const double &p, const double &p_stroke, const double &M, const double &fired, const double &x) {
- 		return (p_stroke/(p/M)) * (fired - p) * fabs(x);
+ 		return (p_stroke/(p/M)) * (fired - p) * x;
 	}
 };
 

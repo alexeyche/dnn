@@ -8,7 +8,7 @@ fname = sprintf("%s/test_spikes.pb", SPIKES_PLACE)
 num_of_patterns = 101
 N = 50
 patt_len = 500
-gap_between_patterns = 100
+gap_between_patterns = 0
 
 
 patt = lapply(seq(0, patt_len, by=patt_len/N), function(x) x)
