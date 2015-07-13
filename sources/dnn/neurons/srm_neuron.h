@@ -84,7 +84,7 @@ public:
         s.ga += - s.ga/c.tau_adapt;
         
         // stat.add("u", s.u);
-        stat.add("p", s.p);
+        // stat.add("p", s.p);
         // stat.add("M", s.M);
         // stat.add("ga", s.ga);
     }

@@ -260,116 +260,55 @@ public:
         if(!field_descr) {
             throw dnnException()<< "Can't find proto field by name " << fname << "\n";
         }
+        
         return *this;
     }
-    Serializable& operator << (double &v) {
-        ASSERT_FIELDS()
-        if(mode == ProcessingOutput) {
-            currentMessage()->GetReflection()->SetDouble(currentMessage(), field_descr, v);
-        } else {
-            v = currentMessage()->GetReflection()->GetDouble(*currentMessage(), field_descr);
-        }
-        return *this;
-    }
+    #define SERIALIZE_METHOD(type, pbmethod_set, pbmethod_get) \
+        Serializable& operator << (type &v) { \
+            ASSERT_FIELDS() \
+            if(mode == ProcessingOutput) { \
+                currentMessage()->GetReflection()->pbmethod_set(currentMessage(), field_descr, v); \
+            } else { \
+                if(field_descr->label() == google::protobuf::FieldDescriptor::LABEL_REPEATED) { \
+                    throw dnnException() << "Using method for serializing simple field for repeated one\n"; \
+                } \
+                if(currentMessage()->GetReflection()->HasField(*currentMessage(), field_descr)) { \
+                    v = currentMessage()->GetReflection()->pbmethod_get(*currentMessage(), field_descr); \
+                } \
+            } \
+            return *this; \
+        } 
 
-    Serializable& operator << (bool &v) {
-        ASSERT_FIELDS()
-        if(mode == ProcessingOutput) {
-            currentMessage()->GetReflection()->SetBool(currentMessage(), field_descr, v);
-        } else {
-            v = currentMessage()->GetReflection()->GetBool(*currentMessage(), field_descr);
+    #define SERIALIZE_REPEATED_METHOD(vtype, type, pbmethod_add, pbmethod_get) \
+        Serializable& operator << (vtype<type> &v) { \
+            ASSERT_FIELDS() \
+            if(mode == ProcessingOutput) { \
+                for(size_t i=0; i<v.size(); ++i) { \
+                    currentMessage()->GetReflection()->pbmethod_add(currentMessage(), field_descr, v[i]); \
+                } \
+            } else { \
+                int cur = currentMessage()->GetReflection()->FieldSize(*currentMessage(), field_descr); \
+                for(int i=0; i<cur; ++i) { \
+                    type subv = currentMessage()->GetReflection()->pbmethod_get(*currentMessage(), field_descr, i); \
+                    v.push_back(subv); \
+                } \
+            } \
+            return *this; \
         }
-        return *this;
-    }
 
-    Serializable& operator << (size_t &v) {
-        ASSERT_FIELDS()
-        if(mode == ProcessingOutput) {
-            currentMessage()->GetReflection()->SetUInt32(currentMessage(), field_descr, v);
-        } else {
-            v = currentMessage()->GetReflection()->GetUInt32(*currentMessage(), field_descr);
-        }
-        return *this;
-    }
-    Serializable& operator << (int &v) {
-        ASSERT_FIELDS()
-        if(mode == ProcessingOutput) {
-            currentMessage()->GetReflection()->SetInt32(currentMessage(), field_descr, v);
-        } else {
-            v = currentMessage()->GetReflection()->GetInt32(*currentMessage(), field_descr);
-        }
-        return *this;
-    }
-    Serializable& operator << (string &v) {
-        ASSERT_FIELDS()
-        if(mode == ProcessingOutput) {
-
-           currentMessage()->GetReflection()->SetString(currentMessage(), field_descr, v);
-        } else {
-           v = currentMessage()->GetReflection()->GetString(*currentMessage(), field_descr);
-        }
-        return *this;
-    }
-    Serializable& operator << (vector<string> &v) {
-        ASSERT_FIELDS()
-        if(mode == ProcessingOutput) {
-            for(size_t i=0; i<v.size(); ++i) {
-                currentMessage()->GetReflection()->AddString(currentMessage(), field_descr, v[i]);
-            }
-        } else {
-            int cur = currentMessage()->GetReflection()->FieldSize(*currentMessage(), field_descr);
-            for(int i=0; i<cur; ++i) {
-                string subv = currentMessage()->GetReflection()->GetRepeatedString(*currentMessage(), field_descr, i);
-                v.push_back(subv);
-            }
-        }
-        return *this;
-    }
-    Serializable& operator << (vector<size_t> &v) {
-        ASSERT_FIELDS()
-        if(mode == ProcessingOutput) {
-            for(size_t i=0; i<v.size(); ++i) {
-                currentMessage()->GetReflection()->AddUInt32(currentMessage(), field_descr, v[i]);
-            }
-        } else {
-            int cur = currentMessage()->GetReflection()->FieldSize(*currentMessage(), field_descr);
-            for(int i=0; i<cur; ++i) {
-                size_t subv = currentMessage()->GetReflection()->GetRepeatedUInt32(*currentMessage(), field_descr, i);
-                v.push_back(subv);
-            }
-        }
-        return *this;
-    }
-    Serializable& operator << (ActVector<double> &v) {
-        ASSERT_FIELDS()
-        if(mode == ProcessingOutput) {
-            for(size_t i=0; i<v.size(); ++i) {
-                currentMessage()->GetReflection()->AddDouble(currentMessage(), field_descr, v[i]);
-            }
-        } else {
-            int cur = currentMessage()->GetReflection()->FieldSize(*currentMessage(), field_descr);
-            for(int i=0; i<cur; ++i) {
-                double subv = currentMessage()->GetReflection()->GetRepeatedDouble(*currentMessage(), field_descr, i);
-                v.push_back(subv);
-            }
-        }
-        return *this;
-    }
-    Serializable& operator << (vector<double> &v) {
-        ASSERT_FIELDS()
-        if(mode == ProcessingOutput) {
-            for(size_t i=0; i<v.size(); ++i) {
-                currentMessage()->GetReflection()->AddDouble(currentMessage(), field_descr, v[i]);
-            }
-        } else {
-            int cur = currentMessage()->GetReflection()->FieldSize(*currentMessage(), field_descr);
-            for(int i=0; i<cur; ++i) {
-                double subv = currentMessage()->GetReflection()->GetRepeatedDouble(*currentMessage(), field_descr, i);
-                v.push_back(subv);
-            }
-        }
-        return *this;
-    }
+    SERIALIZE_METHOD(double, SetDouble, GetDouble);
+    SERIALIZE_METHOD(bool, SetBool, GetBool);
+    SERIALIZE_METHOD(size_t, SetUInt32, GetUInt32);
+    SERIALIZE_METHOD(int, SetInt32, GetInt32);
+    SERIALIZE_METHOD(string, SetString, GetString);
+    SERIALIZE_REPEATED_METHOD(vector, string, AddString, GetRepeatedString);
+    SERIALIZE_REPEATED_METHOD(vector, size_t, AddUInt32, GetRepeatedUInt32);
+    SERIALIZE_REPEATED_METHOD(vector, double, AddDouble, GetRepeatedDouble);
+    SERIALIZE_REPEATED_METHOD(ActVector, size_t, AddUInt32, GetRepeatedUInt32);
+    SERIALIZE_REPEATED_METHOD(ActVector, double, AddDouble, GetRepeatedDouble);
+    
+    
+    
     void operator << (EndMarker e) {
         if(mode == ProcessingInput) {
             deleteCurrentMessage();

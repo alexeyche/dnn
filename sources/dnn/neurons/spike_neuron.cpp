@@ -63,6 +63,10 @@ void SpikeNeuronBase::setLearningRule(LearningRuleBase *_lrule) {
 	lrule.set(_lrule); 
 	lrule.ref().linkWithNeuron(*this);
 }
+InterfacedPtr<LearningRuleBase>& SpikeNeuronBase::getLearningRule() {
+	return lrule;
+}
+
 void SpikeNeuronBase::setActFunction(ActFunctionBase *_act_f) { 
 	act_f.set(_act_f);
 }

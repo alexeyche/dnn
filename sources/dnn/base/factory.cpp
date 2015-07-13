@@ -18,7 +18,10 @@
 #include <dnn/learning_rules/stdp.h>
 #include <dnn/learning_rules/optimal_stdp.h>
 #include <dnn/learning_rules/stdp_time.h>
+#include <dnn/weight_normalizations/pow_min_max.h>
+#include <dnn/weight_normalizations/min_max.h>
 #include <dnn/sim/sim.h>
+
 
 #include <dnn/connections/stochastic.h>
 #include <dnn/connections/difference_of_gaussians.h>
@@ -53,6 +56,7 @@ Factory::Factory() : registration_is_on(true) {
 	REG_TYPE(SpikeNeuronInfo);
 	REG_TYPE(SynapseInfo);
 	REG_TYPE(SimInfo);
+	REG_TYPE(LearningRuleInfo);
 	
 	REG_TYPE_WITH_STATE_AND_CONST(LeakyIntegrateAndFire);
 	REG_TYPE_WITH_STATE_AND_CONST(AdaptIntegrateAndFire);
@@ -68,7 +72,9 @@ Factory::Factory() : registration_is_on(true) {
 	REG_TYPE_WITH_STATE_AND_CONST(Stdp);
 	REG_TYPE_WITH_STATE_AND_CONST(StdpTime);
 	REG_TYPE_WITH_STATE_AND_CONST(OptimalStdp);
-	
+	REG_TYPE_WITH_CONST(PowMinMax);
+	REG_TYPE_WITH_CONST(MinMax);
+
 	REG_TYPE(Statistics);
 	REG_TYPE(StatisticsInfo);
 	REG_TYPE(Stat);

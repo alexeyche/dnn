@@ -27,8 +27,8 @@
         },
         "SRMNeuron" : {
             "u_rest" : 0.0,
-            "amp_adapt" : 1.0,
-            "amp_refr" : 0,
+            "amp_adapt" : 0.0,
+            "amp_refr" : 100,
             "tau_refr" : 2.0,
             "tau_adapt" : 100.0
         }
@@ -40,7 +40,7 @@
         "ExpThreshold" : {
             "p_rest" : 0.1,
             "threshold" : 0.25,
-            "beta" : 2.0,
+            "beta" : 5.0,
             "amp"   : 10.0
         }
     },        
@@ -84,8 +84,20 @@
             "tau_mean" : 10000.0,
             "target_rate" : 5.0,
             "target_rate_factor" : 0.0,
-            "weight_decay" : 0.0,
-            "learning_rate" : 0.04
+            "weight_decay" : 0.05,
+            "learning_rate" : 0.001
+        }
+    },
+    "weight_normalizations" : {
+        "MinMax" : {
+            "max_weight" : 1.0,
+            "min_weight" : 0.0
+        },
+        "PowMinMax" : {
+            "power" : 4.0,
+            "mean_weight" : 0.2,
+            "max_weight" : 1.0,
+            "min_weight" : 0.0
         }
     },
     "connections" : {
@@ -95,8 +107,8 @@
        "DifferenceOfGaussians" : {
            "a" : 3.0,
            "b" : 3.0,
-           "r" : 10,
-           "dimension" : 1
+           "r" : 5,
+           "dimension" : 2
        }
     },
     "sim_configuration" : {
@@ -107,11 +119,12 @@
                 "axon_delay" : 0
             },
             {
-                "size" : 10,
+                "size" : 100,
                 "neuron" : "SRMNeuron",
                 "act_function" : "ExpThreshold",
                 "axon_delay" : 0,
-                "learning_rule" : "OptimalStdp"
+                "learning_rule" : "OptimalStdp",
+                "weight_normalization" : "MinMax"
             }
         ],
         "conn_map" : {
@@ -119,20 +132,20 @@
                 { 
                     "type" : "Stochastic", 
                     "dendrite_delay" : "Exp(0,0)",
-                    "start_weight" : 0.15,
+                    "start_weight" : 0.01,
                     "synapse" : "StaticSynapse"
                 }
+            ],
+            "1->1" : [
+                { 
+                    "type" : "DifferenceOfGaussians",
+                    //"type" : "Stochastic",
+                    "dendrite_delay" : "Exp(0,0)",
+                    "start_weight" : 0.01,
+                    "synapse" : "StaticSynapse",
+                    "inh_synapse" : "StaticSynapse_inh"
+                }
             ]
-            //,
-            //"1->1" : [
-            //    { 
-            //        "type" : "DifferenceOfGaussians",
-            //        "dendrite_delay" : "Exp(0,0)",
-            //        "start_weight" : 0.001,
-            //        "synapse" : "StaticSynapse" ,
-            //        "inh_synapse" : "StaticSynapse_inh"
-            //    }
-            //]
         },
         "dt" : 1.0,
         "seed" : -1,

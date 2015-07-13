@@ -52,7 +52,7 @@ public:
 	static const Value& getVal(const Value &v, const string name) {
 		auto m = v.FindMember(name.c_str());
 		if (m == v.MemberEnd()) {
-			throw dnnException()<< "Erros while finding field: " << name << "\n";
+			throw dnnException()<< "Errors while finding field: " << name << "\n";
 		}
 		return m->value;
 	}

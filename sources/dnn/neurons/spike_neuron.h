@@ -49,6 +49,7 @@ public:
 	void setFired(const bool& f);
 
 	void setLearningRule(LearningRuleBase *_lrule);
+	InterfacedPtr<LearningRuleBase>& getLearningRule();
 	void setActFunction(ActFunctionBase *_act_f);
 	const InterfacedPtr<ActFunctionBase>& getActFunction() const;
 
