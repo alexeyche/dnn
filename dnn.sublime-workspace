@@ -531,7 +531,7 @@
 			"file": "sources/dnn/neurons/spike_neuron.h",
 			"settings":
 			{
-				"buffer_size": 8708,
+				"buffer_size": 5495,
 				"line_ending": "Unix"
 			}
 		},
@@ -539,7 +539,7 @@
 			"file": "sources/dnn/synapses/synapse.h",
 			"settings":
 			{
-				"buffer_size": 3409,
+				"buffer_size": 3453,
 				"line_ending": "Unix"
 			}
 		},
@@ -547,7 +547,7 @@
 			"file": "sources/dnn/sim/sim.h",
 			"settings":
 			{
-				"buffer_size": 3648,
+				"buffer_size": 1016,
 				"line_ending": "Unix"
 			}
 		},
@@ -555,7 +555,15 @@
 			"file": "sources/dnn/base/factory.cpp",
 			"settings":
 			{
-				"buffer_size": 3506,
+				"buffer_size": 3596,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "sources/dnn/learning_rules/optimal_stdp.cpp",
+			"settings":
+			{
+				"buffer_size": 3417,
 				"line_ending": "Unix"
 			}
 		}
@@ -930,7 +938,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 5,
 			"sheets":
 			[
 				{
@@ -945,8 +953,8 @@
 						"selection":
 						[
 							[
-								2054,
-								2054
+								1934,
+								1934
 							]
 						],
 						"settings":
@@ -966,15 +974,15 @@
 					"file": "sources/dnn/neurons/spike_neuron.h",
 					"settings":
 					{
-						"buffer_size": 8708,
+						"buffer_size": 5495,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7112,
-								7112
+								0,
+								0
 							]
 						],
 						"settings":
@@ -983,7 +991,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 4312.0,
+						"translation.y": 3942.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -993,15 +1001,15 @@
 					"file": "sources/dnn/synapses/synapse.h",
 					"settings":
 					{
-						"buffer_size": 3409,
+						"buffer_size": 3453,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3366,
-								3366
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1020,15 +1028,15 @@
 					"file": "sources/dnn/sim/sim.h",
 					"settings":
 					{
-						"buffer_size": 3648,
+						"buffer_size": 1016,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								665,
-								665
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1047,15 +1055,15 @@
 					"file": "sources/dnn/base/factory.cpp",
 					"settings":
 					{
-						"buffer_size": 3506,
+						"buffer_size": 3596,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3506,
-								3506
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1065,6 +1073,34 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 1756.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "sources/dnn/learning_rules/optimal_stdp.cpp",
+					"settings":
+					{
+						"buffer_size": 3417,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2248,
+								2248
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 692.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1117,6 +1153,10 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"opt",
+				"sources/dnn/learning_rules/optimal_stdp.cpp"
+			],
 			[
 				"rpro",
 				"src/RProto.h"
@@ -1188,10 +1228,6 @@
 			[
 				"ptr",
 				"sources/dnn/util/ptr.h"
-			],
-			[
-				"opt",
-				"sources/dnn/learning_rules/optimal_stdp.h"
 			],
 			[
 				"std",
