@@ -20,6 +20,8 @@
 #include <dnn/learning_rules/stdp_time.h>
 #include <dnn/weight_normalizations/pow_min_max.h>
 #include <dnn/weight_normalizations/min_max.h>
+#include <dnn/weight_normalizations/nonlinear_min_max.h>
+
 #include <dnn/sim/sim.h>
 
 
@@ -74,6 +76,7 @@ Factory::Factory() : registration_is_on(true) {
 	REG_TYPE_WITH_STATE_AND_CONST(OptimalStdp);
 	REG_TYPE_WITH_CONST(PowMinMax);
 	REG_TYPE_WITH_CONST(MinMax);
+	REG_TYPE_WITH_CONST(NonLinearMinMax);
 
 	REG_TYPE(Statistics);
 	REG_TYPE(StatisticsInfo);

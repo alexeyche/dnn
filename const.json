@@ -96,6 +96,12 @@
             "mean_weight" : 0.2,
             "max_weight" : 1.0,
             "min_weight" : 0.0
+        },
+        "NonLinearMinMax" : {
+            "depression_factor" : 2.5,
+            "mu" : 0.5,
+            "min_weight" : 0.0,
+            "max_weight" : 3.0
         }
     },
     "connections" : {
@@ -122,8 +128,8 @@
                 "neuron" : "SRMNeuron",
                 "act_function" : "ExpThreshold",
                 "axon_delay" : 0,
-                //"learning_rule" : "Stdp",
-                "weight_normalization" : "MinMax"
+                "learning_rule" : "Stdp",
+                "weight_normalization" : "NonLinearMinMax"
             }
         ],
         "conn_map" : {
@@ -134,17 +140,17 @@
                     "start_weight" : 0.1,
                     "synapse" : "StaticSynapse"
                 }
-            ],
-            "1->1" : [
-                { 
-                    "type" : "DifferenceOfGaussians",
-                    //"type" : "Stochastic",
-                    "dendrite_delay" : "Exp(0,0)",
-                    "start_weight" : 0.1,
-                    "synapse" : "StaticSynapse",
-                    "inh_synapse" : "StaticSynapse_inh"
-                }
-            ]
+            ]//,
+            //"1->1" : [
+            //    { 
+            //        "type" : "DifferenceOfGaussians",
+            //        //"type" : "Stochastic",
+            //        "dendrite_delay" : "Exp(0,0)",
+            //        "start_weight" : 0.1,
+            //        "synapse" : "StaticSynapse",
+            //        "inh_synapse" : "StaticSynapse_inh"
+            //    }
+            //]
         },
         "dt" : 1.0,
         "seed" : -1,
