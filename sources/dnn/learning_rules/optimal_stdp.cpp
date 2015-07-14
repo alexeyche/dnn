@@ -37,7 +37,7 @@ void OptimalStdp::calculateDynamics(const Time& t) {
     }
 
     s.B = B_calc();
-    // stat.add("B", s.B);
+    stat.add("B", s.B);
     
     auto &syns = n->getMutSynapses();
     
@@ -61,10 +61,10 @@ void OptimalStdp::calculateDynamics(const Time& t) {
             s.C.get(i) * s.B * norm.ifc().ltp(w) - decay_part * norm.ifc().ltd(w) 
         );
         
-        // stat.add("C", i, s.C.get(i));
+        stat.add("C", i, s.C.get(i));
         // stat.add("decay_part", i, decay_part);
         // stat.add("dw", i, dw);
-        // stat.add("w", i, syn.weight());
+        stat.add("w", i, syn.weight());
 
         syn.mutWeight() += dw;
 

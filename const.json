@@ -65,17 +65,15 @@
             "tau_plus" : 10.0, 
             "tau_minus" : 10.0,
             "a_plus" : 1.0,
-            "a_minus" : 1.35,
-            "learning_rate" : 0.01,
-            "w_max" : 1.0,
-            "w_min" : 0.0
+            "a_minus" : 1.17,
+            "learning_rate" : 0.01
         },
         "StdpTime" : {
             "tau_plus" : 11,
             "tau_minus" : 10,
             "a_plus" : 0.0016,
             "a_minus" : 0.0055,
-            "learning_rate" : 0.1,
+            "learning_rate" : 0.001,
             "w_max" : 1.0,
             "w_min" : 0.0
         },
@@ -84,7 +82,7 @@
             "tau_mean" : 10000.0,
             "target_rate" : 5.0,
             "target_rate_factor" : 0.0,
-            "weight_decay" : 0.05,
+            "weight_decay" : 0.15,
             "learning_rate" : 0.001
         }
     },
@@ -106,9 +104,10 @@
        },
        "DifferenceOfGaussians" : {
            "a" : 3.0,
-           "b" : 3.0,
-           "r" : 5,
-           "dimension" : 2
+           "b" : 5.0,
+           "r" : 3,
+           "dimension" : 1,
+           "apply_amplitude" : true
        }
     },
     "sim_configuration" : {
@@ -119,11 +118,11 @@
                 "axon_delay" : 0
             },
             {
-                "size" : 100,
+                "size" : 49,
                 "neuron" : "SRMNeuron",
                 "act_function" : "ExpThreshold",
                 "axon_delay" : 0,
-                "learning_rule" : "OptimalStdp",
+                //"learning_rule" : "Stdp",
                 "weight_normalization" : "MinMax"
             }
         ],
@@ -132,7 +131,7 @@
                 { 
                     "type" : "Stochastic", 
                     "dendrite_delay" : "Exp(0,0)",
-                    "start_weight" : 0.01,
+                    "start_weight" : 0.1,
                     "synapse" : "StaticSynapse"
                 }
             ],
@@ -141,7 +140,7 @@
                     "type" : "DifferenceOfGaussians",
                     //"type" : "Stochastic",
                     "dendrite_delay" : "Exp(0,0)",
-                    "start_weight" : 0.01,
+                    "start_weight" : 0.1,
                     "synapse" : "StaticSynapse",
                     "inh_synapse" : "StaticSynapse_inh"
                 }

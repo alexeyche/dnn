@@ -1,6 +1,6 @@
 #pragma once
 
-#include <snnlib/util/fastapprox/fastlog.h>
+#include <dnn/util/fastapprox/fastlog.h>
 
 namespace dnn {
 

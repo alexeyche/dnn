@@ -16,9 +16,7 @@ struct StdpC : public Serializable<Protos::StdpC> {
     , tau_minus(50.0)
     , a_plus(1.0)
     , a_minus(1.5)
-    , learning_rate(1.0)
-    , w_max(5.0)
-    , w_min(0.0)
+    , learning_rate(1.0)    
     {}
 
     void serial_process() {
@@ -26,9 +24,7 @@ struct StdpC : public Serializable<Protos::StdpC> {
                 << "tau_minus: " << tau_minus << ", " 
                 << "a_plus: " << a_plus << ", " 
                 << "a_minus: " << a_minus << ", " 
-                << "learning_rate: " << learning_rate << ", " 
-                << "w_max: " << w_max << ", "
-                << "w_min: " << w_min <<  Self::end;
+                << "learning_rate: " << learning_rate << Self::end;
     }
 
     double tau_plus;
@@ -36,8 +32,6 @@ struct StdpC : public Serializable<Protos::StdpC> {
     double a_plus;
     double a_minus;
     double learning_rate;
-    double w_max;
-    double w_min;
 };
 
 
@@ -81,33 +75,26 @@ public:
         }
         auto &syns = n->getMutSynapses();
         
-        auto x_id_it = s.x.ibegin();
-        //if((n.ref().id() == 101)&&(t.t>=2500)) cout << "Stdp: ";
+        auto x_id_it = s.x.ibegin();        
         while(x_id_it != s.x.iend()) {            
             if(fabs(s.x[x_id_it]) < 0.0001) {
                 s.x.setInactive(x_id_it);
             } else {
                 const size_t &syn_id = *x_id_it;
                 auto &syn = syns.get(syn_id).ref();
-                double dw = c.learning_rate * ( 
-                    c.a_plus  * s.x[x_id_it] * n.ref().fired() - \
-                    c.a_minus * s.y * syn.fired() 
-                );
-                // if(syns.get(syn_id).ifc().getMembranePotential()<0) {
-                //     dw = -dw;
-                // }
-                double new_weight = syn.weight() + dw;
-                if( (new_weight<c.w_max)&&(new_weight>=c.w_min) ) {
-                    syn.mutWeight() = new_weight;    
-                }
+                const double &w = syn.weight();
 
-                //if((n.ref().id() == 101)&&(t.t>=2500)) cout << "(id_pre: " << syn.idPre() << ", dw: " << dw << ", s.y: " << s.y << ", s.x: " << s.x[x_id_it] << "), ";
+                double dw = c.learning_rate * norm.ifc().derivativeModulation(w) * ( 
+                    c.a_plus  * s.x[x_id_it] * n->fired() * norm.ifc().ltp(w) - \
+                    c.a_minus * s.y * syn.fired() * norm.ifc().ltd(w)
+                );
                 
+                syn.mutWeight() += dw;
+
                 s.x[x_id_it] += - s.x[x_id_it]/c.tau_plus;
                 ++x_id_it;
             }
         }
-        //if((n.ref().id() == 101)&&(t.t>=2500)) cout << "\n";
         s.y += - s.y/c.tau_minus;
         
         if(stat.on()) {

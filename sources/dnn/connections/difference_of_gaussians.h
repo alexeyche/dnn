@@ -6,18 +6,20 @@ namespace dnn {
 
 /*@GENERATE_PROTO@*/
 struct DifferenceOfGaussiansC : public Serializable<Protos::DifferenceOfGaussiansC> {
-    DifferenceOfGaussiansC() : a(3.0), b(3.0), r(1), dimension(2) {}
+    DifferenceOfGaussiansC() : a(3.0), b(3.0), r(1), dimension(2), apply_amplitude(true) {}
 
     void serial_process() {
         begin() << "a: " << a << ", "
                 << "b: " << b << ", "
         		<< "r: " << r << ", "
-                << "dimension: " << dimension <<  Self::end;
+                << "dimension: " << dimension << ", "
+                << "apply_amplitude: " << apply_amplitude << Self::end;
     }
     int dimension;
     double a;
     double b;
     double r;
+    bool apply_amplitude;
 };
 
 
@@ -50,7 +52,9 @@ public:
     	if(v<0) {
     		recipe.inhibitory = true;
     	}
-        //recipe.amplitude = fabs(v);
+        if(c.apply_amplitude) {
+            recipe.amplitude = fabs(v);
+        }
     	return recipe;
     }
 };
