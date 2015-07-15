@@ -534,6 +534,30 @@
 				"buffer_size": 2723,
 				"line_ending": "Unix"
 			}
+		},
+		{
+			"file": "sources/dnn/neurons/srm_neuron.h",
+			"settings":
+			{
+				"buffer_size": 2146,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "sources/dnn/neurons/spike_neuron.cpp",
+			"settings":
+			{
+				"buffer_size": 4756,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "sources/dnn/learning_rules/srm_methods.h",
+			"settings":
+			{
+				"buffer_size": 1344,
+				"line_ending": "Unix"
+			}
 		}
 	],
 	"build_system": "",
@@ -906,7 +930,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 4,
 			"sheets":
 			[
 				{
@@ -949,8 +973,8 @@
 						"selection":
 						[
 							[
-								1430,
-								1430
+								1652,
+								1652
 							]
 						],
 						"settings":
@@ -961,6 +985,88 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 1224.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "sources/dnn/neurons/srm_neuron.h",
+					"settings":
+					{
+						"buffer_size": 2146,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2146,
+								2146
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1144.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "sources/dnn/neurons/spike_neuron.cpp",
+					"settings":
+					{
+						"buffer_size": 4756,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4354,
+								4354
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 2512.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "sources/dnn/learning_rules/srm_methods.h",
+					"settings":
+					{
+						"buffer_size": 1344,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1332,
+								1332
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 242.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1014,6 +1120,14 @@
 		"selected_items":
 		[
 			[
+				"srm",
+				"sources/dnn/learning_rules/srm_methods.h"
+			],
+			[
+				"spike",
+				"sources/dnn/neurons/spike_neuron.cpp"
+			],
+			[
 				"std",
 				"sources/dnn/learning_rules/stdp.h"
 			],
@@ -1028,10 +1142,6 @@
 			[
 				"opti",
 				"sources/dnn/learning_rules/optimal_stdp.cpp"
-			],
-			[
-				"srm",
-				"sources/dnn/learning_rules/srm_methods.h"
 			],
 			[
 				"opt",
@@ -1095,10 +1205,6 @@
 			],
 			[
 				"sp",
-				"sources/dnn/neurons/spike_neuron.h"
-			],
-			[
-				"spike",
 				"sources/dnn/neurons/spike_neuron.h"
 			],
 			[
