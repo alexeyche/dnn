@@ -115,6 +115,9 @@ public:
 			}
 			if(neurons[*it].ref().lrule.isSet()) {
 				neurons[*it].ref().lrule.ref().stat.turnOn();
+				if(neurons[*it].ref().lrule.ref().norm.isSet()) {
+					neurons[*it].ref().lrule.ref().norm.ref().stat.turnOn();
+				}
 			}
 		}
 	}

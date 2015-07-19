@@ -50,8 +50,8 @@ public:
                     obj.push_back(o);
                     o = str.readBaseObject();                    
                 }
-            } catch(...) {
-                ERR("Can't open " << protofile << " for reading\n");
+            } catch(const std::exception &e) {
+                ERR("Can't open " << protofile << " for reading: " <<  e.what() << "\n");
             }
 
             if((obj.size() == 1)&&(simplify)) { 

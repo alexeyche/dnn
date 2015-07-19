@@ -1,4 +1,10 @@
 {
+    "globals" : {
+        "learning_rate" : 0.01,
+        "mean_weight" : 0.2,
+        "max_weight" : 1.0,
+        "min_weight" : 0.0
+    },
     "inputs" : {
         "InputTimeSeries" : {
             "dt" : 1.0
@@ -27,7 +33,7 @@
         },
         "SRMNeuron" : {
             "u_rest" : 0.0,
-            "amp_adapt" : 1.0,
+            "amp_adapt" : 0.5,
             "amp_refr" : 100,
             "tau_refr" : 2.0,
             "tau_adapt" : 100.0
@@ -62,20 +68,19 @@
     },
     "learning_rules" : {
         "Stdp" : {
-            "tau_plus" : 10.0, 
-            "tau_minus" : 30.0,
+            "tau_plus" : 16.0, 
+            "tau_minus" : 33.0,
             "a_plus" : 1.2,
             "a_minus" : 1.0,
-            "learning_rate" : 0.001
+            "learning_rate" : "globals/learning_rate"
         },
-        "StdpTime" : {
-            "tau_plus" : 11,
-            "tau_minus" : 10,
-            "a_plus" : 0.0016,
-            "a_minus" : 0.0055,
-            "learning_rate" : 0.001,
-            "w_max" : 1.0,
-            "w_min" : 0.0
+        "TripleStdp" : {
+            "tau_plus" : 16.0, 
+            "tau_minus" : 33.0,
+            "tau_y" : 114.0,
+            "a_plus" : 1.0,
+            "a_minus" : 1.0,
+            "learning_rate" : "globals/learning_rate"
         },
         "OptimalStdp" : {
             "tau_c" : 100.0,
@@ -83,25 +88,33 @@
             "target_rate" : 5.0,
             "target_rate_factor" : 0.0,
             "weight_decay" : 0.0,
-            "learning_rate" : 0.005
+            "learning_rate" : "globals/learning_rate"
         }
     },
     "weight_normalizations" : {
         "MinMax" : {
-            "max_weight" : 1.0,
-            "min_weight" : 0.0
+            "max_weight" : "globals/max_weight",
+            "min_weight" : "globals/min_weight"
         },
         "PowMinMax" : {
             "power" : 4.0,
-            "mean_weight" : 0.2,
-            "max_weight" : 1.0,
-            "min_weight" : 0.0
+            "mean_weight" : "globals/mean_weight",
+            "max_weight" : "globals/max_weight",
+            "min_weight" : "globals/min_weight"
         },
         "NonLinearMinMax" : {
             "depression_factor" : 0.5,
             "mu" : 0.75,
-            "min_weight" : 0.0,
-            "max_weight" : 1.0
+            "max_weight" : "globals/max_weight",
+            "min_weight" : "globals/min_weight"
+        },
+        "SlidingLtd" : {
+            "power" : 3.0,
+            "tau_mean" : 10000,
+            "target_rate" : 10.0,
+            "modulation" : 1.0,
+            "max_weight" : "globals/max_weight",
+            "min_weight" : "globals/min_weight"
         }
     },
     "connections" : {
@@ -128,8 +141,8 @@
                 "neuron" : "SRMNeuron",
                 "act_function" : "ExpThreshold",
                 "axon_delay" : 0,
-                "learning_rule" : "OptimalStdp",
-                "weight_normalization" : "PowMinMax"
+                "learning_rule" : "TripleStdp",
+                "weight_normalization" : "SlidingLtd"
             }
         ],
         "conn_map" : {
@@ -140,21 +153,21 @@
                     "start_weight" : 0.1,
                     "synapse" : "StaticSynapse"
                 }
-            ],
-            "1->1" : [
-                { 
-                    "type" : "DifferenceOfGaussians",
-                    //"type" : "Stochastic",
-                    "dendrite_delay" : "Exp(0,0)",
-                    "start_weight" : 0.01,
-                    "synapse" : "StaticSynapse",
-                    "inh_synapse" : "StaticSynapse_inh"
-                }
-            ]
+            ]//,
+            //"1->1" : [
+            //    { 
+            //        "type" : "DifferenceOfGaussians",
+            //        //"type" : "Stochastic",
+            //        "dendrite_delay" : "Exp(0,0)",
+            //        "start_weight" : 0.01,
+            //        "synapse" : "StaticSynapse",
+            //        "inh_synapse" : "StaticSynapse_inh"
+            //    }
+            //]
         },
         "dt" : 1.0,
         "seed" : -1,
-        "neurons_to_listen" : [50],
+        "neurons_to_listen" : [70],
         "files" : {
             "InputTimeSeries" : { 
                 "filename" : "@pb-input"

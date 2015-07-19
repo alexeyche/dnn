@@ -192,20 +192,43 @@ public:
 		}
 		return document;
 	}
-	static Document aggregateSubst(Document &parsed, vector<string> &stack, map<string, Value> &values) {
+
+	static void aggregateSubst(const Value &parsed, vector<string> &stack, map<string, Value> &values) {
 		for (Value::ConstMemberIterator itr = parsed.MemberBegin(); itr != parsed.MemberEnd(); ++itr) {
-			if (!itr->value.IsObject()) {
+			if (itr->value.IsObject()) {
 				stack.push_back(itr->name.GetString());
-				cout << itr->name.GetString() << "\n";
 				aggregateSubst(itr->value, stack, values);
-				
+				stack.pop_back();
+			} else 
+			if (itr->value.IsArray()) {
+				// ignoring arrays
 			} else {
-				string s;
-				std::copy(stack.begin(), stack.end(), std::ostream_iterator<string>(s, "/")); 
+				stack.push_back(itr->name.GetString());
+				stringstream res;
+				std::copy(stack.begin(), stack.end(), std::ostream_iterator<string>(res, "/")); 
 				Value v;
-				v.CopyFrom(itr->value);
-				cout << s << "\n";
+				v.CopyFrom(itr->value, d.GetAllocator());
+				string s = res.str();
+				
+				size_t endpos = s.find_last_not_of("/");
+				if( string::npos != endpos ) {
+    				s = s.substr( 0, endpos+1 );
+				}
 				values[s] = std::move(v);
+				stack.pop_back();
+			}
+		}
+	}
+	static void applySubst(Value &v, const map<string, Value> &values) {
+		for (Value::MemberIterator itr = v.MemberBegin(); itr != v.MemberEnd(); ++itr) {
+			if (itr->value.IsObject()) {
+				applySubst(itr->value, values);
+			} else 
+			if (itr->value.IsString()) {
+				auto sub_ptr = values.find(itr->value.GetString());
+				if (sub_ptr != values.end()) {
+					itr->value.CopyFrom(sub_ptr->second, d.GetAllocator());
+				}
 			}
 		}
 	}
@@ -214,8 +237,8 @@ public:
 		Document parsed = parseStringC(p);
 		vector<string> stack;
 		map<string, Value> values;
-		aggregateSubst(parsed, stack, values);
-
+		aggregateSubst(parsed, stack, values);		
+		applySubst(parsed, values);
 		return parsed;
 	}
 	static void JsonToProtobuf(const Value &v, ProtoMessage m) {

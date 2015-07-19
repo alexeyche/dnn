@@ -13,6 +13,7 @@ namespace dnn {
 struct LearningRuleInterface {
 	propSynSpikeDelegate propagateSynapseSpike;
 	calculateDynamicsDelegate calculateDynamics;
+	calculateDynamicsDelegate calculateDynamicsInternal;
 };
 
 
@@ -31,12 +32,15 @@ public:
 	static void provideDefaultInterface(LearningRuleInterface &i) {
 		i.calculateDynamics = &LearningRuleBase::__calculateDynamicsDefault;
 		i.propagateSynapseSpike =  &LearningRuleBase::__propagateSynapseSpikeDefault;
+		i.calculateDynamicsInternal = &LearningRuleBase::__calculateDynamicsDefault;
 	}
 	
 	template <typename T>
 	void provideInterface(LearningRuleInterface &i) {
         i.calculateDynamics = MakeDelegate(static_cast<T*>(this), &T::calculateDynamics);
         i.propagateSynapseSpike = MakeDelegate(static_cast<T*>(this), &T::propagateSynapseSpike);
+        i.calculateDynamicsInternal = MakeDelegate(static_cast<T*>(this), &T::calculateDynamicsInternal);
+        ifc = i;
     }
 
 	virtual void propagateSynapseSpike(const SynSpike &s) = 0;
@@ -46,14 +50,22 @@ public:
 	Statistics& getStat() {
 		return stat;
 	}
-	void setWeightNormalization(WeightNormalizationBase *_norm) {
-		norm.set(_norm);
+	void calculateDynamicsInternal(const Time& t) {
+		ifc.calculateDynamics(t);
+		norm.ifc().calculateDynamics(t);
+	}
+
+	virtual void setWeightNormalization(WeightNormalizationBase *_norm) = 0;
+		
+	InterfacedPtr<WeightNormalizationBase>& getWeightNormalization() {
+		return norm;
 	}
 
 	virtual void linkWithNeuron(SpikeNeuronBase &_n) = 0;
 protected:
 	Statistics stat;
 	InterfacedPtr<WeightNormalizationBase> norm;
+	LearningRuleInterface ifc;
 };
 
 /*@GENERATE_PROTO@*/
@@ -94,9 +106,19 @@ public:
 		try {
 			Neuron &nc = static_cast<Neuron&>(_n);
 			n.set(nc);
+			if (norm.isSet()) {
+				norm.ref().linkWithNeuron(n.ref());
+			}
 		} catch(std::bad_cast exp) {
 			throw dnnException() << "Can't cast neuron for learning rule " << name() << "\n";
 		}
+	}
+
+	void setWeightNormalization(WeightNormalizationBase *_norm) {
+		norm.set(_norm);
+		if(n.isSet()) {
+			norm.ref().linkWithNeuron(n.ref());
+		}	
 	}
 protected:
 	Ptr<Neuron> n;

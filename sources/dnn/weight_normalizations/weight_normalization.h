@@ -13,8 +13,13 @@ struct WeightNormalizationInterface {
 	calculateDynamicsDelegate calculateDynamics;
 };
 
+class Network;
+class Builder;
+
 
 class WeightNormalizationBase : public SerializableBase {
+friend class Network;
+friend class Builder;
 public:
 	typedef WeightNormalizationInterface interface;
 
@@ -57,6 +62,12 @@ public:
     	i.derivativeModulation = &WeightNormalizationBase::__derivativeModulationDefault;
     	i.calculateDynamics = &WeightNormalizationBase::__calculateDynamicsDefault;    	
     }
+    virtual void linkWithNeuron(SpikeNeuronBase &_n) = 0;
+	Statistics& getStat() {
+		return stat;
+	}
+protected:
+   	Statistics stat;
 };
 
 /*@GENERATE_PROTO@*/
@@ -67,7 +78,7 @@ struct EmptyState : public Serializable<Protos::EmptyState> {
 };
 
 
-template <typename Constants, typename State = EmptyState>
+template <typename Constants, typename State = EmptyState, typename Neuron = SpikeNeuronBase>
 class WeightNormalization : public WeightNormalizationBase {
 	void serial_process() {
 		begin() << "Constants: " << c;
@@ -78,9 +89,18 @@ class WeightNormalization : public WeightNormalizationBase {
 		if(s.name() != "EmptyState") {
 			(*this) << "State: " << s << Self::end;	
 		}
-		
+	}
+	
+	void linkWithNeuron(SpikeNeuronBase &_n) {
+		try {
+			Neuron &nc = static_cast<Neuron&>(_n);
+			n.set(nc);			
+		} catch(std::bad_cast exp) {
+			throw dnnException() << "Can't cast neuron for weight normalization " << name() << "\n";
+		}
 	}
 protected:
+	Ptr<Neuron> n;
 	Constants c;
 	State s;
 };

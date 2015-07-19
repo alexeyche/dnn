@@ -47,8 +47,8 @@ LAYER_MAP = convStr(Sys.getenv('LAYER_MAP'), NULL)
 SAVE_PIC_IN_FILES = convStr(Sys.getenv('SAVE_PIC_IN_FILES'), "yes") %in% c("yes", "1", "True", "true")
 
 if(length(grep("RStudio", args))>0) {
-    STAT_ID=2
-    STAT_SYN_ID=50
+    STAT_ID=1
+    STAT_SYN_ID=1
     LAYER_MAP= NULL #"1:0:0"
     SAVE_PIC_IN_FILES = FALSE    
 }
@@ -241,18 +241,18 @@ if((length(pic_files)>0)&&(OPEN_PIC)) {
     open_pic(pic_files[1])
 }
 
-
-f_template = "%s_stat.pb"
-epochs = 1:20
-stname = "Stdp_w_50"
-stat_acc = NULL
-STAT_ID = 1
-
-for(ep in epochs) { 
-    s = RProto$new(sprintf(f_template, ep))$rawRead()
-    stat_acc = c(stat_acc, s[[STAT_ID]][[stname]])
-}
-plotl(stat_acc)
-
+# 
+# f_template = "%s_stat.pb"
+# epochs = 1:20
+# stname = "Stdp_w_50"
+# stat_acc = NULL
+# STAT_ID = 1
+# 
+# for(ep in epochs) { 
+#     s = RProto$new(sprintf(f_template, ep))$rawRead()
+#     stat_acc = c(stat_acc, s[[STAT_ID]][[stname]])
+# }
+# plotl(stat_acc)
+# 
 
 

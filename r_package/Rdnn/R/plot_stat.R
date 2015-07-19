@@ -183,13 +183,13 @@ get_st = function(stat, name) {
 }
 
 plot_one_stat = function(stat, stname, synid, T0, T1) {
-    sid = grep(sprintf("^%s($|_)", stname), names(stat))
+    sid = grep(sprintf("^%s($|[0-9]+)", stname), names(stat))
     if(length(sid)>0) {
         if(length(sid)>1) {
             if(is.null(synid)) {
                 v = rowMeans(do.call(cbind, stat[sid])) 
             } else {
-                v = stat[[sprintf("%s_%d", stname, synid)]]
+                v = stat[[sprintf("%s%d", stname, synid)]]
             }
         } else {
             v = stat[[sid]]
@@ -197,13 +197,13 @@ plot_one_stat = function(stat, stname, synid, T0, T1) {
         v = v[T0:T1]
         tx = seq(T0,T1, length.out=length(v))
         return(
-            xyplot(v~tx, type="l", xlim=c(T0,T1), ylab=stname, xlab="time", col="black")
+            xyplot(v~tx, type="l", xlim=c(T0,T1), ylab=sub("_$","", stname), xlab="time", col="black")
         )
     }
 }
 
 plot_stat = function(stat, synid=NULL, T0=0, T1=1000) {
-    stat_names = unique(sub("([^ _0-9]+_[^ _]+).*", "\\1", names(stat)))
+    stat_names = unique(sub("([^ _0-9]+_[^ 0-9]+).*", "\\1", names(stat)))
     plots = list()
     for(n in stat_names) {        
         plots[[n]] = plot_one_stat(stat, n, synid, T0, T1)    

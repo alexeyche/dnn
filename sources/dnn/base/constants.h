@@ -51,8 +51,7 @@ struct Constants : public Printable {
 		} else
 		if(mod == FromString) {
 			const_json = s;
-		}
-		
+		}		
 		for(auto it=mods.begin(); it != mods.end(); ++it) {
 			replaceAll(const_json, it->first, it->second);
 		}

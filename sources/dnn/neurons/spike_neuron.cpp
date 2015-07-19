@@ -125,6 +125,13 @@ Statistics SpikeNeuronBase::getStat() {
 		for(auto it=lrule_st.getStats().begin(); it != lrule_st.getStats().end(); ++it) {
 			rstat[ lrule.ref().name() + "_" + it->first ] = it->second;
 		}
+
+	}
+	if((lrule.isSet())&&(lrule.ref().getWeightNormalization().isSet())&&(lrule.ref().getWeightNormalization().ref().getStat().on())) {
+		Statistics &lrule_st = lrule.ref().getWeightNormalization().ref().getStat();
+		for(auto it=lrule_st.getStats().begin(); it != lrule_st.getStats().end(); ++it) {
+			rstat[ lrule.ref().getWeightNormalization().ref().name() + "_" + it->first ] = it->second;
+		}		
 	}
 	return statc;
 }
@@ -167,7 +174,8 @@ void SpikeNeuronBase::calculateDynamicsInternal(const Time &t) {
     }
     ifc.calculateDynamics(t, Iinput, Isyn);
     
-    lrule.ifc().calculateDynamics(t);
+    lrule.ifc().calculateDynamicsInternal(t);
+    
     if(stat.on()) {
    		for(auto &s: syns) {
    			s.ifc().calculateDynamics(t);
