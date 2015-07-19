@@ -62,7 +62,7 @@ public:
     }
     double ltd(const double &w) {
         if(GlobalCtx::inst().getSimInfo().pastTime < 5*c.tau_mean) { 
-            return 1.0;
+            return c.modulation;
         }
         return c.modulation * fastpow(1000.0*s.p_mean, c.power) * c.__target_rate;
     }

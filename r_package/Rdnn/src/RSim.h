@@ -86,6 +86,9 @@ public:
             Rcpp::Named("w") = w
         );
     }
+    void turnOnStatistics() {
+        Sim::turnOnStatistics();
+    }    
     void saveModel(const string &fname) {
         ofstream fstr(fname);
         Stream str_out(fstr, Stream::Binary);

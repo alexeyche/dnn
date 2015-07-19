@@ -208,8 +208,8 @@ if ( (!is.null(input))&&(!is.null(model))&&(!is.null(net)) ) {
         }
     }
     lab_errors = matrix(0, nrow=length(map_patterns), ncol=length(lab_pattern))
-    for(pi in 1:length(map_patterns)) {
-        p = map_patterns[[pi]]
+    for(pid in 1:length(map_patterns)) {
+        p = map_patterns[[pid]]
         for(lpi in 1:length(lab_pattern)) {
             lp = lab_pattern[[lpi]]
             lab_errors[pi, lpi] = sum( (p$map - lp)^2 )

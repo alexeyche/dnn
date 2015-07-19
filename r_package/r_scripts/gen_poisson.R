@@ -43,7 +43,7 @@ gen_poisson = function(N, rate=10, len=10000, binary=FALSE)  {
     if(binary) {
         net_b
     } else {  
-        lapply(1:N, function(ni) which(net_b[ni,]== 1))
+        lapply(1:N, function(ni) which(net_b[ni,]>= 1))
     }
     
 }

@@ -1,18 +1,19 @@
 {
     "globals" : {
-        "learning_rate" : 0.01,
+        "learning_rate" : 0.005,
         "mean_weight" : 0.2,
         "max_weight" : 1.0,
-        "min_weight" : 0.0
+        "min_weight" : 0.0,
+        "dt" : 1.0
     },
     "inputs" : {
         "InputTimeSeries" : {
-            "dt" : 1.0
+            "dt" : "globals/dt"
         }
     },
     "neurons" : {
         "SpikeSequenceNeuron" : {
-            "dt" : 1.0
+            "dt" : "globals/dt"
         },
         "LeakyIntegrateAndFire" : {
             "tau_m" : 5.0,

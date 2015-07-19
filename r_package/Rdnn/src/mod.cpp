@@ -13,7 +13,7 @@ RCPP_MODULE(dnnMod) {
     .method("getSpikes", &RSim::getSpikes, "get spikes")
     .method("getModel", &RSim::getModel, "get model")
     .method("saveModel", &RSim::saveModel, "save mode")
-//    .method("collectStat", &RSim::collectStat, "turn on collect stat")
+    .method("turnOnStatistics", &RSim::turnOnStatistics, "turn on collect stat")
 //    .method("setInputSpikesList", &RSim::setInputSpikesList, "Set LabeledSpikesList as input spikes")
     ;
     Rcpp::class_<RConstants>("RConstants")
