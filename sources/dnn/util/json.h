@@ -192,9 +192,31 @@ public:
 		}
 		return document;
 	}
+	static Document aggregateSubst(Document &parsed, vector<string> &stack, map<string, Value> &values) {
+		for (Value::ConstMemberIterator itr = parsed.MemberBegin(); itr != parsed.MemberEnd(); ++itr) {
+			if (!itr->value.IsObject()) {
+				stack.push_back(itr->name.GetString());
+				cout << itr->name.GetString() << "\n";
+				aggregateSubst(itr->value, stack, values);
+				
+			} else {
+				string s;
+				std::copy(stack.begin(), stack.end(), std::ostream_iterator<string>(s, "/")); 
+				Value v;
+				v.CopyFrom(itr->value);
+				cout << s << "\n";
+				values[s] = std::move(v);
+			}
+		}
+	}
 	static Document parseString(string &p) {
 		getRidOfComments(p);
-		return parseStringC(p);
+		Document parsed = parseStringC(p);
+		vector<string> stack;
+		map<string, Value> values;
+		aggregateSubst(parsed, stack, values);
+
+		return parsed;
 	}
 	static void JsonToProtobuf(const Value &v, ProtoMessage m) {
 		Document d;
