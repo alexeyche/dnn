@@ -40,6 +40,8 @@ public:
 			opts.push_back(argv[i]);
 		}
 	}
+	OptionParser(const vector<string> &args) : opts(args) {}
+	
 	template <typename T>
 	void option(string long_opt, string short_opt, T &src, bool required = true, bool as_flag = false) {
 		bool found = false;

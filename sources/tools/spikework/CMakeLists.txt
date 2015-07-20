@@ -15,17 +15,20 @@ endforeach()
 set(DNN_SRCS ${DNN_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
-add_executable(spikework
+add_executable(spikework-bin
     spikework.cpp
 )
+SET_TARGET_PROPERTIES(spikework-bin
+  PROPERTIES OUTPUT_NAME spikework)
 
 
 include_directories(${CMAKE_BINARY_DIR}/protos)
 # link dependencies of executable
-target_link_libraries(spikework
+target_link_libraries(spikework-bin
+	spikework
+    dnn
     protos
     ${PROTOBUF_LIBRARY}
-    dnn
     m
 )
 install(TARGETS RUNTIME DESTINATION bin)
