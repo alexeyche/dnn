@@ -6,6 +6,8 @@
 #include <dnn/io/serialize.h>
 #include <dnn/util/fastapprox/fastexp.h>
 
+#include <dnn/contrib/kiss_fft/kiss_fft.h>
+
 namespace dnn {
 
 
@@ -46,7 +48,7 @@ struct TripleStdpState : public Serializable<Protos::TripleStdpState>  {
 
     void serial_process() {
         begin() << "y: "        << y << ", " 
-                << "y_long: "        << y_long << ", " 
+                << "y_long: "   << y_long << ", " 
                 << "x: "        << x << Self::end;
     }
 

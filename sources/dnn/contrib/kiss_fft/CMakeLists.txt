@@ -2,17 +2,11 @@ cmake_minimum_required(VERSION 2.8)
 
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into SNN_SIM.
-set(DIRS
-    pbjson
-    kiss_fft
-)
-
-foreach(dir ${DIRS})
-  add_subdirectory(${dir})
-endforeach()
-
-
 set(SOURCES
+    kiss_fft.c
+    kiss_fftr.c
+    kiss_fftnd.c
+    kiss_fftndr.c
 )
 
 # add directory name to sources

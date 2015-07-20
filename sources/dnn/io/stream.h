@@ -102,6 +102,14 @@ public:
         }
         return d;
     }
+    template <typename T>
+    T* safeReadObject() {
+        SerializableBase *b = readBaseObject();
+        if(!b) return nullptr;
+        
+        return dynamic_cast<T*>(b);
+    }
+    
     vector<ProtoMessage> readObjectProtos();
     void protoReader(vector<ProtoMessage> &messages);
     void jsonReader(string name, const Value &v, vector<ProtoMessage> &messages);

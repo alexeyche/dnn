@@ -5,6 +5,7 @@ set(DIRS
     dnn_sim
     dumptool
     mpl
+    spikework
 )
 
 foreach(dir ${DIRS})

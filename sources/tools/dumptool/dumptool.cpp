@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
     string input_file;
     bool need_help;
     optp.option("--input", "-i", input_file, true);
-    optp.option("--help", "-h", input_file, false, true);
+    optp.option("--help", "-h", need_help, false, true);
     if(need_help) {
         cout << usage;
         return 0;
