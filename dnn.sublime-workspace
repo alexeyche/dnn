@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"Time",
+				"TimeSeries"
+			],
+			[
 				"push",
 				"push_back"
 			],
@@ -510,86 +514,32 @@
 			[
 				"keys",
 				"keys_map_json"
-			],
-			[
-				"giwi_do",
-				"giwi_doc_keys_input"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "sources/dnn/synapses/static_synapse.h",
+			"file": "sources/tools/spikework/spikework.cpp",
 			"settings":
 			{
-				"buffer_size": 1092,
+				"buffer_size": 543,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "sources/dnn/neurons/srm_neuron.h",
+			"file": "sources/tools/spikework/fft.cpp",
 			"settings":
 			{
-				"buffer_size": 2146,
+				"buffer_size": 1363,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "sources/dnn/neurons/spike_neuron.cpp",
+			"file": "sources/dnn/util/time_series.h",
 			"settings":
 			{
-				"buffer_size": 4756,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "sources/dnn/learning_rules/srm_methods.h",
-			"settings":
-			{
-				"buffer_size": 1344,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "sources/dnn/util/json.cpp",
-			"settings":
-			{
-				"buffer_size": 59,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "sources/dnn/util/json.h",
-			"settings":
-			{
-				"buffer_size": 6834,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Searching 148 files for \"IsObject\" (regex, case sensitive)\n\n/home/alexeyche/prog/dnn/sources/.tags:\n  554  IsNull	dnn/contrib/rapidjson/document.h	/^    bool IsNull()   const { return flags_ == kNullFlag; }$/;\"	f	class:GenericValue\n  555  IsNumber	dnn/contrib/rapidjson/document.h	/^    bool IsNumber() const { return (flags_ & kNumberFlag) != 0; }$/;\"	f	class:GenericValue\n  556: IsObject	dnn/contrib/rapidjson/document.h	/^    bool IsObject() const { return flags_ == kObjectFlag; }$/;\"	f	class:GenericValue\n  557  IsPointer	dnn/contrib/rapidjson/internal/meta.h	/^template <typename T> struct IsPointer : FalseType {};$/;\"	s	namespace:internal\n  558  IsPointer	dnn/contrib/rapidjson/internal/meta.h	/^template <typename T> struct IsPointer<T*> : TrueType {};$/;\"	s	namespace:internal\n  ...\n  632  MaybeAddConst	dnn/contrib/rapidjson/internal/meta.h	/^template <bool Constify, typename T> struct MaybeAddConst : SelectIfCond<Constify, const T, T> {};$/;\"	s	namespace:internal\n  633  Member	dnn/contrib/rapidjson/document.h	/^    typedef GenericMember<Encoding, Allocator> Member;$/;\"	t	class:GenericValue\n  634: MemberBegin	dnn/contrib/rapidjson/document.h	/^    ConstMemberIterator MemberBegin() const { RAPIDJSON_ASSERT(IsObject()); return ConstMemberIterator(data_.o.members); }$/;\"	f	class:GenericValue\n  635: MemberBegin	dnn/contrib/rapidjson/document.h	/^    MemberIterator MemberBegin()            { RAPIDJSON_ASSERT(IsObject()); return MemberIterator(data_.o.members); }$/;\"	f	class:GenericValue\n  636: MemberCount	dnn/contrib/rapidjson/document.h	/^    SizeType MemberCount() const { RAPIDJSON_ASSERT(IsObject()); return data_.o.size; }$/;\"	f	class:GenericValue\n  637: MemberEnd	dnn/contrib/rapidjson/document.h	/^    ConstMemberIterator MemberEnd() const   { RAPIDJSON_ASSERT(IsObject()); return ConstMemberIterator(data_.o.members + data_.o.size); }$/;\"	f	class:GenericValue\n  638: MemberEnd	dnn/contrib/rapidjson/document.h	/^    MemberIterator MemberEnd()              { RAPIDJSON_ASSERT(IsObject()); return MemberIterator(data_.o.members + data_.o.size); }$/;\"	f	class:GenericValue\n  639  MemberIterator	dnn/contrib/rapidjson/document.h	/^    typedef typename GenericMemberIterator<false,Encoding,Allocator>::Iterator MemberIterator;  \\/\\/!< Member iterator for iterating in object.$/;\"	t	class:GenericValue\n  640  MemoryBuffer	dnn/contrib/rapidjson/memorybuffer.h	/^typedef GenericMemoryBuffer<> MemoryBuffer;$/;\"	t\n  ...\n  676  Object	dnn/base/base.h	/^class Object {$/;\"	c	namespace:dnn\n  677  Object	dnn/contrib/rapidjson/document.h	/^    struct Object {$/;\"	s	class:GenericValue\n  678: ObjectEmpty	dnn/contrib/rapidjson/document.h	/^    bool ObjectEmpty() const { RAPIDJSON_ASSERT(IsObject()); return data_.o.size == 0; }$/;\"	f	class:GenericValue\n  679  Offset	dnn/contrib/rapidjson/error/error.h	/^    size_t Offset() const { return offset_; }$/;\"	f	struct:ParseResult\n  680  OptMods	dnn/base/base.h	/^typedef map<string, string> OptMods;$/;\"	t	namespace:dnn\n\n/home/alexeyche/prog/dnn/sources/.tags_sorted_by_file:\n  250  IsNull	dnn/contrib/rapidjson/document.h	/^    bool IsNull()   const { return flags_ == kNullFlag; }$/;\"	f	class:GenericValue\n  251  IsNumber	dnn/contrib/rapidjson/document.h	/^    bool IsNumber() const { return (flags_ & kNumberFlag) != 0; }$/;\"	f	class:GenericValue\n  252: IsObject	dnn/contrib/rapidjson/document.h	/^    bool IsObject() const { return flags_ == kObjectFlag; }$/;\"	f	class:GenericValue\n  253  IsString	dnn/contrib/rapidjson/document.h	/^    bool IsString() const { return (flags_ & kStringFlag) != 0; }$/;\"	f	class:GenericValue\n  254  IsTrue	dnn/contrib/rapidjson/document.h	/^    bool IsTrue()   const { return flags_ == kTrueFlag; }$/;\"	f	class:GenericValue\n  ...\n  263  MaxSize	dnn/contrib/rapidjson/document.h	/^        enum { MaxChars = sizeof(String) \\/ sizeof(Ch), MaxSize = MaxChars - 1, LenPos = MaxSize };$/;\"	e	enum:GenericValue::ShortString::__anon21\n  264  Member	dnn/contrib/rapidjson/document.h	/^    typedef GenericMember<Encoding, Allocator> Member;$/;\"	t	class:GenericValue\n  265: MemberBegin	dnn/contrib/rapidjson/document.h	/^    ConstMemberIterator MemberBegin() const { RAPIDJSON_ASSERT(IsObject()); return ConstMemberIterator(data_.o.members); }$/;\"	f	class:GenericValue\n  266: MemberBegin	dnn/contrib/rapidjson/document.h	/^    MemberIterator MemberBegin()            { RAPIDJSON_ASSERT(IsObject()); return MemberIterator(data_.o.members); }$/;\"	f	class:GenericValue\n  267: MemberCount	dnn/contrib/rapidjson/document.h	/^    SizeType MemberCount() const { RAPIDJSON_ASSERT(IsObject()); return data_.o.size; }$/;\"	f	class:GenericValue\n  268: MemberEnd	dnn/contrib/rapidjson/document.h	/^    ConstMemberIterator MemberEnd() const   { RAPIDJSON_ASSERT(IsObject()); return ConstMemberIterator(data_.o.members + data_.o.size); }$/;\"	f	class:GenericValue\n  269: MemberEnd	dnn/contrib/rapidjson/document.h	/^    MemberIterator MemberEnd()              { RAPIDJSON_ASSERT(IsObject()); return MemberIterator(data_.o.members + data_.o.size); }$/;\"	f	class:GenericValue\n  270  MemberIterator	dnn/contrib/rapidjson/document.h	/^    typedef typename GenericMemberIterator<false,Encoding,Allocator>::Iterator MemberIterator;  \\/\\/!< Member iterator for iterating in object.$/;\"	t	class:GenericValue\n  271  NonConstIterator	dnn/contrib/rapidjson/document.h	/^    typedef GenericMemberIterator<false,Encoding,Allocator> NonConstIterator;$/;\"	t	class:GenericMemberIterator\n  ...\n  273  Number	dnn/contrib/rapidjson/document.h	/^    union Number {$/;\"	u	class:GenericValue\n  274  Object	dnn/contrib/rapidjson/document.h	/^    struct Object {$/;\"	s	class:GenericValue\n  275: ObjectEmpty	dnn/contrib/rapidjson/document.h	/^    bool ObjectEmpty() const { RAPIDJSON_ASSERT(IsObject()); return data_.o.size == 0; }$/;\"	f	class:GenericValue\n  276  Parse	dnn/contrib/rapidjson/document.h	/^    GenericDocument& Parse(const Ch* str) {$/;\"	f	class:GenericDocument\n  277  ParseInsitu	dnn/contrib/rapidjson/document.h	/^    GenericDocument& ParseInsitu(Ch* str) {$/;\"	f	class:GenericDocument\n\n/home/alexeyche/prog/dnn/sources/dnn/contrib/rapidjson/document.h:\n  762      bool IsTrue()   const { return flags_ == kTrueFlag; }\n  763      bool IsBool()   const { return (flags_ & kBoolFlag) != 0; }\n  764:     bool IsObject() const { return flags_ == kObjectFlag; }\n  765      bool IsArray()  const { return flags_ == kArrayFlag; }\n  766      bool IsNumber() const { return (flags_ & kNumberFlag) != 0; }\n  ...\n  795  \n  796      //! Set this value as an empty object.\n  797:     /*! \\post IsObject() == true */\n  798      GenericValue& SetObject() { this->~GenericValue(); new (this) GenericValue(kObjectType); return *this; }\n  799  \n  800      //! Get the number of members in the object.\n  801:     SizeType MemberCount() const { RAPIDJSON_ASSERT(IsObject()); return data_.o.size; }\n  802  \n  803      //! Check whether the object is empty.\n  804:     bool ObjectEmpty() const { RAPIDJSON_ASSERT(IsObject()); return data_.o.size == 0; }\n  805  \n  806      //! Get a value from an object associated with the name.\n  807:     /*! \\pre IsObject() == true\n  808          \\tparam T Either \\c Ch or \\c const \\c Ch (template used for disambiguation with \\ref operator[](SizeType))\n  809          \\note In version 0.1x, if the member is not found, this function returns a null value. This makes issue 7.\n  ...\n  822  \n  823      //! Get a value from an object associated with the name.\n  824:     /*! \\pre IsObject() == true\n  825          \\tparam SourceAllocator Allocator of the \\c name value\n  826  \n  ...\n  845  \n  846      //! Const member iterator\n  847:     /*! \\pre IsObject() == true */\n  848:     ConstMemberIterator MemberBegin() const { RAPIDJSON_ASSERT(IsObject()); return ConstMemberIterator(data_.o.members); }\n  849      //! Const \\em past-the-end member iterator\n  850:     /*! \\pre IsObject() == true */\n  851:     ConstMemberIterator MemberEnd() const   { RAPIDJSON_ASSERT(IsObject()); return ConstMemberIterator(data_.o.members + data_.o.size); }\n  852      //! Member iterator\n  853:     /*! \\pre IsObject() == true */\n  854:     MemberIterator MemberBegin()            { RAPIDJSON_ASSERT(IsObject()); return MemberIterator(data_.o.members); }\n  855      //! \\em Past-the-end member iterator\n  856:     /*! \\pre IsObject() == true */\n  857:     MemberIterator MemberEnd()              { RAPIDJSON_ASSERT(IsObject()); return MemberIterator(data_.o.members + data_.o.size); }\n  858  \n  859      //! Check whether a member exists in the object.\n  860      /*!\n  861          \\param name Member name to be searched.\n  862:         \\pre IsObject() == true\n  863          \\return Whether a member with that name exists.\n  864          \\note It is better to use FindMember() directly if you need the obtain the value as well.\n  ...\n  871          This version is faster because it does not need a StrLen(). It can also handle string with null character.\n  872          \\param name Member name to be searched.\n  873:         \\pre IsObject() == true\n  874          \\return Whether a member with that name exists.\n  875          \\note It is better to use FindMember() directly if you need the obtain the value as well.\n  ...\n  882      /*!\n  883          \\param name Member name to be searched.\n  884:         \\pre IsObject() == true\n  885          \\return Iterator to member, if it exists.\n  886              Otherwise returns \\ref MemberEnd().\n  ...\n  902          This version is faster because it does not need a StrLen(). It can also handle string with null character.\n  903          \\param name Member name to be searched.\n  904:         \\pre IsObject() == true\n  905          \\return Iterator to member, if it exists.\n  906              Otherwise returns \\ref MemberEnd().\n  ...\n  913      template <typename SourceAllocator>\n  914      MemberIterator FindMember(const GenericValue<Encoding, SourceAllocator>& name) {\n  915:         RAPIDJSON_ASSERT(IsObject());\n  916          RAPIDJSON_ASSERT(name.IsString());\n  917          MemberIterator member = MemberBegin();\n  ...\n  929          \\return The value itself for fluent API.\n  930          \\note The ownership of \\c name and \\c value will be transferred to this object on success.\n  931:         \\pre  IsObject() && name.IsString()\n  932          \\post name.IsNull() && value.IsNull()\n  933          \\note Amortized Constant time complexity.\n  934      */\n  935      GenericValue& AddMember(GenericValue& name, GenericValue& value, Allocator& allocator) {\n  936:         RAPIDJSON_ASSERT(IsObject());\n  937          RAPIDJSON_ASSERT(name.IsString());\n  938  \n  ...\n  978          \\return The value itself for fluent API.\n  979          \\note The ownership of \\c value will be transferred to this object on success.\n  980:         \\pre  IsObject()\n  981          \\post value.IsNull()\n  982          \\note Amortized Constant time complexity.\n  ...\n  992          \\param allocator    Allocator for reallocating memory. It must be the same one as used before. Commonly use GenericDocument::GetAllocator().\n  993          \\return The value itself for fluent API.\n  994:         \\pre  IsObject()\n  995          \\note This overload is needed to avoid clashes with the generic primitive type AddMember(StringRefType,T,Allocator&) overload below.\n  996          \\note Amortized Constant time complexity.\n  ...\n 1007          \\param allocator Allocator for reallocating memory. Commonly use GenericDocument::GetAllocator().\n 1008          \\return The value itself for fluent API.\n 1009:         \\pre  IsObject()\n 1010  \n 1011          \\note The source type \\c T explicitly disallows all pointer types,\n ....\n 1031      */\n 1032      void RemoveAllMembers() {\n 1033:         RAPIDJSON_ASSERT(IsObject()); \n 1034          for (MemberIterator m = MemberBegin(); m != MemberEnd(); ++m)\n 1035              m->~Member();\n ....\n 1070      */\n 1071      MemberIterator RemoveMember(MemberIterator m) {\n 1072:         RAPIDJSON_ASSERT(IsObject());\n 1073          RAPIDJSON_ASSERT(data_.o.size > 0);\n 1074          RAPIDJSON_ASSERT(data_.o.members != 0);\n ....\n 1090      //! Remove a member from an object by iterator.\n 1091      /*! \\param pos iterator to the member to remove\n 1092:         \\pre IsObject() == true && \\ref MemberBegin() <= \\c pos < \\ref MemberEnd()\n 1093          \\return Iterator following the removed element.\n 1094              If the iterator \\c pos refers to the last element, the \\ref MemberEnd() iterator is returned.\n ....\n 1104      /*! \\param first iterator to the first member to remove\n 1105          \\param last  iterator following the last member to remove\n 1106:         \\pre IsObject() == true && \\ref MemberBegin() <= \\c first <= \\c last <= \\ref MemberEnd()\n 1107          \\return Iterator following the last removed element.\n 1108          \\note This function preserves the relative order of the remaining object\n ....\n 1111      */\n 1112      MemberIterator EraseMember(ConstMemberIterator first, ConstMemberIterator last) {\n 1113:         RAPIDJSON_ASSERT(IsObject());\n 1114          RAPIDJSON_ASSERT(data_.o.size > 0);\n 1115          RAPIDJSON_ASSERT(data_.o.members != 0);\n\n/home/alexeyche/prog/dnn/sources/dnn/io/stream.cpp:\n   83  	bool has_object = false;\n   84  	for (Value::ConstMemberIterator itr = v.MemberBegin(); itr != v.MemberEnd(); ++itr) {\n   85: 		if (itr->value.IsObject()) {\n   86  			jsonReader(itr->name.GetString(), itr->value, messages);\n   87  			has_object = true;\n   ..\n  111  	}\n  112  	if (r == Text) {\n  113: 		if (!iterator->value.IsObject()) {\n  114  			throw dnnException()<< \"Fail to read \" << Json::stringify(iterator->value) << \". Expected object\\n\";\n  115  		}\n\n/home/alexeyche/prog/dnn/sources/dnn/io/stream.h:\n   39              string jstr((std::istreambuf_iterator<char>(*_input_str)), std::istreambuf_iterator<char>());\n   40              document = Json::parseString(jstr);\n   41:             assert(document.IsObject());\n   42              iterator = document.MemberBegin();\n   43          }\n\n48 matches across 5 files\n",
-			"settings":
-			{
-				"buffer_size": 14002,
-				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
-			"file": "sources/dnn/io/stream.cpp",
-			"settings":
-			{
-				"buffer_size": 3915,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "sources/dnn/core.h",
-			"settings":
-			{
-				"buffer_size": 1087,
+				"buffer_size": 4118,
 				"line_ending": "Unix"
 			}
 		}
@@ -626,9 +576,23 @@
 	},
 	"file_history":
 	[
+		"/home/alexeyche/prog/dnn/sources/dnn/contrib/kiss_fft/kiss_fftndr.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/contrib/kiss_fft/kiss_fftnd.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/io/stream.cpp",
+		"/home/alexeyche/prog/dnn/sources/tools/dumptool/dumptool.cpp",
+		"/home/alexeyche/prog/dnn/sources/dnn/util/option_parser.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/io/stream.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/core.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/util/json.cpp",
+		"/home/alexeyche/prog/dnn/sources/dnn/neurons/spike_neuron.cpp",
+		"/home/alexeyche/prog/dnn/sources/dnn/neurons/srm_neuron.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/synapses/static_synapse.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/util/json.h",
-		"/home/alexeyche/prog/dnn/sources/dnn/learning_rules/stdp.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/learning_rules/triple_stdp.h",
+		"/home/alexeyche/prog/dnn/sources/tools/spikework/fft.cpp",
 		"/home/alexeyche/prog/dnn/sources/dnn/learning_rules/srm_methods.h",
+		"/home/alexeyche/prog/dnn/sources/tools/spikework/spikework.cpp",
+		"/home/alexeyche/prog/dnn/sources/dnn/learning_rules/stdp.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/base/factory.cpp",
 		"/home/alexeyche/prog/dnn/sources/dnn/sim/sim.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/synapses/synapse.h",
@@ -637,10 +601,7 @@
 		"/home/alexeyche/prog/dnn/sources/dnn/connections/difference_of_gaussians.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/neurons/leaky_integrate_and_fire.h",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RProto.h",
-		"/home/alexeyche/prog/dnn/sources/dnn/synapses/static_synapse.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/base/factory.h",
-		"/home/alexeyche/prog/dnn/sources/dnn/neurons/srm_neuron.h",
-		"/home/alexeyche/prog/dnn/sources/dnn/io/stream.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/learning_rules/optimal_stdp.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/sim/global_ctx.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/sim/global_ctx.cpp",
@@ -742,18 +703,7 @@
 		"/home/alexeyche/cpp/r_package/Rdnn/R/zzz.R",
 		"/mnt/twalrus4/arc/local-oxy/oxygen/noah/conf.py",
 		"/home/alexeyche/cpp/sources/tools/mpl/CMakeLists.txt",
-		"/home/alexeyche/cpp/r_package/Rdnn/src/Makevars.in",
-		"/home/alexeyche/cpp/r_package/Rdnn/src/RMpl.cpp",
-		"/home/alexeyche/cpp/r_package/Rdnn/src/mpl.cpp",
-		"/home/alexeyche/cpp/sources/dnn/io/serialize.cpp",
-		"/mnt/twalrus4/arc/local-oxy/util/rem.py",
-		"/mnt/twalrus4/arc/local-oxy/core/local_oxy_args.py",
-		"/home/alexeyche/cpp/sources/dnn/core.h",
-		"/home/alexeyche/cpp/sources/dnn/base/factory.h",
-		"/home/alexeyche/prog/junk/min_ci/server/templates/tree.html",
-		"/home/alexeyche/prog/junk/min_ci/humongolus/__init__.py",
-		"/home/alexeyche/prog/junk/min_ci/humongolus/field.py",
-		"/home/alexeyche/prog/junk/min_ci/server/static/tpl/NodeView.html"
+		"/home/alexeyche/cpp/r_package/Rdnn/src/Makevars.in"
 	],
 	"find":
 	{
@@ -761,7 +711,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 90.0,
+		"height": 0.0,
 		"where_history":
 		[
 			""
@@ -772,6 +722,8 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"TimeSeriesData",
+			"readBase",
 			"itera",
 			"IsObject",
 			"Is",
@@ -897,9 +849,7 @@
 			"tempo",
 			"exc",
 			"uploads_tables",
-			"find_handlers",
-			"find_han",
-			"handler"
+			"find_handlers"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -964,23 +914,23 @@
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "sources/dnn/synapses/static_synapse.h",
+					"file": "sources/tools/spikework/spikework.cpp",
 					"settings":
 					{
-						"buffer_size": 1092,
+						"buffer_size": 543,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								851,
-								851
+								1,
+								1
 							]
 						],
 						"settings":
@@ -997,18 +947,18 @@
 				},
 				{
 					"buffer": 1,
-					"file": "sources/dnn/neurons/srm_neuron.h",
+					"file": "sources/tools/spikework/fft.cpp",
 					"settings":
 					{
-						"buffer_size": 2146,
+						"buffer_size": 1363,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1245,
-								1245
+								1137,
+								1137
 							]
 						],
 						"settings":
@@ -1018,105 +968,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 486.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "sources/dnn/neurons/spike_neuron.cpp",
+					"file": "sources/dnn/util/time_series.h",
 					"settings":
 					{
-						"buffer_size": 4756,
+						"buffer_size": 4118,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4354,
-								4354
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 2512.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "sources/dnn/learning_rules/srm_methods.h",
-					"settings":
-					{
-						"buffer_size": 1344,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1332,
-								1332
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "sources/dnn/util/json.cpp",
-					"settings":
-					{
-						"buffer_size": 59,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "sources/dnn/util/json.h",
-					"settings":
-					{
-						"buffer_size": 6834,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5568,
-								5568
+								4111,
+								4111
 							]
 						],
 						"settings":
@@ -1125,292 +995,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3284.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"settings":
-					{
-						"buffer_size": 14002,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										381,
-										389
-									],
-									[
-										434,
-										442
-									],
-									[
-										1224,
-										1232
-									],
-									[
-										1426,
-										1434
-									],
-									[
-										1612,
-										1620
-									],
-									[
-										1788,
-										1796
-									],
-									[
-										2003,
-										2011
-									],
-									[
-										2702,
-										2710
-									],
-									[
-										3318,
-										3326
-									],
-									[
-										3371,
-										3379
-									],
-									[
-										4170,
-										4178
-									],
-									[
-										4372,
-										4380
-									],
-									[
-										4558,
-										4566
-									],
-									[
-										4734,
-										4742
-									],
-									[
-										4949,
-										4957
-									],
-									[
-										5736,
-										5744
-									],
-									[
-										6268,
-										6276
-									],
-									[
-										6543,
-										6551
-									],
-									[
-										6804,
-										6812
-									],
-									[
-										6953,
-										6961
-									],
-									[
-										7090,
-										7098
-									],
-									[
-										7455,
-										7463
-									],
-									[
-										7623,
-										7631
-									],
-									[
-										7715,
-										7723
-									],
-									[
-										7849,
-										7857
-									],
-									[
-										7941,
-										7949
-									],
-									[
-										8067,
-										8075
-									],
-									[
-										8159,
-										8167
-									],
-									[
-										8282,
-										8290
-									],
-									[
-										8374,
-										8382
-									],
-									[
-										8602,
-										8610
-									],
-									[
-										8992,
-										9000
-									],
-									[
-										9275,
-										9283
-									],
-									[
-										9609,
-										9617
-									],
-									[
-										9917,
-										9925
-									],
-									[
-										10223,
-										10231
-									],
-									[
-										10509,
-										10517
-									],
-									[
-										10757,
-										10765
-									],
-									[
-										11100,
-										11108
-									],
-									[
-										11512,
-										11520
-									],
-									[
-										11702,
-										11710
-									],
-									[
-										11937,
-										11945
-									],
-									[
-										12200,
-										12208
-									],
-									[
-										12612,
-										12620
-									],
-									[
-										12997,
-										13005
-									],
-									[
-										13320,
-										13328
-									],
-									[
-										13501,
-										13509
-									],
-									[
-										13891,
-										13899
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								13138,
-								13138
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"output_tag": 1,
-							"result_base_dir": "",
-							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 4006.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "sources/dnn/io/stream.cpp",
-					"settings":
-					{
-						"buffer_size": 3915,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2348,
-								2348
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1214.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "sources/dnn/core.h",
-					"settings":
-					{
-						"buffer_size": 1087,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								513,
-								513
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2080.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1464,6 +1049,38 @@
 		"selected_items":
 		[
 			[
+				"time",
+				"sources/dnn/util/time_series.h"
+			],
+			[
+				"stre",
+				"sources/dnn/io/stream.h"
+			],
+			[
+				"dump",
+				"sources/tools/dumptool/dumptool.cpp"
+			],
+			[
+				"optio",
+				"sources/dnn/util/option_parser.h"
+			],
+			[
+				"fft",
+				"sources/tools/spikework/fft.cpp"
+			],
+			[
+				"spike",
+				"sources/tools/spikework/spikework.cpp"
+			],
+			[
+				"ff",
+				"sources/tools/spikework/fft.cpp"
+			],
+			[
+				"tripl",
+				"sources/dnn/learning_rules/triple_stdp.h"
+			],
+			[
 				"core",
 				"sources/dnn/core.h"
 			],
@@ -1474,10 +1091,6 @@
 			[
 				"srm",
 				"sources/dnn/learning_rules/srm_methods.h"
-			],
-			[
-				"spike",
-				"sources/dnn/neurons/spike_neuron.cpp"
 			],
 			[
 				"std",
@@ -1514,10 +1127,6 @@
 			[
 				"glob",
 				"sources/dnn/sim/global_ctx.h"
-			],
-			[
-				"stre",
-				"sources/dnn/io/stream.h"
 			],
 			[
 				"p",
@@ -1618,10 +1227,6 @@
 			[
 				"op",
 				"sources/dnn/learning_rules/optimal_stdp.h"
-			],
-			[
-				"time",
-				"sources/dnn/util/time_series.h"
 			],
 			[
 				"mpl",
@@ -1954,26 +1559,6 @@
 			[
 				"pr",
 				"tests/prob_selector_mapper.py"
-			],
-			[
-				"patc",
-				"oxygen/patch_giwi_dump.py"
-			],
-			[
-				"conne",
-				"dnn/connections/connection.h"
-			],
-			[
-				"sa",
-				"handlers/sandbox_handler.py"
-			],
-			[
-				"han",
-				"handlers/handler.py"
-			],
-			[
-				"ar",
-				"handlers/arc_commit_handler.py"
 			]
 		],
 		"width": 0.0
