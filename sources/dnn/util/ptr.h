@@ -1,5 +1,7 @@
 #pragma once
 
+#include <dnn/core.h>
+
 namespace dnn {
 
 template <typename T>
@@ -45,6 +47,17 @@ public:
 	}
 	bool isSet() {
 		return _ptr ? true : false;
+	}
+	explicit operator bool() {
+		return isSet();
+	}
+	
+	template<typename NT> 
+	Ptr<NT> as() {
+		if(!isSet()) return Ptr<NT>();
+		NT *t = dynamic_cast<NT*>(_ptr);
+		if(!t) return Ptr<NT>();
+		return t;
 	}
 private:
 	T *_ptr;

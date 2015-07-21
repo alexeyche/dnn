@@ -53,6 +53,14 @@ public:
         return objects[it->second];
     }
     template <typename T> 
+    T* createObject() {
+        if (std::is_same<T, TimeSeries>::value) {
+            return createObject<T>("TimeSeries");
+        }
+        throw dnnException() << "Can't recognize type to create\n";
+    }
+    
+    template <typename T> 
     T* createObject(string name) {
         SerializableBase* b = createObject(name);
         T *p = dynamic_cast<T*>(b);

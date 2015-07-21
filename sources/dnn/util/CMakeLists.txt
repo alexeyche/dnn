@@ -18,6 +18,7 @@ set(SOURCES
     json.cpp
     #spikes_list.cpp
     #spikes_queue.cpp
+    option_parser.cpp
 )
 
 # add directory name to sources

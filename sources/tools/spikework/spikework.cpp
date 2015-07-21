@@ -1,24 +1,14 @@
 
 
-#include "fft.cpp"
-
-const char * usage = R"USAGE(Tool for working with spikes and time series. Tool has subprograms
-    fft
-)USAGE";
+#include <spikework/spikework.h>
 
 
 int main(int argc, char **argv) {
-    if(argc == 1) {
-        cout << usage;
-        return 0; 
+    vector<string> args;
+    for(size_t i=1; i<argc; ++i) {
+        args.push_back(argv[i]);
     }
-    if(strcmp(argv[1], "fft") == 0) {
-        return fft_sub(--argc, ++argv);
-    } else
-    if((strcmp(argv[1], "-h") == 0)||(strcmp(argv[1], "--help") == 0)) {
-       cout << usage; 
-    } else {
-       throw dnnException() << "Can't find subprogramm with name " << argv[1]; 
-    }
+    dnn::Spikework sw(args);
+    
     return 0;    
 }
