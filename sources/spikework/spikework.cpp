@@ -2,8 +2,6 @@
 #include "spikework.h"
 #include "fft.h"
 
-#include <dnn/util/option_parser.h>
-#include <dnn/io/stream.h>
 
 
 
@@ -30,39 +28,14 @@ Spikework::Spikework(const vector<string> &args) {
 	}
 
 	for(auto &p: processors) {
-		p->start(f);
-		p->process(f);
-		p->end(f);
+		p->start(s);
+		p->process(s);
+		p->end(s);
 	}
 
 }
 
-const char * usage = R"USAGE(Processors has options:
-	--input,  -i  FILENAME specifying input of processor  (optional)
-	--output, -o  FILENAME specifying output of processor (optional)
-	--help,   -h  show this help message
-)USAGE";
 
-void Processor::processDefaultArgs(const vector<string> &args) {
-	OptionParser op(args);
-    bool need_help = false;
-	op.option("--input", "-i", input_filename, false);
-	op.option("--output", "-o", output_filename, false);
-    op.option("--help", "-h", need_help, false, true);
-    processArgs(args);
-    if(need_help) {
-    	cout << usage;
-    	std::exit(0);
-    }
-}
-
-void Processor::start(Spikework::Field &f) {
-	if(!input_filename.empty()) {
-		ifstream ff(input_filename);
-	    Stream s(ff, Stream::Binary);
-	    f.push_input(Ptr<SerializableBase>(s.readBaseObject()));
-	}
-}
 
 
 

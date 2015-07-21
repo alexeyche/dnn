@@ -17,44 +17,35 @@ public:
     Spikework(const vector<string> &args);
     
 
-    class Field {
+    class Stack {
     public:
-    	Ptr<SerializableBase> pop_input() {
-            if(inputs.size() == 0) {
-                throw dnnException() << "input stack is exhausted\n";
+    	Ptr<SerializableBase> pop() {
+            if(stack.size() == 0) {
+                throw dnnException() << "stack is exhausted\n";
             }
-    		Ptr<SerializableBase> b = inputs.back();
-    		inputs.pop_back();
+    		Ptr<SerializableBase> b = stack.back();
+    		stack.pop_back();
     		return b;
     	}
-        void push_input(Ptr<SerializableBase> inp) {
-            inputs.push_back(inp);
+        Ptr<SerializableBase> back() {
+            if(stack.size() == 0) {
+                throw dnnException() << "stack is exhausted\n";
+            }
+            return stack.back();
+        }
+        void push(Ptr<SerializableBase> p) {
+            stack.push_back(p);
         }
 	private:    	
-    	vector<Ptr<SerializableBase>> inputs;
-    	vector<Ptr<SerializableBase>> outputs;
+    	vector<Ptr<SerializableBase>> stack;        
     };
 
 private:
-    Field f;
+    Stack s;
     vector<Ptr<Processor>> processors;
     processors_map_type proc_map;
 };
 
-class Processor {
-public:
-	void processDefaultArgs(const vector<string> &args);
-    
-    virtual void processArgs(const vector<string> &args) {};
-	
-    virtual void process(Spikework::Field &f) = 0;
-    
-    void start(Spikework::Field &f);
-    void end(Spikework::Field &f) {}
-private:
-    string input_filename;
-    string output_filename;
-};
 
 
 

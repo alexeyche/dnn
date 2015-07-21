@@ -11,27 +11,16 @@ T cast(string &s) {
 }
 
 template <>
-double cast(string &s) {
-	return std::stof(s);
-}
+double cast(string &s);
 
 template <>
-int cast(string &s) {
-	return std::stoi(s);
-}
+int cast(string &s);
 
 template <>
-size_t cast(string &s) {
-	int i = std::stoi(s);
-	if(i<0) {
-		throw dnnException() << "Can't cast signed value to unsigned: " << s << "\n";
-	}
-	return static_cast<size_t>(i);
-}
+size_t cast(string &s);
+
 template <>
-string cast(string &s) {
-	return string(s);
-}
+string cast(string &s);
 
 class OptionParser {
 public:

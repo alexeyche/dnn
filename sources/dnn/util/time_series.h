@@ -73,8 +73,29 @@ struct TimeSeries : public SerializableBase {
 	TimeSeries(const string &filename, const string &format) {
 		readFromFile(filename, format);
 	}
-
 	
+	vector<double>& getVector(size_t ndim) {
+		while(ndim >= dim_info.size) {
+			dim_info.size = ndim+1;
+			data.push_back(TimeSeriesData());			
+		}
+		assert(dim_info.size == data.size());
+		return data[ndim].values;
+	}
+	
+	void addValue(size_t dim_index, double val) {
+		if(dim_index == dim_info.size) {
+			dim_info.size = dim_index+1;
+			data.push_back(TimeSeriesData());
+			assert(dim_info.size == data.size());
+		}
+		if(dim_index >= data.size()) {
+			throw dnnException() << "Trying to make randow write to memory\n";
+		}
+
+		data[dim_index].values.push_back(val);
+	}
+
 	void readFromFile(const string &filename, const string &format) {
 		ifstream f(filename);
 		if(!f.is_open()) {

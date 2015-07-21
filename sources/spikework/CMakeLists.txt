@@ -7,6 +7,7 @@ project(spikework)
 # Anything not in this list will not be compiled into DNN.
 set(SOURCES
     fft.cpp
+    io_processor.cpp
     spikework.cpp
 )
 
