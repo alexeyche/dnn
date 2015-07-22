@@ -41,9 +41,10 @@ void FFTProcessor::fft(const vector<double> &src, vector<double> &dst, bool inve
 	kiss_fft(c, data, fout);
     free(data);
 
-    for(size_t val_i=0; val_i<vec_size/2; ++val_i) {
-		dst.push_back(fout[val_i].r/vec_size);
+    for(size_t val_i=0; val_i<vec_size; ++val_i) {
+		dst.push_back(fout[val_i].r);
 	}
+
 	free(fout);
 	free(c);
 }

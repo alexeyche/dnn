@@ -94,6 +94,8 @@ Factory::Factory() : registration_is_on(true) {
 	REG_TYPE(TimeSeriesInfo);
 	REG_TYPE(TimeSeriesDimInfo);
 	REG_TYPE(TimeSeriesData);
+	REG_TYPE(TimeSeriesComplexData);
+	REG_TYPE(TimeSeriesComplex);
 
 	REG_TYPE(DoubleMatrix);
 	REG_TYPE(MatchingPursuitConfig)

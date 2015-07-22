@@ -44,6 +44,7 @@ struct TimeSeriesData : public Serializable<Protos::TimeSeriesData> {
 	vector<double> values;
 };
 
+
 /*@GENERATE_PROTO@*/
 struct TimeSeriesDimInfo : public Serializable<Protos::TimeSeriesDimInfo> {
 	TimeSeriesDimInfo() : size(0) {}
@@ -179,5 +180,37 @@ struct TimeSeries : public SerializableBase {
 	TimeSeriesInfo info;
 	vector<TimeSeriesData> data;
 };
+
+/*@GENERATE_PROTO@*/
+struct TimeSeriesComplexData : public Serializable<Protos::TimeSeriesData> {
+	void serial_process() {
+		begin() << "values: " << values << Self::end;
+	}
+
+	vector<complex<double>> values;
+};
+
+struct TimeSeriesComplex : public SerializableBase {
+	const string name() const {
+		return "TimeSeriesComplex";
+	}
+
+	void serial_process() {
+		begin() << "dim_info: " << dim_info;
+		if (mode == ProcessingInput) {
+			data.resize(dim_info.size);
+		}
+		for(size_t i=0; i<dim_info.size; ++i) {
+			(*this) << data[i];
+		}
+		(*this) << "info: " << info << Self::end;
+	}
+
+	TimeSeriesDimInfo dim_info;
+	TimeSeriesInfo info;
+	vector<TimeSeriesComplexData> data;
+};
+
+
 
 }

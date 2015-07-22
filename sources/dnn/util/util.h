@@ -31,6 +31,7 @@ string strip_comments(const string& input, const string& delimiters);
 long getFileSize(string filename);
 bool fileExists(const std::string& name);
 bool strStartsWith(const string &s, const string &prefix);
+bool strEndsWith(const std::string &str, const std::string &suffix);
 
 struct IndexSlice {
     IndexSlice(size_t _from, size_t _to) : from(_from), to(_to) {}

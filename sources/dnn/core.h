@@ -26,6 +26,7 @@
 #include <set>
 #include <future>
 #include <iterator>
+#include <complex>
 
 typedef google::protobuf::Message* ProtoMessage;
 
@@ -49,6 +50,7 @@ using std::ifstream;
 using std::multimap;
 using std::priority_queue;
 using std::unordered_set;
+using std::complex;
 
 template <typename T>
 using uptr = std::unique_ptr<T>;

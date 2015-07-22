@@ -306,7 +306,31 @@ public:
     SERIALIZE_REPEATED_METHOD(vector, double, AddDouble, GetRepeatedDouble);
     SERIALIZE_REPEATED_METHOD(ActVector, size_t, AddUInt32, GetRepeatedUInt32);
     SERIALIZE_REPEATED_METHOD(ActVector, double, AddDouble, GetRepeatedDouble);
-    
+
+    Serializable& operator << (vector<std::complex<double>> &v) { 
+        ASSERT_FIELDS() 
+        
+        const google::protobuf::Descriptor* descriptor = currentMessage()->GetDescriptor();
+        const google::protobuf::FieldDescriptor* imag_field_descr = descriptor->FindFieldByName(field_descr->name() + "_imag");
+        if(!imag_field_descr) {
+            throw dnnException() << "Failed to find protobuf field for imaginery part of complex number\n";
+        }
+        if(mode == ProcessingOutput) { 
+            for(size_t i=0; i<v.size(); ++i) { 
+                currentMessage()->GetReflection()->AddDouble(currentMessage(), field_descr, v[i].real());     
+                currentMessage()->GetReflection()->AddDouble(currentMessage(), imag_field_descr, v[i].imag());     
+            }
+        } else { 
+            int cur = currentMessage()->GetReflection()->FieldSize(*currentMessage(), field_descr); 
+            for(int i=0; i<cur; ++i) { 
+                double subv = currentMessage()->GetReflection()->GetRepeatedDouble(*currentMessage(), field_descr, i); 
+                double subv_imag = currentMessage()->GetReflection()->GetRepeatedDouble(*currentMessage(), imag_field_descr, i); 
+                v.push_back(std::complex<double>(subv, subv_imag)); 
+            } 
+        } 
+        return *this; 
+    }
+
     
     
     void operator << (EndMarker e) {

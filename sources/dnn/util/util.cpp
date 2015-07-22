@@ -130,6 +130,11 @@ bool strStartsWith(const string &s, const string &prefix) {
     return s.substr(0, prefix.size()) == prefix;
 }
 
+bool strEndsWith(const std::string &str, const std::string &suffix) {
+    return str.size() >= suffix.size() &&
+           str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
+}
+
 vector<double> parseParenthesis(const string &s) {
     if((std::count(s.begin(), s.end(), '(') != 1)||(std::count(s.begin(), s.end(), ')') != 1)) {
         throw dnnException()<< "Bad string to parse parenthesis: " << s << "\n";

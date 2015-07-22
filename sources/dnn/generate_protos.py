@@ -9,9 +9,10 @@ KNOWN_TYPES = {
     "size_t"    : "uint32", 
     "float"     : "float", 
     "string"    : "string",
-    "bool"       : "bool", 
+    "bool"      : "bool", 
+    "complex<double>" : "double",   
 }
-VECTOR_RE = re.compile("(?:vector|ActVector)+<([^ ]*?)>")
+VECTOR_RE = re.compile("(?:vector|ActVector)+<([^ ]*)>")
 
 PROTO_FILE = "generated.proto"
 
@@ -21,14 +22,19 @@ def generateProtos(structures, package, dst):
         f_ptr.write("\n")
         for s in structures:
             f_ptr.write("message %s {\n" % s['name'])
-            for i, f in enumerate(s['fields']):
+            i = 1
+            for f in s['fields']:
                 if KNOWN_TYPES.get(f[0]) is None:
                     m = VECTOR_RE.match(f[0])
                     if m is None:
                         sys.exit(1)
-                    f_ptr.write("    repeated %s %s = %s;\n" % (KNOWN_TYPES[ m.group(1) ], f[1], str(i+1)))
+                    f_ptr.write("    repeated %s %s = %s;\n" % (KNOWN_TYPES[ m.group(1) ], f[1], str(i)))
+                    if m.group(1).startswith("complex"):
+                        f_ptr.write("    repeated %s %s = %s;\n" % (KNOWN_TYPES[ m.group(1) ], f[1] + "_imag", str(i+1)))
+                        i += 1
                 else:
-                    f_ptr.write("    required %s %s = %s;\n" % (KNOWN_TYPES[ f[0] ], f[1], str(i+1)))
+                    f_ptr.write("    required %s %s = %s;\n" % (KNOWN_TYPES[ f[0] ], f[1], str(i)))
+                i += 1
             f_ptr.write("}\n")
             f_ptr.write("\n")
 
@@ -65,6 +71,7 @@ def parseSources(src):
                             )
                             if m and curly_counter == 1:
                                 struct['fields'].append( (m.group(1), m.group(2)) )
+
                                 continue
                         if len(struct) > 0 and curly_counter == 0:
                             generate_proto = False
