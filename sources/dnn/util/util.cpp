@@ -35,22 +35,22 @@ vector<string> splitBySubstr(const string &s_inp, const string &delimiter) {
     return out;
 }
 
-void trim(string &str) {
-    size_t endpos = str.find_last_not_of(" \t");
+void trim(string &str, string symbols) {
+    size_t endpos = str.find_last_not_of(symbols);
     if( string::npos != endpos )
     {
         str = str.substr( 0, endpos+1 );
     }
-    size_t startpos = str.find_first_not_of(" \t");
+    size_t startpos = str.find_first_not_of(symbols);
     if( string::npos != startpos )
     {
         str = str.substr( startpos );
     }
 }
 
-string trimC(const string &str) {
+string trimC(const string &str, string symbols) {
     string s(str);
-    trim(s);
+    trim(s, symbols);
     return s;
 }
 double normal_distr_var = -1;
@@ -168,16 +168,20 @@ vector<IndexSlice> dispatchOnThreads(size_t elements_size, size_t jobs) {
     }
     return out;
 }
-void replaceAll( string &s, const string &search, const string &replace ) {
+void replaceStr( string &s, const string &search, const string &replace, size_t num) {
+    size_t repl_num = 0;
     for( size_t pos = 0; ; pos += replace.length() ) {
+        if(repl_num>=num) break;
         // Locate the substring to replace
         pos = s.find( search, pos );
         if( pos == string::npos ) break;
         // Replace by erasing and inserting
         s.erase( pos, search.length() );
         s.insert( pos, replace );
+        repl_num+=1;
     }
 }
+
 map<string, string> parseArgOptionsPairs(const vector<string> &opts) {
     map<string, string> opt_pairs;
     for(size_t i=0; i<opts.size(); i+=2) {

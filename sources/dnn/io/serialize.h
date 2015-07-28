@@ -309,7 +309,6 @@ public:
 
     Serializable& operator << (vector<std::complex<double>> &v) { 
         ASSERT_FIELDS() 
-        
         const google::protobuf::Descriptor* descriptor = currentMessage()->GetDescriptor();
         const google::protobuf::FieldDescriptor* imag_field_descr = descriptor->FindFieldByName(field_descr->name() + "_imag");
         if(!imag_field_descr) {
@@ -351,7 +350,7 @@ public:
             messages->push_back(header);
             
             ProtoMessage mess = new Proto;
-            
+
             messages->push_back(mess);
         }
         if(mode == ProcessingInput) {

@@ -6,7 +6,10 @@ project(spikework)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into DNN.
 set(SOURCES
+    gram.cpp
+    kernel.cpp
     fft.cpp
+    conv.cpp
     io_processor.cpp
     spikework.cpp
 )

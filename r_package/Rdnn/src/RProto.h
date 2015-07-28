@@ -155,8 +155,15 @@ public:
                     rm(i,j) = m->getElement(i,j);
                 }
             }
+            Rcpp::List matrix_info;
+            if(m->uniqueLabels().size()>0) {
+                matrix_info["unique_labels"] = Rcpp::wrap(m->uniqueLabels());
+                matrix_info["row_labels_ids"] = Rcpp::wrap(m->rowLabelsIds());
+                matrix_info["col_labels_ids"] = Rcpp::wrap(m->colLabelsIds());
+            }
             out = Rcpp::List::create(
-                Rcpp::Named("DoubleMatrix") = rm
+                Rcpp::Named("DoubleMatrix") = rm,
+                Rcpp::Named("matrix_info") = matrix_info
             );
         }
         SpikeNeuronBase* nb = dynamic_cast<SpikeNeuronBase*>(o);

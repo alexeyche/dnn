@@ -1,20 +1,21 @@
 #pragma once
 
+#include <dnn/core.h>
 #include <dnn/io/stream.h>
 #include <dnn/util/pretty_print.h>
+
 
 namespace dnn {
 
 
-
-
 /*@GENERATE_PROTO@*/
 struct TimeSeriesInfo : public Serializable<Protos::TimeSeriesInfo> {
-
+	TimeSeriesInfo() {}
 	void serial_process() {
 		begin() << "labels_ids: " 	   << labels_ids 	  << ", " \
 		        << "unique_labels: "   << unique_labels   << ", " \
-		        << "labels_timeline: " << labels_timeline << Self::end;
+		        << "labels_timeline: " << labels_timeline  << Self::end;
+		        
 	}
 	
 	void addLabelAtPos(const string &lab, size_t pos) {
@@ -59,35 +60,66 @@ struct TimeSeriesInterface {
 	getValueAtIndexDelegate getValueAt;
 };
 
-struct TimeSeries : public SerializableBase {
-	const string name() const {
-		return "TimeSeries";
-	}
-	typedef TimeSeriesInterface interface;
-
-	TimeSeries() {}
-	TimeSeries(vector<double> v) {
+template <typename DATA, typename ELEM> 
+struct TimeSeriesGeneric {
+	TimeSeriesGeneric() {}
+	
+	TimeSeriesGeneric(const vector<ELEM> &v) {
 		dim_info.size = 1;
 		data.resize(dim_info.size); 
 		data[0].values = v;
 	}
-	TimeSeries(const string &filename, const string &format) {
-		readFromFile(filename, format);
+
+	void padRightWithZeros(size_t padSize) {
+		for(auto &v: data) {
+			for(size_t zi=0; zi<padSize; ++zi) {
+				v.values.push_back(ELEM(0.0));	
+			}
+		}
 	}
 	
-	vector<double>& getVector(size_t ndim) {
+	void cutFromRight(size_t cutSize) {
+		for(auto &v: data) {
+			for(size_t zi=0; zi<cutSize; ++zi) {
+				v.values.pop_back();
+			}
+		}	
+	}
+	void assertAnotherTs(TimeSeriesGeneric<DATA, ELEM> &anotherTs) {
+		if( (data.size() != anotherTs.data.size()) || (length() != anotherTs.length()) ) {
+			throw dnnException() << "Can't multiply time series with different dimenstions\n";
+		}
+	}
+
+	double innerProduct(TimeSeriesGeneric<DATA, ELEM> &anotherTs) {
+		assertAnotherTs(anotherTs);
+		double acc = 0.0;
+		for(size_t di=0; di < data.size(); ++di) {
+			acc += std::inner_product(data[di].values.begin(), data[di].values.end(), anotherTs.data[di].values.begin(), 0.0);			
+		}
+		return acc;		
+	}
+	void operator * (TimeSeriesGeneric<DATA, ELEM> &anotherTs) {
+		assertAnotherTs(anotherTs);
+		for(size_t di=0; di < data.size(); ++di) {
+			for(size_t vi=0; vi < data[di].values.size(); ++vi) {
+				data[di].values[vi] *= anotherTs.data[di].values[vi];
+			}
+		}
+	}
+
+	vector<ELEM>& getVector(size_t ndim) {
 		while(ndim >= dim_info.size) {
 			dim_info.size = ndim+1;
-			data.push_back(TimeSeriesData());			
+			data.push_back(DATA());			
 		}
 		assert(dim_info.size == data.size());
 		return data[ndim].values;
 	}
-	
-	void addValue(size_t dim_index, double val) {
+	void addValue(size_t dim_index, ELEM val) {
 		if(dim_index == dim_info.size) {
 			dim_info.size = dim_index+1;
-			data.push_back(TimeSeriesData());
+			data.push_back(DATA());
 			assert(dim_info.size == data.size());
 		}
 		if(dim_index >= data.size()) {
@@ -96,7 +128,49 @@ struct TimeSeries : public SerializableBase {
 
 		data[dim_index].values.push_back(val);
 	}
+	size_t length() {
+		return data[0].values.size();
+	}
+	
+	size_t dim() const {
+		return data.size();
+	}
 
+	const ELEM& getValueAt(const size_t &index) {		
+		return data[0].values[index];	
+	}
+	const ELEM& getValueAtDim(const size_t &index, const size_t &dim) {		
+		return data[dim].values[index];	
+	}
+	
+	const string& getLabel() {
+		if(info.unique_labels.size() == 0) {
+			throw dnnException() << "Trying to get one label from nonlabeled time series\n";
+		}
+		if(info.unique_labels.size() > 1) {
+			throw dnnException() << "Trying to get one label from multilabeled time series\n";
+		}
+		return info.unique_labels[0];
+	}	
+
+	TimeSeriesDimInfo dim_info;
+	TimeSeriesInfo info;
+	vector<DATA> data;
+};
+
+struct TimeSeries : public SerializableBase, public TimeSeriesGeneric<TimeSeriesData, double> {
+	const string name() const {
+		return "TimeSeries";
+	}
+	typedef TimeSeriesInterface interface;
+
+	TimeSeries() {}	
+	TimeSeries(const vector<double> &v) : TimeSeriesGeneric<TimeSeriesData, double>(v) {}	
+	TimeSeries(const string &filename, const string &format) {
+		readFromFile(filename, format);
+	}
+	
+	
 	void readFromFile(const string &filename, const string &format) {
 		ifstream f(filename);
 		if(!f.is_open()) {
@@ -122,25 +196,11 @@ struct TimeSeries : public SerializableBase {
 			throw dnnException() << "TimeSeries: unknown format " << format << "\n";
 		}
 	}
-	size_t length() {
-		return data[0].values.size();
-	}
-	
-	size_t dim() const {
-		return data.size();
-	}
 
-	const double& getValueAt(const size_t &index) {		
-		return data[0].values[index];	
-	}
-	const double& getValueAtDim(const size_t &index, const size_t &dim) {		
-		return data[dim].values[index];	
-	}
 	template <typename T>
 	void provideInterface(TimeSeriesInterface &i) {
 		i.getValueAt = MakeDelegate(static_cast<T*>(this), &T::getValueAt);
 	}
-	
 	static const double& getValueAtDefault(const size_t &index) {
 		throw dnnException()<< "Calling inapropriate default function method\n";
 	}
@@ -158,6 +218,7 @@ struct TimeSeries : public SerializableBase {
 		}
 		(*this) << "info: " << info << Self::end;
 	}
+
 	static void convertUcrTimeSeriesLine(const string &line, vector<double> &ts_data, string &lab) {
 	   vector<string> els = split(line, ' ');
 	   assert(els.size() > 0);
@@ -176,13 +237,10 @@ struct TimeSeries : public SerializableBase {
 	   }
 	}
 
-	TimeSeriesDimInfo dim_info;
-	TimeSeriesInfo info;
-	vector<TimeSeriesData> data;
 };
 
 /*@GENERATE_PROTO@*/
-struct TimeSeriesComplexData : public Serializable<Protos::TimeSeriesData> {
+struct TimeSeriesComplexData : public Serializable<Protos::TimeSeriesComplexData> {
 	void serial_process() {
 		begin() << "values: " << values << Self::end;
 	}
@@ -190,7 +248,7 @@ struct TimeSeriesComplexData : public Serializable<Protos::TimeSeriesData> {
 	vector<complex<double>> values;
 };
 
-struct TimeSeriesComplex : public SerializableBase {
+struct TimeSeriesComplex : public SerializableBase, public TimeSeriesGeneric<TimeSeriesComplexData, std::complex<double>> {
 	const string name() const {
 		return "TimeSeriesComplex";
 	}
@@ -205,10 +263,7 @@ struct TimeSeriesComplex : public SerializableBase {
 		}
 		(*this) << "info: " << info << Self::end;
 	}
-
-	TimeSeriesDimInfo dim_info;
-	TimeSeriesInfo info;
-	vector<TimeSeriesComplexData> data;
+	
 };
 
 

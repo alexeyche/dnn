@@ -13,8 +13,8 @@ vector<string> split_into(const string &s, char delim, vector<string> &elems);
 vector<string> split(const string &s, char delim);
 vector<string> splitBySubstr(const string &s_inp, const string &delimiter);
 
-void trim(string &str);
-string trimC(const string &str);
+void trim(string &str, string symbols = " \t");
+string trimC(const string &str, string symbols = " \t");
 
 #ifndef PI
     #define PI 3.1415926535897932384626433832795028841971693993751
@@ -38,7 +38,7 @@ struct IndexSlice {
     size_t from;
     size_t to;
 };
-void replaceAll( string &s, const string &search, const string &replace );
+void replaceStr( string &s, const string &search, const string &replace, const size_t num = std::numeric_limits<size_t>::max());
 
 vector<IndexSlice> dispatchOnThreads(size_t elements_size, size_t jobs);
 
@@ -59,4 +59,13 @@ unsigned long upper_power_of_two(unsigned long v);
 }
 
 
-
+template <typename Return, typename ...Parameters, typename ...Args>
+auto AssertiveCall(Return (*function)(Parameters...), Args&& ...args)
+    -> Return
+{
+    if (function != nullptr) {
+        return (*function)(std::forward<Args>(args)...);
+    } else {
+        return Return{};
+    }
+}

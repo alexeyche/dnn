@@ -114,6 +114,7 @@ SerializableBase* Factory::createObject(string name) {
 		throw dnnException()<< "Failed to find method to construct type " << name << "\n";
 	}
 	SerializableBase* o = typemap[name]();
+	
 	if(registration_is_on) {
 		objects.push_back(o);
 		objects_map.insert(std::make_pair(o->name(), objects.size()-1));

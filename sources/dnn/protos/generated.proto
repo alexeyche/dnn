@@ -124,9 +124,12 @@ message StatisticsInfo {
 }
 
 message DoubleMatrix {
-    required uint32 ncol_v = 1;
-    required uint32 nrow_v = 2;
-    repeated double vals = 3;
+    repeated uint32 col_labels_ids = 1;
+    repeated uint32 row_labels_ids = 2;
+    repeated string unique_labels = 3;
+    required uint32 ncol_v = 4;
+    required uint32 nrow_v = 5;
+    repeated double values = 6;
 }
 
 message SpikesSequence {

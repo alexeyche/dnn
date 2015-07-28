@@ -7,13 +7,18 @@ source("env.R")
 
 ucr_data_to_spikes = function(
     N
-  , samples_size
+  , sample_size
   , dt
   , gap_between_patterns = 0
   , data_name = synth
-  , sel = c(1:10, 51:60, 101:110, 151:160)) {
-    
+  , sel = c(1:10, 51:60, 101:110, 151:160)
+) {
+    ts_dst_dir= TS_PLACE
     ts_dir = pj(DATASETS_PLACE, "ucr")
+    
+    dir.create(ts_dst_dir, FALSE, TRUE)        
+    dir.create(dst_dir, FALSE, TRUE)
+    
     c(data_train, data_test) := read_ts_file(data_name, sample_size, ts_dir)
     min_train = min(sapply(data_train, function(x) min(x$data)))
     min_test = min(sapply(data_test, function(x) min(x$data)))
@@ -29,10 +34,11 @@ ucr_data_to_spikes = function(
     for(data_part in names(data_complect)) {
         ts = data_complect[[data_part]]
         
-        sp = list(timeline = NULL, labels = NULL, dt=dt, gap_between_patterns=gap_between_patterns)
+        sp = list(ts_info=list(labels_timeline = NULL, unique_labels = NULL))
         
         sp$values = lapply(1:N, function(i) x <- vector(mode="numeric", length=0))
         
+        labels = NULL        
         time = 0
         for(i in sel) {
             for(x in ts[[i]]$data) {
@@ -42,18 +48,29 @@ ucr_data_to_spikes = function(
                 time = time + dt
             }
             time = time + gap_between_patterns
-            sp$timeline = c(sp$timeline, time)
-            sp$labels = c(sp$labels, ts[[i]]$label)
+            sp$ts_info$labels_timeline = c(sp$ts_info$labels_timeline, time)
+            labels = c(labels, as.character(ts[[i]]$label))
         }
+        sp$ts_info$unique_labels = unique(labels)
         
+        l_ids = list()
+        idx = 0
+        for(l in sp$ts_info$unique_labels) {
+            l_ids[[l]] = idx
+            idx = idx + 1
+        }
+        sp$ts_info$labels_ids = as.numeric(sapply(labels, function(l) l_ids[[l]]))
         spikes_complect[[data_part]] = sp
+        
+        fname = sprintf("%s/%s_%s_len_%s_classes_%s.pb", dst_dir, data_name, length(sel), length(sp$ts_info$unique_labels), data_part)
+        RProto$new(fname)$write(sp, "SpikesList")
+        fname = sprintf("%s/%s_%s_len_%s_classes_%s.pb", ts_dst_dir, data_name, length(sel), length(sp$ts_info$unique_labels), data_part)
+        RProto$new(fname)$write(list(values=c(sapply(ts[sel], function(x) x$data)), ts_info=sp$ts_info), "TimeSeries")
     }
     return(spikes_complect)
 }
     
-save_spikes_complect = function(dst_dir = SPIKES_PLACE, ts_dst_dir= TS_PLACE) {
-    dir.create(dst_dir, FALSE, TRUE)
-    dir.create(ts_dst_dir, FALSE, TRUE)
+save_spikes_complect = function(spikes_complect, dst_dir = SPIKES_PLACE) {
     for(data_part in names(spikes_complect)) {
         spl = spikes_complect[[data_part]]
         labs = unique(spl$labels)
@@ -66,15 +83,12 @@ save_spikes_complect = function(dst_dir = SPIKES_PLACE, ts_dst_dir= TS_PLACE) {
             ts_info = ts_info,
             values = spl$values
         )   
-        fname = sprintf("%s/%s_%s_len_%s_classes_%s.pb", dst_dir, data_name, length(sel), length(labs), data_part)
-        RProto$new(fname)$write(out, "SpikesList")
         spikes_complect[[data_part]] = out
         ts_out = list(
             ts_info = ts_info,
             values = unlist(lapply(data_complect[[data_part]], function(x) x$data))
         )
-        fname = sprintf("%s/%s_%s_len_%s_classes_%s.pb", ts_dst_dir, data_name, length(sel), length(labs), data_part)
-        RProto$new(fname)$write(ts_out, "TimeSeries")
+        
     }
     
     #prast(spikes_complect[["train"]]$values,T0=0,Tmax=1000)    

@@ -53,7 +53,7 @@ struct Constants : public Printable {
 			const_json = s;
 		}		
 		for(auto it=mods.begin(); it != mods.end(); ++it) {
-			replaceAll(const_json, it->first, it->second);
+			replaceStr(const_json, it->first, it->second);
 		}
 
 		Document document = Json::parseString(const_json);		

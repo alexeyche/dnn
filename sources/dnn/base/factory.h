@@ -10,7 +10,8 @@ class SerializableBase;
 class SpikeNeuronBase;
 class ActFunctionBase;
 class TimeSeries;
-
+class TimeSeriesComplex;
+class DoubleMatrix;
 
 class Factory {
 public:
@@ -56,6 +57,12 @@ public:
     T* createObject() {
         if (std::is_same<T, TimeSeries>::value) {
             return createObject<T>("TimeSeries");
+        }
+        if (std::is_same<T, TimeSeriesComplex>::value) {
+            return createObject<T>("TimeSeriesComplex");
+        }
+        if (std::is_same<T, DoubleMatrix>::value) {
+            return createObject<T>("DoubleMatrix");
         }
         throw dnnException() << "Can't recognize type to create\n";
     }

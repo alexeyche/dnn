@@ -1,127 +1,48 @@
 #pragma once
 
 
-// #include <snnlib/core.h>
-// #include <snnlib/util/json/json_box.h>
-// #include <snnlib/serialize/serialize.h>
-// #include <snnlib/protos/matrix.pb.h>
-
-
-
-// template <typename T>
-// class Matrix {
-// public:
-
-//     Matrix(size_t nr, size_t nc) : Matrix() {
-//         allocate(nr, nc);
-//     }
-//     Matrix(size_t nr, size_t nc, T val) : Matrix(nr, nc) {
-//         fill(val);
-//     }
-//     ~Matrix() {
-//         if((nrow != 0)&&(ncol != 0)) delete[] vals;
-//     }
-//     Matrix() : nrow(0), ncol(0) {
-//     }
-
-//     T getElement(size_t i, size_t j) const {
-//         assert( (nrow != 0) && (ncol != 0) );
-//         return vals[j*nrow + i];
-//     }
-//     void setElement(size_t i, size_t j, T val) {
-//         assert( (nrow != 0) && (ncol != 0) );
-//         vals[j*nrow + i] = val;
-//     }
-//     void allocate(size_t nr, size_t nc) {
-//         if((nrow != 0)&&(ncol != 0)) delete[] vals;
-//         nrow = nr;
-//         ncol = nc;
-//         vals = new T[nrow*ncol];
-//     }
-//     void fill(T val) {
-//         for(size_t i=0; i<nrow; i++) {
-//             for(size_t j=0; j<ncol; j++) {
-//                 setElement(i, j, val);
-//             }
-//         }
-//     }
-//     void print(std::ostream& str) const {
-//         for(size_t i=0; i<nrow; i++) {
-//             str << "|";
-//             for(size_t j=0; j<nrow; j++) {
-//                 str << getElement(i, j);
-//                 if( j < (nrow-1) ) {
-//                     str << " | ";
-//                 }
-//             }
-//             str << "|\n";
-//         }
-//     }
-//     void printR(const vector<string> &row_labels, const vector<string> &col_labels) {
-//         assert( (row_labels.size() == nrow ) && (col_labels.size() == ncol) );
-//         for(auto it=col_labels.begin(); it != col_labels.end(); ++it) {
-//             cout << *it;
-//             if( (it+1) != col_labels.end() ) cout << ",";
-//         }
-//         cout << "\n";
-//         for(size_t i=0; i<nrow; i++) {
-//             cout << row_labels[i] << ",";
-//             for(size_t j=0; j<ncol; j++) {
-//                 cout << getElement(i, j);
-//                 if( (j+1) != ncol ) cout << ",";
-//             }
-//             cout << "\n";
-//         }
-//     }
-
-// protected:
-//     T *vals;
-//     size_t ncol;
-//     size_t nrow;
-// };
-
-// class DoubleMatrix: public Matrix<double>, public Serializable<Protos::DoubleMatrix> {
-// public:
-//     DoubleMatrix(size_t nr, size_t nc) : Matrix<double>(nr, nc), Serializable(EDoubleMatrix) {}
-//     DoubleMatrix(size_t nr, size_t nc, double val) : Matrix<double>(nr, nc, val), Serializable(EDoubleMatrix) {}
-//     DoubleMatrix() : Serializable(EDoubleMatrix) {}
-//     ProtoPack serialize() {
-//         Protos::DoubleMatrix *m = getNewMessage();
-//         m->set_ncol(ncol);
-//         m->set_nrow(nrow);
-//         for(size_t i=0; i<(ncol*nrow); i++) {
-//             m->add_vals(vals[i]);
-//         }
-//         return ProtoPack({m});
-//     }
-
-//     void print(std::ostream& str) const {
-//         Matrix<double>::print(str);
-//     }
-
-
-// };
 
 #include <dnn/io/serialize.h>
 #include <dnn/protos/generated.pb.h>
 
 namespace dnn {
 
+
+
+
 /*@GENERATE_PROTO@*/
 class DoubleMatrix : public Serializable<Protos::DoubleMatrix> {
+    void setLabel(size_t i, string lab, vector<size_t> &labels_ids) {
+        size_t lab_id;
+        auto lab_ptr = std::find(unique_labels.begin(), unique_labels.end(), lab);
+        if(lab_ptr == unique_labels.end()) {        
+            unique_labels.push_back(lab);        
+            lab_id = unique_labels.size()-1;
+        } else {
+            lab_id = lab_ptr - unique_labels.begin();
+        }
+        assert(lab_id < labels_ids.size());
+        labels_ids[i] = lab_id;
+    }
 public:
     void serial_process() {
     	begin() << "ncol_v: " << ncol_v << ", " 
     			<< "nrow_v: " << nrow_v << ", " 
-    			<< "vals: " << vals << Self::end;
-
+    			<< "values: " << values << ", ";
+        
+        (*this) << "unique_labels: " << unique_labels << ", ";
+        if (unique_labels.size()>0) {
+            (*this) << "row_labels_ids: " << row_labels_ids << ", ";
+            (*this) << "col_labels_ids: " << col_labels_ids << ", ";
+        }
+        (*this) << Self::end;
     }
     double& operator () (size_t i, size_t j) {
         assert( (nrow_v != 0) && (ncol_v != 0) );
         if( ! ( (i<nrow_v) && (j<ncol_v) ) ) {
             throw dnnException() << "assert: " << i << "<" << nrow_v << " && " << j << "<" << ncol_v << "\n";
         }
-        return vals[j*nrow_v + i];
+        return values[j*nrow_v + i];
     }
     
     double operator () (size_t i, size_t j) const {
@@ -129,7 +50,7 @@ public:
         if( ! ( (i<nrow_v) && (j<ncol_v) ) ) {
             throw dnnException() << "assert: " << i << "<" << nrow_v << " && " << j << "<" << ncol_v << "\n";
         }
-        return vals[j*nrow_v + i];
+        return values[j*nrow_v + i];
     }
     DoubleMatrix(size_t _nrow, size_t _ncol) {
         allocate(_nrow, _ncol);
@@ -144,25 +65,35 @@ public:
     	}
     }
 
+    
+    void setRowLabel(size_t i, string lab) {
+        setLabel(i, lab, row_labels_ids);
+    }
+    
+    void setColLabel(size_t i, string lab) {
+        setLabel(i, lab, col_labels_ids);
+    }
     double getElement(size_t i, size_t j) const {
         assert( (nrow_v != 0) && (ncol_v != 0) );
         if( ! ( (i<nrow_v) && (j<ncol_v) ) ) {
             throw dnnException() << "assert: " << i << "<" << nrow_v << " && " << j << "<" << ncol_v << "\n";
         }
-        return vals[j*nrow_v + i];
+        return values[j*nrow_v + i];
     }
     void setElement(size_t i, size_t j, double val) {
         assert( (nrow_v != 0) && (ncol_v != 0) );
         if( ! ( (i<nrow_v) && (j<ncol_v) ) ) {
             throw dnnException() << "assert: " << i << "<" << nrow_v << " && " << j << "<" << ncol_v << "\n";
         }
-        vals[j*nrow_v + i] = val;
+        values[j*nrow_v + i] = val;
     }
     void allocate(size_t nr, size_t nc) {
-        if((nrow_v != 0)&&(ncol_v != 0)) vals.clear();
+        if((nrow_v != 0)&&(ncol_v != 0)) values.clear();
         nrow_v = nr;
         ncol_v = nc;
-        vals.resize(nrow_v*ncol_v);
+        values.resize(nrow_v*ncol_v);
+        row_labels_ids.resize(nrow_v);
+        col_labels_ids.resize(ncol_v);
 	}
     void fill(double val) {
 	    for(size_t i=0; i<nrow_v; i++) {
@@ -185,11 +116,43 @@ public:
     }
 	inline const size_t& ncol() const { return ncol_v; } 	
 	inline const size_t& nrow() const { return nrow_v; } 	
+    
+    const vector<size_t>& colLabelsIds() {
+        return col_labels_ids;
+    }
+    const vector<size_t>& rowLabelsIds() {
+        return row_labels_ids;
+    }
+    const vector<string>& uniqueLabels() {
+        return unique_labels;
+    }
+
+    void csvRepr(ostream &o) {
+        if(unique_labels.size()>0) {
+            for(size_t li=0; li<col_labels_ids.size(); ++li) {
+                o << unique_labels[ col_labels_ids[li] ];
+                if(li<col_labels_ids.size()-1) o << ", ";
+            }
+            o << "\n";
+        }
+        for(size_t i=0; i<nrow_v; ++i) {
+            if(unique_labels.size()>0) o << unique_labels[row_labels_ids[i]] << ", ";
+            for(size_t j=0; j<ncol_v; ++j) {
+                o << getElement(i, j);
+                if(j<ncol_v-1) o << ", ";
+            }
+            o << "\n";            
+        }
+    }
+
 private:
+    vector<size_t> col_labels_ids;
+    vector<size_t> row_labels_ids;
+    vector<string> unique_labels;
 
 	size_t ncol_v;
 	size_t nrow_v;
-	vector<double> vals;
+	vector<double> values;
 };
 
 

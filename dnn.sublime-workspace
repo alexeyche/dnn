@@ -4,20 +4,132 @@
 		"selected_items":
 		[
 			[
+				"col",
+				"col_labels_ids"
+			],
+			[
+				"uniq",
+				"unique_labels"
+			],
+			[
+				"matr",
+				"matrix_info"
+			],
+			[
+				"labe",
+				"labels_timeline"
+			],
+			[
+				"row_",
+				"row_labels_ids"
+			],
+			[
+				"lab_",
+				"lab_ptr"
+			],
+			[
+				"elem",
+				"elem_id"
+			],
+			[
+				"kerne",
+				"kernel"
+			],
+			[
+				"ts",
+				"ts_chopped"
+			],
+			[
+				"gram",
+				"gram_matrix"
+			],
+			[
+				"strings",
+				"stringstream"
+			],
+			[
+				"repl",
+				"repl_num"
+			],
+			[
+				"kern",
+				"kernel"
+			],
+			[
+				"spec",
+				"specification"
+			],
+			[
 				"TimeSer",
-				"TimeSeriesData"
+				"TimeSeries"
+			],
+			[
+				"ker",
+				"kernel_length"
+			],
+			[
+				"double",
+				"double_exp"
+			],
+			[
+				"out",
+				"output"
+			],
+			[
+				"padd",
+				"paddingSize"
+			],
+			[
+				"Spike",
+				"SpikesList"
 			],
 			[
 				"Time",
-				"TimeSeriesData"
+				"TimeSeriesGeneric"
+			],
+			[
+				"filt",
+				"filter"
+			],
+			[
+				"Conv",
+				"ConvProcessor"
+			],
+			[
+				"TimeS",
+				"TimeSeries"
+			],
+			[
+				"filter",
+				"filter_fname"
+			],
+			[
+				"curr",
+				"currentMessage"
+			],
+			[
+				"TimeSeriesC",
+				"TimeSeriesComplexData"
+			],
+			[
+				"dim_i",
+				"dim_info"
+			],
+			[
+				"tem",
+				"template"
+			],
+			[
+				"subv",
+				"subv_imag"
+			],
+			[
+				"fiel",
+				"field_descr"
 			],
 			[
 				"kiss_fft",
 				"kiss_fftndr    (kiss_fftndr.c)"
-			],
-			[
-				"out",
-				"output_filename"
 			],
 			[
 				"Spik",
@@ -26,10 +138,6 @@
 			[
 				"Proce",
 				"Processor  (spikework.h)"
-			],
-			[
-				"Spike",
-				"Spikework::Field"
 			],
 			[
 				"create",
@@ -268,10 +376,6 @@
 				"UPLOAD_WAIT_TIMEOUT"
 			],
 			[
-				"filter",
-				"filter"
-			],
-			[
 				"skyn",
 				"skynetlibs"
 			],
@@ -326,10 +430,6 @@
 			[
 				"remove",
 				"remove_yt_node"
-			],
-			[
-				"filt",
-				"filter_size"
 			],
 			[
 				"resto",
@@ -414,180 +514,48 @@
 			[
 				"messa",
 				"messages"
-			],
-			[
-				"mess",
-				"messages"
-			],
-			[
-				"null",
-				"nullptr"
-			],
-			[
-				"pu",
-				"public"
-			],
-			[
-				"ser",
-				"serial_process"
-			],
-			[
-				"node",
-				"node_names_to_ids"
-			],
-			[
-				"out_",
-				"out_nodes"
-			],
-			[
-				"build_",
-				"build_with_patch"
-			],
-			[
-				"bs_t",
-				"bs_thread_patched"
-			],
-			[
-				"rec",
-				"recurse_tag"
-			],
-			[
-				"key",
-				"key_name"
-			],
-			[
-				"recu",
-				"recurse_level"
-			],
-			[
-				"doc",
-				"doc_query"
-			],
-			[
-				"get_",
-				"get_prod_build_conf"
-			],
-			[
-				"itera",
-				"iterated_doc"
-			],
-			[
-				"BUILD",
-				"BUILD_CONF_URL"
-			],
-			[
-				"mac",
-				"macro_val"
-			],
-			[
-				"macr",
-				"macro_name"
-			],
-			[
-				"oxygen",
-				"oxygen_queries"
-			],
-			[
-				"src_",
-				"src_tables_args"
-			],
-			[
-				"prob",
-				"prob_selector"
-			],
-			[
-				"tab",
-				"table_index"
-			],
-			[
-				"targ",
-				"target_ctx"
-			],
-			[
-				"for",
-				"format"
-			],
-			[
-				"class",
-				"classmethod"
-			],
-			[
-				"doc_d",
-				"doc_dump"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "sources/spikework/spikework.h",
-			"settings":
-			{
-				"buffer_size": 1072,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "sources/spikework/spikework.cpp",
-			"settings":
-			{
-				"buffer_size": 664,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "sources/spikework/processor.h",
-			"settings":
-			{
-				"buffer_size": 374,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "sources/spikework/fft.cpp",
-			"settings":
-			{
-				"buffer_size": 1584,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "sources/dnn/util/time_series.h",
 			"settings":
 			{
-				"buffer_size": 4931,
+				"buffer_size": 7042,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "sources/dnn/contrib/kiss_fft/kiss_fftndr.c",
+			"file": "sources/dnn/util/matrix.h",
 			"settings":
 			{
-				"buffer_size": 4621,
+				"buffer_size": 4829,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "sources/dnn/contrib/kiss_fft/kiss_fftr.c",
+			"file": "sources/spikework/gram.cpp",
 			"settings":
 			{
-				"buffer_size": 5939,
+				"buffer_size": 1997,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "sources/dnn/contrib/kiss_fft/_kiss_fft_guts.h",
+			"file": "sources/spikework/gram.h",
 			"settings":
 			{
-				"buffer_size": 5798,
+				"buffer_size": 296,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "sources/dnn/contrib/kiss_fft/kiss_fft.h",
+			"file": "sources/spikework/conv.cpp",
 			"settings":
 			{
-				"buffer_size": 3301,
+				"buffer_size": 1977,
 				"line_ending": "Unix"
 			}
 		}
@@ -624,54 +592,71 @@
 	},
 	"file_history":
 	[
-		"/home/alexeyche/prog/dnn/sources/dnn/contrib/kiss_fft/kiss_fftr.h",
-		"/home/alexeyche/prog/dnn/sources/dnn/base/factory.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/util/option_parser.h",
+		"/home/alexeyche/prog/dnn/sources/spikework/gram.h",
+		"/home/alexeyche/prog/dnn/sources/spikework/processor.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/util/matrix.h",
+		"/home/alexeyche/prog/dnn/sources/spikework/kernel.h",
+		"/home/alexeyche/prog/dnn/sources/spikework/spikework.h",
+		"/home/alexeyche/prog/dnn/sources/spikework/spikework.cpp",
+		"/home/alexeyche/prog/dnn/sources/spikework/io_processor.cpp",
+		"/home/alexeyche/prog/dnn/sources/dnn/core.h",
+		"/home/alexeyche/prog/dnn/sources/spikework/conv.cpp",
+		"/home/alexeyche/prog/dnn/sources/spikework/conv.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/base/factory.cpp",
+		"/home/alexeyche/prog/dnn/sources/spikework/kernel.cpp",
+		"/home/alexeyche/prog/dnn/sources/spikework/gram.cpp",
+		"/home/alexeyche/prog/dnn/sources/dnn/neurons/spike_neuron.h",
+		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RProto.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/util/time_series.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/base/factory.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/util/util.cpp",
+		"/home/alexeyche/prog/dnn/sources/dnn/base/constants.h",
+		"/home/alexeyche/prog/dnn/sources/spikework/fft.h",
+		"/home/alexeyche/prog/dnn/sources/spikework/io_processor.h",
+		"/home/alexeyche/prog/dnn/sources/spikework/fft.cpp",
+		"/home/alexeyche/prog/dnn/sources/dnn/util/util.h",
+		"/home/alexeyche/prog/dnn/sources/spikework/CMakeLists.txt",
+		"/home/alexeyche/prog/dnn/sources/dnn/util/option_parser.cpp",
+		"/home/alexeyche/prog/dnn/sources/dnn/io/serialize.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/io/serialize.cpp",
+		"/home/alexeyche/prog/dnn/sources/tools/spikework/spikework.cpp",
+		"/home/alexeyche/prog/dnn/sources/dnn/util/ptr.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/protos/generated.proto",
+		"/home/alexeyche/prog/dnn/sources/dnn/synapses/static_synapse.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/contrib/kiss_fft/kiss_fftndr.c",
+		"/home/alexeyche/prog/dnn/sources/dnn/contrib/kiss_fft/kiss_fftr.c",
+		"/home/alexeyche/prog/dnn/sources/dnn/contrib/kiss_fft/_kiss_fft_guts.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/contrib/kiss_fft/kiss_fft.h",
+		"/home/alexeyche/prog/dnn/sources/dnn/contrib/kiss_fft/kiss_fftr.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/learning_rules/triple_stdp.h",
 		"/home/alexeyche/prog/dnn/sources/tools/mpl/mpl_main.cpp",
-		"/home/alexeyche/prog/dnn/sources/spikework/fft.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/contrib/kiss_fft/kiss_fftnd.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/contrib/kiss_fft/kiss_fftnd.c",
-		"/home/alexeyche/prog/dnn/sources/dnn/contrib/kiss_fft/kiss_fft.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/contrib/kiss_fft/kiss_fft.c",
 		"/home/alexeyche/prog/dnn/sources/dnn/contrib/kiss_fft/kissfft.hh",
-		"/home/alexeyche/prog/dnn/sources/spikework/io_processor.h",
-		"/home/alexeyche/prog/dnn/sources/spikework/io_processor.cpp",
 		"/home/alexeyche/prog/dnn/sources/dnn/util/interfaced_ptr.h",
-		"/home/alexeyche/prog/dnn/sources/dnn/util/ptr.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/generate_protos.py",
 		"/home/alexeyche/prog/dnn/sources/dnn/io/stream.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/learning_rules/stdp.h",
-		"/home/alexeyche/prog/dnn/sources/dnn/neurons/spike_neuron.h",
-		"/home/alexeyche/prog/dnn/sources/spikework/CMakeLists.txt",
 		"/home/alexeyche/prog/dnn/sources/dnn/util/pretty_print.h",
 		"/home/alexeyche/prog/dnn/sources/tools/dumptool/dumptool.cpp",
 		"/home/alexeyche/prog/dnn/sources/tools/dnn_sim/dnn_sim.cpp",
-		"/home/alexeyche/prog/dnn/sources/tools/spikework/spikework.cpp",
 		"/home/alexeyche/prog/dnn/sources/dnn/mpl/mpl.h",
-		"/home/alexeyche/prog/dnn/sources/dnn/util/matrix.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/util/CMakeLists.txt",
-		"/home/alexeyche/prog/dnn/sources/dnn/util/option_parser.cpp",
-		"/home/alexeyche/prog/dnn/sources/dnn/util/option_parser.h",
 		"/home/alexeyche/prog/dnn/sources/tools/spikework/CMakeLists.txt",
 		"/home/alexeyche/prog/dnn/sources/dnn/learning_rules/optimal_stdp.cpp",
 		"/home/alexeyche/prog/dnn/sources/dnn/learning_rules/optimal_stdp.h",
-		"/home/alexeyche/prog/dnn/sources/spikework/fft.cpp",
 		"/home/alexeyche/prog/dnn/sources/spikeworklib/spikework.cpp",
 		"/home/alexeyche/prog/dnn/sources/spikeworklib/fft.cpp",
 		"/home/alexeyche/prog/dnn/sources/spikeworklib/fft.h",
 		"/home/alexeyche/prog/dnn/sources/tools/spikework/fft.cpp",
 		"/home/alexeyche/prog/dnn/sources/spikeworklib/spikework.h",
-		"/home/alexeyche/prog/dnn/sources/dnn/io/serialize.h",
 		"/home/alexeyche/prog/dnn/sources/CMakeLists.txt",
 		"/home/alexeyche/prog/dnn/sources/dnn/neurons/spike_neuron.cpp",
-		"/home/alexeyche/prog/dnn/sources/dnn/io/serialize.cpp",
-		"/home/alexeyche/prog/dnn/sources/dnn/core.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/sim/builder.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/learning_rules/learning_rule.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/weight_normalizations/weight_normalization.h",
-		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RProto.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/sim/sim.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/weight_normalizations/sliding_ltd.h",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RSim.h",
@@ -679,7 +664,6 @@
 		"/home/alexeyche/prog/dnn/sources/dnn/util/statistics.h",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/mod.cpp",
 		"/home/alexeyche/prog/dnn/sources/dnn/sim/sim.cpp",
-		"/home/alexeyche/prog/dnn/sources/dnn/synapses/static_synapse.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/learning_rules/srm_methods.h",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/mod.h",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RMpl.h",
@@ -735,23 +719,7 @@
 		"/home/alexeyche/cpp/sources/dnn/io/stream.cpp",
 		"/home/alexeyche/cpp/sources/dnn/mpl/mpl.h",
 		"/home/alexeyche/cpp/r_package/Rdnn/src/RMpl.h",
-		"/mnt/twalrus4/arc/local-oxy/tests/noah_test.py",
-		"/mnt/twalrus4/arc/local-oxy/oxygen/oxygen_util.py",
-		"/mnt/twalrus4/arc/local-oxy/core/doer.py",
-		"/mnt/twalrus4/arc/local-oxy/tests/base_diff.py",
-		"/mnt/twalrus4/arc/local-oxy/oxygen/master.py",
-		"/mnt/twalrus4/arc/local-oxy/oxygen/noah.py",
-		"/mnt/twalrus4/arc/local-oxy/handlers/bike_handler.py",
-		"/mnt/twalrus4/arc/local-oxy/oxygen/cm.py",
-		"/mnt/twalrus4/arc/local-oxy/oxygen/bike.py",
-		"/mnt/twalrus4/arc/local-oxy/local-oxy.py",
-		"/mnt/twalrus4/arc/local-oxy/tests/noah_diff.py",
-		"/mnt/twalrus4/arc/local-oxy/handlers/tests_handlers/noah_diff_handler.py",
-		"/mnt/twalrus4/arc/local-oxy/kiwi/kiwi.py",
-		"/mnt/twalrus4/arc/local-oxy/util/util.py",
-		"/mnt/twalrus4/arc/local-oxy/util/io.py",
-		"/mnt/twalrus4/arc/local-oxy/handlers/kiwi_handler.py",
-		"/mnt/twalrus4/arc/local-oxy/core/local_oxy.py"
+		"/mnt/twalrus4/arc/local-oxy/tests/noah_test.py"
 	],
 	"find":
 	{
@@ -770,6 +738,39 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"vals",
+			"getRow",
+			"getLa",
+			"alloc",
+			"unique_labels",
+			"addLabelAtPos",
+			"labels_timeline",
+			"addLabelAtPos",
+			"\n    ",
+			"inner_",
+			"num",
+			"innerProduct",
+			"TimeSeriesInfo",
+			"replac",
+			"replaceAll",
+			"stof",
+			"spec_spl",
+			"navailable",
+			"FFT",
+			"createOb",
+			"image",
+			"Type",
+			"imag",
+			"imad",
+			"imagi",
+			"TimeSeriesCo",
+			"getVe",
+			"TimeSer",
+			"TimeSeries",
+			"\\<info",
+			"dim_info",
+			"\\\\",
+			"\\",
 			"kiss_fft_cpx",
 			"kiss_fft_cp",
 			"freqdata",
@@ -864,40 +865,7 @@
 			"yt_find",
 			"uploads_status",
 			"wait_all_uploads",
-			"uploads_test_root",
-			"waiting_for_stage",
-			"ATTEMPT",
-			"sample_table",
-			"skynetlibs",
-			"python",
-			"noah_env",
-			"rem_server",
-			"bin",
-			"json.dump",
-			"noah_env",
-			"r",
-			"viewer_por",
-			"getNor",
-			"seed",
-			"__accu",
-			"__acuu",
-			"__acc",
-			"env",
-			"ti",
-			"from",
-			"x_start",
-			"dispatchOnThreads",
-			"get_oxygen_cfg",
-			"config",
-			"pkg",
-			"self.",
-			"scripts_dir",
-			"\"\"",
-			"self.",
-			"zodb_server_conf",
-			"20001",
-			"20000",
-			"= "
+			"uploads_test_root"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -905,6 +873,11 @@
 		"regex": true,
 		"replace_history":
 		[
+			"values",
+			"Conv",
+			"TimeSeriesBase::info",
+			"TimeSeriesBase::dim_info",
+			"",
 			"C_",
 			"SRMNeuron",
 			"n\\.",
@@ -962,30 +935,29 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "sources/spikework/spikework.h",
+					"file": "sources/dnn/util/time_series.h",
 					"settings":
 					{
-						"buffer_size": 1072,
+						"buffer_size": 7042,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								478,
+								478
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -995,187 +967,79 @@
 				},
 				{
 					"buffer": 1,
-					"file": "sources/spikework/spikework.cpp",
+					"file": "sources/dnn/util/matrix.h",
 					"settings":
 					{
-						"buffer_size": 664,
+						"buffer_size": 4829,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								166,
-								166
+								4298,
+								4298
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2276.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "sources/spikework/processor.h",
+					"file": "sources/spikework/gram.cpp",
 					"settings":
 					{
-						"buffer_size": 374,
+						"buffer_size": 1997,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								36,
-								36
+								1943,
+								1943
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/C++/C++.tmLanguage"
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 496.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "sources/spikework/fft.cpp",
+					"file": "sources/spikework/gram.h",
 					"settings":
 					{
-						"buffer_size": 1584,
+						"buffer_size": 296,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1115,
-								1115
+								288,
+								288
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/C++/C++.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 226.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "sources/dnn/util/time_series.h",
-					"settings":
-					{
-						"buffer_size": 4931,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1282,
-								1282
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 648.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "sources/dnn/contrib/kiss_fft/kiss_fftndr.c",
-					"settings":
-					{
-						"buffer_size": 4621,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2436,
-								2436
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 486.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "sources/dnn/contrib/kiss_fft/kiss_fftr.c",
-					"settings":
-					{
-						"buffer_size": 5939,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2486,
-								2486
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": -0.0,
-						"translation.y": 533.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "sources/dnn/contrib/kiss_fft/_kiss_fft_guts.h",
-					"settings":
-					{
-						"buffer_size": 5798,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1903,
-								1903
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1184,27 +1048,29 @@
 					"type": "text"
 				},
 				{
-					"buffer": 8,
-					"file": "sources/dnn/contrib/kiss_fft/kiss_fft.h",
+					"buffer": 4,
+					"file": "sources/spikework/conv.cpp",
 					"settings":
 					{
-						"buffer_size": 3301,
+						"buffer_size": 1977,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1099,
-								1099
+								597,
+								597
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/C++/C++.tmLanguage"
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
-						"translation.x": -0.0,
-						"translation.y": 542.0,
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1262,24 +1128,132 @@
 		"selected_items":
 		[
 			[
+				"opt",
+				"sources/dnn/util/option_parser.h"
+			],
+			[
+				"cov",
+				"sources/spikework/conv.cpp"
+			],
+			[
+				"gram",
+				"sources/spikework/gram.h"
+			],
+			[
+				"ma",
+				"sources/dnn/util/matrix.h"
+			],
+			[
+				"rpro",
+				"src/RProto.h"
+			],
+			[
+				"rpr",
+				"src/RProto.h"
+			],
+			[
+				"spike",
+				"sources/dnn/neurons/spike_neuron.h"
+			],
+			[
 				"time",
 				"sources/dnn/util/time_series.h"
 			],
 			[
-				"fa",
-				"sources/dnn/base/factory.cpp"
+				"tim",
+				"sources/dnn/util/time_series.h"
 			],
 			[
-				"ki",
-				"sources/dnn/contrib/kiss_fft/kiss_fftndr.c"
+				"gra",
+				"sources/spikework/gram.h"
+			],
+			[
+				"proc",
+				"sources/spikework/processor.h"
+			],
+			[
+				"fa",
+				"sources/dnn/base/factory.h"
+			],
+			[
+				"ke",
+				"sources/spikework/kernel.h"
+			],
+			[
+				"sp",
+				"sources/spikework/spikework.cpp"
 			],
 			[
 				"io",
-				"sources/spikework/io_processor.h"
+				"sources/spikework/io_processor.cpp"
+			],
+			[
+				"gr",
+				"sources/spikework/gram.cpp"
+			],
+			[
+				"core",
+				"sources/dnn/core.h"
+			],
+			[
+				"con",
+				"sources/spikework/conv.h"
+			],
+			[
+				"ker",
+				"sources/spikework/kernel.cpp"
+			],
+			[
+				"seri",
+				"sources/dnn/io/serialize.h"
+			],
+			[
+				"ut",
+				"sources/dnn/util/util.cpp"
+			],
+			[
+				"pro",
+				"sources/spikework/processor.h"
 			],
 			[
 				"ptr",
 				"sources/dnn/util/ptr.h"
+			],
+			[
+				"spik",
+				"sources/spikework/spikework.cpp"
+			],
+			[
+				"ti",
+				"sources/dnn/util/time_series.h"
+			],
+			[
+				"fft",
+				"sources/spikework/fft.cpp"
+			],
+			[
+				"gen",
+				"sources/dnn/protos/generated.proto"
+			],
+			[
+				"gene",
+				"sources/dnn/protos/generated.proto"
+			],
+			[
+				"ff",
+				"sources/spikework/fft.cpp"
+			],
+			[
+				"stat",
+				"sources/dnn/synapses/static_synapse.h"
+			],
+			[
+				"uti",
+				"sources/dnn/util/util.cpp"
+			],
+			[
+				"ki",
+				"sources/dnn/contrib/kiss_fft/kiss_fftndr.c"
 			],
 			[
 				"str",
@@ -1298,28 +1272,8 @@
 				"sources/tools/mpl/mpl_main.cpp"
 			],
 			[
-				"fft",
-				"sources/spikework/fft.h"
-			],
-			[
 				"optio",
 				"sources/dnn/util/option_parser.h"
-			],
-			[
-				"spike",
-				"sources/tools/spikework/spikework.cpp"
-			],
-			[
-				"seri",
-				"sources/dnn/io/serialize.h"
-			],
-			[
-				"ff",
-				"sources/spikeworklib/fft.cpp"
-			],
-			[
-				"stat",
-				"sources/dnn/util/statistics.h"
 			],
 			[
 				"srm",
@@ -1332,10 +1286,6 @@
 			[
 				"sim.h",
 				"sources/dnn/sim/sim.h"
-			],
-			[
-				"rpro",
-				"src/RProto.h"
 			],
 			[
 				"rsi",
@@ -1370,10 +1320,6 @@
 				"sources/dnn/weight_normalizations/weight_normalization.h"
 			],
 			[
-				"opt",
-				"sources/dnn/learning_rules/optimal_stdp.cpp"
-			],
-			[
 				"ser",
 				"sources/dnn/io/serialize.h"
 			],
@@ -1388,10 +1334,6 @@
 			[
 				"wei",
 				"sources/dnn/weight_normalizations/weight_normalization.h"
-			],
-			[
-				"core",
-				"sources/dnn/core.h"
 			],
 			[
 				"jso",
@@ -1438,16 +1380,8 @@
 				"sources/dnn/synapses/synapse.h"
 			],
 			[
-				"sp",
-				"sources/dnn/neurons/spike_neuron.h"
-			],
-			[
 				"exp",
 				"sources/dnn/act_functions/exp_threshold.h"
-			],
-			[
-				"spik",
-				"sources/dnn/neurons/spike_neuron.h"
 			],
 			[
 				"inter",
@@ -1468,10 +1402,6 @@
 			[
 				"buil",
 				"sources/dnn/sim/builder.h"
-			],
-			[
-				"rpr",
-				"src/RProto.h"
 			],
 			[
 				"faslo",
@@ -1498,16 +1428,8 @@
 				"sources/dnn/learning_rules/optimal_stdp.h"
 			],
 			[
-				"ma",
-				"sources/dnn/util/matrix.h"
-			],
-			[
 				"r",
 				"src/RMpl.h"
-			],
-			[
-				"ut",
-				"util/util.py"
 			],
 			[
 				"noa",
@@ -1528,10 +1450,6 @@
 			[
 				"mas",
 				"oxygen/master.py"
-			],
-			[
-				"uti",
-				"util/util.py"
 			],
 			[
 				"base",
@@ -1720,58 +1638,6 @@
 			[
 				"arc",
 				"handlers/arc_commit_handler.py"
-			],
-			[
-				"tree",
-				"server/templates/tree.html"
-			],
-			[
-				"ha",
-				"handlers/handler.py"
-			],
-			[
-				"mi",
-				"min-ci.py"
-			],
-			[
-				"ind",
-				"server/templates/index.html"
-			],
-			[
-				"in",
-				"server/templates/index.html"
-			],
-			[
-				"db",
-				"db.py"
-			],
-			[
-				"tr",
-				"server/templates/tree.html"
-			],
-			[
-				"fie",
-				"humongolus/field.py"
-			],
-			[
-				"__",
-				"humongolus/__init__.py"
-			],
-			[
-				"nod",
-				"nodes.py"
-			],
-			[
-				"tre",
-				"server/templates/tree.html"
-			],
-			[
-				"he",
-				"server/templates/header.html"
-			],
-			[
-				"inde",
-				"server/templates/index.html"
 			]
 		],
 		"width": 0.0

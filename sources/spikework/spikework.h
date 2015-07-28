@@ -10,16 +10,15 @@ namespace dnn {
 class Processor;
 
 class Spikework {
-public:
     typedef map<string, Ptr<Processor> (*)()> processors_map_type;
     template<typename INST> static Ptr<Processor> createProcessor() { return new INST; }
-
+public:
     Spikework(const vector<string> &args);
-    
+    ~Spikework();
 
     class Stack {
     public:
-    	Ptr<SerializableBase> pop() {
+        Ptr<SerializableBase> pop() {
             if(stack.size() == 0) {
                 throw dnnException() << "stack is exhausted\n";
             }
@@ -33,8 +32,9 @@ public:
             }
             return stack.back();
         }
-        void push(Ptr<SerializableBase> p) {
-            stack.push_back(p);
+        template<typename T>
+        void push(Ptr<T> p) {
+            stack.push_back(p. template as<SerializableBase>());
         }
 	private:    	
     	vector<Ptr<SerializableBase>> stack;        

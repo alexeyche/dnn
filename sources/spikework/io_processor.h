@@ -12,7 +12,7 @@ public:
 	IOProcessor() : tee(false) {}
 	
 	void usage();
-	void processDefaultArgs(const vector<string> &args);    
+    void processArgs(const vector<string> &args);    
     void start(Spikework::Stack &s);
     void end(Spikework::Stack &s);
     

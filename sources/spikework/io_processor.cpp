@@ -14,13 +14,12 @@ void IOProcessor::usage() {
 }
 
 
-void IOProcessor::processDefaultArgs(const vector<string> &args) {
+void IOProcessor::processArgs(const vector<string> &args) {
 	OptionParser op(args);
     bool need_help = false;
 	op.option("--input", "-i", input_filename, false);
 	op.option("--output", "-o", output_filename, false);
     op.option("--help", "-h", need_help, false, true);
-    processArgs(args);
     if(need_help) {
     	usage();
     	std::exit(0);
@@ -31,7 +30,11 @@ void IOProcessor::start(Spikework::Stack &s) {
 	if(!input_filename.empty()) {
 		ifstream ff(input_filename);
 	    Stream str(ff, Stream::Binary);
-	    s.push(Ptr<SerializableBase>(str.readBaseObject()));
+        Ptr<SerializableBase> o = str.readBaseObject();
+        // if(o.as<SpikesList>()) {
+        //     throw dnnException() << "Not implemented\n";
+        // }
+	    s.push(o);
 	}
 }
 
@@ -43,9 +46,10 @@ void IOProcessor::end(Spikework::Stack &s) {
 		} else {
 			p = s.pop();
 		}
+
 		ofstream ff(output_filename);
 	    Stream str(ff, Stream::Binary);
-	    str.writeObject(p.ptr());
+        str.writeObject(p.ptr());
 	}
 }
 
