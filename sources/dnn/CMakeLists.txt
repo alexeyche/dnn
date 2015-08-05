@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(dnn)
-
 
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into DNN.
@@ -40,7 +38,7 @@ include_directories(${CMAKE_BINARY_DIR}/protos)
 SET_TARGET_PROPERTIES(dnn PROPERTIES COMPILE_FLAGS "-fPIC")
 
 target_link_libraries(dnn
-    protos
+    dnn_protos
     ${PROTOBUF_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
     m

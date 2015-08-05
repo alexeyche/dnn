@@ -2,6 +2,7 @@
 
 #include <dnn/io/serialize.h>
 #include <dnn/util/statistics.h>
+#include <dnn/protos/synapse.pb.h>
 
 namespace dnn {
 
@@ -23,35 +24,35 @@ public:
 	SynapseBase() : _fired(false), _potential(0.0), _weight(0.0), _dendriteDelay(0.0) {}
 	typedef SynapseInterface interface;
 
-	inline const size_t& idPre() const { 
+	inline const size_t& idPre() const {
 		return _idPre;
 	}
-	inline size_t& mutIdPre() { 
-		return _idPre; 
+	inline size_t& mutIdPre() {
+		return _idPre;
 	}
 
 	virtual void propagateSpike() = 0;
 	virtual void calculateDynamics(const Time &t) = 0;
 	virtual void reset() = 0;
-		
+
 	template <typename T>
 	void provideInterface(SynapseInterface &i) {
         i.propagateSpike = MakeDelegate(static_cast<T*>(this), &T::propagateSpike);
         i.calculateDynamics = MakeDelegate(static_cast<T*>(this), &T::calculateDynamics);
     }
-	static void __defaultPropagateSpike() { 
+	static void __defaultPropagateSpike() {
 		throw dnnException() << "Calling inapropriate default interface function\n";
 	}
-	static void __defaultCalculateDynamics(const Time &t) { 
+	static void __defaultCalculateDynamics(const Time &t) {
 		throw dnnException() << "Calling inapropriate default interface function\n";
 	}
-	
+
 	static void provideDefaultInterface(SynapseInterface &i) {
 		i.propagateSpike = &SynapseBase::__defaultPropagateSpike;
-        i.calculateDynamics = &SynapseBase::__defaultCalculateDynamics;        
+        i.calculateDynamics = &SynapseBase::__defaultCalculateDynamics;
 	}
 	Statistics& getStat() {
-		return stat; 
+		return stat;
 	}
 	inline void setFired(bool fired) {
 		_fired = fired;
@@ -68,8 +69,8 @@ public:
 	inline const double& dendriteDelay() {
 		return _dendriteDelay;
 	}
-	inline double& mutDendriteDelay() { 
-		return _dendriteDelay; 
+	inline double& mutDendriteDelay() {
+		return _dendriteDelay;
 	}
 	inline const double& potential() const {
 		return _potential;
@@ -110,7 +111,7 @@ struct SynapseInfo : public Serializable<Protos::SynapseInfo> {
 template <typename Constants, typename State>
 class Synapse : public SynapseBase {
 
-public:	
+public:
 	SynapseInfo getInfo() {
 		SynapseInfo info;
 		info.idPre = _idPre;
@@ -140,7 +141,7 @@ public:
 		}
 
 		(*this) << "SynapseInfo: "   << info;
-		
+
 		if (mode == ProcessingInput) {
 			_weight = info.weight;
 			_idPre = info.idPre;

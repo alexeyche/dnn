@@ -3,7 +3,7 @@
 
 #include "weight_normalization.h"
 
-#include <dnn/protos/generated.pb.h>
+#include <dnn/protos/pow_min_max.pb.h>
 #include <dnn/util/fastapprox/fastpow.h>
 
 namespace dnn {

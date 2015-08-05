@@ -4,7 +4,7 @@
 
 
 namespace dnn {
-   
+
 class ConvProcessor : public IOProcessor {
 public:
     ConvProcessor() {}
@@ -14,7 +14,7 @@ public:
     void process(Spikework::Stack &s);
 
 private:
-    Ptr<TimeSeries> filter;    
+    Ptr<TimeSeries> filter;
 };
 
 

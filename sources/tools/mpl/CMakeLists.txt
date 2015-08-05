@@ -23,7 +23,7 @@ add_executable(mpl
 include_directories(${CMAKE_BINARY_DIR}/protos)
 # link dependencies of executable
 target_link_libraries(mpl
-    protos
+    dnn_protos
     ${PROTOBUF_LIBRARY}
     dnn
     m

@@ -27,7 +27,7 @@ include_directories(${CMAKE_BINARY_DIR}/protos)
 target_link_libraries(spikework-bin
 	spikework
     dnn
-    protos
+    dnn_protos
     ${PROTOBUF_LIBRARY}
     m
 )

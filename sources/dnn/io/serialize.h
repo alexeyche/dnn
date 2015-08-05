@@ -1,6 +1,5 @@
 #pragma once
 
-#include <dnn/core.h>
 #include <dnn/util/util.h>
 #include <dnn/util/json.h>
 #include <dnn/util/interfaced_ptr.h>
@@ -10,8 +9,6 @@
 #include <dnn/protos/base.pb.h>
 
 #include <google/protobuf/message.h>
-#include <dnn/protos/generated.pb.h>
-
 
 typedef google::protobuf::Message* ProtoMessage;
 
@@ -26,6 +23,7 @@ public:
     enum EndMarker { end };
 
     typedef SerializableBase Self;
+
     static const bool hasProto = false;
     typedef Protos::EmptyProto ProtoType;
 
@@ -39,10 +37,10 @@ public:
 
     virtual ~SerializableBase() {
         if(mode == ProcessingOutput) {
-    
+
         }
     }
-    
+
     void clean() {
         if(messages) {
             for(auto &m: *messages) {
@@ -92,7 +90,7 @@ public:
             messages->push_back(header);
         }
         if(mode == ProcessingInput) {
-            Protos::ClassName *head = getHeader();            
+            Protos::ClassName *head = getHeader();
             if(name() != head->class_name()) {
                 throw dnnException()<< "Error while deserializing. Wrong class name header: " << name() << " != " << head->class_name() << "\n";
             }
@@ -106,7 +104,7 @@ public:
         }
     }
 
-    
+
 
     SerializableBase& operator << (SerializableBase &b) {
         if(mode == ProcessingOutput) {
@@ -116,19 +114,19 @@ public:
             }
         } else
         if(mode == ProcessingInput) {
-            b.getDeserialized(*messages);            
+            b.getDeserialized(*messages);
         }
 
         return *this;
     }
-    
-    
+
+
     template <typename T>
     SerializableBase& operator << (InterfacedPtr<T> &b) {
         if(mode == ProcessingOutput) {
             if(!b.isSet()) {
                 throw dnnException()<< "Failed to serialize InterfacePtr: it is without an pointer\n";
-            }            
+            }
             (*this) << b.ref();
         } else
         if(mode == ProcessingInput) {
@@ -137,7 +135,7 @@ public:
             T* p = dynamic_cast<T*>(pb);
             if(!p) {
                 throw dnnException()<< name() << ": cast error while deserializing interfaced ptr, got " << pb->name() << "\n";
-            }            
+            }
             b.set(p);
             (*this) << b.ref();
         }
@@ -147,7 +145,7 @@ public:
     vector<ProtoMessage>& getSerialized() {
         if ((mode == ProcessingOutput) && (messages)) clean();
         mode = ProcessingOutput;
-        
+
         messages = new vector<ProtoMessage>;
 
 
@@ -157,7 +155,7 @@ public:
 
     void getDeserialized(vector<ProtoMessage> &inp_mess) {
         mode = ProcessingInput;
-        
+
         if(messages) clean();
         messages = &inp_mess;
 
@@ -202,8 +200,8 @@ public:
 
     // }
     // SerializableBase& operator =(const SerializableBase &obj) { return *this; }
-    
-    
+
+
 protected:
     vector<ProtoMessage> *messages;
     Protos::ClassName *header;
@@ -251,7 +249,7 @@ public:
         vector<string> v_spl = split(v, ':');
         string fname = v_spl[0];
         trim(fname);
-        
+
         //cout << messages->size() << "\n";
         // cout << "Filling fname " << fname << " (" << currentMessage()->GetTypeName()  << ")\n";
         const google::protobuf::Descriptor* descriptor = currentMessage()->GetDescriptor();
@@ -260,7 +258,7 @@ public:
         if(!field_descr) {
             throw dnnException()<< "Can't find proto field by name " << fname << "\n";
         }
-        
+
         return *this;
     }
     #define SERIALIZE_METHOD(type, pbmethod_set, pbmethod_get) \
@@ -277,7 +275,7 @@ public:
                 } \
             } \
             return *this; \
-        } 
+        }
 
     #define SERIALIZE_REPEATED_METHOD(vtype, type, pbmethod_add, pbmethod_get) \
         Serializable& operator << (vtype<type> &v) { \
@@ -307,31 +305,31 @@ public:
     SERIALIZE_REPEATED_METHOD(ActVector, size_t, AddUInt32, GetRepeatedUInt32);
     SERIALIZE_REPEATED_METHOD(ActVector, double, AddDouble, GetRepeatedDouble);
 
-    Serializable& operator << (vector<std::complex<double>> &v) { 
-        ASSERT_FIELDS() 
+    Serializable& operator << (vector<std::complex<double>> &v) {
+        ASSERT_FIELDS()
         const google::protobuf::Descriptor* descriptor = currentMessage()->GetDescriptor();
         const google::protobuf::FieldDescriptor* imag_field_descr = descriptor->FindFieldByName(field_descr->name() + "_imag");
         if(!imag_field_descr) {
             throw dnnException() << "Failed to find protobuf field for imaginery part of complex number\n";
         }
-        if(mode == ProcessingOutput) { 
-            for(size_t i=0; i<v.size(); ++i) { 
-                currentMessage()->GetReflection()->AddDouble(currentMessage(), field_descr, v[i].real());     
-                currentMessage()->GetReflection()->AddDouble(currentMessage(), imag_field_descr, v[i].imag());     
+        if(mode == ProcessingOutput) {
+            for(size_t i=0; i<v.size(); ++i) {
+                currentMessage()->GetReflection()->AddDouble(currentMessage(), field_descr, v[i].real());
+                currentMessage()->GetReflection()->AddDouble(currentMessage(), imag_field_descr, v[i].imag());
             }
-        } else { 
-            int cur = currentMessage()->GetReflection()->FieldSize(*currentMessage(), field_descr); 
-            for(int i=0; i<cur; ++i) { 
-                double subv = currentMessage()->GetReflection()->GetRepeatedDouble(*currentMessage(), field_descr, i); 
-                double subv_imag = currentMessage()->GetReflection()->GetRepeatedDouble(*currentMessage(), imag_field_descr, i); 
-                v.push_back(std::complex<double>(subv, subv_imag)); 
-            } 
-        } 
-        return *this; 
+        } else {
+            int cur = currentMessage()->GetReflection()->FieldSize(*currentMessage(), field_descr);
+            for(int i=0; i<cur; ++i) {
+                double subv = currentMessage()->GetReflection()->GetRepeatedDouble(*currentMessage(), field_descr, i);
+                double subv_imag = currentMessage()->GetReflection()->GetRepeatedDouble(*currentMessage(), imag_field_descr, i);
+                v.push_back(std::complex<double>(subv, subv_imag));
+            }
+        }
+        return *this;
     }
 
-    
-    
+
+
     void operator << (EndMarker e) {
         if(mode == ProcessingInput) {
             deleteCurrentMessage();
@@ -346,9 +344,9 @@ public:
             header->set_class_name(name());
             header->set_has_proto(true);
             header->set_size(0);
-            
+
             messages->push_back(header);
-            
+
             ProtoMessage mess = new Proto;
 
             messages->push_back(mess);
@@ -373,7 +371,7 @@ T* as(SerializableBase *b) {
     T* p = dynamic_cast<T*>(b);
     if(!p) {
         throw dnnException() << "Failed to cast: " << b->name() << "\n";
-    } 
+    }
     return p;
 }
 

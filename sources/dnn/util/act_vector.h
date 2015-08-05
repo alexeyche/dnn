@@ -1,7 +1,11 @@
 #pragma once
 
+#include <vector>
+
+using std::vector;
 
 #include <dnn/core.h>
+
 
 
 namespace dnn {
@@ -20,13 +24,13 @@ public:
 		}
 	}
 	inline T& operator[](const unordered_set<size_t>::iterator &i) {
-		return vector<T>::operator[](*i);	
+		return vector<T>::operator[](*i);
 	}
 	inline T& get(const size_t &i) {
-		return vector<T>::operator[](i);		
+		return vector<T>::operator[](i);
 	}
 	inline const T& get(const size_t &i) const {
-		return vector<T>::operator[](i);		
+		return vector<T>::operator[](i);
 	}
 	void push_back(const T &v) {
 		vector<T>::push_back(v);
@@ -37,11 +41,11 @@ public:
 	typename vector<T>::iterator end() {
 		return vector<T>::end();
 	}
-	
+
 	typename vector<T>::const_iterator begin() const {
 		return vector<T>::cbegin();
 	}
-	
+
 	typename vector<T>::const_iterator end() const {
 		return vector<T>::cend();
 	}
@@ -59,7 +63,7 @@ public:
 		return vector<T>::size();
 	}
 	void resize(size_t s) {
-		vector<T>::resize(s);	
+		vector<T>::resize(s);
 	}
     friend std::ostream& operator<<(std::ostream& str, const ActVector &self) {
         for(size_t i=0; i<self.size(); ++i) {

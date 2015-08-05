@@ -4,6 +4,7 @@
 #include "conv.h"
 #include "kernel.h"
 #include "gram.h"
+#include "read.h"
 
 namespace dnn {
 
@@ -14,7 +15,8 @@ Spikework::~Spikework() {
     }
 }
 
-Spikework::Spikework(const vector<string> &args) { 
+Spikework::Spikework(const vector<string> &args) {
+	proc_map["read"] = &createProcessor<ReadProcessor>;
 	proc_map["fft"] = &createProcessor<FFTProcessor>;
 	proc_map["conv"] = &createProcessor<ConvProcessor>;
 	proc_map["kernel"] = &createProcessor<KernelProcessor>;
@@ -31,7 +33,7 @@ Spikework::Spikework(const vector<string> &args) {
 		auto p_ptr = proc_map.find(a);
 		if(p_ptr != proc_map.end()) {
 			if(processors.size() > 0) {
-				processors.back()->processArgs(acc_args);				
+				processors.back()->processArgs(acc_args);
 			}
 			acc_args = vector<string>();
 			processors.push_back(p_ptr->second());

@@ -1,0 +1,8 @@
+package Protos;
+
+message ShapeletsConfig {
+    required uint32 startSize = 1;
+    required uint32 endSize = 2;
+    required uint32 stepSize = 3;
+}
+

@@ -23,7 +23,7 @@ void Stream::writeObject(SerializableBase *b) {
 	if (getRepr() == Text) {
 		vector<string> buff;
 		Document d;
-		Value o(kObjectType);		
+		Value o(kObjectType);
 		string temps = b->name();
 		if(!Factory::inst().isProtoType(temps)) {
 			Value sub_o(kObjectType);
@@ -75,7 +75,7 @@ void Stream::jsonReader(string name, const Value &v, vector<ProtoMessage> &messa
 	vector<string> name_spl = split(name, '_');
 	if(name_spl.size()>0) {
 		name = name_spl[0];
-	} 
+	}
 	Protos::ClassName *cl = new Protos::ClassName;
 	cl->set_class_name(name);
 	messages.push_back(cl);
@@ -128,16 +128,16 @@ SerializableBase* Stream::readBaseObject(SerializableBase *o) {
 	}
 
 	vector<ProtoMessage> messages = readObjectProtos();
-	
+
 	if(messages.size() == 0) {
-		return nullptr;		
+		return nullptr;
 	}
-	
+
 	std::reverse(messages.begin(), messages.end());
 
 	Protos::ClassName *head = SerializableBase::getHeader(messages);
 	if(!o) {
-		SerializableBase *new_o = Factory::inst().createObject(head->class_name());	
+		SerializableBase *new_o = Factory::inst().createObject(head->class_name());
 		new_o->getDeserialized(messages);
 		return new_o;
 	} else {

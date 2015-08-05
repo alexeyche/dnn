@@ -1,0 +1,10 @@
+package Protos;
+
+message DifferenceOfGaussiansC {
+    required int32 dimension = 1;
+    required double a = 2;
+    required double b = 3;
+    required double r = 4;
+    required bool apply_amplitude = 5;
+}
+

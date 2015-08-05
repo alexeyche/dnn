@@ -2,6 +2,7 @@
 
 #include <dnn/io/serialize.h>
 #include <dnn/base/exceptions.h>
+#include <dnn/protos/weight_normalization.pb.h>
 
 namespace dnn {
 
@@ -53,14 +54,14 @@ public:
 	static double __derivativeModulationDefault(const double &w) {
 		return 1.0;
 	}
-	static void __calculateDynamicsDefault(const Time &t) {		
+	static void __calculateDynamicsDefault(const Time &t) {
 	}
 
 	static void provideDefaultInterface(WeightNormalizationInterface &i) {
     	i.ltp = &WeightNormalizationBase::__ltpDefault;
     	i.ltd = &WeightNormalizationBase::__ltdDefault;
     	i.derivativeModulation = &WeightNormalizationBase::__derivativeModulationDefault;
-    	i.calculateDynamics = &WeightNormalizationBase::__calculateDynamicsDefault;    	
+    	i.calculateDynamics = &WeightNormalizationBase::__calculateDynamicsDefault;
     }
     virtual void linkWithNeuron(SpikeNeuronBase &_n) = 0;
 	Statistics& getStat() {
@@ -87,14 +88,14 @@ class WeightNormalization : public WeightNormalizationBase {
 			return;
 		}
 		if(s.name() != "EmptyState") {
-			(*this) << "State: " << s << Self::end;	
+			(*this) << "State: " << s << Self::end;
 		}
 	}
-	
+
 	void linkWithNeuron(SpikeNeuronBase &_n) {
 		try {
 			Neuron &nc = static_cast<Neuron&>(_n);
-			n.set(nc);			
+			n.set(nc);
 		} catch(std::bad_cast exp) {
 			throw dnnException() << "Can't cast neuron for weight normalization " << name() << "\n";
 		}

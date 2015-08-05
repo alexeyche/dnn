@@ -35,26 +35,26 @@ public:
             ifstream f(protofile);
             vector<SerializableBase*> obj;
 
-                
+
             try {
                 Stream str(f, Stream::Binary);
-                
+
                 Factory::inst().registrationOff();
                 SerializableBase* o = str.readBaseObject();
-                
+
                 if (!o) {
                     ERR("Can't read protofile " << protofile << "\n");
                 }
-                
+
                 while(o) {
                     obj.push_back(o);
-                    o = str.readBaseObject();                    
+                    o = str.readBaseObject();
                 }
             } catch(const std::exception &e) {
                 ERR("Can't open " << protofile << " for reading: " <<  e.what() << "\n");
             }
 
-            if((obj.size() == 1)&&(simplify)) { 
+            if((obj.size() == 1)&&(simplify)) {
                 values = convertToList(obj[0]);
                 delete obj[0];
             } else {
@@ -65,14 +65,14 @@ public:
                     for(auto &o: obj) {
                         Rcpp::List l = convertToList(o);
                         if(l.size()>0) {
-                            ret.push_back(l);                    
+                            ret.push_back(l);
                         }
                         delete o;
                     }
                     values = Rcpp::wrap(ret);
                 }
             }
-            Factory::inst().registrationOn();            
+            Factory::inst().registrationOn();
         }
         return values;
     }
@@ -82,7 +82,7 @@ public:
         Stream str(f, Stream::Binary);
         str.writeObject(b);
     }
-    
+
     static Rcpp::List convertFilterMatches(vector<SerializableBase*> &obj) {
         vector<double> t;
         vector<size_t> fi;
@@ -112,10 +112,15 @@ public:
                 out[name] = Rcpp::wrap(od->getStats()[name].values);
             }
         }
+        if(o->name() == "Subsequence") {
+            Subsequence *sub = dynamic_cast<Subsequence*>(o);
+            if(!sub) { ERR("Can't cast"); }
+            o = sub->referent().ptr();
+        }
         if(o->name() == "TimeSeries") {
             TimeSeries *od = dynamic_cast<TimeSeries*>(o);
             if(!od) { ERR("Can't cast"); }
-            vector<vector<double>> ts_vals; 
+            vector<vector<double>> ts_vals;
             for(auto &d : od->data) {
                 ts_vals.push_back(d.values);
             }
@@ -127,12 +132,12 @@ public:
                     , Rcpp::Named("labels_timeline") = Rcpp::wrap(od->info.labels_timeline)
                 )
             );
-        }  
+        }
         if(o->name() == "SpikesList") {
             SpikesList *od = dynamic_cast<SpikesList*>(o);
             if(!od) { ERR("Can't cast"); }
-            
-            vector<vector<double>> sp; 
+
+            vector<vector<double>> sp;
             for(auto &seq : od->seq) {
                 sp.push_back(seq.values);
             }
@@ -148,7 +153,7 @@ public:
         if(o->name() == "DoubleMatrix") {
             DoubleMatrix *m = dynamic_cast<DoubleMatrix*>(o);
             if(!m) { ERR("Can't cast"); }
-            
+
             Rcpp::NumericMatrix rm(m->nrow(), m->ncol());
             for(size_t i=0; i<m->nrow(); ++i) {
                 for(size_t j=0; j<m->ncol(); ++j) {
@@ -174,7 +179,7 @@ public:
                 weights.push_back(s.ref().weight());
                 ids_pre.push_back(s.ref().idPre());
             }
-            
+
             out = Rcpp::List::create(
                   Rcpp::Named("xi") = nb->xi()
                 , Rcpp::Named("yi") = nb->yi()
@@ -191,7 +196,7 @@ public:
         if(o->name() == "MatchingPursuitConfig") {
             MatchingPursuitConfig *m = dynamic_cast<MatchingPursuitConfig*>(o);
             if(!m) { ERR("Can't cast"); }
-            
+
             out = Rcpp::List::create(
                 Rcpp::Named("threshold") = m->threshold,
                 Rcpp::Named("learn_iterations") = m->learn_iterations,
@@ -205,7 +210,7 @@ public:
                 Rcpp::Named("seed") = m->seed,
                 Rcpp::Named("noise_sd") = m->noise_sd
             );
-            
+
         }
         if(o->name() == "FilterMatch") {
             FilterMatch *m = dynamic_cast<FilterMatch*>(o);
@@ -218,7 +223,7 @@ public:
         }
         return out;
     }
-    
+
     template <typename T>
     static T* convertBack(const Rcpp::List &list, const string &name) {
         SerializableBase* o = convertBack(list, name);
@@ -241,10 +246,10 @@ public:
             TimeSeries* ts = Factory::inst().createObject<TimeSeries>(name);
             SEXP values = list["values"];
             if(Rf_isMatrix(values)) {
-                Rcpp::NumericMatrix m(values); 
+                Rcpp::NumericMatrix m(values);
                 ts->dim_info.size = m.nrow();
                 ts->data.resize(ts->dim_info.size);
-                for(size_t i=0; i<m.nrow(); ++i) {                    
+                for(size_t i=0; i<m.nrow(); ++i) {
                     for(size_t j=0; j<m.ncol(); ++j) {
                         ts->data[i].values.push_back(m(i,j));
                     }
@@ -255,7 +260,7 @@ public:
                 ts->data.resize(ts->dim_info.size);
                 ts->data[0].values = Rcpp::as<vector<double>>(values);
             }
-            
+
             ts->info = ts_info;
             return ts;
         }

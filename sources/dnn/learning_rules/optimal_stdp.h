@@ -1,6 +1,6 @@
 #pragma once
 
-#include <dnn/protos/generated.pb.h>
+#include <dnn/protos/optimal_stdp.pb.h>
 #include <dnn/io/serialize.h>
 #include <dnn/util/fastapprox/fastexp.h>
 #include <dnn/neurons/srm_neuron.h>
@@ -16,7 +16,7 @@ class LearningRule;
 
 /*@GENERATE_PROTO@*/
 struct OptimalStdpC : public Serializable<Protos::OptimalStdpC> {
-    OptimalStdpC() 
+    OptimalStdpC()
     : tau_c(100.0)
     , tau_mean(10000.0)
     , target_rate(10.0)
@@ -35,7 +35,7 @@ struct OptimalStdpC : public Serializable<Protos::OptimalStdpC> {
             "learning_rate: " << learning_rate << ", " <<
             "weight_decay: " << weight_decay  << ", " <<
             "tau_mi_stat: " << tau_mi_stat << Self::end;
-        __target_rate = target_rate/1000.0;        
+        __target_rate = target_rate/1000.0;
     }
 
     double tau_c;
@@ -51,13 +51,13 @@ struct OptimalStdpC : public Serializable<Protos::OptimalStdpC> {
 
 /*@GENERATE_PROTO@*/
 struct OptimalStdpState : public Serializable<Protos::OptimalStdpState>  {
-    OptimalStdpState() 
+    OptimalStdpState()
     : B(0.0), p_mean(0.0), mi_stat(0.0)
     {}
 
     void serial_process() {
-        begin() << "p_mean: " << p_mean << ", " 
-                << "C: " << C << ", " 
+        begin() << "p_mean: " << p_mean << ", "
+                << "C: " << C << ", "
                 << "B: " << B << ", "
                 << "mi_stat: " << mi_stat << Self::end;
     }
@@ -77,12 +77,12 @@ public:
     void reset() {
         s.B = 0.0;
         s.C.resize(n->getSynapses().size());
-        fill(s.C.begin(), s.C.end(), 0.0);        
+        fill(s.C.begin(), s.C.end(), 0.0);
     }
 
     void propagateSynapseSpike(const SynSpike &sp);
-    
-    inline double B_calc();    
+
+    inline double B_calc();
     void calculateDynamics(const Time& t);
 
 };

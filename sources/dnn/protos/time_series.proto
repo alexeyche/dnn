@@ -1,0 +1,21 @@
+package Protos;
+
+message TimeSeriesInfo {
+    repeated uint32 labels_ids = 1;
+    repeated string unique_labels = 2;
+    repeated uint32 labels_timeline = 3;
+}
+
+message TimeSeriesData {
+    repeated double values = 1;
+}
+
+message TimeSeriesDimInfo {
+    required uint32 size = 1;
+}
+
+message TimeSeriesComplexData {
+    repeated double values = 1;
+    repeated double values_imag = 2;
+}
+

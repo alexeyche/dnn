@@ -11,7 +11,7 @@
 #include <dnn/learning_rules/learning_rule.h>
 #include <dnn/util/act_vector.h>
 #include <dnn/util/spikes_list.h>
-
+#include <dnn/protos/spike_neuron.pb.h>
 
 
 namespace dnn {
@@ -31,7 +31,7 @@ friend class Builder;
 friend class Network;
 public:
 	SpikeNeuronBase() : input_queue_lock(ATOMIC_FLAG_INIT), _fired(false) {
-		_id = global_neuron_index++;		
+		_id = global_neuron_index++;
 	}
 
 	typedef SpikeNeuronInterface interface;
@@ -45,7 +45,7 @@ public:
 	const double& axonDelay() const;
 	double& mutAxonDelay();
 	const bool& fired() const;
-	
+
 	void setFired(const bool& f);
 
 	void setLearningRule(LearningRuleBase *_lrule);
@@ -63,7 +63,7 @@ public:
 
 	template <typename T>
 	void provideInterface(SpikeNeuronInterface &i) {
-        i.calculateDynamics = MakeDelegate(static_cast<T*>(this), &T::calculateDynamics);        
+        i.calculateDynamics = MakeDelegate(static_cast<T*>(this), &T::calculateDynamics);
         i.propagateSynapseSpike = MakeDelegate(static_cast<T*>(this), &T::propagateSynapseSpike);
         ifc = i;
 	}
@@ -73,7 +73,7 @@ public:
 	static void __propagateSynapseSpikeDefault(const SynSpike &s) {
 		throw dnnException()<< "Calling inapropriate default interface function\n";
 	}
-	
+
 	static void provideDefaultInterface(SpikeNeuronInterface &i) {
 		i.calculateDynamics = &SpikeNeuronBase::__calculateDynamicsDefault;
 		i.propagateSynapseSpike =  &SpikeNeuronBase::__propagateSynapseSpikeDefault;
@@ -81,18 +81,18 @@ public:
 
 	void resetInternal();
 	virtual void reset() = 0;
-	
+
 	virtual void calculateDynamics(const Time& t, const double &Iinput, const double &Isyn) = 0;
 	virtual void propagateSynapseSpike(const SynSpike &sp);
-	
+
 	Statistics getStat();
 
 	void enqueueSpike(const SynSpike && sp);
 
 	void readInputSpikes(const Time &t);
 	void calculateDynamicsInternal(const Time &t);
-	
-	
+
+
 
 protected:
 	bool _fired;

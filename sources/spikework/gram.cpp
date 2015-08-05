@@ -7,8 +7,11 @@
 namespace dnn {
 
 void GramProcessor::usage() {
-    cout << "GramProcessor building gram matrix on input time series\n";    
-    cout << "   --csv,      print to stdout matrix in csv representation\n";
+    cout << "GramProcessor building gram matrix on input time series\n";
+    cout << "   --text,      print to stdout matrix in text representation\n";
+    cout << "   --mode,      modes specifying how to deal with multiple dimensions: \n";
+    cout << "       mul  (default) multiply inner products of each dimension \n";
+    cout << "       acc            sum inner products of each dimension\n";
     cout << "\n";
     IOProcessor::usage();
 }
@@ -16,44 +19,47 @@ void GramProcessor::usage() {
 void GramProcessor::processArgs(const vector<string> &args) {
     IOProcessor::processArgs(args);
     OptionParser op(args);
-    op.loption("--csv", csv, false, true);
+    string mode_str = "mul";
+    op.loption("--text", text, false, true);
+    op.loption("--mode", mode_str, false);
+    if(mode_str == "mul") {
+        mode = MUL;
+    } else
+    if(mode_str == "acc") {
+        mode = ACC;
+    } else {
+        throw dnnException() << "Can't recognize inner product mode: " << mode_str << "\n";
+    }
 }
 
 void GramProcessor::process(Spikework::Stack &s) {
     Ptr<TimeSeries> ts = s.pop().as<TimeSeries>();
-    size_t elem_id = 0;
-    vector<Ptr<TimeSeries>> ts_chopped;
-    assert(ts->info.labels_timeline.size() == ts->info.labels_ids.size());
-    for(size_t li=0; li<ts->info.labels_timeline.size(); ++li) {
-        const size_t &end_of_label = ts->info.labels_timeline[li]; 
-        const size_t &label_id = ts->info.labels_ids[li];
-        const string &label = ts->info.unique_labels[label_id];
 
-        Ptr<TimeSeries> labeled_ts(Factory::inst().createObject<TimeSeries>());
-        for(; elem_id < end_of_label; ++elem_id) {       
-            for(size_t di=0; di<ts->data.size(); ++di) {
-                labeled_ts->addValue(di, ts->data[di].values[elem_id]);
-            }
-        }
-        labeled_ts->info.addLabelAtPos(label, labeled_ts->length());
-        ts_chopped.push_back(labeled_ts);
-    }
+    vector<Ptr<TimeSeries>> ts_chopped = ts->chop();
+
     Ptr<DoubleMatrix> gram_matrix(Factory::inst().createObject<DoubleMatrix>());
     gram_matrix->allocate(ts_chopped.size(), ts_chopped.size());
     for(size_t i=0; i<ts_chopped.size(); ++i) {
         gram_matrix->setRowLabel(i, ts_chopped[i]->getLabel());
         for(size_t j=0; j<ts_chopped.size(); ++j) {
             gram_matrix->setColLabel(j, ts_chopped[j]->getLabel());
-            gram_matrix.ref()(i, j) = ts_chopped[i]->innerProduct(ts_chopped[j].ref());
+            if(mode == MUL) {
+                gram_matrix.ref()(i, j) = ts_chopped[i]->innerProductMul(ts_chopped[j].ref());
+            } else
+            if(mode == ACC) {
+                gram_matrix.ref()(i, j) = ts_chopped[i]->innerProductAcc(ts_chopped[j].ref());
+            } else {
+                throw dnnException() << "UB";
+            }
         }
     }
-    if(csv) {
-        gram_matrix->csvRepr(cout);        
+    if(text) {
+        gram_matrix->textRepr(cout);
     }
     s.push(gram_matrix);
 }
 
-    
+
 
 
 

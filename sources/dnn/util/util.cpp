@@ -1,5 +1,8 @@
 
 #include "util.h"
+
+#include <iomanip>
+
 namespace dnn {
 
 vector<string> split_into(const string &s, char delim, vector<string> &elems) {
@@ -123,7 +126,7 @@ bool fileExists(const std::string& name) {
     } else {
         f.close();
         return false;
-    }   
+    }
 }
 
 bool strStartsWith(const string &s, const string &prefix) {
@@ -190,7 +193,7 @@ map<string, string> parseArgOptionsPairs(const vector<string> &opts) {
         }
         string optname = opts[i];
         string optvalue =  opts[i+1];
-        
+
         size_t startpos = optname.find_first_not_of("--");
         if( string::npos != startpos ) {
             optname = optname.substr( startpos );
@@ -199,7 +202,7 @@ map<string, string> parseArgOptionsPairs(const vector<string> &opts) {
         }
         opt_pairs.insert(
             std::make_pair(
-                "@" + optname, 
+                "@" + optname,
                 optvalue
             )
         );
@@ -217,7 +220,16 @@ unsigned long upper_power_of_two(unsigned long v) {
     v |= v >> 16;
     v++;
     return v;
+}
 
+
+ostream& printNow(ostream &o) {
+    char buffer[23];
+    time_t now = time(0);
+    strftime(buffer, 23, "%Y-%m-%d %H:%M:%S ", localtime (&now));
+    string s(buffer);
+    o << s;
+    return o;
 }
 
 }

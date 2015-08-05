@@ -1,0 +1,11 @@
+package Protos;
+
+message SpikeSequenceNeuronC {
+    required double dt = 1;
+}
+
+message SpikeSequenceNeuronState {
+    required double p = 1;
+    required uint32 index = 2;
+}
+

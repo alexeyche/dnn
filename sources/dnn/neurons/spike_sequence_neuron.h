@@ -2,7 +2,7 @@
 
 
 #include "spike_neuron.h"
-#include <dnn/protos/generated.pb.h>
+#include <dnn/protos/spike_sequence_neuron.pb.h>
 #include <dnn/io/serialize.h>
 
 namespace dnn {

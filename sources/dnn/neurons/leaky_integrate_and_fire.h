@@ -2,7 +2,7 @@
 
 
 #include "spike_neuron.h"
-#include <dnn/protos/generated.pb.h>
+#include <dnn/protos/leaky_integrate_and_fire.pb.h>
 #include <dnn/io/serialize.h>
 
 namespace dnn {

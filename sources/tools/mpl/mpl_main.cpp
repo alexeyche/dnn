@@ -35,13 +35,13 @@ void printHelp() {
 }
 
 int main(int argc, char **argv) {
-    
+
     if(argc == 1) {
         printHelp();
-        return 0; 
+        return 0;
     }
     OptionParser optp(argc, argv);
-    
+
     string input_file;
     string spikes_file;
     string config_file;
@@ -61,12 +61,12 @@ int main(int argc, char **argv) {
     optp.option("--dim", "-d", dimension, false);
     optp.option("--restored", "-r", restored_ts, false);
 
-    
+
     MatchingPursuitConfig c;
-    
+
     if(!config_file.empty()) {
         std::ifstream ifs(config_file);
-        Stream(ifs, Stream::Text).readObject<MatchingPursuitConfig>(&c);        
+        Stream(ifs, Stream::Text).readObject<MatchingPursuitConfig>(&c);
     }
     MatchingPursuit mpl(c);
 
@@ -75,9 +75,9 @@ int main(int argc, char **argv) {
         std::ifstream ifs(filter_file);
         Factory::inst().registrationOff();
         DoubleMatrix *f = Stream(ifs, Stream::Binary).readObject<DoubleMatrix>();
-        
+
         mpl.setFilter(*f);
-        
+
         delete f;
         Factory::inst().registrationOn();
     }
@@ -97,11 +97,11 @@ int main(int argc, char **argv) {
         std::ofstream ofs(spikes_file);
         Stream s(ofs, Stream::Binary);
         for(auto &m: r.matches) {
-            s.writeObject(&m);    
+            s.writeObject(&m);
         }
     }
-    
-    
+
+
 
     if(!restored_ts.empty()) {
         vector<double> v = mpl.restore(r.matches);

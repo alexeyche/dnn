@@ -15,7 +15,7 @@ Ptr<TimeSeries> Kernel::generate(size_t dim, size_t length, double dt) {
     if(fun == nullptr) {
         throw dnnException() << "Need to specify kernel function before generating\n";
     }
-    Ptr<TimeSeries> out(Factory::inst().createObject<TimeSeries>());      
+    Ptr<TimeSeries> out(Factory::inst().createObject<TimeSeries>());
     for(size_t di=0; di<dim; ++di) {
         double max_t = length * dt;
         for(double s=0; s<max_t; s+=dt) {
@@ -28,7 +28,7 @@ Ptr<TimeSeries> Kernel::generate(size_t dim, size_t length, double dt) {
 
 // kernels
 void EpspKernel::usage() {
-    cout << "kernel that specified by exponential rise and decay, or decay only: Epsp(5, 15), Epsp(15), accordingly\n";    
+    cout << "kernel that specified by exponential rise and decay, or decay only: Epsp(5, 15), Epsp(15), accordingly\n";
 }
 void EpspKernel::processSpec(string spec) {
     vector<string> spec_spl = split(spec, ',');
@@ -37,7 +37,7 @@ void EpspKernel::processSpec(string spec) {
         fun = [=](double t) {
             return (1/tau_decay) * exp(-t/tau_decay);
         };
-    } else 
+    } else
     if(spec_spl.size() == 2) {
         double tau_rise = std::stof(trimC(spec_spl[0], " \t()"));
         double tau_decay = std::stof(trimC(spec_spl[1], " \t()"));
@@ -51,7 +51,7 @@ void EpspKernel::processSpec(string spec) {
         stringstream ss;
         for(auto &v: spec_spl) {
             ss << v;
-        }        
+        }
         throw dnnException() << "EpspKernel: Unexpected parameters: " << ss.str() << "\n";
     }
 }
@@ -84,13 +84,13 @@ void KernelProcessor::usage() {
     cout << "\n";
     IOProcessor::usage();
 }
-    
+
 void KernelProcessor::processArgs(const vector<string> &args) {
     IOProcessor::processArgs(args);
     OptionParser op(args);
     string kernel_spec;
-    op.option("--kernel", "-k", kernel_spec, true);    
-    op.option("--length", "-l", kernel_length, false);    
+    op.option("--kernel", "-k", kernel_spec, true);
+    op.option("--length", "-l", kernel_length, false);
     op.option("--dt", "-d", kernel_dt, false);
     for(const auto &k: kernel_map) {
         if(strStartsWith(trimC(kernel_spec), k.first)) {
@@ -103,23 +103,26 @@ void KernelProcessor::processArgs(const vector<string> &args) {
     if(!kernel) {
         throw dnnException() << "Can't recognize kernel specification: " << kernel_spec << "\n";
     }
-
 }
 
 void KernelProcessor::start(Spikework::Stack &s) {
     IOProcessor::start(s);
 }
 
-void KernelProcessor::process(Spikework::Stack &s) {    
+void KernelProcessor::process(Spikework::Stack &s) {
     {
-        Ptr<TimeSeries> ts = s.pop().as<TimeSeries>();        
+        cout << printNow(cout) << " kernel start\n";
+        Ptr<TimeSeries> ts = s.pop().as<TimeSeries>();
         Ptr<TimeSeries> kernel_ts = kernel->generate(ts->dim(), kernel_length, kernel_dt);
         s.push(ts);
         s.push(kernel_ts);
+        cout << printNow(cout) << " kernel end\n";
     }
     {
+        cout << printNow(cout) << " conv start\n";
         ConvProcessor conv;
         conv.process(s);
+        cout << printNow(cout) << " conv end\n";
     }
 }
 

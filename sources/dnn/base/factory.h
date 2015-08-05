@@ -13,6 +13,20 @@ class TimeSeries;
 class TimeSeriesComplex;
 class DoubleMatrix;
 
+#define REG_TYPE(name) \
+    Factory::registerType<name>(#name);\
+
+#define REG_TYPE_WITH_CONST(name) \
+    Factory::registerType<name>(#name);\
+    Factory::registerType<name##C>(string(#name) + string("C"));\
+
+#define REG_TYPE_WITH_STATE_AND_CONST(name) \
+    Factory::registerType<name>(#name);\
+    Factory::registerType<name##C>(string(#name) + string("C"));\
+    Factory::registerType<name##State>(string(#name) + string("State"));\
+
+
+
 class Factory {
 public:
     typedef map<string, SerializableBase* (*)()> entity_map_type;
@@ -39,7 +53,7 @@ public:
 
     SerializableBase* createObject(string name);
     ProtoMessage createProto(string name);
-    
+
     void registrationOff() {
         registration_is_on = false;
     }
@@ -49,11 +63,11 @@ public:
     static Factory& inst();
 
     pair<object_iter, object_iter> getObjectsSlice(const string& name);
-    
+
     SerializableBase* getObject(object_iter &it) {
         return objects[it->second];
     }
-    template <typename T> 
+    template <typename T>
     T* createObject() {
         if (std::is_same<T, TimeSeries>::value) {
             return createObject<T>("TimeSeries");
@@ -66,8 +80,8 @@ public:
         }
         throw dnnException() << "Can't recognize type to create\n";
     }
-    
-    template <typename T> 
+
+    template <typename T>
     T* createObject(string name) {
         SerializableBase* b = createObject(name);
         T *p = dynamic_cast<T*>(b);

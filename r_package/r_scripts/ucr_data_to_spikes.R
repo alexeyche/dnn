@@ -17,7 +17,7 @@ ucr_data_to_spikes = function(
     ts_dir = pj(DATASETS_PLACE, "ucr")
     
     dir.create(ts_dst_dir, FALSE, TRUE)        
-    dir.create(dst_dir, FALSE, TRUE)
+    #dir.create(dst_dir, FALSE, TRUE)
     
     c(data_train, data_test) := read_ts_file(data_name, sample_size, ts_dir)
     min_train = min(sapply(data_train, function(x) min(x$data)))
@@ -62,7 +62,7 @@ ucr_data_to_spikes = function(
         sp$ts_info$labels_ids = as.numeric(sapply(labels, function(l) l_ids[[l]]))
         spikes_complect[[data_part]] = sp
         
-        fname = sprintf("%s/%s_%s_len_%s_classes_%s.pb", dst_dir, data_name, length(sel), length(sp$ts_info$unique_labels), data_part)
+        fname = sprintf("%s/%s_%s_len_%s_classes_%s.pb", ts_dir, data_name, length(sel), length(sp$ts_info$unique_labels), data_part)
         RProto$new(fname)$write(sp, "SpikesList")
         fname = sprintf("%s/%s_%s_len_%s_classes_%s.pb", ts_dst_dir, data_name, length(sel), length(sp$ts_info$unique_labels), data_part)
         RProto$new(fname)$write(list(values=c(sapply(ts[sel], function(x) x$data)), ts_info=sp$ts_info), "TimeSeries")

@@ -9,17 +9,18 @@ namespace dnn {
 
 class IOProcessor : public Processor {
 public:
-	IOProcessor() : tee(false) {}
-	
+	IOProcessor() : tee(false), dt(1.0) {}
+
 	void usage();
-    void processArgs(const vector<string> &args);    
+    void processArgs(const vector<string> &args);
     void start(Spikework::Stack &s);
     void end(Spikework::Stack &s);
-    
+
 private:
     string input_filename;
     string output_filename;
     bool tee;
+    double dt;
 };
 
 

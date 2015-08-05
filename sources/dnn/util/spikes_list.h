@@ -3,6 +3,9 @@
 
 #include "time_series.h"
 
+#include <dnn/util/ptr.h>
+#include <dnn/protos/spikes_list.pb.h>
+
 namespace dnn {
 
 
@@ -27,7 +30,7 @@ struct SpikesListInfo : public Serializable<Protos::SpikesListInfo> {
 
 struct SpikesList : public SerializableBase {
 	SpikesList() {}
-	
+
 	SpikesList(const size_t& size) {
 		seq.resize(size);
 	}
@@ -50,7 +53,7 @@ struct SpikesList : public SerializableBase {
 		}
 
 		(*this) << "SpikesList: "  << info;
-		
+
 		if (mode == ProcessingInput) {
 			seq.resize(info.size);
 		}
@@ -60,7 +63,7 @@ struct SpikesList : public SerializableBase {
 		}
 		(*this) << Self::end;
 	}
-	
+
 	vector<double>& operator [](const size_t &i) {
 		return seq[i].values;
 	}
@@ -68,6 +71,8 @@ struct SpikesList : public SerializableBase {
 	inline const size_t size() const {
 		return seq.size();
 	}
+	Ptr<TimeSeries> convertToBinaryTimeSeries(const double &dt) const;
+
 	TimeSeriesInfo ts_info;
 	vector<SpikesSequence> seq;
 };

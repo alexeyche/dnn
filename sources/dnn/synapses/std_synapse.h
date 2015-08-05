@@ -1,7 +1,7 @@
 #pragma once
 
 #include "synapse.h"
-#include <dnn/protos/generated.pb.h>
+#include <dnn/protos/std_synapse.pb.h>
 #include <dnn/io/serialize.h>
 
 namespace dnn {

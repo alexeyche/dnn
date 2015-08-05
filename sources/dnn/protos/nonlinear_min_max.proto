@@ -1,0 +1,9 @@
+package Protos;
+
+message NonLinearMinMaxC {
+    required double depression_factor = 1;
+    required double mu = 2;
+    required double min_weight = 3;
+    required double max_weight = 4;
+}
+

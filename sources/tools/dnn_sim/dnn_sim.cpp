@@ -48,17 +48,17 @@ struct DnnSimOpts {
 int main(int argc, char **argv) {
 	if(argc == 1) {
 		cout << usage;
-		return 0; 
+		return 0;
 	}
 	DnnSimOpts sopt;
 
 	bool need_help = false;
-	
+
 	OptionParser optp(argc, argv);
 	optp.option("--help", "-h", need_help, false, true);
-	if(need_help) { 
+	if(need_help) {
 		cout << usage;
-		return 0; 
+		return 0;
 	}
 	optp.option("--const", "-c", sopt.const_file, true);
 	optp.option("--output", "-o", sopt.out_spikes, false);
@@ -67,12 +67,12 @@ int main(int argc, char **argv) {
 	optp.option("--load", "-l", sopt.model_load, false);
 	optp.loption("--stat", sopt.out_stat_file, false);
 	optp.option("--T-max", "-T", sopt.Tmax, false);
-	
-	
+
+
 
 	vector<string> rest_opts = optp.getRawOptions();
 	sopt.add_opts = parseArgOptionsPairs(rest_opts);
-	
+
 	Constants c(sopt.const_file, sopt.add_opts);
 	Sim s(c);
 
@@ -108,4 +108,3 @@ int main(int argc, char **argv) {
 	}
 	return 0;
 }
- 

@@ -42,3 +42,24 @@ kernel = RProto$new(file)$read()
 
 file="/home/alexeyche/dnn/build/gram.pb"
 gram = RProto$new(file)$read()
+
+file="/home/alexeyche/dnn/build/f.csv"
+
+file="/home/alexeyche/dnn/build/out.pb"
+v = RProto$new(file)$read()
+for(val in v$values) {
+    vf = fft(v$values[[1]])
+    cat(Sys.time(), "\n")
+}
+
+v$values = list(v$values[[1]])
+v$ts_info = NULL
+#v$ts_info$labels_ids = as.integer(v$ts_info$labels_ids)
+#v$ts_info$labels_timeline = as.integer(v$ts_info$labels_timeline)
+
+file2="/home/alexeyche/dnn/build/out2.pb"
+
+RProto$new(file2)$write(v, "TimeSeries")
+
+
+

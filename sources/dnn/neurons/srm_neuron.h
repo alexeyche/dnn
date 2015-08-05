@@ -2,7 +2,7 @@
 
 #include <dnn/util/fastapprox/fastexp.h>
 #include "spike_neuron.h"
-#include <dnn/protos/generated.pb.h>
+#include <dnn/protos/srm_neuron.pb.h>
 #include <dnn/io/serialize.h>
 
 namespace dnn {

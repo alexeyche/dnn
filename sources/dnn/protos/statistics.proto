@@ -1,0 +1,14 @@
+package Protos;
+
+message Stat {
+    required int32 low_lim = 1;
+    required int32 high_lim = 2;
+    repeated double values = 3;
+}
+
+message StatisticsInfo {
+    required int32 low_lim = 1;
+    required int32 high_lim = 2;
+    repeated string stat_names = 3;
+}
+

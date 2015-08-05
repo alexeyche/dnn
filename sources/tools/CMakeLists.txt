@@ -6,6 +6,7 @@ set(DIRS
     dumptool
     mpl
     spikework
+    shapelets
 )
 
 foreach(dir ${DIRS})

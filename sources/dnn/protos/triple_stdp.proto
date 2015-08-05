@@ -1,0 +1,17 @@
+package Protos;
+
+message TripleStdpC {
+    required double tau_plus = 1;
+    required double tau_minus = 2;
+    required double tau_y = 3;
+    required double a_plus = 4;
+    required double a_minus = 5;
+    required double learning_rate = 6;
+}
+
+message TripleStdpState {
+    required double y = 1;
+    required double y_long = 2;
+    repeated double x = 3;
+}
+

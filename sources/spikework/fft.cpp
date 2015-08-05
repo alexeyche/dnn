@@ -15,7 +15,7 @@ void FFTProcessor::usage() {
 	cout << "\n";
 	IOProcessor::usage();
 }
-	
+
 void FFTProcessor::processArgs(const vector<string> &args) {
     IOProcessor::processArgs(args);
 	OptionParser op(args);
@@ -25,21 +25,20 @@ void FFTProcessor::processArgs(const vector<string> &args) {
 void FFTProcessor::fft(const vector<double> &src, vector<complex<double>> &dst) {
 	size_t vec_size = src.size();
 	if(vec_size % 2 != 0) {
-		cout << vec_size % 2 << "\n";
         vec_size--;
 	}
 
 	kiss_fft_cpx *data = (kiss_fft_cpx*)malloc(vec_size*sizeof(kiss_fft_cpx));
-	
+
 	for(size_t val_i=0; val_i<vec_size; ++val_i) {
     	data[val_i].r = src[val_i];
     	data[val_i].i = 0;
     }
 
 	kiss_fft_cfg c = kiss_fft_alloc(vec_size, 0, 0, 0);
-	
+
 	kiss_fft_cpx *fout = (kiss_fft_cpx*)malloc(sizeof(kiss_fft_cpx)*vec_size);
-	
+
 	kiss_fft(c, data, fout);
     free(data);
 
@@ -58,16 +57,16 @@ void FFTProcessor::ifft(const vector<complex<double>> &src, vector<double> &dst)
     }
 
     kiss_fft_cpx *data = (kiss_fft_cpx*)malloc(vec_size*sizeof(kiss_fft_cpx));
-    
+
     for(size_t val_i=0; val_i<vec_size; ++val_i) {
         data[val_i].r = src[val_i].real();
         data[val_i].i = src[val_i].imag();
     }
 
     kiss_fft_cfg c = kiss_fft_alloc(vec_size, 1, 0, 0);
-    
+
     kiss_fft_cpx *fout = (kiss_fft_cpx*)malloc(sizeof(kiss_fft_cpx)*vec_size);
-    
+
     kiss_fft(c, data, fout);
     free(data);
 
@@ -87,24 +86,25 @@ void FFTProcessor::process(Spikework::Stack &s) {
             throw dnnException() << "For inverse transform expecting time series with complex data (TimeSeriesComplex)";
         }
 		size_t dim_size = ts->data.size();
-		
-		Ptr<TimeSeriesComplex> out(Factory::inst().createObject<TimeSeriesComplex>());		
+
+		Ptr<TimeSeriesComplex> out(Factory::inst().createObject<TimeSeriesComplex>());
 
         for(size_t dim_i=0; dim_i<dim_size; ++dim_i) {
-            fft(ts->getVector(dim_i), out->getVector(dim_i));
+            cout << printNow(cout) << " fft dim " << dim_i << "\n";
+            fft(ts->getMutVector(dim_i), out->getMutVector(dim_i));
         }
-		s.push(out.as<SerializableBase>());        
-	} else 
+		s.push(out.as<SerializableBase>());
+	} else
     if(Ptr<TimeSeriesComplex> ts = input.as<TimeSeriesComplex>()) {
         if(!inverse) {
             throw dnnException() << "For fft transform expecting time series with real data (TimeSeries)";
         }
         size_t dim_size = ts->data.size();
-        
+
         Ptr<TimeSeries> out(Factory::inst().createObject<TimeSeries>());
-        
+
         for(size_t dim_i=0; dim_i<dim_size; ++dim_i) {
-            ifft(ts->getVector(dim_i), out->getVector(dim_i));
+            ifft(ts->getMutVector(dim_i), out->getMutVector(dim_i));
         }
         s.push(out.as<SerializableBase>());
     } else {

@@ -16,7 +16,7 @@ void ConvProcessor::usage() {
     cout << "\n";
     IOProcessor::usage();
 }
-    
+
 void ConvProcessor::processArgs(const vector<string> &args) {
     IOProcessor::processArgs(args);
     OptionParser op(args);
@@ -39,32 +39,38 @@ void ConvProcessor::start(Spikework::Stack &s) {
 void ConvProcessor::process(Spikework::Stack &s) {
     size_t paddingSize;
     {
+        cout << printNow(cout) << " conv pad start\n";
         Ptr<TimeSeries> filter = s.pop().as<TimeSeries>();
         Ptr<TimeSeries> input = s.pop().as<TimeSeries>();
-        
+
         paddingSize = filter->length();
-        
+
         input->padRightWithZeros(paddingSize);
         filter->padRightWithZeros(input->length()-paddingSize);
 
         s.push(input.as<SerializableBase>());
         s.push(filter.as<SerializableBase>());
+        cout << printNow(cout) << " conv pad end\n";
+
     }
     {
+        cout << printNow(cout) << " conv fft start\n";
         Ptr<TimeSeriesComplex> input_fft;
-        Ptr<TimeSeriesComplex> filter_fft;   
+        Ptr<TimeSeriesComplex> filter_fft;
         {
             FFTProcessor p;
             p.process(s);
             filter_fft = s.pop().as<TimeSeriesComplex>();
             p.process(s);
             input_fft = s.pop().as<TimeSeriesComplex>();
-        }        
-        input_fft.ref() * filter_fft.ref();    
-        s.push(input_fft);    
+        }
+        cout << printNow(cout) << " conv fft mult\n";
+        input_fft.ref() * filter_fft.ref();
+        s.push(input_fft);
+        cout << printNow(cout) << " conv fft end\n";
     }
     {
-        FFTProcessor p(true); 
+        FFTProcessor p(true);
         p.process(s);
     }
     {

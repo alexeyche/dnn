@@ -2,7 +2,7 @@
 
 
 #include "act_function.h"
-#include <dnn/protos/generated.pb.h>
+#include <dnn/protos/determ.pb.h>
 
 namespace dnn {
 

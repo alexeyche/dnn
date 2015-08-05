@@ -2,7 +2,7 @@
 
 
 #include "learning_rule.h"
-#include <dnn/protos/generated.pb.h>
+#include <dnn/protos/triple_stdp.pb.h>
 #include <dnn/io/serialize.h>
 #include <dnn/util/fastapprox/fastexp.h>
 

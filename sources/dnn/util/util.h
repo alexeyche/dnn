@@ -1,9 +1,14 @@
 #pragma once
 
+#include <vector>
+
+using std::vector;
 
 #include <dnn/base/base.h>
 #include <sys/stat.h>
 #include <dnn/contrib/rapidjson/document.h>
+
+
 
 namespace dnn {
 
@@ -56,8 +61,7 @@ map<string, string> parseArgOptionsPairs(const vector<string> &opts);
 unsigned long upper_power_of_two(unsigned long v);
 
 
-}
-
+ostream& printNow(ostream &o);
 
 template <typename Return, typename ...Parameters, typename ...Args>
 auto AssertiveCall(Return (*function)(Parameters...), Args&& ...args)
@@ -68,4 +72,6 @@ auto AssertiveCall(Return (*function)(Parameters...), Args&& ...args)
     } else {
         return Return{};
     }
+}
+
 }

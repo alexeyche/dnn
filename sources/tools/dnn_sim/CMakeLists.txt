@@ -26,7 +26,7 @@ include_directories(${CMAKE_SOURCE_DIR}/dnn)
 include_directories(${CMAKE_BINARY_DIR}/protos)
 # link dependencies of executable
 target_link_libraries(dnn_sim-bin
-    protos
+    dnn_protos
     ${PROTOBUF_LIBRARY}
     dnn
     m

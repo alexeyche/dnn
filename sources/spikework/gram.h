@@ -4,16 +4,18 @@
 
 
 namespace dnn {
-   
+
 class GramProcessor : public IOProcessor {
 public:
-    GramProcessor() : csv(false) {}
-    
+    enum EInnerProductMode { MUL, ACC };
+    GramProcessor() : text(false) {}
+
     void usage();
-    void processArgs(const vector<string> &args);    
+    void processArgs(const vector<string> &args);
     void process(Spikework::Stack &s);
 private:
-    bool csv;
+    bool text;
+    EInnerProductMode mode;
 };
 
 

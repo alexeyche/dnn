@@ -1,6 +1,6 @@
 #pragma once
 
-#include <dnn/protos/generated.pb.h>
+#include <dnn/protos/statistics.pb.h>
 #include <dnn/io/serialize.h>
 #include <regex>
 

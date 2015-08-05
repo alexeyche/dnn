@@ -1,5 +1,9 @@
 #pragma once
 
+#include <sstream>
+
+using std::stringstream;
+
 namespace dnn {
 
 struct dnnException : public std::exception
@@ -17,7 +21,7 @@ struct dnnException : public std::exception
  	const char * what () const throw () {
     	return ss.str().c_str();
   	}
-  	stringstream ss;  	
+  	stringstream ss;
 };
 
 struct dnnInterrupt : public std::exception {

@@ -7,14 +7,14 @@
 namespace dnn {
 
 class Kernel {
-    typedef std::function<double(double)> KernelFun;    
+    typedef std::function<double(double)> KernelFun;
 public:
     Kernel() : fun(nullptr) {}
     virtual ~Kernel() {}
     virtual void usage() = 0;
     virtual void processSpec(string spec) = 0;
 
-    Ptr<TimeSeries> generate(size_t dim, size_t length, double dt);    
+    Ptr<TimeSeries> generate(size_t dim, size_t length, double dt);
 protected:
     KernelFun fun;
 };

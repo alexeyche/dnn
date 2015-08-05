@@ -1,0 +1,9 @@
+package Protos;
+
+message PowMinMaxC {
+    required double power = 1;
+    required double mean_weight = 2;
+    required double min_weight = 3;
+    required double max_weight = 4;
+}
+

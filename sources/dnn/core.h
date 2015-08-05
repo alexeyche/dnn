@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <memory>
-#include <vector>
 #include <numeric>
 #include <functional>
 #include <sstream>
@@ -28,13 +27,13 @@
 #include <iterator>
 #include <complex>
 
+
 typedef google::protobuf::Message* ProtoMessage;
 
 using std::map;
 using std::set;
 using std::cout;
 using std::move;
-using std::vector;
 using std::accumulate;
 using std::stringstream;
 using std::istringstream;

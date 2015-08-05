@@ -3,7 +3,7 @@
 
 #include "act_function.h"
 
-#include <dnn/protos/generated.pb.h>
+#include <dnn/protos/exp_threshold.pb.h>
 #include <dnn/util/fastapprox/fastexp.h>
 #include <dnn/util/fastapprox/fastlog.h>
 

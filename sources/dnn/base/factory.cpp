@@ -44,25 +44,13 @@ Factory& Factory::inst() {
 }
 
 
-#define REG_TYPE(name) \
-	registerType<name>(#name);\
-
-#define REG_TYPE_WITH_CONST(name) \
-	registerType<name>(#name);\
-	registerType<name##C>(string(#name) + string("C"));\
-
-#define REG_TYPE_WITH_STATE_AND_CONST(name) \
-	registerType<name>(#name);\
-	registerType<name##C>(string(#name) + string("C"));\
-	registerType<name##State>(string(#name) + string("State"));\
-
 
 Factory::Factory() : registration_is_on(true) {
 	REG_TYPE(SpikeNeuronInfo);
 	REG_TYPE(SynapseInfo);
 	REG_TYPE(SimInfo);
 	REG_TYPE(LearningRuleInfo);
-	
+
 	REG_TYPE_WITH_STATE_AND_CONST(LeakyIntegrateAndFire);
 	REG_TYPE_WITH_STATE_AND_CONST(AdaptIntegrateAndFire);
 	REG_TYPE_WITH_STATE_AND_CONST(StaticSynapse);
@@ -89,7 +77,7 @@ Factory::Factory() : registration_is_on(true) {
 	REG_TYPE(SpikesList);
 	REG_TYPE(SpikesListInfo);
 	REG_TYPE(SpikesSequence);
-	
+
 	REG_TYPE(TimeSeries);
 	REG_TYPE(TimeSeriesInfo);
 	REG_TYPE(TimeSeriesDimInfo);
@@ -114,7 +102,7 @@ SerializableBase* Factory::createObject(string name) {
 		throw dnnException()<< "Failed to find method to construct type " << name << "\n";
 	}
 	SerializableBase* o = typemap[name]();
-	
+
 	if(registration_is_on) {
 		objects.push_back(o);
 		objects_map.insert(std::make_pair(o->name(), objects.size()-1));
@@ -132,7 +120,7 @@ ProtoMessage Factory::createProto(string name) {
 
 
 
-SerializableBase* Factory::getCachedObject(const string& filename) {	
+SerializableBase* Factory::getCachedObject(const string& filename) {
     if(cache_map.find(filename) == cache_map.end()) {
         ifstream f(filename);
         Stream s(f, Stream::Binary);

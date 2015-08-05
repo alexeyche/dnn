@@ -1,0 +1,6 @@
+package Protos;
+
+message SimInfo {
+    required double pastTime = 1;
+}
+

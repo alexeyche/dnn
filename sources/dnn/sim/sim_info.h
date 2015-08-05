@@ -1,6 +1,6 @@
 #pragma once
 
-#include <dnn/protos/generated.pb.h>
+#include <dnn/protos/sim_info.pb.h>
 #include <dnn/io/serialize.h>
 
 namespace dnn {

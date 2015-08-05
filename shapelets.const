@@ -1,0 +1,7 @@
+{
+    "ShapeletsConfig": {
+        "startSize": 10,
+        "endSize": 100,
+        "stepSize": 5
+    }
+}

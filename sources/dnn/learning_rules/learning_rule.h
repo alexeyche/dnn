@@ -6,6 +6,7 @@
 #include <dnn/util/ptr.h>
 #include <dnn/util/interfaced_ptr.h>
 #include <dnn/weight_normalizations/weight_normalization.h>
+#include <dnn/protos/learning_rule.pb.h>
 
 namespace dnn {
 
@@ -34,7 +35,7 @@ public:
 		i.propagateSynapseSpike =  &LearningRuleBase::__propagateSynapseSpikeDefault;
 		i.calculateDynamicsInternal = &LearningRuleBase::__calculateDynamicsDefault;
 	}
-	
+
 	template <typename T>
 	void provideInterface(LearningRuleInterface &i) {
         i.calculateDynamics = MakeDelegate(static_cast<T*>(this), &T::calculateDynamics);
@@ -46,7 +47,7 @@ public:
 	virtual void propagateSynapseSpike(const SynSpike &s) = 0;
 	virtual void calculateDynamics(const Time &t) = 0;
 	virtual void reset() = 0;
-		
+
 	Statistics& getStat() {
 		return stat;
 	}
@@ -56,7 +57,7 @@ public:
 	}
 
 	virtual void setWeightNormalization(WeightNormalizationBase *_norm) = 0;
-		
+
 	InterfacedPtr<WeightNormalizationBase>& getWeightNormalization() {
 		return norm;
 	}
@@ -78,7 +79,7 @@ struct LearningRuleInfo : public Serializable<Protos::LearningRuleInfo> {
 
 template <typename Constants, typename State, typename Neuron>
 class LearningRule : public LearningRuleBase {
-public:	
+public:
 	LearningRuleInfo getInfo() {
 		LearningRuleInfo info;
 		info.weight_normalization_is_set = norm.isSet();
@@ -118,7 +119,7 @@ public:
 		norm.set(_norm);
 		if(n.isSet()) {
 			norm.ref().linkWithNeuron(n.ref());
-		}	
+		}
 	}
 protected:
 	Ptr<Neuron> n;

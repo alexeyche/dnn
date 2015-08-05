@@ -5,7 +5,7 @@ source("env.R")
 
 fname = sprintf("%s/test_spikes.pb", SPIKES_PLACE)
 
-num_of_patterns = 101
+num_of_patterns = 3
 N = 50
 patt_len = 500
 gap_between_patterns = 0

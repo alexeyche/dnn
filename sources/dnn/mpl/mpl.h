@@ -4,7 +4,7 @@
 #include <dnn/util/matrix.h>
 #include <dnn/util/json.h>
 #include <dnn/util/time_series.h>
-#include <dnn/protos/generated.pb.h>
+#include <dnn/protos/mpl.pb.h>
 #include <dnn/io/serialize.h>
 
 namespace dnn {
@@ -12,13 +12,13 @@ namespace dnn {
 
 /*@GENERATE_PROTO@*/
 struct MatchingPursuitConfig : public Serializable<Protos::MatchingPursuitConfig> {
-	MatchingPursuitConfig() : 
+	MatchingPursuitConfig() :
 	  threshold(0.1)
 	, learn_iterations(100)
 	, jobs(4)
 	, learning_rate(1.0)
 	, filters_num(100)
-	, filter_size(100) 
+	, filter_size(100)
 	, learn(true)
 	, continue_learning(false)
 	, batch_size(1000)
@@ -96,19 +96,19 @@ struct FilterMatch : public Serializable<Protos::FilterMatch>  {
 
 
 class MatchingPursuit {
-public:	
+public:
 	MatchingPursuit(const MatchingPursuitConfig &_c) : c(_c) {
 		if(c.seed < 0) {
 			std::srand ( unsigned ( std::time(0) ) );
 		} else {
 			std::srand ( c.seed );
-		}		
+		}
 		filter.allocate(c.filters_num, c.filter_size);
 		for(size_t i=0; i<c.filters_num; ++i) {
 			double acc = 0.0;
 	        for(size_t j=0; j<c.filter_size; ++j) {
 	        	filter(i, j) = getNorm();
-	        	acc += filter(i, j) * filter(i, j);		        	
+	        	acc += filter(i, j) * filter(i, j);
 	        }
 	        double n = sqrt(acc);
 	        for(size_t j=0; j<c.filter_size; ++j) {
@@ -117,25 +117,25 @@ public:
 	    }
 	}
 
-	
+
 
 	struct SubSeqRet {
 		SubSeqRet() {}
-		
+
 		vector<FilterMatch> matches;
 		DoubleMatrix dfilter;
-		
+
 		vector<double> s;
 		vector<size_t> winners_id;
 	};
-	
+
 	vector<double> restore(const vector<FilterMatch> &matches) {
 		TimeSeries ts;
 		size_t max_t=0;
 		for(auto &m: matches) {
 			max_t = std::max(max_t, (size_t)m.t);
 		}
-		
+
 		vector<double> restored;
 		restored.resize(max_t + filter.ncol());
 		_restore(matches, restored);
@@ -168,14 +168,14 @@ public:
 
 		for(size_t ti=0; ti<(x.size()-self.filter.ncol()); ++ti) {
 			size_t ti_f = ti+self.filter.ncol();
-			for(size_t i=0; i<self.c.learn_iterations; ++i) {			
+			for(size_t i=0; i<self.c.learn_iterations; ++i) {
 				double max_s = -100;
 				size_t max_fi = 0;
 
 				for(size_t fi=0; fi<self.filter.nrow(); ++fi) {
 					double s_f=0;
 					for(size_t xi=ti; xi<ti_f; ++xi) {
-						s_f += x[xi] * self.filter(fi, xi-ti);					
+						s_f += x[xi] * self.filter(fi, xi-ti);
 					}
 
 					if (max_s<s_f) {
@@ -187,14 +187,14 @@ public:
 					FilterMatch m(max_fi, max_s, ti+from);
 
 					for(size_t xi=ti; xi<ti_f; ++xi) {
-						x[xi] -= m.s * self.filter(m.fi, xi-ti);						
+						x[xi] -= m.s * self.filter(m.fi, xi-ti);
 					}
 					r.matches.push_back(m);
 				} else {
 					break;
 				}
 			}
-		}	
+		}
 		if( (self.c.learn) && (r.matches.size()>0) ) {
 			vector<double> restored;
 			restored.resize(x.size());
@@ -209,7 +209,7 @@ public:
 		}
 		return r;
 	}
-	
+
 	struct MPLReturn {
 		MPLReturn() {}
 		vector<FilterMatch> matches;
@@ -217,7 +217,7 @@ public:
 
 	MPLReturn run(const TimeSeries &ts, const size_t dim) {
 		MPLReturn runret;
-		for(size_t bi=0; bi<ts.data[dim].values.size(); bi+=c.batch_size) { 
+		for(size_t bi=0; bi<ts.data[dim].values.size(); bi+=c.batch_size) {
 			vector<FilterMatch> matches;
 			vector<IndexSlice> slices = dispatchOnThreads(
 				std::min(ts.data[dim].values.size()-bi, c.batch_size), c.jobs
@@ -227,17 +227,17 @@ public:
 				futures.push_back(
 					std::async(
 						std::launch::async,
-						runOnSubSeq, 
-						std::cref(*this), 
-						std::cref(ts), 
-						dim, 
-						bi+slice.from, 
+						runOnSubSeq,
+						std::cref(*this),
+						std::cref(ts),
+						dim,
+						bi+slice.from,
 						bi+slice.to
 					)
 				);
 				//cout << "Running worker on slice " << bi+slice.from << ": " << bi+slice.to << "\n";
 			}
-			
+
 			vector<SubSeqRet> rets;
 			for(auto &fret: futures) {
 				SubSeqRet ret = fret.get();
@@ -245,7 +245,7 @@ public:
 				for(auto &m: ret.matches) {
 					runret.matches.push_back(m);
 				}
-				rets.push_back(ret);				
+				rets.push_back(ret);
 			}
 			if(c.learn) {
 				for(auto &ret : rets) {

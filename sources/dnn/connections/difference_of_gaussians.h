@@ -1,6 +1,7 @@
 #pragma once
 
 #include <dnn/connections/connection.h>
+#include <dnn/protos/difference_of_gaussians.pb.h>
 
 namespace dnn {
 
@@ -45,9 +46,9 @@ public:
             v = (1+c.a) * gaussFunction2d(right.xi(), right.yi(), left.xi(), left.yi(), c.r) - \
                       c.a * gaussFunction2d(right.xi(), right.yi(), left.xi(), left.yi(), c.b*c.r);
         } else {
-            throw dnnException() << "Can't build DifferenceOfGaussians with dimension like this: " << c.dimension << "\n" 
+            throw dnnException() << "Can't build DifferenceOfGaussians with dimension like this: " << c.dimension << "\n"
                                  << "Only 1 or 2 dimension supported\n";
-        }        
+        }
     	recipe.exists = true;
     	if(v<0) {
     		recipe.inhibitory = true;

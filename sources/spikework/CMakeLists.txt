@@ -1,11 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(spikework)
-
 
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into DNN.
 set(SOURCES
+    read.cpp
     gram.cpp
     kernel.cpp
     fft.cpp
@@ -37,7 +36,7 @@ SET_TARGET_PROPERTIES(spikework PROPERTIES COMPILE_FLAGS "-fPIC")
 
 target_link_libraries(spikework
     dnn
-    protos
+    dnn_protos
     ${PROTOBUF_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
     m
@@ -46,11 +45,11 @@ target_link_libraries(spikework
 install(TARGETS spikework  DESTINATION lib/ COMPONENT)
 
 install(
-    DIRECTORY 
+    DIRECTORY
     ${PROJECT_SOURCE_DIR}
-    DESTINATION 
+    DESTINATION
     include
-    FILES_MATCHING 
-    PATTERN "*.h" 
+    FILES_MATCHING
+    PATTERN "*.h"
     PATTERN "*.hpp"
 )

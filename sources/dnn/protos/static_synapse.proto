@@ -1,0 +1,10 @@
+package Protos;
+
+message StaticSynapseC {
+    required double psp_decay = 1;
+    required double amp = 2;
+}
+
+message StaticSynapseState {
+}
+

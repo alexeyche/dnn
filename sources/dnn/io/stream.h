@@ -16,21 +16,21 @@ class SerializableBase;
 class Stream {
 public:
     enum Repr { Binary, Text };
-    
-    Stream(istream &str, Repr _r = Binary, bool _destroy_stream=false) 
+
+    Stream(istream &str, Repr _r = Binary, bool _destroy_stream=false)
     : _input_str(&str)
     , r(_r)
     , destroy_stream(_destroy_stream)
     , _output_str(nullptr)
     , zeroOut(nullptr)
     , codedOut(nullptr)
-    ,zeroIn(nullptr)
-    , codedIn(nullptr) 
+    , zeroIn(nullptr)
+    , codedIn(nullptr)
     {
         if((_input_str)&&(!_input_str->good())) {
             throw dnnException()<< "Input filestream isn't open\n";
         }
-        if(r == Binary) {        
+        if(r == Binary) {
             zeroIn = new IstreamInputStream(_input_str);
             codedIn = new CodedInputStream(zeroIn);
             codedIn->SetTotalBytesLimit(300.0 * 1024 * 1024,300.0 * 1024 * 1024);
@@ -42,8 +42,8 @@ public:
             iterator = document.MemberBegin();
         }
     }
-    
-    Stream(ostream &str, Repr _r = Binary, bool _destroy_stream=false) 
+
+    Stream(ostream &str, Repr _r = Binary, bool _destroy_stream=false)
     : _output_str(&str)
     , r(_r)
     , _input_str(nullptr)
@@ -51,7 +51,7 @@ public:
     , zeroIn(nullptr)
     , codedIn(nullptr)
     , zeroOut(nullptr)
-    , codedOut(nullptr) 
+    , codedOut(nullptr)
     {
         if((_output_str)&&(!_output_str->good())) {
             throw dnnException()<< "Output filestream isn't open\n";
@@ -89,13 +89,13 @@ public:
     }
 
     void writeObject(SerializableBase *b);
-    SerializableBase* readBaseObject(SerializableBase *o = nullptr);    
-        
+    SerializableBase* readBaseObject(SerializableBase *o = nullptr);
+
     template <typename T>
     T* readObject(T *o = nullptr) {
         SerializableBase *b = readBaseObject(o);
         if(!b) return nullptr;
-        
+
         T *d = dynamic_cast<T*>(b);
         if(!d) {
             throw dnnException()<< "Failed to cast from " << b->name() << "\n";
@@ -106,19 +106,19 @@ public:
     T* safeReadObject() {
         SerializableBase *b = readBaseObject();
         if(!b) return nullptr;
-        
+
         return dynamic_cast<T*>(b);
     }
-    
+
     vector<ProtoMessage> readObjectProtos();
     void protoReader(vector<ProtoMessage> &messages);
     void jsonReader(string name, const Value &v, vector<ProtoMessage> &messages);
-    
+
     Repr getRepr() {
         return r;
     }
 
-    bool readBinaryMessage(ProtoMessage mess, istream *str) {        
+    bool readBinaryMessage(ProtoMessage mess, istream *str) {
         google::protobuf::uint32 size;
         if(!codedIn->ReadVarint32(&size)) {
                 return false;

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into SNN_SIM.
 set(DIRS
+    log
 )
 
 foreach(dir ${DIRS})
@@ -16,7 +17,7 @@ set(SOURCES
     util.h
     util.cpp
     json.cpp
-    #spikes_list.cpp
+    spikes_list.cpp
     #spikes_queue.cpp
     option_parser.cpp
 )

@@ -2,7 +2,7 @@
 
 #include "input.h"
 
-#include <dnn/protos/generated.pb.h>
+#include <dnn/protos/input_time_series.pb.h>
 #include <dnn/io/stream.h>
 
 namespace dnn {

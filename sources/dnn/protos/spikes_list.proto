@@ -1,0 +1,10 @@
+package Protos;
+
+message SpikesSequence {
+    repeated double values = 1;
+}
+
+message SpikesListInfo {
+    required uint32 size = 1;
+}
+

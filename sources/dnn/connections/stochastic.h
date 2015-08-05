@@ -1,6 +1,7 @@
 #pragma once
 
 #include <dnn/connections/connection.h>
+#include <dnn/protos/stochastic.pb.h>
 
 namespace dnn {
 

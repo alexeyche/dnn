@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vector>
+
+using std::vector;
 
 #include <dnn/contrib/pbjson/pbjson.hpp>
 #include <dnn/contrib/rapidjson/stringbuffer.h>
@@ -117,13 +120,13 @@ public:
 		}
 		throw dnnException()<< name << " expected as int\n";
 	}
-	
+
 	static Value getArray(const Value &v, const string name) {
 		Value f_v;
-		const Value &f_src = getVal(v, name);		
+		const Value &f_src = getVal(v, name);
 		f_v.CopyFrom(f_src, d.GetAllocator());
 		if (f_v.IsArray()) {
-			return f_v;	
+			return f_v;
 		}
 		Value f_v_arr(kArrayType);
 		f_v_arr.PushBack(f_v, d.GetAllocator());
@@ -175,7 +178,7 @@ public:
 	static Document parseStringC(const string &p) {
 		Document document;
 
-		document.Parse(p.c_str());		
+		document.Parse(p.c_str());
 
 		if (document.HasParseError()) {
 			vector<string> spl = split(p, '\n');
@@ -187,7 +190,7 @@ public:
 				offset -= spl[line_num].size();
 				line_num++;
 			}
-			throw dnnException() << "Parse JSON error:\n" 
+			throw dnnException() << "Parse JSON error:\n"
 							     << GetParseError_En(document.GetParseError()) << line_num + 1 << ":" << offset << "\n";
 		}
 		return document;
@@ -199,17 +202,17 @@ public:
 				stack.push_back(itr->name.GetString());
 				aggregateSubst(itr->value, stack, values);
 				stack.pop_back();
-			} else 
+			} else
 			if (itr->value.IsArray()) {
 				// ignoring arrays
 			} else {
 				stack.push_back(itr->name.GetString());
 				stringstream res;
-				std::copy(stack.begin(), stack.end(), std::ostream_iterator<string>(res, "/")); 
+				std::copy(stack.begin(), stack.end(), std::ostream_iterator<string>(res, "/"));
 				Value v;
 				v.CopyFrom(itr->value, d.GetAllocator());
 				string s = res.str();
-				
+
 				size_t endpos = s.find_last_not_of("/");
 				if( string::npos != endpos ) {
     				s = s.substr( 0, endpos+1 );
@@ -223,7 +226,7 @@ public:
 		for (Value::MemberIterator itr = v.MemberBegin(); itr != v.MemberEnd(); ++itr) {
 			if (itr->value.IsObject()) {
 				applySubst(itr->value, values);
-			} else 
+			} else
 			if (itr->value.IsString()) {
 				auto sub_ptr = values.find(itr->value.GetString());
 				if (sub_ptr != values.end()) {
@@ -237,7 +240,7 @@ public:
 		Document parsed = parseStringC(p);
 		vector<string> stack;
 		map<string, Value> values;
-		aggregateSubst(parsed, stack, values);		
+		aggregateSubst(parsed, stack, values);
 		applySubst(parsed, values);
 		return parsed;
 	}
@@ -248,7 +251,7 @@ public:
 		for (Value::MemberIterator itr = cv.MemberBegin(); itr != cv.MemberEnd(); ++itr) {
 	        const google::protobuf::Descriptor* descriptor = m->GetDescriptor();
 	        const google::protobuf::FieldDescriptor* field_descr = descriptor->FindFieldByName(itr->name.GetString());
-	        
+
 	        if(!field_descr) {
 	        	continue;
 	        }
