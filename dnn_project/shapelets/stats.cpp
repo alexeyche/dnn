@@ -14,15 +14,17 @@ Stats::Stats(const Dataset &_ds) : ds(_ds) {
         vector<vector<double>> cumSums;
         vector<vector<double>> cumSumsSquared;
         for(size_t di=0; di<ts->dim(); ++di) {
-            vector<double> v;
-            vector<double> v_sq;
+            auto vec = ts->getVector(di);
 
-            v.push_back(0.0);
-            v_sq.push_back(0.0);
+            vector<double> v(vec.size()+1);
+            vector<double> v_sq(vec.size()+1);
 
-            for(const auto &val: ts->getVector(di)) {
-                v.push_back(v.back() + val);
-                v_sq.push_back(v.back() + val*val);
+            v[0] = 0.0;
+            v_sq[0] = 0.0;
+
+            for(size_t k=0; k<vec.size(); ++k) {
+                v[k+1] = v[k] + vec[k];
+                v_sq[k+1] = v_sq[k] + vec[k]*vec[k];
             }
 
             cumSums.push_back(v);
@@ -68,6 +70,7 @@ void Stats::calculateSpecificStat(const Dataset &ds, Ptr<TimeSeries> currentTs) 
 }
 
 const vector<double>& Stats::cumulativeSum(const size_t &ts_id, const size_t &dim) const {
+    L_DEBUG << "Getting cum sum " << ts_id << "-" << dim;
     return cumulativeSums[ts_id][dim];
 }
 const vector<double>& Stats::squaredCumulativeSum(const size_t &ts_id, const size_t &dim) const {

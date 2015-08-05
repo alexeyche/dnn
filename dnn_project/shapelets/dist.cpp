@@ -13,12 +13,14 @@ namespace shapelets {
 
 double DistAlgorithm::mean(const Subsequence& sub, const Stats &stats, const size_t &dim) {
     const vector<double>& sums = stats.cumulativeSum(sub.id(), dim);
-    return (sums[sub.from()+sub.length()] - sums[sub.from()])/sub.length();
+    return (sums[ sub.from()+sub.length() ] - sums[sub.from()] )/sub.length();
 }
+
 double DistAlgorithm::meanSquared(const Subsequence& sub, const Stats &stats, const size_t &dim) {
     const vector<double>& sums = stats.squaredCumulativeSum(sub.id(), dim);
-    return (sums[sub.from()+sub.length()] - sums[sub.from()])/sub.length();
+    return (sums[ sub.from()+sub.length() ] - sums[sub.from()])/sub.length();
 }
+
 double DistAlgorithm::meanProd(const Subsequence& left_sub, const Subsequence& right_sub, const Stats &stats, const size_t &dim) {
     const Ptr<DoubleMatrix> &prod_stat = stats.meanProdMatrix(right_sub.id(), dim);
     return prod_stat->getElement(
@@ -35,12 +37,14 @@ double DistAlgorithm::sdist(const Subsequence &left, const Subsequence &right, c
     for(size_t di=0; di<left.dim(); ++di) {
         double m_left = mean(left, stats, di);
         double m_right = mean(right, stats, di);
-        L_DEBUG << m_left << " " << m_right;
+        L_DEBUG << "mean left: " << m_left << " mean right: " << m_right;
 
         double sq_m_left = meanSquared(left, stats, di);
         double sq_m_right = meanSquared(right, stats, di);
-        double mean_prod = meanProd(left, right, stats, di);
+        L_DEBUG << "sq mean left: " << sq_m_left << " sq mean right: " << sq_m_right;
 
+        double mean_prod = meanProd(left, right, stats, di);
+        L_DEBUG << "mean_prod: " << mean_prod;
         double cov = mean_prod - m_left * m_right;
         double sd2_left = sq_m_left - m_left * m_left;
         double sd2_right = sq_m_right - m_right * m_right;
@@ -57,7 +61,7 @@ double DistAlgorithm::sdist(const Subsequence &left, const Subsequence &right, c
             corr = cov/sqrt(sd2_left*sd2_right);
         }
         double dist2 = 2.0 * (1.0 - corr);
-        // L_INFO << "corr: " << corr << " dist2: " << dist2;
+        L_INFO << "corr: " << corr << " dist2: " << dist2;
 
         total_dist += dist2 > 1e-09 ? sqrt(dist2) : 0.0;
     }

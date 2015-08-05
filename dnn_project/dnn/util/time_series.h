@@ -156,10 +156,13 @@ struct TimeSeriesGeneric {
 		return data.size();
 	}
 
-	const ELEM& getValueAt(const size_t &index) {
+	const ELEM& getValueAt(const size_t &index) const {
 		return data[0].values[index];
 	}
-	const ELEM& getValueAtDim(const size_t &index, const size_t &dim) {
+	const ELEM& getValueAtDim(const size_t &index, const size_t &dim) const {
+		return data[dim].values[index];
+	}
+	const ELEM& operator () (const size_t &dim, const size_t &index) const {
 		return data[dim].values[index];
 	}
 	void assertOneLabel() {

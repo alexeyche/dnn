@@ -41,6 +41,7 @@ public:
     Ptr<TimeSeries> referent() {
         return _referent;
     }
+    const double& operator () (const size_t &dim, const size_t &id) const;
 private:
     Ptr<TimeSeries> _referent;
     size_t _id;

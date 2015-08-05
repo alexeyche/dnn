@@ -35,6 +35,9 @@ size_t Subsequence::dim() const {
     return _referent->dim();
 }
 
+const double& Subsequence::operator () (const size_t &dim, const size_t &id) const {
+    return _referent.ref()(dim, id);
+}
 
 }
 }

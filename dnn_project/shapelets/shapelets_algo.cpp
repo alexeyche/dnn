@@ -50,6 +50,7 @@ void ShapeletsAlgo::run(Dataset &dataset) {
                     double best_dist = std::numeric_limits<double>::max();
                     for(size_t comp_pos=0; comp_pos < (dataset(l)->length()-sub.length()); ++comp_pos) {
                         Subsequence comp_sub(dataset(l), l, comp_pos, sub.length());
+
                         stringstream ss;
                         ss << "right" << comp_pos << ".pb";
                         ofstream f2(ss.str());
@@ -60,6 +61,8 @@ void ShapeletsAlgo::run(Dataset &dataset) {
                         if(dist<best_dist) {
                             best_dist = dist;
                         }
+                        L_DEBUG << "==============================================";
+                        if(comp_pos>3) return;
                     }
                     L_INFO << "Best dist: " << best_dist;
                     return;

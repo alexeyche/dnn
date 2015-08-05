@@ -31,7 +31,9 @@ ucr_data_to_spikes = function(
     intercept = seq(min_val, max_val, length.out=N)
     data_complect = list(train=data_train, test=data_test)
     spikes_complect = list()
-    
+    if(norm) {
+        data_name = sprintf("%s_norm", data_name)
+    }
     for(data_part in names(data_complect)) {
         ts = data_complect[[data_part]]
         
@@ -65,9 +67,7 @@ ucr_data_to_spikes = function(
         }
         sp$ts_info$labels_ids = as.numeric(sapply(labels, function(l) l_ids[[l]]))
         spikes_complect[[data_part]] = sp
-        if(norm) {
-            data_name = sprintf("%s_norm", data_name)
-        }
+
         fname = sprintf("%s/%s_%s_len_%s_classes_%s.pb", ts_dir, data_name, length(sel), length(sp$ts_info$unique_labels), data_part)
         RProto$new(fname)$write(sp, "SpikesList")
         fname = sprintf("%s/%s_%s_len_%s_classes_%s.pb", ts_dst_dir, data_name, length(sel), length(sp$ts_info$unique_labels), data_part)
