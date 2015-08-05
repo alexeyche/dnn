@@ -26,6 +26,7 @@ void Subsequence::serial_process() {
         cut = cutTimeSeries();
     } else {
         cut = Factory::inst().createObject<TimeSeries>();
+        _referent.set(cut.ptr());
     }
     begin() << "Values: " << cut.ref() << Self::end;
 }

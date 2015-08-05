@@ -2,7 +2,7 @@
 	"folders":
 	[
 		{
-			"path": "sources"
+			"path": "dnn_project"
 		},
 		{
 			"path": "r_package/Rdnn/src"

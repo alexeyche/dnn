@@ -29,7 +29,7 @@ PKG_CXXFLAGS = -std=c++11
 
 PKG_CPPFLAGS=-I"@DNN_INCLUDE@"
 
-PKG_LIBS = -L"@DNN_LIB@" -ldnn  $(LIBS) 
+PKG_LIBS = -L"@DNN_LIB@" -ldnn -lshapelets  $(LIBS) 
 
 
 OBJECTS.root=RSim.o  RMpl.o mod.o 

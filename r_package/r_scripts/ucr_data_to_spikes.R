@@ -12,6 +12,7 @@ ucr_data_to_spikes = function(
   , gap_between_patterns = 0
   , data_name = synth
   , sel = c(1:10, 51:60, 101:110, 151:160)
+  , norm = FALSE
 ) {
     ts_dst_dir= TS_PLACE
     ts_dir = pj(DATASETS_PLACE, "ucr")
@@ -41,6 +42,9 @@ ucr_data_to_spikes = function(
         labels = NULL        
         time = 0
         for(i in sel) {
+            if(norm) {
+                ts[[i]]$data = (ts[[i]]$data - mean(ts[[i]]$data))/sd(ts[[i]]$data)
+            }
             for(x in ts[[i]]$data) {
                 d = abs(x - intercept)
                 ni = which(d == min(d))
@@ -61,7 +65,9 @@ ucr_data_to_spikes = function(
         }
         sp$ts_info$labels_ids = as.numeric(sapply(labels, function(l) l_ids[[l]]))
         spikes_complect[[data_part]] = sp
-        
+        if(norm) {
+            data_name = sprintf("%s_norm", data_name)
+        }
         fname = sprintf("%s/%s_%s_len_%s_classes_%s.pb", ts_dir, data_name, length(sel), length(sp$ts_info$unique_labels), data_part)
         RProto$new(fname)$write(sp, "SpikesList")
         fname = sprintf("%s/%s_%s_len_%s_classes_%s.pb", ts_dst_dir, data_name, length(sel), length(sp$ts_info$unique_labels), data_part)

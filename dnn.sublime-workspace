@@ -519,22 +519,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "sources/shapelets/shapelets_algo.cpp",
-			"settings":
-			{
-				"buffer_size": 2257,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "sources/shapelets/shapelets_algo.h",
-			"settings":
-			{
-				"buffer_size": 373,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -568,11 +552,24 @@
 	},
 	"file_history":
 	[
+		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RConstants.h",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/CMakeLists.txt",
+		"/home/alexeyche/prog/dnn/dnn_project/shapelets/CMakeLists.txt",
+		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RProto.h",
+		"/home/alexeyche/prog/dnn/dnn_project/shapelets/subsequence.h",
+		"/home/alexeyche/prog/dnn/dnn_project/shapelets/subsequence.cpp",
+		"/home/alexeyche/prog/dnn/sources/dnn/neurons/spike_neuron.h",
+		"/home/alexeyche/prog/dnn/sources/shapelets/subsequence.cpp",
+		"/home/alexeyche/prog/dnn/sources/dnn/CMakeLists.txt",
+		"/home/alexeyche/prog/dnn/sources/shapelets/shapelets_algo.h",
+		"/home/alexeyche/prog/dnn/sources/shapelets/shapelets_algo.cpp",
+		"/home/alexeyche/prog/dnn/sources/CMakeLists.txt",
+		"/home/alexeyche/prog/dnn/dnn.sublime-project",
+		"/home/alexeyche/prog/dnn/sources/shapelets/CMakeLists.txt",
 		"/home/alexeyche/prog/dnn/sources/shapelets/subsequence.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/io/serialize.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/io/stream.cpp",
 		"/home/alexeyche/prog/dnn/sources/dnn/io/stream.h",
-		"/home/alexeyche/prog/dnn/sources/shapelets/subsequence.cpp",
 		"/home/alexeyche/prog/dnn/sources/shapelets/dist.cpp",
 		"/home/alexeyche/prog/dnn/sources/shapelets/dataset.h",
 		"/home/alexeyche/distr/LogicalRelease/logicOrderLine.cpp",
@@ -580,13 +577,10 @@
 		"/home/alexeyche/prog/dnn/sources/shapelets/stats.h",
 		"/home/alexeyche/prog/dnn/sources/shapelets/stats.cpp",
 		"/home/alexeyche/distr/LogicalRelease/timeSeries.cpp",
-		"/home/alexeyche/prog/dnn/sources/shapelets/shapelets_algo.h",
 		"/home/alexeyche/distr/LogicalRelease/xyMatrix.cpp",
 		"/home/alexeyche/distr/LogicalRelease/logic.cpp",
-		"/home/alexeyche/prog/dnn/sources/shapelets/shapelets_algo.cpp",
 		"/home/alexeyche/prog/dnn/sources/shapelets/dist.h",
 		"/home/alexeyche/distr/LogicalRelease/xyMatrix.h",
-		"/home/alexeyche/prog/dnn/sources/shapelets/CMakeLists.txt",
 		"/home/alexeyche/prog/dnn/sources/tools/shapelets/shapelets.cpp",
 		"/home/alexeyche/prog/dnn/sources/shapelets/projection.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/base/factory.h",
@@ -598,7 +592,6 @@
 		"/home/alexeyche/prog/dnn/sources/dnn/mpl/mpl.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/protos/mpl.proto",
 		"/home/alexeyche/distr/LogicalRelease/timeSeries.h",
-		"/home/alexeyche/prog/dnn/sources/dnn/neurons/spike_neuron.h",
 		"/home/alexeyche/distr/LogicalRelease/logicOrderLine.h",
 		"/home/alexeyche/prog/dnn/sources/shapelets/shapelet.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/core.h",
@@ -631,7 +624,6 @@
 		"/home/alexeyche/prog/dnn/sources/shapelets/protos/shapelets_algo.proto",
 		"/home/alexeyche/prog/dnn/sources/spikework/kernel.h",
 		"/home/alexeyche/dnn/build/dnn/protos/generated.pb.h",
-		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RProto.h",
 		"/home/alexeyche/prog/dnn/sources/spikework/kernel.cpp",
 		"/home/alexeyche/prog/dnn/sources/spikework/conv.cpp",
 		"/home/alexeyche/prog/dnn/sources/spikework/io_processor.cpp",
@@ -676,7 +668,6 @@
 		"/home/alexeyche/prog/dnn/sources/spikeworklib/fft.h",
 		"/home/alexeyche/prog/dnn/sources/tools/spikework/fft.cpp",
 		"/home/alexeyche/prog/dnn/sources/spikeworklib/spikework.h",
-		"/home/alexeyche/prog/dnn/sources/CMakeLists.txt",
 		"/home/alexeyche/prog/dnn/sources/dnn/neurons/spike_neuron.cpp",
 		"/home/alexeyche/prog/dnn/sources/dnn/sim/builder.h",
 		"/home/alexeyche/prog/dnn/sources/dnn/sim/sim.h",
@@ -688,14 +679,7 @@
 		"/home/alexeyche/prog/dnn/sources/dnn/sim/sim.cpp",
 		"/home/alexeyche/prog/dnn/sources/dnn/learning_rules/srm_methods.h",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/mod.h",
-		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RMpl.h",
-		"/home/alexeyche/prog/dnn/sources/dnn/neurons/leaky_integrate_and_fire.h",
-		"/home/alexeyche/prog/dnn/sources/dnn/neurons/spike_sequence_neuron.h",
-		"/home/alexeyche/prog/dnn/sources/dnn/contrib/rapidjson/writer.h",
-		"/home/alexeyche/prog/dnn/sources/dnn/util/json.cpp",
-		"/home/alexeyche/prog/dnn/sources/dnn/sim/global_ctx.h",
-		"/home/alexeyche/prog/dnn/sources/dnn/sim/global_ctx.cpp",
-		"/home/alexeyche/cpp/sources/tools/dnn_sim/dnn_sim.cpp"
+		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RMpl.h"
 	],
 	"find":
 	{
@@ -714,6 +698,8 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"inst",
+			"DIRECTORY",
 			"Debug",
 			"getSe",
 			"DebugString",
@@ -839,9 +825,7 @@
 			"SpikeNeuronBase \\*n",
 			"\n};",
 			"setFired",
-			"n->",
-			"linkWithNeuron",
-			"getRidOfComments"
+			"n->"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -917,63 +901,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "sources/shapelets/shapelets_algo.cpp",
-					"settings":
-					{
-						"buffer_size": 2257,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1159,
-								1159
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 748.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "sources/shapelets/shapelets_algo.h",
-					"settings":
-					{
-						"buffer_size": 373,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								44,
-								44
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -1027,6 +956,22 @@
 		"selected_items":
 		[
 			[
+				"subs",
+				"dnn_project/shapelets/subsequence.cpp"
+			],
+			[
+				"rpro",
+				"src/RProto.h"
+			],
+			[
+				"spike",
+				"sources/dnn/neurons/spike_neuron.h"
+			],
+			[
+				"sub",
+				"sources/shapelets/subsequence.cpp"
+			],
+			[
 				"dis",
 				"sources/shapelets/dist.cpp"
 			],
@@ -1037,10 +982,6 @@
 			[
 				"stre",
 				"sources/dnn/io/stream.h"
-			],
-			[
-				"subs",
-				"sources/shapelets/subsequence.h"
 			],
 			[
 				"dist",
@@ -1061,10 +1002,6 @@
 			[
 				"stats",
 				"sources/shapelets/stats.cpp"
-			],
-			[
-				"sub",
-				"sources/shapelets/subsequence.h"
 			],
 			[
 				"time",
@@ -1097,10 +1034,6 @@
 			[
 				"data",
 				"sources/shapelets/dataset.h"
-			],
-			[
-				"spike",
-				"sources/dnn/neurons/spike_neuron.h"
 			],
 			[
 				"subse",
@@ -1237,10 +1170,6 @@
 			[
 				"gram",
 				"sources/spikework/gram.h"
-			],
-			[
-				"rpro",
-				"src/RProto.h"
 			],
 			[
 				"rpr",

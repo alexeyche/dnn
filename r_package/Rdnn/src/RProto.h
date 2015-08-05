@@ -4,6 +4,8 @@
 #include <dnn/io/stream.h>
 #include <dnn/util/matrix.h>
 #include <dnn/mpl/mpl.h>
+#include <shapelets/subsequence.h>
+
 #include <R.h>
 #include <Rinternals.h>
 
@@ -16,6 +18,7 @@
 #include "common.h"
 
 using namespace dnn;
+using namespace shapelets;
 
 class RProto {
 public:

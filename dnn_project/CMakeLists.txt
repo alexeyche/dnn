@@ -6,7 +6,7 @@ set(DNN_MINOR_VERSION 1)
 set(DNN_PATCH_VERSION 0)
 set(DNN_VERSION
   ${DNN_MAJOR_VERSION}.${DNN_MINOR_VERSION}.${DNN_PATCH_VERSION})
- 
+
 # First, define all the compilation options.
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information" OFF)
@@ -32,7 +32,7 @@ elseif(PROFILE)
   add_definitions(-DNDEBUG)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O3")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -g -O3")
-else()    
+else()
   add_definitions(-DNDEBUG)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O3")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -O3")
