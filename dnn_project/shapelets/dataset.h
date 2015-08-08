@@ -24,7 +24,9 @@ public:
     size_t C() const {
         return class_counts.size();
     }
-
+    const double& entropy() const {
+        return _entropy;
+    }
     Ptr<TimeSeries> operator() (const size_t &i) const {
         return ts_set[i];
     }
@@ -40,8 +42,23 @@ public:
     vector<Ptr<TimeSeries>>::const_iterator end() const {
         return ts_set.cend();
     }
+    const size_t& getTsLabelId(const size_t &i);
+
+    static double calcEntropy(const unordered_map<size_t, size_t> &_class_counts, const size_t &N);
+
+    template <typename K>
+    static void pushIntoHist(unordered_map<K, size_t> &hist, const K& v) {
+        auto p = hist.find(v);
+        if(p == hist.end()) {
+            hist.insert(std::make_pair(v, 1));
+        } else {
+            ++(p->second);
+        }
+    }
+
 private:
-    unordered_map<string, size_t> class_counts;
+    double _entropy;
+    unordered_map<size_t, size_t> class_counts;
     unordered_map<string, size_t> class_ids;
     vector<Ptr<TimeSeries>> ts_set;
 };

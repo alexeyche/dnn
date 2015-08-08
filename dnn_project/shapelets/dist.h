@@ -16,6 +16,8 @@ public:
     static double meanSquared(const Subsequence& sub, const Stats &stats, const size_t &dim);
     static double meanProd(const Subsequence& left_sub, const Subsequence& right_sub, const Stats &stats, const size_t &dim);
     static double sdist(const Subsequence &left, const Subsequence &right, const Stats &stats);
+
+    static const double MIN_DIST;
 };
 
 

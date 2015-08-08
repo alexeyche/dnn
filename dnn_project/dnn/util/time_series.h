@@ -165,6 +165,7 @@ struct TimeSeriesGeneric {
 	const ELEM& operator () (const size_t &dim, const size_t &index) const {
 		return data[dim].values[index];
 	}
+
 	void assertOneLabel() {
 		if(info.unique_labels.size() == 0) {
 			throw dnnException() << "Trying to get one label from nonlabeled time series\n";

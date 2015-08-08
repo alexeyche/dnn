@@ -70,7 +70,6 @@ void Stats::calculateSpecificStat(const Dataset &ds, Ptr<TimeSeries> currentTs) 
 }
 
 const vector<double>& Stats::cumulativeSum(const size_t &ts_id, const size_t &dim) const {
-    L_DEBUG << "Getting cum sum " << ts_id << "-" << dim;
     return cumulativeSums[ts_id][dim];
 }
 const vector<double>& Stats::squaredCumulativeSum(const size_t &ts_id, const size_t &dim) const {
@@ -92,11 +91,8 @@ void Stats::computeDistStat(
     if(dst.size() != ts_right.dim()) {
         throw dnnException() << "Right time series has wrong dimenstion";
     }
-
     size_t n = ts_left.length();
     size_t m = ts_right.length();
-
-    size_t L = (n > m) ? n : m;
 
     for(size_t di=0; di<dst.size(); ++di) {
         const vector<double> &x = ts_left.getVector(di);
@@ -104,24 +100,51 @@ void Stats::computeDistStat(
         DoubleMatrix &d = dst[di].ref();
         d.allocate(n+1, m+1);
 
-        int i , j , k;
-        for( k = 0 ; k < L ; k++ )
-        {
-            if( k <= n )
-            {
-                d(k,0) = x[k]*y[0];
-                for( i = k+1 , j = 1 ; i <= n && j <= m ; i++, j++ )
-                    d(i, j) = d(i-1, j-1)+x[i]*y[j];
-            }
-
-            if( k <= m )
-            {
-                d(0, k) = x[0]*y[k];
-                for( i = 1 , j = k+1 ; i <= n && j <= m ; i++, j++ )
-                   d(i, j) = d(i-1, j-1)+x[i]*y[j];
+        for(size_t col = 0; col < ts_left.length(); ++col) {
+            for(size_t row = 0; row < ts_right.length(); ++row) {
+                if( (col == 0) || (row == 0) ) {
+                    d(col, row) = 0.0;
+                    continue;
+                }
+                d(col, row) = d(col-1, row-1) + x[col-1] * y[row - 1];
             }
         }
+
     }
+
+
+    // size_t L = (n > m) ? n : m;
+
+    // for(size_t di=0; di<dst.size(); ++di) {
+    //     const vector<double> &x = ts_left.getVector(di);
+    //     const vector<double> &y = ts_right.getVector(di);
+        // DoubleMatrix &d = dst[di].ref();
+        // d.allocate(n+1, m+1);
+
+    //     int i , j , k;
+    //     for( k = 0 ; k < L ; k++ )
+    //     {
+    //         // L_DEBUG << "k: " << k;
+    //         if( k <= n )
+    //         {
+    //             d(k,0) = 0.0; //x[k]*y[0];
+    //             for( i = k+1 , j = 0 ; i < n && j < m ; i++, j++ ) {
+    //                 // L_DEBUG << "i: " << i;
+    //                 d(i+1, j) = d(i-1, j-1)+x[i]*y[j];
+    //             }
+    //         }
+
+    //         if( k <= m )
+    //         {
+    //             d(0, k) = 0.0; //x[0]*y[k];
+    //             for( i = 1 , j = k+0 ; i < n && j < m ; i++, j++ ) {
+    //                d(i, j) = d(i-1, j-1)+x[i]*y[j];
+    //                // L_DEBUG << "i: " << i;
+    //            }
+    //         }
+    //     }
+    //     // throw dnnException() << "OUT";
+    // }
 }
 
 

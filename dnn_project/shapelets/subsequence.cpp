@@ -23,6 +23,9 @@ Ptr<TimeSeries> Subsequence::cutTimeSeries() {
 void Subsequence::serial_process() {
     Ptr<TimeSeries> cut;
     if(mode == ProcessingOutput) {
+        if(!_referent.isSet()) {
+            throw dnnException() << "Trying serialize null subsequence\n";
+        }
         cut = cutTimeSeries();
     } else {
         cut = Factory::inst().createObject<TimeSeries>();

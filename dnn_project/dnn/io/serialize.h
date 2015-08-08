@@ -208,6 +208,7 @@ protected:
     ProcessMode mode;
 };
 
+void protobinSave(SerializableBase *b, const string fname);
 
 template <typename Proto>
 class Serializable : public SerializableBase {
@@ -374,6 +375,7 @@ T* as(SerializableBase *b) {
     }
     return p;
 }
+
 
 
 

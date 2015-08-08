@@ -11,6 +11,7 @@
 #include "subsequence.h"
 #include "projection.h"
 #include "dist.h"
+#include "orderline.h"
 
 namespace dnn {
 namespace shapelets {
@@ -30,6 +31,10 @@ ShapeletsAlgo::ShapeletsAlgo(const ShapeletsConfig &conf)
 
 void ShapeletsAlgo::run(Dataset &dataset) {
     Stats stats(dataset);
+
+    Subsequence best_subsequence;
+    Orderline::SplitStat best_split;
+
     for(size_t k=0; k<dataset.N(); ++k) {
         Ptr<TimeSeries> currentTs = dataset(k);
         L_DEBUG << "Perfoming main loop on dataset " << k;
@@ -39,39 +44,50 @@ void ShapeletsAlgo::run(Dataset &dataset) {
         for(size_t len = config.startSize ; len <= config.endSize; len += config.stepSize) {
             L_DEBUG << "Finding shapelets with length " << len;
             for(size_t pos = 0; pos < currentTs->length() - len + 1 ; pos++ ) {
-                Subsequence sub(currentTs, k, pos, len);
-                ofstream f("left.pb");
-                Stream s(f, Stream::Binary);
-                s.writeObject(&sub);
+                Subsequence candidate(currentTs, k, pos, len);
 
-                L_DEBUG << "Prepared candidate from " << pos << " to " << pos+len;
+                // L_DEBUG << "Prepared candidate from " << pos << " to " << pos+len;
+
+                Orderline line(dataset);
+
                 for(size_t l=0; l<dataset.N(); ++l) {
-                    Projection prj(l, dataset(l)->getLabelId(), len);
                     double best_dist = std::numeric_limits<double>::max();
-                    for(size_t comp_pos=0; comp_pos < (dataset(l)->length()-sub.length()); ++comp_pos) {
-                        Subsequence comp_sub(dataset(l), l, comp_pos, sub.length());
+                    for(size_t comp_pos=0; comp_pos < (dataset(l)->length()-candidate.length()); ++comp_pos) {
+                        Subsequence comp_sub(dataset(l), l, comp_pos, candidate.length());
 
-                        stringstream ss;
-                        ss << "right" << comp_pos << ".pb";
-                        ofstream f2(ss.str());
-                        Stream s2(f2, Stream::Binary);
-                        s2.writeObject(&comp_sub);
-
-                        double dist = DistAlgorithm::sdist(sub, comp_sub, stats);
+                        double dist = DistAlgorithm::sdist(candidate, comp_sub, stats);
                         if(dist<best_dist) {
                             best_dist = dist;
                         }
-                        L_DEBUG << "==============================================";
-                        if(comp_pos>3) return;
+                        if(fabs(best_dist - DistAlgorithm::MIN_DIST) < 1e-10) {
+                            break; // Nothing to do here
+                        }
                     }
-                    L_INFO << "Best dist: " << best_dist;
-                    return;
+
+                    line.insert(
+                        Projection(l, dataset.getTsLabelId(l), len, best_dist)
+                    );
+                }
+                if(line.illConditioned()) {
+                    // L_DEBUG << "Found ill conditioned order line. Ignoring ...";
+                    continue;
+                }
+                Orderline::SplitStat split_stat = line.makeBestSplit();
+                // L_INFO << "Comparing: ";
+                // L_INFO << best_split;
+                // L_INFO << split_stat;
+                if(split_stat.betterThan(best_split)) {
+                    // L_INFO << "Better!";
+                    best_split = split_stat;
+                    best_subsequence = candidate;
                 }
 
             }
         }
 
     }
+    L_INFO << "Final best split: " << best_split;
+    protobinSave(&best_subsequence, "best.pb");
 }
 
 
