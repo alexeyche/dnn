@@ -520,68 +520,26 @@
 	"buffers":
 	[
 		{
-			"file": "dnn_project/shapelets/dist.h",
+			"file": "dnn_project/shapelets/shapelets_algo.cpp",
 			"settings":
 			{
-				"buffer_size": 605,
+				"buffer_size": 2876,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "dnn_project/shapelets/subsequence.cpp",
+			"file": "dnn_project/shapelets/orderline.cpp",
 			"settings":
 			{
-				"buffer_size": 1107,
+				"buffer_size": 2794,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/home/alexeyche/distr/LogicalRelease/logicOrderLine.cpp",
+			"file": "dnn_project/shapelets/orderline.h",
 			"settings":
 			{
-				"buffer_size": 8533,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "/home/alexeyche/distr/LogicalRelease/timeSeries.cpp",
-			"settings":
-			{
-				"buffer_size": 2085,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "dnn_project/shapelets/projection.h",
-			"settings":
-			{
-				"buffer_size": 373,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"contents": "Searching 18 files for \"Printa\" (regex, case sensitive)\n\n/home/alexeyche/prog/dnn/dnn_project/shapelets/orderline.h:\n   16  \n   17  \n   18: class Orderline : public Printable {\n   19  public:\n   20      static bool betterSplitStats(const double &gainLeft, const double &gapLeft, const double &gainRight, const double &gapRight) {\n   ..\n   29      }\n   30  \n   31:     struct SplitStat : public Printable {\n   32          SplitStat() : gain(0.0), gap(0.0), split_dist(0.0), split_position(std::numeric_limits<size_t>::max()) {}\n   33          double gain;\n\n2 matches in 1 file\n\n\nSearching 18 files for \"Printa\" (regex, case sensitive)\n\n/home/alexeyche/prog/dnn/dnn_project/shapelets/orderline.h:\n   16  \n   17  \n   18: class Orderline : public Printable {\n   19  public:\n   20      static bool betterSplitStats(const double &gainLeft, const double &gapLeft, const double &gainRight, const double &gapRight) {\n   ..\n   29      }\n   30  \n   31:     struct SplitStat : public Printable {\n   32          SplitStat() : gain(0.0), gap(0.0), split_dist(0.0), split_position(std::numeric_limits<size_t>::max()) {}\n   33          double gain;\n\n2 matches in 1 file\n",
-			"settings":
-			{
-				"buffer_size": 1154,
-				"line_ending": "Unix",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
-			"file": "dnn_project/dnn/io/serialize.h",
-			"settings":
-			{
-				"buffer_size": 12028,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "dnn_project/dnn/io/serialize.cpp",
-			"settings":
-			{
-				"buffer_size": 219,
+				"buffer_size": 1992,
 				"line_ending": "Unix"
 			}
 		}
@@ -618,6 +576,13 @@
 	},
 	"file_history":
 	[
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/io/serialize.cpp",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/io/serialize.h",
+		"/home/alexeyche/prog/dnn/dnn_project/shapelets/projection.h",
+		"/home/alexeyche/distr/LogicalRelease/timeSeries.cpp",
+		"/home/alexeyche/distr/LogicalRelease/logicOrderLine.cpp",
+		"/home/alexeyche/prog/dnn/dnn_project/shapelets/subsequence.cpp",
+		"/home/alexeyche/prog/dnn/dnn_project/shapelets/dist.h",
 		"/home/alexeyche/prog/dnn/dnn_project/shapelets/orderline.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/shapelets/orderline.h",
 		"/home/alexeyche/prog/dnn/dnn_project/shapelets/shapelets_algo.cpp",
@@ -625,16 +590,10 @@
 		"/home/alexeyche/prog/dnn/dnn_project/shapelets/dataset.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/shapelets/subsequence.h",
 		"/home/alexeyche/prog/dnn/dnn_project/shapelets/dist.cpp",
-		"/home/alexeyche/prog/dnn/dnn_project/shapelets/dist.h",
-		"/home/alexeyche/prog/dnn/dnn_project/shapelets/subsequence.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/base/base.h",
-		"/home/alexeyche/prog/dnn/dnn_project/shapelets/projection.h",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/time_series.h",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/io/serialize.h",
 		"/home/alexeyche/prog/dnn/dnn_project/shapelets/shapelets_config.h",
-		"/home/alexeyche/distr/LogicalRelease/logicOrderLine.cpp",
 		"/home/alexeyche/distr/LogicalRelease/logic.cpp",
-		"/home/alexeyche/distr/LogicalRelease/timeSeries.cpp",
 		"/home/alexeyche/distr/LogicalRelease/xyMatrix.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/shapelets/stats.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/shapelets/shapelets_algo.h",
@@ -744,8 +703,7 @@
 		"/home/alexeyche/prog/dnn/sources/dnn/util/pretty_print.h",
 		"/home/alexeyche/prog/dnn/sources/tools/dumptool/dumptool.cpp",
 		"/home/alexeyche/prog/dnn/sources/tools/spikework/CMakeLists.txt",
-		"/home/alexeyche/prog/dnn/sources/dnn/learning_rules/optimal_stdp.cpp",
-		"/home/alexeyche/prog/dnn/sources/spikeworklib/spikework.cpp"
+		"/home/alexeyche/prog/dnn/sources/dnn/learning_rules/optimal_stdp.cpp"
 	],
 	"find":
 	{
@@ -753,7 +711,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 90.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"/home/alexeyche/prog/dnn/dnn_project/shapelets",
@@ -765,6 +723,8 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"Right",
+			"Left",
 			"Printa",
 			"left",
 			"gapDist",
@@ -890,9 +850,7 @@
 			"kiss_fftr",
 			"freq",
 			"mem",
-			"convertBa",
-			"turn",
-			"turnO"
+			"convertBa"
 		],
 		"highlight": true,
 		"in_selection": true,
@@ -900,6 +858,8 @@
 		"regex": true,
 		"replace_history":
 		[
+			"New",
+			"Base",
 			"right",
 			"",
 			"right",
@@ -969,49 +929,51 @@
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "dnn_project/shapelets/dist.h",
+					"file": "dnn_project/shapelets/shapelets_algo.cpp",
 					"settings":
 					{
-						"buffer_size": 605,
+						"buffer_size": 2876,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								147,
-								147
+								1552,
+								1552
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/C++/C++.tmLanguage"
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 674.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "dnn_project/shapelets/subsequence.cpp",
+					"file": "dnn_project/shapelets/orderline.cpp",
 					"settings":
 					{
-						"buffer_size": 1107,
+						"buffer_size": 2794,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								714,
-								714
+								2789,
+								2789
 							]
 						],
 						"settings":
@@ -1021,77 +983,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 90.0,
+						"translation.y": 872.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "/home/alexeyche/distr/LogicalRelease/logicOrderLine.cpp",
+					"file": "dnn_project/shapelets/orderline.h",
 					"settings":
 					{
-						"buffer_size": 8533,
+						"buffer_size": 1992,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3757,
-								3757
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 3154.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "/home/alexeyche/distr/LogicalRelease/timeSeries.cpp",
-					"settings":
-					{
-						"buffer_size": 2085,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								187,
-								187
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "dnn_project/shapelets/projection.h",
-					"settings":
-					{
-						"buffer_size": 373,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
+								1709,
+								1709
 							]
 						],
 						"settings":
@@ -1101,117 +1011,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"settings":
-					{
-						"buffer_size": 1154,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										165,
-										171
-									],
-									[
-										394,
-										400
-									],
-									[
-										743,
-										749
-									],
-									[
-										972,
-										978
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								746,
-								746
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"output_tag": 2,
-							"result_base_dir": "",
-							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 342.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "dnn_project/dnn/io/serialize.h",
-					"settings":
-					{
-						"buffer_size": 12028,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								11760,
-								11760
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 6289.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "dnn_project/dnn/io/serialize.cpp",
-					"settings":
-					{
-						"buffer_size": 219,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								75,
-								75
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C++/C++.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 594.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1258,6 +1058,14 @@
 	{
 		"height": 0.0
 	},
+	"output.sbt":
+	{
+		"height": 0.0
+	},
+	"output.sbt_error":
+	{
+		"height": 0.0
+	},
 	"replace":
 	{
 		"height": 62.0
@@ -1268,6 +1076,14 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"ord",
+				"dnn_project/shapelets/orderline.cpp"
+			],
+			[
+				"shape",
+				"dnn_project/shapelets/shapelets_algo.cpp"
+			],
 			[
 				"da",
 				"dnn_project/shapelets/dataset.h"
@@ -1295,10 +1111,6 @@
 			[
 				"data",
 				"dnn_project/shapelets/dataset.h"
-			],
-			[
-				"ord",
-				"dnn_project/shapelets/orderline.cpp"
 			],
 			[
 				"time",
@@ -1335,10 +1147,6 @@
 			[
 				"subs",
 				"dnn_project/shapelets/subsequence.cpp"
-			],
-			[
-				"shape",
-				"dnn_project/shapelets/shapelets_algo.cpp"
 			],
 			[
 				"rpro",

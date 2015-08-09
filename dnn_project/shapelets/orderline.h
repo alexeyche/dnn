@@ -17,10 +17,10 @@ class Dataset;
 
 class Orderline : public Printable {
 public:
-    static bool betterSplitStats(const double &gainLeft, const double &gapLeft, const double &gainRight, const double &gapRight) {
-        // L_DEBUG << "Comparing: " << gainLeft << " " << gapLeft << " and " << gainRight << " " << gapRight;
-        if( (gainRight > gainLeft ) ||
-            ((gainRight == gainLeft) && (gapRight > gapLeft)) ) {
+    static bool betterSplitStats(const double &gainBase, const double &gapBase, const double &gainNew, const double &gapNew) {
+        // L_DEBUG << "Comparing: " << gainBase << " " << gapBase << " and " << gainNew << " " << gapNew;
+        if( (gainNew > gainBase ) ||
+            ((gainNew == gainBase) && (gapNew > gapBase)) ) {
             // L_DEBUG << "true";
             return true;
         }
