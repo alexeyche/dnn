@@ -5,6 +5,11 @@ setwd(path.expand("~/dnn/r_scripts"))
 source("ucr_ts.R")
 source("env.R")
 
+
+norm = function(x) {
+    x/sqrt(sum(x^2))
+}
+
 ucr_data_to_spikes = function(
     N
   , sample_size
@@ -12,8 +17,12 @@ ucr_data_to_spikes = function(
   , gap_between_patterns = 0
   , data_name = synth
   , sel = c(1:10, 51:60, 101:110, 151:160)
-  , norm = FALSE
+  , znorm = FALSE
+  , vec_norm = FALSE
 ) {
+    if(znorm && vec_norm) {
+        stop("Need to choose one normalization method")
+    }
     ts_dst_dir= TS_PLACE
     ts_dir = pj(DATASETS_PLACE, "ucr")
     
@@ -31,8 +40,11 @@ ucr_data_to_spikes = function(
     intercept = seq(min_val, max_val, length.out=N)
     data_complect = list(train=data_train, test=data_test)
     spikes_complect = list()
-    if(norm) {
-        data_name = sprintf("%s_norm", data_name)
+    if(znorm) {
+        data_name = sprintf("%s_znorm", data_name)
+    } else
+    if(vec_norm) {
+        data_name = sprintf("%s_vec_norm", data_name)
     }
     for(data_part in names(data_complect)) {
         ts = data_complect[[data_part]]
@@ -44,9 +56,13 @@ ucr_data_to_spikes = function(
         labels = NULL        
         time = 0
         for(i in sel) {
-            if(norm) {
+            if(znorm) {
                 ts[[i]]$data = (ts[[i]]$data - mean(ts[[i]]$data))/sd(ts[[i]]$data)
+            } else
+            if(vec_norm) {
+                ts[[i]]$data = norm(ts[[i]]$data)
             }
+            
             for(x in ts[[i]]$data) {
                 d = abs(x - intercept)
                 ni = which(d == min(d))
@@ -71,37 +87,15 @@ ucr_data_to_spikes = function(
         fname = sprintf("%s/%s_%s_len_%s_classes_%s.pb", ts_dir, data_name, length(sel), length(sp$ts_info$unique_labels), data_part)
         RProto$new(fname)$write(sp, "SpikesList")
         fname = sprintf("%s/%s_%s_len_%s_classes_%s.pb", ts_dst_dir, data_name, length(sel), length(sp$ts_info$unique_labels), data_part)
-        RProto$new(fname)$write(list(values=c(sapply(ts[sel], function(x) x$data)), ts_info=sp$ts_info), "TimeSeries")
+        ts_data = c(sapply(ts[sel], function(x) x$data))
+        #ts_data = norm(ts_data)
+        RProto$new(fname)$write(
+            list(
+                values=ts_data
+              , ts_info=sp$ts_info
+            )
+            , "TimeSeries"
+        )
     }
     return(spikes_complect)
 }
-    
-save_spikes_complect = function(spikes_complect, dst_dir = SPIKES_PLACE) {
-    for(data_part in names(spikes_complect)) {
-        spl = spikes_complect[[data_part]]
-        labs = unique(spl$labels)
-        ts_info = list(
-            unique_labels = as.character(labs),
-            labels_ids = sapply(spl$labels, function(l) which(l == unique(spl$labels))) - 1,
-            labels_timeline = spl$timeline
-        )
-        out = list(
-            ts_info = ts_info,
-            values = spl$values
-        )   
-        spikes_complect[[data_part]] = out
-        ts_out = list(
-            ts_info = ts_info,
-            values = unlist(lapply(data_complect[[data_part]], function(x) x$data))
-        )
-        
-    }
-    
-    #prast(spikes_complect[["train"]]$values,T0=0,Tmax=1000)    
-}
-
-
-
-#sel = c(1:10)
-#sel = c(1:length(data_train))
-#sel = c(151:200)

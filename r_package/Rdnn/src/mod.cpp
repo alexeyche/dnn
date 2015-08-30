@@ -36,9 +36,9 @@ RCPP_MODULE(dnnMod) {
     .method("print", &RMatchingPursuit::print, "Print mpl instance")
     .method("restore", &RMatchingPursuit::restore, "Restore time series")
     ;
-//    Rcpp::class_<RGammatoneFB>("RGammatoneFB")
-//    .constructor()
-//    .method("calc", &RGammatoneFB::calc, "Run calculations")
-//    .method("print", &RGammatoneFB::print, "Print instance")
-//    ;
+   Rcpp::class_<RGammatoneFB>("RGammatoneFB")
+   .constructor()
+   .method("calc", &RGammatoneFB::calc, "Run calculations")
+   .method("print", &RGammatoneFB::print, "Print instance")
+   ;
 }

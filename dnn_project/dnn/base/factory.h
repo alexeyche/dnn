@@ -12,6 +12,7 @@ class ActFunctionBase;
 class TimeSeries;
 class TimeSeriesComplex;
 class DoubleMatrix;
+class SpikesList;
 
 #define REG_TYPE(name) \
     Factory::registerType<name>(#name);\
@@ -78,15 +79,19 @@ public:
         if (std::is_same<T, DoubleMatrix>::value) {
             return createObject<T>("DoubleMatrix");
         }
+        if (std::is_same<T, SpikesList>::value) {
+            return createObject<T>("SpikesList");
+        }
         throw dnnException() << "Can't recognize type to create\n";
     }
 
     template <typename T>
     T* createObject(string name) {
         SerializableBase* b = createObject(name);
+
         T *p = dynamic_cast<T*>(b);
         if (!p) {
-            throw dnnException()<< "Error to cast create object to its base" << "\n";
+            throw dnnException()<< "Error to cast while creating " << name << " to its base" << "\n";
         }
         return p;
     }

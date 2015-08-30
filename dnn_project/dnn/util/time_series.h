@@ -66,9 +66,6 @@ struct TimeSeriesInterface {
 
 template <typename DATA, typename ELEM>
 struct TimeSeriesGeneric {
-
-
-
 	TimeSeriesGeneric() {}
 
 	TimeSeriesGeneric(const vector<ELEM> &v) {
@@ -98,6 +95,19 @@ struct TimeSeriesGeneric {
 		}
 	}
 
+	void norm() {
+		for(size_t di=0; di < data.size(); ++di) {
+			ELEM acc(0.0);
+			for(const auto &v: data[di].values) {
+				acc += v*v;
+			}
+			acc = sqrt(acc);
+			for(auto &v: data[di].values) {
+				v = v / acc;
+			}
+		}
+	}
+
 	double innerProductMul(TimeSeriesGeneric<DATA, ELEM> &anotherTs) {
 		assertAnotherTs(anotherTs);
 		double acc = 1.0;
@@ -111,15 +121,22 @@ struct TimeSeriesGeneric {
 		assertAnotherTs(anotherTs);
 		double acc = 0.0;
 		for(size_t di=0; di < data.size(); ++di) {
-			acc += std::inner_product(data[di].values.begin(), data[di].values.end(), anotherTs.data[di].values.begin(), 0.0);
+			acc += std::inner_product(data[di].values.begin(), data[di].values.end(), anotherTs.data[di].values.begin(), 0.0)/data[di].values.size();
 		}
 		return acc;
 	}
+
 	void operator * (const TimeSeriesGeneric<DATA, ELEM> &anotherTs) {
-		assertAnotherTs(anotherTs);
+		if( ((dim() != anotherTs.dim())&&(anotherTs.dim() != 1)) || (length() != anotherTs.length()) ) {
+			throw dnnException() << "Can't multiply time series with different dimensions or length\n";
+		}
 		for(size_t di=0; di < data.size(); ++di) {
 			for(size_t vi=0; vi < data[di].values.size(); ++vi) {
-				data[di].values[vi] *= anotherTs.data[di].values[vi];
+				size_t another_ts_di = di;
+				if(anotherTs.dim() == 1) {
+					another_ts_di = 0;
+				}
+				data[di].values[vi] *= anotherTs.data[another_ts_di].values[vi];
 			}
 		}
 	}
@@ -135,6 +152,16 @@ struct TimeSeriesGeneric {
 	const vector<ELEM>& getVector(size_t ndim) const {
 		return const_cast<TimeSeriesGeneric<DATA,ELEM>&>(*this).getMutVector(ndim);
 	}
+
+	vector<double> getColumnVector(size_t xi) {
+		vector<double> col(dim());
+		for(size_t di=0; di < dim(); ++di) {
+			assert(xi<data[di].values.size());
+			col[di] = data[di].values[xi];
+		}
+		return col;
+	}
+
 	void addValue(size_t dim_index, ELEM val) {
 		if(dim_index == dim_info.size) {
 			dim_info.size = dim_index+1;
@@ -182,6 +209,12 @@ struct TimeSeriesGeneric {
 	const size_t& getLabelId() {
 		assertOneLabel();
 		return info.labels_ids[0];
+	}
+	void setDimSize(const size_t &size) {
+		while(dim_info.size < size) {
+			data.push_back(DATA());
+			dim_info.size = data.size();
+		}
 	}
 
 	TimeSeriesDimInfo dim_info;

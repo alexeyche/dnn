@@ -14,19 +14,22 @@ struct ShapeletsConfig : public Serializable<Protos::ShapeletsConfig> {
     : startSize(10)
     , endSize(100)
     , stepSize(5)
+    , poorCacheSize(5)
     {
     }
 
     void serial_process() {
         begin() << "startSize: " << startSize << ", "
                 << "endSize: " << endSize << ", "
-                << "stepSize: " << stepSize << Self::end;
+                << "stepSize: " << stepSize << ", "
+                << "poorCacheSize: " << poorCacheSize << Self::end;
     }
 
 
     size_t startSize;
     size_t endSize;
     size_t stepSize;
+    size_t poorCacheSize;
 };
 
 

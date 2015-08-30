@@ -4,25 +4,30 @@
 #include <fstream>
 
 #include <dnn/core.h>
-#include <dnn/mpl/mpl.h>
+#include <mpl/mpl.h>
 #include <dnn/util/option_parser.h>
 #include <dnn/io/stream.h>
 #include <dnn/util/time_series.h>
 
+#include <dnn/util/log/log.h>
+
 using namespace dnn;
+using namespace mpl;
 using namespace rapidjson;
 
 const char * usage = R"USAGE(
 Matching Pursuit Learning tool
 
-    --input, -i   input time series
-    --filter, -f   filter protobin file
-    --spikes, -s spikes
-    --help,  -h   for this menu
-    --dim,   -d   index of dimension of input time series to use
-    --restored,   -r   calculate restored time series and print error (not required)
-    --config, -c json file with structure like this, to override defaults:
-
+    --input, i        input time series
+    --filter, -f      filter protobin file
+    --spikes, -s      spikes to save
+    --matches, -m     filter matches to save
+    --dim, -d         index of dimension of input time series to use
+    --restored, -r    calculate restored time series and print error (not required)
+    --verbose, -v     turn on verbose logging
+    --no-colors, -nc  no colors while logging
+    --help, -h        for this menu
+    --config, -c      json file with structure like this, to override defaults:
 %s
 )USAGE";
 
@@ -46,8 +51,11 @@ int main(int argc, char **argv) {
     string spikes_file;
     string config_file;
     string filter_file;
+    string matches_file;
     bool need_help = false;
+    bool verbose = false;
     int dimension = 0;
+    bool no_colors = false;
     string restored_ts;
     optp.option("--help", "-h", need_help, false, true);
     if(need_help) {
@@ -57,10 +65,19 @@ int main(int argc, char **argv) {
     optp.option("--input", "-i", input_file, true);
     optp.option("--filter", "-f", filter_file);
     optp.option("--spikes", "-s", spikes_file, false);
+    optp.option("--matches", "-m", matches_file, false);
     optp.option("--config", "-c", config_file, false);
     optp.option("--dim", "-d", dimension, false);
     optp.option("--restored", "-r", restored_ts, false);
+    optp.option("--verbose", "-v", verbose, false, true);
+    optp.option("--no-colors", "-nc", no_colors, false, true);
 
+    if(verbose) {
+        Log::inst().setLogLevel(Log::DEBUG_LEVEL);
+    }
+    if(!no_colors) {
+        Log::inst().setColors();
+    }
 
     MatchingPursuitConfig c;
 
@@ -71,7 +88,7 @@ int main(int argc, char **argv) {
     MatchingPursuit mpl(c);
 
     if( (fileExists(filter_file)) && ( (!c.learn) || c.continue_learning )) {
-        cout << "Reading filter from " << filter_file << "\n";
+        L_INFO << "Reading filter from " << filter_file;
         std::ifstream ifs(filter_file);
         Factory::inst().registrationOff();
         DoubleMatrix *f = Stream(ifs, Stream::Binary).readObject<DoubleMatrix>();
@@ -96,6 +113,12 @@ int main(int argc, char **argv) {
     if(!spikes_file.empty()) {
         std::ofstream ofs(spikes_file);
         Stream s(ofs, Stream::Binary);
+        Ptr<SpikesList> sl = MatchingPursuit::convertMatchesToSpikes(r.matches);
+        s.writeObject(sl.ptr());
+    }
+    if(!matches_file.empty()) {
+        std::ofstream ofs(matches_file);
+        Stream s(ofs, Stream::Binary);
         for(auto &m: r.matches) {
             s.writeObject(&m);
         }
@@ -105,6 +128,12 @@ int main(int argc, char **argv) {
 
     if(!restored_ts.empty()) {
         vector<double> v = mpl.restore(r.matches);
+        double v_denom = 0.0;
+        for(auto &v_el :v) {
+            v_denom += v_el * v_el;
+        }
+        v_denom = sqrt(v_denom);
+
         TimeSeries ts_rest(v);
         std::ofstream s(restored_ts);
         Stream(s, Stream::Binary).writeObject(&ts_rest);
@@ -113,13 +142,13 @@ int main(int argc, char **argv) {
             const double& orig_val = ts->getValueAtDim(vi, dimension);
             double rest_val;
             if(vi < v.size()) {
-                rest_val = v[vi];
+                rest_val = v[vi]/v_denom;
             } else {
                 rest_val = 0.0;
             }
             acc_error += (orig_val - rest_val)*(orig_val - rest_val);
         }
-        cout << "\nAccumulated error: " << 1000*acc_error/ts->length() << "\n";
+        L_INFO << "Accumulated error: " << 100000*acc_error/ts->length();
         // Document d;
         // d.SetObject();
         // d.AddMember("accum_error", acc_error, d.GetAllocator());

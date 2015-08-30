@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 2.8)
 set(DIRS
     pbjson
     kiss_fft
+    spdlog
 )
 
 foreach(dir ${DIRS})

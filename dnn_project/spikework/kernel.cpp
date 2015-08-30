@@ -1,131 +1,129 @@
 
 #include "kernel.h"
-#include "conv.h"
-#include "fft.h"
+#include "kernel_factory.h"
 
-#include <dnn/util/time_series.cpp>
 #include <dnn/util/util.h>
-#include <dnn/util/option_parser.h>
+#include <dnn/util/matrix.h>
 
 
 namespace dnn {
 
-// generic kernel creation
-Ptr<TimeSeries> Kernel::generate(size_t dim, size_t length, double dt) {
-    if(fun == nullptr) {
-        throw dnnException() << "Need to specify kernel function before generating\n";
-    }
-    Ptr<TimeSeries> out(Factory::inst().createObject<TimeSeries>());
-    for(size_t di=0; di<dim; ++di) {
-        double max_t = length * dt;
-        for(double s=0; s<max_t; s+=dt) {
-            double v = fun(s);
-            out->addValue(di, v);
-        }
-    }
-    return out;
-}
 
-// kernels
-void EpspKernel::usage() {
-    cout << "kernel that specified by exponential rise and decay, or decay only: Epsp(5, 15), Epsp(15), accordingly\n";
-}
-void EpspKernel::processSpec(string spec) {
-    vector<string> spec_spl = split(spec, ',');
-    if(spec_spl.size() == 1) {
-        double tau_decay = std::stof(trimC(spec_spl[0], " \t()"));
-        fun = [=](double t) {
-            return (1/tau_decay) * exp(-t/tau_decay);
-        };
-    } else
-    if(spec_spl.size() == 2) {
-        double tau_rise = std::stof(trimC(spec_spl[0], " \t()"));
-        double tau_decay = std::stof(trimC(spec_spl[1], " \t()"));
-        if(fabs(tau_rise - tau_decay) < 1e-06) {
-            tau_decay += 1e-05;
-        }
-        fun = [=](double t) {
-            return (1/(1-tau_rise/tau_decay)) * (exp(-t/tau_decay) - exp(-t/tau_rise));
-        };
-    } else {
-        stringstream ss;
-        for(auto &v: spec_spl) {
-            ss << v;
-        }
-        throw dnnException() << "EpspKernel: Unexpected parameters: " << ss.str() << "\n";
-    }
-}
-
-
-
-// kernel processor
-
-KernelProcessor::KernelProcessor() : kernel_length(100), kernel_dt(1.0) {
-    kernel_map["Epsp"] = &createKernel<EpspKernel>;
-}
-
-KernelProcessor::~KernelProcessor() {
+KernelWorker::~KernelWorker() {
     if(kernel) {
         delete kernel.ptr();
     }
+    if(kernel_proc) {
+        delete kernel_proc.ptr();
+    }
 }
 
-void KernelProcessor::usage() {
-    cout << "KernelProcessor applying specifed kernel\n";
-    cout << "\t--kernel,  -k  kernel specification (required)\n";
-    cout << "\t--length,  -l  kernel length (optional, default " << kernel_length << ")\n";
-    cout << "\t--dt,      -d  kernel resolution (optional, default " << kernel_dt << ")\n";
+
+
+
+void KernelWorker::usage() {
+    cout << "KernelWorker applying specifed kernel\n";
+    cout << "\t--kernel,  -k        kernel specification (required)\n";
+    cout << "\t--preprocessor,  -p  preprocessor specification\n";
+    cout << "\t--text FILE,      print to file (- for stdout) kernel matrix in text representation\n";
     cout << "\n";
     cout << "available kernels:\n";
-    for(const auto &k: kernel_map) {
-        cout << "\t" <<  k.first << "\t";
-        k.second()->usage();
-    }
-    cout << "\n";
-    IOProcessor::usage();
-}
-
-void KernelProcessor::processArgs(const vector<string> &args) {
-    IOProcessor::processArgs(args);
-    OptionParser op(args);
-    string kernel_spec;
-    op.option("--kernel", "-k", kernel_spec, true);
-    op.option("--length", "-l", kernel_length, false);
-    op.option("--dt", "-d", kernel_dt, false);
-    for(const auto &k: kernel_map) {
-        if(strStartsWith(trimC(kernel_spec), k.first)) {
-            kernel = k.second();
-            replaceStr(kernel_spec, k.first, "", 1);
-
-            kernel->processSpec(kernel_spec);
+    for(const auto &k: KernelFactory::inst().getKernelsMap()) {
+        cout << "\t" <<  k.first << "\n";
+        stringstream ss;
+        k.second()->usage(ss);
+        for(auto l: split(ss.str(), '\n')) {
+            cout << "\t\t" << l << "\n";
         }
     }
-    if(!kernel) {
+    cout << "\n";
+    cout << "available preprocessors:\n";
+    for(const auto &k:  KernelFactory::inst().getKernelPreprocessorsMap()) {
+        cout << "\t" <<  k.first << "\n";
+        stringstream ss;
+        k.second()->usage(ss);
+        for(auto l: split(ss.str(), '\n')) {
+            cout << "\t\t" << l << "\n";
+        }
+    }
+    cout << "\n";
+
+    IOWorker::usage();
+}
+
+void KernelWorker::processArgs(vector<string> &args) {
+    IOWorker::processArgs(args);
+    OptionParser op(args);
+    string kernel_spec;
+    string kernel_preproc_spec;
+
+    op.option("--kernel", "-k", kernel_spec, false);
+    op.option("--preprocessor", "-p", kernel_preproc_spec, false);
+    op.loption("--text", text_file, false);
+    op.checkEmpty();
+
+    if(!kernel_spec.empty()) {
+        kernel = KernelFactory::inst().createKernel(kernel_spec);
+    }
+    if(!kernel_preproc_spec.empty()) {
+        kernel_proc = KernelFactory::inst().createKernelPreprocessor(kernel_preproc_spec);
+    }
+
+    if((!kernel)&&(!kernel_proc)) {
         throw dnnException() << "Can't recognize kernel specification: " << kernel_spec << "\n";
     }
 }
 
-void KernelProcessor::start(Spikework::Stack &s) {
-    IOProcessor::start(s);
+void KernelWorker::start(Spikework::Stack &s) {
+    IOWorker::start(s);
 }
 
-void KernelProcessor::process(Spikework::Stack &s) {
-    {
-        cout << printNow(cout) << " kernel start\n";
+void KernelWorker::process(Spikework::Stack &s) {
+    if(kernel_proc) {
+        L_DEBUG << "KernelWorker, Start preprocessing";
+        IKernelPreprocessor &k = kernel_proc.ref();
         Ptr<TimeSeries> ts = s.pop().as<TimeSeries>();
-        Ptr<TimeSeries> kernel_ts = kernel->generate(ts->dim(), kernel_length, kernel_dt);
-        s.push(ts);
-        s.push(kernel_ts);
-        cout << printNow(cout) << " kernel end\n";
+        Ptr<TimeSeries> ts_out = k(ts);
+        s.push(ts_out);
+        L_DEBUG << "KernelWorker, End preprocessing";
     }
-    {
-        cout << printNow(cout) << " conv start\n";
-        ConvProcessor conv;
-        conv.process(s);
-        cout << printNow(cout) << " conv end\n";
+    if(kernel) {
+        L_DEBUG << "KernelWorker, Start applying kernel";
+        IKernel &k = kernel.ref();
+
+        Ptr<TimeSeries> ts = s.pop().as<TimeSeries>();
+
+        vector<Ptr<TimeSeries>> ts_chopped = ts->chop();
+        if(ts_chopped.size() == 0) {
+            throw dnnException() << "Got zero sized time series list, check presence of time series information\n";
+        }
+        Ptr<DoubleMatrix> gram_matrix(Factory::inst().createObject<DoubleMatrix>());
+        DoubleMatrix &m = gram_matrix.ref();
+        m.allocate(ts_chopped.size(), ts_chopped.size());
+        for(size_t i=0; i<ts_chopped.size(); ++i) {
+            m.setRowLabel(i, ts_chopped[i]->getLabel());
+            for(size_t j=0; j<ts_chopped.size(); ++j) {
+                m.setColLabel(j, ts_chopped[j]->getLabel());
+                m(i, j) = k.process(ts_chopped[i], ts_chopped[j]);
+            }
+        }
+        L_DEBUG << "KernelWorker, End applying kernel";
+        if(!text_file.empty()) {
+            if(text_file == "-") {
+                m.textRepr(cout);
+            } else {
+                ofstream f(text_file);
+                if(!f.good()) {
+                    throw dnnException() << "Can't open " << text_file << "\n";
+                }
+                m.textRepr(f);
+            }
+        }
+        s.push(gram_matrix);
     }
 }
 
 
-}
 
+
+}

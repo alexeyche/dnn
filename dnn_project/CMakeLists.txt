@@ -61,4 +61,6 @@ add_subdirectory(dnn)
 add_subdirectory(shapelets)
 add_subdirectory(spikework)
 add_subdirectory(tools)
+add_subdirectory(mpl)
+
 

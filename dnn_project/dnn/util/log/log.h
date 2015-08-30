@@ -16,6 +16,9 @@ public:
     Log()
     {
         log = spdlog::stdout_logger_mt("console");
+        log->set_pattern("LOG [%H:%M:%S %z] [thread %t]: %v");
+    }
+    void setColors() {
         log->set_pattern("\x1b[32mLOG [%H:%M:%S %z] [thread %t]: %v\x1b[0m");
     }
 

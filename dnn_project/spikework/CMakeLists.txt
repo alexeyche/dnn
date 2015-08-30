@@ -7,9 +7,10 @@ set(SOURCES
     read.cpp
     gram.cpp
     kernel.cpp
+    kernel_factory.cpp
     fft.cpp
     conv.cpp
-    io_processor.cpp
+    io_worker.cpp
     spikework.cpp
 )
 
@@ -23,6 +24,7 @@ endforeach()
 set(DNN_SRCS ${DIR_SRCS})
 
 set(DIRS
+    kernels
 )
 
 foreach(dir ${DIRS})

@@ -10,6 +10,7 @@ set(SOURCES
     dataset.cpp
     stats.cpp
     subsequence.cpp
+    common.cpp
 )
 
 # add directory name to sources

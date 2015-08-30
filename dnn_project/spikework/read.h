@@ -1,13 +1,13 @@
 #pragma once
 
-#include "io_processor.h"
+#include "io_worker.h"
 
 
 namespace dnn {
 
-class ReadProcessor : public IOProcessor {
+class ReadWorker : public IOWorker {
 public:
-    ReadProcessor() {}
+    ReadWorker() {}
     void usage();
     void process(Spikework::Stack &s);
 };

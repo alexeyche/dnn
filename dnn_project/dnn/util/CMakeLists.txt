@@ -13,13 +13,12 @@ endforeach()
 
 set(SOURCES
     matrix.cpp
-    matrix.h
-    util.h
     util.cpp
     json.cpp
     spikes_list.cpp
     #spikes_queue.cpp
     option_parser.cpp
+    func_param_parser.cpp
 )
 
 # add directory name to sources

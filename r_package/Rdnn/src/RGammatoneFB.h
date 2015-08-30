@@ -6,30 +6,35 @@
 
 #include "common.h"
 
-#include <snnlib/util/gammatone_fb.h>
+#include <dnn/util/gammatone_fb.h>
 
 
 class RGammatoneFB {
 public:
     RGammatoneFB() {}
     Rcpp::List calc(Rcpp::NumericVector x, Rcpp::NumericVector freqs, double sampling_rate, int hrect, int verbose) {
-        vector<vector<double>> membrane;
+        Rcpp::NumericMatrix membrane(freqs.size(), x.size());
         vector<vector<double>> hilbert_envelope;
         vector<vector<double>> inst_phase;
         vector<vector<double>> inst_freq;
 
         vector<double> xv = Rcpp::as<vector<double>>(x);
+        size_t i=0;
         for(auto it = freqs.begin(); it != freqs.end(); ++it) {
             vector<double> out_f;
             GammatoneFilter f( (verbose>0) ? GammatoneFilter::Options::Full : GammatoneFilter::Options::OnlyMembrane);
 
             f.calc(xv, sampling_rate, *it, hrect);
-            membrane.push_back(f.membrane);
+            for(size_t j=0; j<f.membrane.size(); ++j) {
+                membrane(i,j) = f.membrane[j];
+            }
+
             if(verbose>0) {
                 hilbert_envelope.push_back(f.hilbert_envelope);
                 inst_phase.push_back(f.inst_phase);
                 inst_freq.push_back(f.inst_freq);
             }
+            ++i;
         }
         Rcpp::List list_out;
         list_out["membrane"] = membrane;
@@ -44,7 +49,7 @@ public:
         cout << "GammatoneFB instance\n";
     }
 
-    size_t verbose;    
+    size_t verbose;
 };
 
 #endif

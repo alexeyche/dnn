@@ -15,14 +15,18 @@ endforeach()
 set(DNN_SRCS ${DNN_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
-add_executable(mpl
+add_executable(mpl-bin
     mpl_main.cpp
 )
 
+SET_TARGET_PROPERTIES(mpl-bin
+  PROPERTIES OUTPUT_NAME mpl)
 
 include_directories(${CMAKE_BINARY_DIR}/protos)
 # link dependencies of executable
-target_link_libraries(mpl
+target_link_libraries(mpl-bin
+    mpl
+    mpl_protos
     dnn_protos
     ${PROTOBUF_LIBRARY}
     dnn

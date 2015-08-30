@@ -5,12 +5,12 @@
 
 namespace dnn {
 
-class Processor {
+class Worker {
 public:
-    virtual ~Processor() {}
+    virtual ~Worker() {}
 	virtual void usage() = 0;
 
-	virtual void processArgs(const vector<string> &args) {};
+	virtual void processArgs(vector<string> &args) {};
 
 	virtual void start(Spikework::Stack &s) {}
 	virtual void process(Spikework::Stack &s) = 0;

@@ -34,6 +34,7 @@ fi
 #Set optional library path with option --with-snn-lib or
 #environment variable SNN_LIBS
 
+
 AC_ARG_WITH([dnn-lib],
             AC_HELP_STRING([--with-dnn-lib=LIB_PATH],
                            [the location of the DNN library]),

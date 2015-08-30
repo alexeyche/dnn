@@ -5,3 +5,13 @@
 
 using namespace Rcpp;
 
+// setVerboseLevel
+void setVerboseLevel(int level);
+RcppExport SEXP Rdnn_setVerboseLevel(SEXP levelSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< int >::type level(levelSEXP);
+    setVerboseLevel(level);
+    return R_NilValue;
+END_RCPP
+}

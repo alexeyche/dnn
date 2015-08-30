@@ -108,7 +108,7 @@ qpushd $DST
     ln -s $CURDIR/*.json $DST
 
     if [ $RPACKAGE -eq 1 ]; then
-        DNN_LIB=$DST/lib DNN_INCLUDE=$DST/include $CURDIR/r_package/build.sh
+        DNN_LIB=$DST/lib DNN_INCLUDE=$DST/include/dnn_project $CURDIR/r_package/build.sh
     fi
 
     qmkdir $RUNS_DIR

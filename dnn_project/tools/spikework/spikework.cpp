@@ -9,6 +9,6 @@ int main(int argc, char **argv) {
         args.push_back(argv[i]);
     }
     dnn::Spikework sw(args);
-    
-    return 0;    
+
+    return 0;
 }

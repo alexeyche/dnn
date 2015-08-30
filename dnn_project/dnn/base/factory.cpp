@@ -13,7 +13,6 @@
 #include <dnn/util/time_series.h>
 #include <dnn/util/statistics.h>
 #include <dnn/util/matrix.h>
-#include <dnn/mpl/mpl.h>
 #include <dnn/util/spikes_list.h>
 #include <dnn/learning_rules/stdp.h>
 #include <dnn/learning_rules/optimal_stdp.h>
@@ -86,8 +85,6 @@ Factory::Factory() : registration_is_on(true) {
 	REG_TYPE(TimeSeriesComplex);
 
 	REG_TYPE(DoubleMatrix);
-	REG_TYPE(MatchingPursuitConfig)
-	REG_TYPE(FilterMatch);
 }
 
 Factory::~Factory() {

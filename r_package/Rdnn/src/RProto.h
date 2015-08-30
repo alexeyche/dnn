@@ -3,7 +3,7 @@
 
 #include <dnn/io/stream.h>
 #include <dnn/util/matrix.h>
-#include <dnn/mpl/mpl.h>
+#include <mpl/mpl.h>
 #include <shapelets/subsequence.h>
 
 #include <R.h>
@@ -19,6 +19,7 @@
 
 using namespace dnn;
 using namespace shapelets;
+using namespace mpl;
 
 class RProto {
 public:
@@ -124,6 +125,22 @@ public:
             TimeSeries *od = dynamic_cast<TimeSeries*>(o);
             if(!od) { ERR("Can't cast"); }
             vector<vector<double>> ts_vals;
+            for(auto &d : od->data) {
+                ts_vals.push_back(d.values);
+            }
+            out = Rcpp::List::create(
+                  Rcpp::Named("values") = Rcpp::wrap(ts_vals)
+                , Rcpp::Named("ts_info") = Rcpp::List::create(
+                      Rcpp::Named("labels_ids") = Rcpp::wrap(od->info.labels_ids)
+                    , Rcpp::Named("unique_labels") = Rcpp::wrap(od->info.unique_labels)
+                    , Rcpp::Named("labels_timeline") = Rcpp::wrap(od->info.labels_timeline)
+                )
+            );
+        }
+        if(o->name() == "TimeSeriesComplex") {
+            TimeSeriesComplex *od = dynamic_cast<TimeSeriesComplex*>(o);
+            if(!od) { ERR("Can't cast"); }
+            vector<vector<complex<double>>> ts_vals;
             for(auto &d : od->data) {
                 ts_vals.push_back(d.values);
             }

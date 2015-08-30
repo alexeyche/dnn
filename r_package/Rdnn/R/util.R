@@ -20,13 +20,13 @@ plotl <- function(x) {
         rhs = c(rhs, rep(list(NULL), length(lhs) - length(rhs)))
         for (i in 1:length(lhs))
         do.call(`=`, list(lhs[[i]], rhs[[i]]), envir=frame)
-        return(invisible(NULL)) 
+        return(invisible(NULL))
     }
     if(is.vector(rhs)) {
         mapply(assign, as.character(substitute(lhs)[-1]), rhs,
         MoreArgs = list(envir = parent.frame()))
         invisible()
-    }    
+    }
 }
 
 
@@ -41,27 +41,36 @@ prast_mpl = function(spikes,T0=0, Tmax=Inf) {
     tv = spikes$t
     sv = spikes$s
     fiv = spikes$fi
-    
+
     for(i in 1:length(tv)) {
         if((tv[i]<T0)||(tv[i])>Tmax) next
         x = c(x, tv[i])
         y = c(y, fiv[i])
         cex = c(cex, sv[i])
-        
+
     }
-    xyplot(y ~ x, list(x = x, y = y), xlim=c(T0, max(x)), cex=cex*10,  col = "black")
+    pl_size = Sys.getenv("MPLMATCH_PLOT_SIZE")
+    pl_size = as.numeric(pl_size)
+    if(is.na(pl_size)) {
+        pl_size = 1.0
+    }
+
+    xyplot(y ~ x, list(x = x, y = y), xlim=c(T0, max(x)), cex=cex*pl_size,  col = "black")
 }
 
 plot_rastl <- function(raster, lab="",T0=0, Tmax=Inf, i=-1, plen=-1) {
-    if( "t" %in% names(raster)) {
-        return(prast_mpl(raster, T0, Tmax))
-    }
-    x <- c()
-    y <- c()
     if((i>0)&&(plen>0)) {
         T0=plen*(i-1)
         Tmax=plen*i
     }
+    if( "t" %in% names(raster)) {
+        return(prast_mpl(raster, T0, Tmax))
+    }
+    if("values" %in% names(raster)) {
+        raster = raster$values
+    }
+    x <- c()
+    y <- c()
     for(ni in 1:length(raster)) {
         rast = raster[[ni]]
         rast = rast[rast >= T0]
@@ -81,7 +90,7 @@ gr_pl = function(m) {
 measureSpikeCor = function(net, dt) {
     N = length(net)
     Tmax = max(sapply(net, function(x) if(length(x)>0) max(x) else -Inf))
-    
+
     net_m = matrix(0, nrow=N, ncol=Tmax/dt)
     for(ni in 1:N) {
         net_m[ni, ceiling(net[[ni]]/dt) ] <- 1
@@ -97,7 +106,7 @@ measureSpikeCor = function(net, dt) {
         }
     }
 
-    return(cor_m)    
+    return(cor_m)
 }
 
 readConst = function(const) {
@@ -112,6 +121,16 @@ blank_net = function(N) {
     net = list()
     for(i in 1:N) {
         net[[i]] = numeric(0)
-    }   
+    }
     return(net)
 }
+
+safe.log = function(x) {
+    if(x == 0) return(0)
+    return(log(x))
+}
+
+log.seq = function(from, to, length.out) {
+    return(exp(seq(safe.log(from), safe.log(to), length.out=length.out)))
+}
+

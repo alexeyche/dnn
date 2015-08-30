@@ -44,6 +44,7 @@ struct SpikesList : public SerializableBase {
 		info.size = seq.size();
 		return info;
 	}
+
 	void serial_process() {
 		begin() << "ts_info: " << ts_info;
 
@@ -72,6 +73,17 @@ struct SpikesList : public SerializableBase {
 		return seq.size();
 	}
 	Ptr<TimeSeries> convertToBinaryTimeSeries(const double &dt) const;
+
+	void addSpike(size_t ni, double t) {
+		while(ni >= seq.size()) {
+			seq.emplace_back();
+		}
+		if((seq[ni].values.size()>0)&&(seq[ni].values.back()>t)) {
+			throw dnnException() << "Adding spike in past to spikes list. Add sorted array of spikes\n";
+		}
+		seq[ni].values.push_back(t);
+	}
+
 
 	TimeSeriesInfo ts_info;
 	vector<SpikesSequence> seq;

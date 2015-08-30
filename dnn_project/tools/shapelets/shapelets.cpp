@@ -17,6 +17,7 @@ Options:
     --input,  -i    Input time series
     --config, -c    Config of shapelets in json
     --verbose, -v   Turn on verbose logging
+    --no-colors, -nc   No colors while logging
 %s
 )USAGE";
 
@@ -33,6 +34,7 @@ int main(int argc, char **argv) {
     string config_file;
     bool need_help = false;
     bool verbose = false;
+    bool no_colors = false;
 
     OptionParser optp(argc, argv);
     optp.option("--help", "-h", need_help, false, true);
@@ -43,7 +45,10 @@ int main(int argc, char **argv) {
     optp.option("--verbose", "-v", verbose, false, true);
     optp.option("--config", "-c", config_file, false);
     optp.option("--input", "-i", input_file, true);
-
+    optp.option("--no-colors", "-nc", no_colors, false, true);
+    if(!no_colors) {
+        Log::inst().setColors();
+    }
     ShapeletsConfig c;
 
     if(!config_file.empty()) {

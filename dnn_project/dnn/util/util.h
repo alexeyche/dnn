@@ -16,7 +16,7 @@ using namespace rapidjson;
 
 vector<string> split_into(const string &s, char delim, vector<string> &elems);
 vector<string> split(const string &s, char delim);
-vector<string> splitBySubstr(const string &s_inp, const string &delimiter);
+vector<string> splitBySubstr(const string &s_inp, const string &delimiter, const string &not_include = "");
 
 void trim(string &str, string symbols = " \t");
 string trimC(const string &str, string symbols = " \t");

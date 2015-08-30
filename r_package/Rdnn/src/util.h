@@ -1,3 +1,4 @@
-#pramga once
+#pragma once
 
-listToJson(const Rcpp::List &list)
+
+void setVerboseLevel(int level);

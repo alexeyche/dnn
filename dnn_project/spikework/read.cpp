@@ -4,14 +4,14 @@
 
 namespace dnn {
 
-void ReadProcessor::usage() {
-    cout << "ReadProcessor perfoming simple reading file into stack\n";
+void ReadWorker::usage() {
+    cout << "ReadWorker perfoming simple reading file into stack\n";
     cout << "\n";
-    IOProcessor::usage();
+    IOWorker::usage();
 }
 
 
-void ReadProcessor::process(Spikework::Stack &s) {
+void ReadWorker::process(Spikework::Stack &s) {
     // pass
 }
 

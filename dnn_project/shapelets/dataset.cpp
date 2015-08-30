@@ -57,6 +57,16 @@ const size_t& Dataset::getTsLabelId(const size_t& id) {
 }
 
 
+bool Dataset::operator == (const Dataset &d) const {
+    if( (entropy() == d.entropy()) && (N() == d.N()) && (C() == d.C()) ) return true;
+    return false;
+}
+
+bool Dataset::operator != (const Dataset &d) const {
+    return !((*this) == d);
+}
+
+
 
 }
 }

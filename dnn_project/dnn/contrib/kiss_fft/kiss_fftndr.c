@@ -28,7 +28,7 @@ struct kiss_fftndr_state
 static int prod(const int *dims, int ndims)
 {
     int x=1;
-    while (ndims--) 
+    while (ndims--)
         x *= *dims++;
     return x;
 }
@@ -40,7 +40,7 @@ kiss_fftndr_cfg kiss_fftndr_alloc(const int *dims,int ndims,int inverse_fft,void
     int dimReal = dims[ndims-1];
     int dimOther = prod(dims,ndims-1);
     size_t memneeded;
-    
+
     (void)kiss_fftr_alloc(dimReal,inverse_fft,NULL,&nr);
     (void)kiss_fftnd_alloc(dims,ndims-1,inverse_fft,NULL,&nd);
     ntmp =
@@ -54,15 +54,16 @@ kiss_fftndr_cfg kiss_fftndr_alloc(const int *dims,int ndims,int inverse_fft,void
     }else{
         if (*lenmem >= memneeded)
             st = (kiss_fftndr_cfg)mem;
-        *lenmem = memneeded; 
+        *lenmem = memneeded;
     }
     if (st==NULL)
         return NULL;
     memset( st , 0 , memneeded);
-    
+
     st->dimReal = dimReal;
     st->dimOther = dimOther;
     st->cfg_r = kiss_fftr_alloc( dimReal,inverse_fft,st+1,&nr);
+    // printf("fftnd: %d\n", ndims-1);
     st->cfg_nd = kiss_fftnd_alloc(dims,ndims-1,inverse_fft, ((char*) st->cfg_r)+nr,&nd);
     st->tmpbuf = (char*)st->cfg_nd + nd;
 
@@ -76,22 +77,30 @@ void kiss_fftndr(kiss_fftndr_cfg st,const kiss_fft_scalar *timedata,kiss_fft_cpx
     int dimOther = st->dimOther;
     int nrbins = dimReal/2+1;
 
-    kiss_fft_cpx * tmp1 = (kiss_fft_cpx*)st->tmpbuf; 
+    printf("dimOther: %d, dimReal: %d, nrbins: %d\n", dimOther, dimReal, nrbins);
+
+    kiss_fft_cpx * tmp1 = (kiss_fft_cpx*)st->tmpbuf;
     kiss_fft_cpx * tmp2 = tmp1 + MAX(nrbins,dimOther);
 
     // timedata is N0 x N1 x ... x Nk real
 
     // take a real chunk of data, fft it and place the output at correct intervals
     for (k1=0;k1<dimOther;++k1) {
+        printf("Perform fft on %d\n", k1*dimReal);
         kiss_fftr( st->cfg_r, timedata + k1*dimReal , tmp1 ); // tmp1 now holds nrbins complex points
-        for (k2=0;k2<nrbins;++k2)
+        for (k2=0;k2<nrbins;++k2) {
            tmp2[ k2*dimOther+k1 ] = tmp1[k2];
+           printf("Put %d -> %d*%d + %d == %d, %f %f\n", k2, k2, dimOther, k1, k2*dimOther + k1, tmp2[ k2*dimOther+k1 ].r, tmp2[ k2*dimOther+k1 ].i);
+        }
     }
 
     for (k2=0;k2<nrbins;++k2) {
+        printf("Perform fft on %d\n", k2*dimOther);
         kiss_fftnd(st->cfg_nd, tmp2+k2*dimOther, tmp1);  // tmp1 now holds dimOther complex points
-        for (k1=0;k1<dimOther;++k1) 
+        for (k1=0;k1<dimOther;++k1) {
             freqdata[ k1*(nrbins) + k2] = tmp1[k1];
+            printf("And put %d -> %d*%d + %d == %d, %f %f\n", k1, k1, nrbins, k2, k1*(nrbins) + k2, freqdata[ k1*(nrbins) + k2].r, freqdata[ k1*(nrbins) + k2].i);
+        }
     }
 }
 
@@ -101,11 +110,11 @@ void kiss_fftndri(kiss_fftndr_cfg st,const kiss_fft_cpx *freqdata,kiss_fft_scala
     int dimReal = st->dimReal;
     int dimOther = st->dimOther;
     int nrbins = dimReal/2+1;
-    kiss_fft_cpx * tmp1 = (kiss_fft_cpx*)st->tmpbuf; 
+    kiss_fft_cpx * tmp1 = (kiss_fft_cpx*)st->tmpbuf;
     kiss_fft_cpx * tmp2 = tmp1 + MAX(nrbins,dimOther);
 
     for (k2=0;k2<nrbins;++k2) {
-        for (k1=0;k1<dimOther;++k1) 
+        for (k1=0;k1<dimOther;++k1)
             tmp1[k1] = freqdata[ k1*(nrbins) + k2 ];
         kiss_fftnd(st->cfg_nd, tmp1, tmp2+k2*dimOther);
     }

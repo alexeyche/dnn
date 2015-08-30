@@ -20,11 +20,11 @@ public:
         ERR("\nCan't build Sim: " << e.what() << "\n");
     }
     ~RSim() { }
-    
+
     void print() {
         cout << *this;
     }
-    
+
     void run(size_t jobs=1) {
         try {
             Sim::run(jobs);
@@ -32,7 +32,7 @@ public:
             ERR("Sim run failed: " << e.what() << "\n" );
         }
     }
-    
+
     void setTimeSeries(const Rcpp::NumericVector &v, const string &obj_name) {
         Rcpp::List tsl;
         tsl["values"] = v;
@@ -42,7 +42,7 @@ public:
             Factory::inst().getObject(it)->setAsInput(
                 ts
             );
-        }        
+        }
         for(auto &n: neurons) {
             duration = std::max(duration, n.ref().getSimDuration());
         }
@@ -57,7 +57,7 @@ public:
             Factory::inst().getObject(it)->setAsInput(
                 sp_l
             );
-        }        
+        }
         for(auto &n: neurons) {
             duration = std::max(duration, n.ref().getSimDuration());
         }
@@ -76,7 +76,7 @@ public:
     }
     Rcpp::List getModel() {
         Rcpp::NumericMatrix w(neurons.size(), neurons.size());
-        
+
         for(auto &n: neurons) {
             for(auto &syn: n.ref().getSynapses()) {
                 w(syn.ref().idPre(), n.ref().id()) = syn.ref().weight();
@@ -88,7 +88,7 @@ public:
     }
     void turnOnStatistics() {
         Sim::turnOnStatistics();
-    }    
+    }
     void saveModel(const string &fname) {
         ofstream fstr(fname);
         Stream str_out(fstr, Stream::Binary);
@@ -101,6 +101,8 @@ public:
         return RProto::convertToList(&net->spikesList());
     }
 };
+
+
 
 
 

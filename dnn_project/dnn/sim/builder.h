@@ -64,11 +64,11 @@ public:
 		}
 
 		for (auto it = c.sim_conf.files.begin(); it != c.sim_conf.files.end(); ++it) {
-			const string &obj_name = it->first;			
+			const string &obj_name = it->first;
 			Document file_conf = Json::parseStringC(it->second);
-			
+
 			string fname = Json::getStringVal(file_conf, "filename");
-			if(fname.find("@") == 0) {
+			if(strStartsWith(fname, "@")) {
 				continue;
 			}
 			auto slice = Factory::inst().getObjectsSlice(obj_name);
@@ -80,8 +80,8 @@ public:
 				);
 			}
 		}
-		
-		
+
+
 		if (!input_stream) {
 			for (auto it = c.sim_conf.conn_map.begin(); it != c.sim_conf.conn_map.end(); ++it) {
 				size_t l_id_pre = it->first.first;
@@ -132,10 +132,10 @@ public:
 				}
 				ConnectionRecipe connection_recipe = conn->getConnectionRecipe(npre.ref(), npost.ref());
 				if (connection_recipe.exists) {
-					SynapseBase *syn(nullptr);					
+					SynapseBase *syn(nullptr);
 					if(!connection_recipe.inhibitory) {
 					    syn = buildObjectFromConstants<SynapseBase>(
-					    	Json::getStringVal(conn_conf, "synapse"), 
+					    	Json::getStringVal(conn_conf, "synapse"),
 					    	c.synapses
 					    );
 					} else {
@@ -149,7 +149,7 @@ public:
 					    );
 					}
 					assert(syn);
-					
+
 					syn->mutIdPre() = npre.ref().id();
 					syn->mutDendriteDelay() = Json::getDoubleValDef(conn_conf, "dendrite_delay", 0.0);
 					syn->mutWeight() = connection_recipe.amplitude * Json::getDoubleVal(conn_conf, "start_weight");

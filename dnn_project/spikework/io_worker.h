@@ -1,18 +1,18 @@
 #pragma once
 
-#include "processor.h"
+#include "worker.h"
 
 #include <dnn/util/option_parser.h>
 
 namespace dnn {
 
 
-class IOProcessor : public Processor {
+class IOWorker : public Worker {
 public:
-	IOProcessor() : tee(false), dt(1.0) {}
+	IOWorker() : tee(false), dt(1.0) {}
 
 	void usage();
-    void processArgs(const vector<string> &args);
+    void processArgs(vector<string> &args);
     void start(Spikework::Stack &s);
     void end(Spikework::Stack &s);
 

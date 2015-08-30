@@ -7,7 +7,7 @@ namespace dnn {
 template <typename T>
 class Ptr {
 public:
-	Ptr(T *ptr_to_set) : _ptr(ptr_to_set) {		
+	Ptr(T *ptr_to_set) : _ptr(ptr_to_set) {
 	}
 
 	Ptr() : _ptr(nullptr) {
@@ -24,18 +24,18 @@ public:
 		assert(_ptr);
 		return *_ptr;
 	}
-	
+
 	inline const T& ref() const {
 		assert(_ptr);
 		return *_ptr;
 	}
 	void set(T *ptr_to_set) {
-		_ptr = ptr_to_set;		
+		_ptr = ptr_to_set;
 	}
 	void set(T &ptr_to_set) {
-		_ptr = &ptr_to_set;		
+		_ptr = &ptr_to_set;
 	}
-	
+
 	const T* operator -> () const {
 		return ptr();
 	}
@@ -51,8 +51,8 @@ public:
 	explicit operator bool() {
 		return isSet();
 	}
-	
-	template<typename NT> 
+
+	template<typename NT>
 	Ptr<NT> as() {
 		if(!isSet()) return Ptr<NT>();
 		NT *t = dynamic_cast<NT*>(_ptr);

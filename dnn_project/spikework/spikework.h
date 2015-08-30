@@ -7,11 +7,11 @@
 namespace dnn {
 
 
-class Processor;
+class Worker;
 
 class Spikework {
-    typedef map<string, Ptr<Processor> (*)()> processors_map_type;
-    template<typename INST> static Ptr<Processor> createProcessor() { return new INST; }
+    typedef map<string, Ptr<Worker> (*)()> workers_map_type;
+    template<typename INST> static Ptr<Worker> createWorker() { return new INST; }
 public:
     Spikework(const vector<string> &args);
     ~Spikework();
@@ -36,14 +36,14 @@ public:
         void push(Ptr<T> p) {
             stack.push_back(p. template as<SerializableBase>());
         }
-	private:    	
-    	vector<Ptr<SerializableBase>> stack;        
+	private:
+    	vector<Ptr<SerializableBase>> stack;
     };
 
 private:
     Stack s;
-    vector<Ptr<Processor>> processors;
-    processors_map_type proc_map;
+    vector<Ptr<Worker>> workers;
+    workers_map_type work_map;
 };
 
 

@@ -21,20 +21,37 @@ vector<string> split(const string &s, char delim) {
     return elems;
 }
 
-vector<string> splitBySubstr(const string &s_inp, const string &delimiter) {
+vector<string> splitBySubstr(const string &s_inp, const string &delimiter, const string &not_include) {
     string s(s_inp);
     vector<string> out;
 
     size_t pos = 0;
+    std::string acc_token;
     std::string token;
     while ((pos = s.find(delimiter)) != std::string::npos) {
         token = s.substr(0, pos);
-        trim(token);
-        out.push_back(token);
+        // cout << "token: " << token << "\n";
+        if((!not_include.empty()) && (token.find_first_of(not_include) != std::string::npos)) {
+            if(!acc_token.empty()) {
+                acc_token += delimiter;
+            }
+            acc_token += token;
+            // cout << token << " " << acc_token << " 1\n";
+        } else {
+            if(!acc_token.empty()) {
+                // cout << token << " " << acc_token << " 2\n";
+                token = acc_token + delimiter + token;
+                acc_token = std::string();
+            }
+            out.push_back(trimC(token));
+        }
         s.erase(0, pos + delimiter.length());
     }
-    trim(s);
-    out.push_back(s);
+    if(!acc_token.empty()) {
+        // cout << s << " " << acc_token << " 3\n";
+        s = acc_token + delimiter + s;
+    }
+    out.push_back(trimC(s));
     return out;
 }
 

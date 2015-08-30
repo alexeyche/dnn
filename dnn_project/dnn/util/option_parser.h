@@ -67,6 +67,15 @@ public:
 	vector<string>& getRawOptions() {
 		return opts;
 	}
+	void checkEmpty() {
+		if(opts.size() != 0) {
+			string s;
+			for(auto v: opts) {
+				s += " " + v;
+			}
+			throw dnnException() << "Got unknown options: "  << s << "\n";
+		}
+	}
 private:
 
 	vector<string> opts;

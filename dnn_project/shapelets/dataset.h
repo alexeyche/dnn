@@ -14,6 +14,7 @@ class TimeSeries;
 
 namespace shapelets {
 
+
 class Dataset {
 public:
     Dataset(vector<Ptr<TimeSeries>> &_ts);
@@ -24,6 +25,14 @@ public:
     size_t C() const {
         return class_counts.size();
     }
+
+    const unordered_map<size_t, size_t>& class_hist() const {
+        return class_counts;
+    }
+
+    bool operator == (const Dataset &d) const;
+    bool operator != (const Dataset &d) const;
+
     const double& entropy() const {
         return _entropy;
     }

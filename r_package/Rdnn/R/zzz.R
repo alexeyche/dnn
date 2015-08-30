@@ -20,6 +20,31 @@
     setMethod( "show", RMatchingPursuit, function(object) {
         object$print()
     } )
-
+    
 }
+
+proto.read = function(f) {
+    f = path.expand(f)
+    return(Module("dnnMod")$RProto$new(f)$read())
+}
+
+proto.write = function(f, l, n) {
+    f = path.expand(f)
+    return(Module("dnnMod")$RProto$new(f)$write(l, n))
+}    
+
+get.gammatones = function(freqs, samp_rate, len=100) {
+    inp = c(1, rep(0, len-1))
+    gfb = Module("dnnMod")$RGammatoneFB$new()
+    gfb_out = gfb$calc(inp, freqs, samp_rate, 0, 0)
+    return(gfb_out$membrane)
+}
+
+
+conv.gammatones = function(x, freqs, samp_rate) {
+    gfb = Module("dnnMod")$RGammatoneFB$new()
+    gfb_out = gfb$calc(x, freqs, samp_rate, 0, 0)
+    return(gfb_out$membrane)
+}
+
 

@@ -24,10 +24,10 @@ public:
         i.prob = MakeDelegate(static_cast<T*>(this), &T::prob);
         i.probDeriv = MakeDelegate(static_cast<T*>(this), &T::probDeriv);
     }
-	static double __default(const double &u) { 
+	static double __default(const double &u) {
 		throw dnnException() << "Calling inapropriate default interface function\n";
 	}
-	
+
 	static void provideDefaultInterface(ActFunctionInterface &i) {
     	i.prob = &ActFunctionBase::__default;
     	i.probDeriv = &ActFunctionBase::__default;

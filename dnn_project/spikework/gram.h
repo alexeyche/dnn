@@ -1,20 +1,20 @@
 #pragma once
 
-#include "io_processor.h"
+#include "io_worker.h"
 
 
 namespace dnn {
 
-class GramProcessor : public IOProcessor {
+class GramWorker : public IOWorker {
 public:
     enum EInnerProductMode { MUL, ACC };
-    GramProcessor() : text(false) {}
+    GramWorker() {}
 
     void usage();
-    void processArgs(const vector<string> &args);
+    void processArgs(vector<string> &args);
     void process(Spikework::Stack &s);
 private:
-    bool text;
+    string text_file;
     EInnerProductMode mode;
 };
 

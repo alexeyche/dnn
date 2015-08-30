@@ -1,15 +1,15 @@
 #pragma once
 
-#include "io_processor.h"
+#include "io_worker.h"
 
 
 namespace dnn {
 
-class ConvProcessor : public IOProcessor {
+class ConvWorker : public IOWorker {
 public:
-    ConvProcessor() {}
+    ConvWorker() {}
     void usage();
-    void processArgs(const vector<string> &args);
+    void processArgs(vector<string> &args);
     void start(Spikework::Stack &s);
     void process(Spikework::Stack &s);
 
