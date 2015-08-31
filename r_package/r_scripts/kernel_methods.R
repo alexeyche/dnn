@@ -23,4 +23,17 @@ get.labs = function(K) {
         function(s) tail(s, 1)
     )
 }
+
+l=10
+
+mm = matrix(0, nrow=l, ncol=l)
+
+for(i in 1:l) {
+    for(j in 1:i) {
+        mm[i, j] = -10
+    }
+    for(j in i:l) {
+        mm[i, j] = 10    
+    }
+}
     

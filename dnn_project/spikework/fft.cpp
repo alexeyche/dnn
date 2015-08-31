@@ -73,7 +73,7 @@ void FFTWorker::ifft(const TimeSeriesComplex &src, TimeSeries &dst) {
     kiss_fft_scalar *data_out = new kiss_fft_scalar[out_size];
 
     for(size_t di=0; di<src.dim(); ++di) {
-        L_DEBUG << "fft: inverse processing " << di << " dimension";
+        L_DEBUG << "FFTWorker, fft inverse processing " << di << " dimension";
         const vector<complex<double>> &v = src.getVector(di);
         for(size_t val_i=0; val_i<ts_size; ++val_i) {
             data_in[val_i].r = v[val_i].real();

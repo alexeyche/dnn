@@ -102,12 +102,18 @@ void KernelWorker::process(Spikework::Stack &s) {
         m.allocate(ts_chopped.size(), ts_chopped.size());
         for(size_t i=0; i<ts_chopped.size(); ++i) {
             m.setRowLabel(i, ts_chopped[i]->getLabel());
-            for(size_t j=0; j<ts_chopped.size(); ++j) {
-                m.setColLabel(j, ts_chopped[j]->getLabel());
+            for(size_t j=0; j<i; ++j) {
+                m(i, j) = m(j, i);
+            }
+            for(size_t j=i; j<ts_chopped.size(); ++j) {
+                if(i == 0) {
+                    m.setColLabel(j, ts_chopped[j]->getLabel());
+                }
                 m(i, j) = k.process(ts_chopped[i], ts_chopped[j]);
             }
         }
         L_DEBUG << "KernelWorker, End applying kernel";
+
         if(!text_file.empty()) {
             if(text_file == "-") {
                 m.textRepr(cout);
