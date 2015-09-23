@@ -1,6 +1,7 @@
 #pragma once
 
 #include <dnn/io/serialize.h>
+#include <dnn/neurons/spike_neuron.h>
 
 namespace dnn {
 
@@ -15,7 +16,7 @@ class ConnectionBase : public SerializableBase {
 public:
 	ConnectionBase() {}
 
-	virtual ConnectionRecipe getConnectionRecipe(const SpikeNeuronBase &left, const SpikeNeuronBase &right) = 0;	
+	virtual ConnectionRecipe getConnectionRecipe(const SpikeNeuronBase &left, const SpikeNeuronBase &right) = 0;
 };
 
 template <typename Constants>

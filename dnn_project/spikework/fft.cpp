@@ -2,7 +2,8 @@
 
 #include "fft.h"
 
-#include <dnn/util/time_series.cpp>
+#include <dnn/util/time_series.h>
+#include <dnn/base/factory.h>
 #include <dnn/contrib/kiss_fft/kiss_fftndr.h>
 #include <dnn/util/option_parser.h>
 #include <dnn/util/log/log.h>

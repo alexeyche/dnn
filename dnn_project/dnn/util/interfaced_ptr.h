@@ -1,5 +1,7 @@
 #pragma once
 
+#include <dnn/util/ptr.h>
+
 namespace dnn {
 
 
@@ -32,7 +34,12 @@ public:
 		_ptr = ptr_to_set;
 		_ptr->template provideInterface<T>(i);
 	}
-	
+
+	InterfacedPtr<T>& operator = (Ptr<T> src) {
+		set(src.ptr());
+		return *this;
+	}
+
 	bool isSet() {
 		return _ptr ? true : false;
 	}

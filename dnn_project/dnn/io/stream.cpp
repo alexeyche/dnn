@@ -2,6 +2,7 @@
 
 #include <dnn/io/serialize.h>
 #include <dnn/protos/base.pb.h>
+#include <dnn/base/factory.h>
 
 namespace dnn {
 
@@ -122,28 +123,24 @@ vector<ProtoMessage> Stream::readObjectProtos() {
 	return messages;
 }
 
-SerializableBase* Stream::readBaseObject(SerializableBase *o) {
-	if (!isInput()) {
-		throw dnnException()<< "Stream isn't open in input mode. Need input stream\n";
-	}
 
-	vector<ProtoMessage> messages = readObjectProtos();
-
-	if(messages.size() == 0) {
-		return nullptr;
-	}
-
-	std::reverse(messages.begin(), messages.end());
-
-	Protos::ClassName *head = SerializableBase::getHeader(messages);
-	if(!o) {
-		SerializableBase *new_o = Factory::inst().createObject(head->class_name());
-		new_o->getDeserialized(messages);
-		return new_o;
-	} else {
-		o->getDeserialized(messages);
-		return o;
-	}
+Ptr<SerializableBase> Stream::deserialize(string name, vector<ProtoMessage> &messages, bool dynamically, SerializableBase *src) {
+    if(messages.size() == 0) {
+        return Ptr<SerializableBase>();
+    }
+    if(!src) {
+        Ptr<SerializableBase> new_o;
+        if(dynamically) {
+            new_o = Factory::inst().createDynamicObject(name); //
+        } else {
+            new_o = Factory::inst().createObject(name); // head->class_name());
+        }
+        new_o->getDeserialized(messages);
+        return new_o;
+    } else {
+        src->getDeserialized(messages);
+        return Ptr<SerializableBase>(src);
+    }
 }
 
 }

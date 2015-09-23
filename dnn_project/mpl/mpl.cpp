@@ -5,15 +5,29 @@
 #include <dnn/util/log/log.h>
 #include <dnn/base/factory.h>
 
+#include <dnn/base/type_deducer.h>
 
 namespace dnn {
 namespace mpl {
 
-MplInit init;
+
+class MplTypeDeduce : public TypeDeducer {
+public:
+    string deduceType(const std::type_info &info) const {
+        #define REG_FILE <mpl/mpl_register.x>
+        #include <dnn/base/deduce_type_impl.x>
+        #undef REG_FILE
+    }
+};
+
+
 
 MplInit::MplInit() {
-    REG_TYPE(MatchingPursuitConfig)
-    REG_TYPE(FilterMatch);
+    #define REG_FILE <mpl/mpl_register.x>
+    #include <dnn/base/register_impl.x>
+    #undef REG_FILE
+
+    Factory::inst().addTypeDeducer(new MplTypeDeduce());
 }
 
 MatchingPursuit::MatchingPursuit(const MatchingPursuitConfig &_c) : c(_c) {

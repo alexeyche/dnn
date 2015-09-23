@@ -13,6 +13,10 @@ class TimeSeries;
 namespace shapelets {
 class Dataset;
 
+#define REG_FILE <shapelets/shapelet_register.x>
+#include <dnn/base/forward_declarations.x>
+#undef REG_FILE
+
 class ShapeletInit {
 public:
     ShapeletInit();

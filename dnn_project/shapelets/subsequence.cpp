@@ -1,6 +1,7 @@
 #include "subsequence.h"
 
 #include <dnn/util/time_series.h>
+#include <dnn/base/factory.h>
 
 namespace dnn {
 namespace shapelets {

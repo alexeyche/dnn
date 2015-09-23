@@ -1,6 +1,7 @@
 
 #include "shapelets_algo.h"
 
+
 #include <dnn/util/log/log.h>
 #include <dnn/util/time_series.h>
 #include <dnn/base/factory.h>
@@ -13,12 +14,31 @@
 #include "dist.h"
 #include "orderline.h"
 
+
+
+
 namespace dnn {
 namespace shapelets {
 
+
+
+
+class ShapeletTypeDeduce : public TypeDeducer {
+public:
+    string deduceType(const std::type_info &info) const {
+        #define REG_FILE <shapelets/shapelet_register.x>
+        #include <dnn/base/deduce_type_impl.x>
+        #undef REG_FILE
+    }
+};
+
+
 ShapeletInit::ShapeletInit() {
-    REG_TYPE(ShapeletsConfig);
-    REG_TYPE(Subsequence);
+    #define REG_FILE <shapelets/shapelet_register.x>
+    // #include <dnn/base/register_impl.x>
+    #undef REG_FILE
+
+    Factory::inst().addTypeDeducer(new ShapeletTypeDeduce());
 }
 
 

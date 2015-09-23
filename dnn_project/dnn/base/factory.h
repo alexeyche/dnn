@@ -1,35 +1,32 @@
 #pragma once
 
+#include <type_traits>
+#include <typeinfo>
+
+
 #include <dnn/core.h>
 #include <dnn/io/serialize.h>
+#include <dnn/util/ptr.h>
+
+#include <dnn/base/type_deducer.h>
 
 namespace dnn {
 
 class ClassName;
 class SerializableBase;
-class SpikeNeuronBase;
-class ActFunctionBase;
-class TimeSeries;
-class TimeSeriesComplex;
-class DoubleMatrix;
-class SpikesList;
 
-#define REG_TYPE(name) \
-    Factory::registerType<name>(#name);\
-
-#define REG_TYPE_WITH_CONST(name) \
-    Factory::registerType<name>(#name);\
-    Factory::registerType<name##C>(string(#name) + string("C"));\
-
-#define REG_TYPE_WITH_STATE_AND_CONST(name) \
-    Factory::registerType<name>(#name);\
-    Factory::registerType<name##C>(string(#name) + string("C"));\
-    Factory::registerType<name##State>(string(#name) + string("State"));\
-
-
+#define REG_FILE <dnn/base/register.x>
+#include <dnn/base/forward_declarations.x>
+#undef REG_FILE
 
 class Factory {
 public:
+    friend class SerializableBase;
+    friend class Stream;
+
+    Factory();
+
+
     typedef map<string, SerializableBase* (*)()> entity_map_type;
     typedef map<string, ProtoMessage (*)()> proto_map_type;
     typedef multimap<string, size_t>::iterator object_iter;
@@ -37,30 +34,39 @@ public:
     template<typename INST> static SerializableBase* createInstance() { return new INST; }
     template<typename INST> static ProtoMessage createProtoInstance() { return new INST; }
 
-    Factory();
+    template<typename T>
+    string deduceType() {
+        string t;
+        for(const auto& deducer: type_deducers) {
+            t = deducer->deduceType(typeid(T));
+        }
+        if(t.empty()) {
+            throw dnnException() << "Can't deduce type\n";
+        }
+        return t;
+    }
+
     ~Factory();
 
+    void addTypeDeducer(TypeDeducer *t) {
+        type_deducers.push_back(t);
+    }
 
-    template<typename T>
+    template <typename T>
     static void registerType(const string type) {
         typemap[type] = &createInstance<T>;
         if (T::hasProto) {
             prototypemap[type] = &createProtoInstance<typename T::ProtoType>;
         }
     }
+
     bool isProtoType(const string name) {
         return prototypemap.find(name) != prototypemap.end();
     }
 
-    SerializableBase* createObject(string name);
+    // SerializableBase* createObject(string name);
     ProtoMessage createProto(string name);
 
-    void registrationOff() {
-        registration_is_on = false;
-    }
-    void registrationOn() {
-        registration_is_on = true;
-    }
     static Factory& inst();
 
     pair<object_iter, object_iter> getObjectsSlice(const string& name);
@@ -68,43 +74,64 @@ public:
     SerializableBase* getObject(object_iter &it) {
         return objects[it->second];
     }
+
+
     template <typename T>
-    T* createObject() {
-        if (std::is_same<T, TimeSeries>::value) {
-            return createObject<T>("TimeSeries");
-        }
-        if (std::is_same<T, TimeSeriesComplex>::value) {
-            return createObject<T>("TimeSeriesComplex");
-        }
-        if (std::is_same<T, DoubleMatrix>::value) {
-            return createObject<T>("DoubleMatrix");
-        }
-        if (std::is_same<T, SpikesList>::value) {
-            return createObject<T>("SpikesList");
-        }
-        throw dnnException() << "Can't recognize type to create\n";
+    Ptr<T> createObject() {
+        Ptr<T> o = _createObject<T>();
+        registerObject(o.ptr());
+        return o;
     }
 
     template <typename T>
-    T* createObject(string name) {
-        SerializableBase* b = createObject(name);
+    Ptr<T> createDynamicObject() {
+        Ptr<T> o = _createObject<T>();
+        return o;
+    }
 
-        T *p = dynamic_cast<T*>(b);
+    Ptr<SerializableBase> getCachedObject(const string& filename);
+private:
+    void registerObject(Ptr<SerializableBase> o) {
+        objects.push_back(o.ptr());
+        objects_map.insert(std::make_pair(o->name(), objects.size()-1));
+    }
+
+    Ptr<SerializableBase> createDynamicObject(string name) {
+        if (typemap.find(name) == typemap.end()) {
+            throw dnnException()<< "Failed to find method to construct type " << name << "\n";
+        }
+        SerializableBase* o = typemap[name]();
+        return Ptr<SerializableBase>(o);
+    }
+
+    Ptr<SerializableBase> createObject(string name) {
+        Ptr<SerializableBase> o = createDynamicObject(name);
+        registerObject(o);
+        return o;
+    }
+
+    template <typename T>
+    Ptr<T> _createObject() {
+        string name = deduceType<T>();
+        Ptr<SerializableBase> o = createDynamicObject(name);
+
+        T *p = dynamic_cast<T*>(o.ptr());
         if (!p) {
             throw dnnException()<< "Error to cast while creating " << name << " to its base" << "\n";
         }
-        return p;
+        return Ptr<T>(p);
     }
-    SerializableBase* getCachedObject(const string& filename);
-private:
-    bool registration_is_on;
+
+
     static entity_map_type typemap;
     static proto_map_type prototypemap;
     multimap<string, size_t> objects_map;
 
     vector<SerializableBase*> objects;
     vector<ProtoMessage> proto_objects;
-    map<string, SerializableBase*> cache_map;
+    map<string, Ptr<SerializableBase>> cache_map;
+
+    vector<TypeDeducer*> type_deducers;
 };
 
 

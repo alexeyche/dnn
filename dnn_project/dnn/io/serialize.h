@@ -3,10 +3,11 @@
 #include <dnn/util/util.h>
 #include <dnn/util/json.h>
 #include <dnn/util/interfaced_ptr.h>
+#include <dnn/util/ptr.h>
 #include <dnn/util/act_vector.h>
 #include <dnn/base/base.h>
-#include <dnn/base/factory.h>
 #include <dnn/protos/base.pb.h>
+
 
 #include <google/protobuf/message.h>
 
@@ -120,6 +121,7 @@ public:
         return *this;
     }
 
+    static Ptr<SerializableBase> createObject(string name);
 
     template <typename T>
     SerializableBase& operator << (InterfacedPtr<T> &b) {
@@ -130,9 +132,9 @@ public:
             (*this) << b.ref();
         } else
         if(mode == ProcessingInput) {
-            SerializableBase *pb = Factory::inst().createObject(getHeader()->class_name());
+            Ptr<SerializableBase> pb = SerializableBase::createObject(getHeader()->class_name());
 
-            T* p = dynamic_cast<T*>(pb);
+            T* p = dynamic_cast<T*>(pb.ptr());
             if(!p) {
                 throw dnnException()<< name() << ": cast error while deserializing interfaced ptr, got " << pb->name() << "\n";
             }
@@ -190,7 +192,7 @@ public:
             messages->pop_back();
         }
     }
-    virtual void setAsInput(SerializableBase *b) {
+    virtual void setAsInput(Ptr<SerializableBase> b) {
 
     }
     virtual double getSimDuration() {

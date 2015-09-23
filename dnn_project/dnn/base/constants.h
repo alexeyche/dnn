@@ -21,7 +21,7 @@ struct SimConfiguration : public Printable {
 	int seed;
 	vector<size_t> neurons_to_listen;
 	map<string, string> files;
-	
+
 	void print(ostream &o) const {
 		o << "layers: \n";
 		for (auto &v : layers) {
@@ -51,12 +51,12 @@ struct Constants : public Printable {
 		} else
 		if(mod == FromString) {
 			const_json = s;
-		}		
+		}
 		for(auto it=mods.begin(); it != mods.end(); ++it) {
 			replaceStr(const_json, it->first, it->second);
 		}
 
-		Document document = Json::parseString(const_json);		
+		Document document = Json::parseString(const_json);
 
 		fill(Json::getVal(document, "neurons"), neurons);
 		fill(Json::getVal(document, "act_functions"), act_functions);

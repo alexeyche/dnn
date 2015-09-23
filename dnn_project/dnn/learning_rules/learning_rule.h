@@ -56,7 +56,7 @@ public:
 		norm.ifc().calculateDynamics(t);
 	}
 
-	virtual void setWeightNormalization(WeightNormalizationBase *_norm) = 0;
+	virtual void setWeightNormalization(Ptr<WeightNormalizationBase> _norm) = 0;
 
 	InterfacedPtr<WeightNormalizationBase>& getWeightNormalization() {
 		return norm;
@@ -115,8 +115,8 @@ public:
 		}
 	}
 
-	void setWeightNormalization(WeightNormalizationBase *_norm) {
-		norm.set(_norm);
+	void setWeightNormalization(Ptr<WeightNormalizationBase> _norm) {
+		norm = _norm;
 		if(n.isSet()) {
 			norm.ref().linkWithNeuron(n.ref());
 		}

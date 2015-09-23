@@ -9,10 +9,10 @@ namespace dnn {
 class Conn : public Printable {
 public:
 	Conn(SpikeNeuronBase &_neuron, size_t _syn_id) : neuron(_neuron), syn_id(_syn_id) {}
-	
+
 	SpikeNeuronBase &neuron;
 	size_t syn_id;
-	
+
 	void print(std::ostream& str) const {
 		str << "(" << neuron.id() << ":" << syn_id << ")";
 	}
@@ -49,7 +49,7 @@ public:
 	        );
 	    }
 	}
-	
+
 	void print(std::ostream &str) const {
 		str << "Network: \n";
 		str << "\tConnMap: \n";
@@ -57,7 +57,7 @@ public:
 			cout << "neuron " << i << " cause spike in: ";
 			cout << conn_map[i];
 			cout << "\n";
-		}	
+		}
 	}
 	SpikesList& spikesList() {
 		return spikes_list;
@@ -65,7 +65,7 @@ public:
 private:
 	vector<vector<Conn>> conn_map;
 	SpikesList spikes_list;
-	
+
 };
 
 

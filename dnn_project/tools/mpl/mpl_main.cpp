@@ -8,7 +8,7 @@
 #include <dnn/util/option_parser.h>
 #include <dnn/io/stream.h>
 #include <dnn/util/time_series.h>
-
+#include <dnn/base/factory.h>
 #include <dnn/util/log/log.h>
 
 using namespace dnn;
@@ -83,24 +83,23 @@ int main(int argc, char **argv) {
 
     if(!config_file.empty()) {
         std::ifstream ifs(config_file);
-        Stream(ifs, Stream::Text).readObject<MatchingPursuitConfig>(&c);
+        c = Stream(ifs, Stream::Text).readDynamic<MatchingPursuitConfig>().ref();
     }
     MatchingPursuit mpl(c);
 
     if( (fileExists(filter_file)) && ( (!c.learn) || c.continue_learning )) {
         L_INFO << "Reading filter from " << filter_file;
         std::ifstream ifs(filter_file);
-        Factory::inst().registrationOff();
-        DoubleMatrix *f = Stream(ifs, Stream::Binary).readObject<DoubleMatrix>();
+        Ptr<DoubleMatrix> f = Stream(ifs, Stream::Binary).readDynamic<DoubleMatrix>();
 
-        mpl.setFilter(*f);
+        mpl.setFilter(f.ref());
 
-        delete f;
-        Factory::inst().registrationOn();
+        delete f.ptr();
+
     }
 
     std::ifstream ifs(input_file);
-    TimeSeries *ts = Stream(ifs, Stream::Binary).readObject<TimeSeries>();
+    Ptr<TimeSeries> ts = Stream(ifs, Stream::Binary).read<TimeSeries>();
     if(dimension>=ts->dim()) {
         throw dnnException() << "Can't find dimension with index " << dimension << " in input time series\n";
     }

@@ -4,6 +4,7 @@
 
 
 namespace dnn {
+class TimeSeries;
 
 class ConvWorker : public IOWorker {
 public:

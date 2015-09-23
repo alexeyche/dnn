@@ -63,20 +63,8 @@ protected:
 class FunKernel {
     typedef std::function<double(double)> KernelFun;
 public:
-    Ptr<TimeSeries> generate(size_t dim, size_t length, double dt) const {
-        if(fun == nullptr) {
-            throw dnnException() << "Need to specify kernel function before generating\n";
-        }
-        Ptr<TimeSeries> out(Factory::inst().createObject<TimeSeries>());
-        for(size_t di=0; di<dim; ++di) {
-            double max_t = length * dt;
-            for(double s=0; s<max_t; s+=dt) {
-                double v = fun(s);
-                out->addValue(di, v);
-            }
-        }
-        return out;
-    }
+    Ptr<TimeSeries> generate(size_t dim, size_t length, double dt) const;
+
     Ptr<TimeSeries> convolve(Ptr<TimeSeries> x, double length, double dt) const {
         Spikework::Stack s;
 

@@ -48,12 +48,12 @@ public:
 
 	void setFired(const bool& f);
 
-	void setLearningRule(LearningRuleBase *_lrule);
+	void setLearningRule(Ptr<LearningRuleBase> _lrule);
 	InterfacedPtr<LearningRuleBase>& getLearningRule();
-	void setActFunction(ActFunctionBase *_act_f);
+	void setActFunction(Ptr<ActFunctionBase> _act_f);
 	const InterfacedPtr<ActFunctionBase>& getActFunction() const;
 
-	void setInput(InputBase *_input);
+	void setInput(Ptr<InputBase> _input);
 	bool inputIsSet();
 	InputBase& getInput();
 	void addSynapse(InterfacedPtr<SynapseBase> syn);

@@ -4,7 +4,9 @@
 #include "fft.h"
 
 #include <dnn/util/log/log.h>
-#include <dnn/util/time_series.cpp>
+#include <dnn/base/factory.h>
+#include <dnn/io/stream.h>
+#include <dnn/util/time_series.h>
 #include <dnn/contrib/kiss_fft/kiss_fftndr.h>
 #include <dnn/util/option_parser.h>
 
@@ -27,7 +29,7 @@ void ConvWorker::processArgs(vector<string> &args) {
     if(!filter_fname.empty()) {
         ifstream ff(filter_fname);
         Stream str(ff, Stream::Binary);
-        filter.set(str.readObject<TimeSeries>());
+        filter = str.read<TimeSeries>();
     }
 }
 

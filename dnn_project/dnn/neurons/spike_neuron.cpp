@@ -53,29 +53,29 @@ void SpikeNeuronBase::resetInternal() {
 }
 
 
-// runtime	
+// runtime
 void SpikeNeuronBase::propagateSynapseSpike(const SynSpike &sp) {
     syns[ sp.syn_id ].ifc().propagateSpike();
     lrule.ifc().propagateSynapseSpike(sp);
 }
 
-void SpikeNeuronBase::setLearningRule(LearningRuleBase *_lrule) { 
-	lrule.set(_lrule); 
+void SpikeNeuronBase::setLearningRule(Ptr<LearningRuleBase> _lrule) {
+	lrule = _lrule;
 	lrule.ref().linkWithNeuron(*this);
 }
 InterfacedPtr<LearningRuleBase>& SpikeNeuronBase::getLearningRule() {
 	return lrule;
 }
 
-void SpikeNeuronBase::setActFunction(ActFunctionBase *_act_f) { 
-	act_f.set(_act_f);
+void SpikeNeuronBase::setActFunction(Ptr<ActFunctionBase> _act_f) {
+	act_f = _act_f;
 }
 const InterfacedPtr<ActFunctionBase>& SpikeNeuronBase::getActFunction() const {
 	return act_f;
 }
 
-void SpikeNeuronBase::setInput(InputBase *_input) { 
-	input.set(_input); 
+void SpikeNeuronBase::setInput(Ptr<InputBase> _input) {
+	input = _input;
 }
 bool SpikeNeuronBase::inputIsSet() {
 	return input.isSet();
@@ -115,8 +115,8 @@ Statistics SpikeNeuronBase::getStat() {
 		if(s.ref().getStat().on()) {
 			Statistics& syn_st = s.ref().getStat();
 			for(auto it=syn_st.getStats().begin(); it != syn_st.getStats().end(); ++it) {
-				rstat[s.ref().name() + "_" +  it->first + "_" + std::to_string(syn_id)] = it->second;	
-			}						
+				rstat[s.ref().name() + "_" +  it->first + "_" + std::to_string(syn_id)] = it->second;
+			}
 		}
 		++syn_id;
 	}
@@ -131,7 +131,7 @@ Statistics SpikeNeuronBase::getStat() {
 		Statistics &lrule_st = lrule.ref().getWeightNormalization().ref().getStat();
 		for(auto it=lrule_st.getStats().begin(); it != lrule_st.getStats().end(); ++it) {
 			rstat[ lrule.ref().getWeightNormalization().ref().name() + "_" + it->first ] = it->second;
-		}		
+		}
 	}
 	return statc;
 }
@@ -151,9 +151,9 @@ void SpikeNeuronBase::readInputSpikes(const Time &t) {
         s.ref().setFired(true);
         // cout << s.ref().idPre() << " -> " << id() << " spiked at " << t.t << "\n";
         ifc.propagateSynapseSpike(sp);
-        input_spikes.pop();   
+        input_spikes.pop();
     }
-    input_queue_lock.clear(std::memory_order_release);        
+    input_queue_lock.clear(std::memory_order_release);
 }
 void SpikeNeuronBase::calculateDynamicsInternal(const Time &t) {
     readInputSpikes(t);
@@ -169,17 +169,17 @@ void SpikeNeuronBase::calculateDynamicsInternal(const Time &t) {
         	syns.setInactive(syn_id_it);
         } else {
         	Isyn += x;
-        	++syn_id_it;	
+        	++syn_id_it;
         }
     }
     ifc.calculateDynamics(t, Iinput, Isyn);
-    
+
     lrule.ifc().calculateDynamicsInternal(t);
-    
+
     if(stat.on()) {
    		for(auto &s: syns) {
    			s.ifc().calculateDynamics(t);
-        	s.ref().setFired(false);	
+        	s.ref().setFired(false);
    		}
     } else {
         for(auto syn_id_it = syns.ibegin(); syn_id_it != syns.iend(); ++syn_id_it) {

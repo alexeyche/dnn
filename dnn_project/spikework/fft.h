@@ -4,6 +4,9 @@
 
 
 namespace dnn {
+class TimeSeries;
+class TimeSeriesComplex;
+
 
 class FFTWorker : public IOWorker {
 public:

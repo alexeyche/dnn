@@ -2,6 +2,7 @@
 
 #include <dnn/core.h>
 #include <dnn/io/serialize.h>
+#include <dnn/util/ptr.h>
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/io/coded_stream.h>
@@ -89,26 +90,47 @@ public:
     }
 
     void writeObject(SerializableBase *b);
-    SerializableBase* readBaseObject(SerializableBase *o = nullptr);
 
     template <typename T>
-    T* readObject(T *o = nullptr) {
-        SerializableBase *b = readBaseObject(o);
-        if(!b) return nullptr;
-
-        T *d = dynamic_cast<T*>(b);
-        if(!d) {
-            throw dnnException()<< "Failed to cast from " << b->name() << "\n";
-        }
-        return d;
+    Ptr<T> read() {
+        return readBase().as<T>();
     }
+
     template <typename T>
-    T* safeReadObject() {
-        SerializableBase *b = readBaseObject();
-        if(!b) return nullptr;
-
-        return dynamic_cast<T*>(b);
+    Ptr<T> readDynamic() {
+        return readDynamicBase().as<T>();
     }
+
+    Ptr<SerializableBase> readDynamicBase() {
+        auto messages = getMessages();
+        return deserialize(SerializableBase::getHeader(messages)->class_name(), messages, true);
+    }
+
+    Ptr<SerializableBase> readBase() {
+        auto messages = getMessages();
+        return deserialize(SerializableBase::getHeader(messages)->class_name(), messages, false);
+    }
+
+
+
+    // template <typename T>
+    // T* readObject(T *o = nullptr) {
+    //     SerializableBase *b = readBaseObject(o);
+    //     if(!b) return nullptr;
+
+    //     T *d = dynamic_cast<T*>(b);
+    //     if(!d) {
+    //         throw dnnException()<< "Failed to cast from " << b->name() << "\n";
+    //     }
+    //     return d;
+    // }
+    // template <typename T>
+    // T* safeReadObject() {
+    //     SerializableBase *b = readBaseObject();
+    //     if(!b) return nullptr;
+
+    //     return dynamic_cast<T*>(b);
+    // }
 
     vector<ProtoMessage> readObjectProtos();
     void protoReader(vector<ProtoMessage> &messages);
@@ -141,6 +163,21 @@ public:
     }
 
 private:
+    vector<ProtoMessage> getMessages() {
+        if (!isInput()) {
+            throw dnnException()<< "Stream isn't open in input mode. Need input stream\n";
+        }
+
+        vector<ProtoMessage> messages = readObjectProtos();
+
+        std::reverse(messages.begin(), messages.end());
+        return messages;
+    }
+
+
+    Ptr<SerializableBase> deserialize(string name, vector<ProtoMessage> &messages, bool dynamically, SerializableBase *src = nullptr);
+
+
     istream *_input_str;
     ostream *_output_str;
 

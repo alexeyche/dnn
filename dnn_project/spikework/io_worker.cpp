@@ -34,7 +34,7 @@ void IOWorker::start(Spikework::Stack &s) {
 	if(!input_filename.empty()) {
 		ifstream ff(input_filename);
 	    Stream str(ff, Stream::Binary);
-        Ptr<SerializableBase> o = str.readBaseObject();
+        Ptr<SerializableBase> o = str.readBase();
         if(Ptr<SpikesList> sp = o.as<SpikesList>()) {
             s.push(sp->convertToBinaryTimeSeries(dt));
         } else {

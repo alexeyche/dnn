@@ -1,6 +1,6 @@
 
 #include "spikes_list.h"
-
+#include <dnn/base/factory.h>
 
 
 namespace dnn {

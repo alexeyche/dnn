@@ -43,69 +43,50 @@ Factory& Factory::inst() {
 }
 
 
+class BasicTypeDeduce : public TypeDeducer {
+public:
+    string deduceType(const std::type_info &info) const {
+        #define REG_FILE <dnn/base/register.x>
+        #include <dnn/base/deduce_type_impl.x>
+        #undef REG_FILE
+    }
+};
 
-Factory::Factory() : registration_is_on(true) {
-	REG_TYPE(SpikeNeuronInfo);
-	REG_TYPE(SynapseInfo);
-	REG_TYPE(SimInfo);
-	REG_TYPE(LearningRuleInfo);
 
-	REG_TYPE_WITH_STATE_AND_CONST(LeakyIntegrateAndFire);
-	REG_TYPE_WITH_STATE_AND_CONST(AdaptIntegrateAndFire);
-	REG_TYPE_WITH_STATE_AND_CONST(StaticSynapse);
-	REG_TYPE_WITH_STATE_AND_CONST(STDSynapse);
-	REG_TYPE_WITH_STATE_AND_CONST(SpikeSequenceNeuron);
-	REG_TYPE_WITH_STATE_AND_CONST(SRMNeuron);
-	REG_TYPE_WITH_CONST(Determ);
-	REG_TYPE_WITH_CONST(ExpThreshold);
-	REG_TYPE_WITH_CONST(Stochastic);
-	REG_TYPE_WITH_CONST(DifferenceOfGaussians);
-	REG_TYPE_WITH_STATE_AND_CONST(InputTimeSeries);
-	REG_TYPE_WITH_STATE_AND_CONST(Stdp);
-	REG_TYPE_WITH_STATE_AND_CONST(StdpTime);
-	REG_TYPE_WITH_STATE_AND_CONST(TripleStdp);
-	REG_TYPE_WITH_STATE_AND_CONST(OptimalStdp);
-	REG_TYPE_WITH_CONST(PowMinMax);
-	REG_TYPE_WITH_CONST(MinMax);
-	REG_TYPE_WITH_CONST(NonLinearMinMax);
-	REG_TYPE_WITH_STATE_AND_CONST(SlidingLtd);
 
-	REG_TYPE(Statistics);
-	REG_TYPE(StatisticsInfo);
-	REG_TYPE(Stat);
-	REG_TYPE(SpikesList);
-	REG_TYPE(SpikesListInfo);
-	REG_TYPE(SpikesSequence);
+Factory::Factory() {
+    #define REG_FILE <dnn/base/register.x>
+    #include <dnn/base/register_impl.x>
+    #undef REG_FILE
 
-	REG_TYPE(TimeSeries);
-	REG_TYPE(TimeSeriesInfo);
-	REG_TYPE(TimeSeriesDimInfo);
-	REG_TYPE(TimeSeriesData);
-	REG_TYPE(TimeSeriesComplexData);
-	REG_TYPE(TimeSeriesComplex);
-
-	REG_TYPE(DoubleMatrix);
+    addTypeDeducer(new BasicTypeDeduce());
 }
+
+
+
 
 Factory::~Factory() {
 	for (auto &o : objects) {
 		delete o;
 	}
+    for(auto &td: type_deducers) {
+        delete td;
+    }
 }
 
 
-SerializableBase* Factory::createObject(string name) {
-	if (typemap.find(name) == typemap.end()) {
-		throw dnnException()<< "Failed to find method to construct type " << name << "\n";
-	}
-	SerializableBase* o = typemap[name]();
+// SerializableBase* Factory::createObject(string name) {
+// 	if (typemap.find(name) == typemap.end()) {
+// 		throw dnnException()<< "Failed to find method to construct type " << name << "\n";
+// 	}
+// 	SerializableBase* o = typemap[name]();
 
-	if(registration_is_on) {
-		objects.push_back(o);
-		objects_map.insert(std::make_pair(o->name(), objects.size()-1));
-	}
-	return o;
-}
+// 	if(registration_is_on) {
+// 		objects.push_back(o);
+// 		objects_map.insert(std::make_pair(o->name(), objects.size()-1));
+// 	}
+// 	return o;
+// }
 
 ProtoMessage Factory::createProto(string name) {
 	if (prototypemap.find(name) == prototypemap.end()) {
@@ -117,12 +98,12 @@ ProtoMessage Factory::createProto(string name) {
 
 
 
-SerializableBase* Factory::getCachedObject(const string& filename) {
+Ptr<SerializableBase> Factory::getCachedObject(const string& filename) {
     if(cache_map.find(filename) == cache_map.end()) {
         ifstream f(filename);
         Stream s(f, Stream::Binary);
 
-        cache_map[filename] = s.readBaseObject();
+        cache_map[filename] = s.readBase();
     }
     return cache_map[filename];
 }

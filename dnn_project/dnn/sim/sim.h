@@ -19,17 +19,17 @@ public:
 	Sim(const Constants &_c) : c(_c), duration(0.0) {
 		GlobalCtx::inst().init(sim_info, c);
 	}
-	
+
 	void build(Stream* input_stream = nullptr);
-	
+
 	void serialize(Stream &output_stream);
 	void saveStat(Stream &str);
 	void saveSpikes(Stream &str);
 	void turnOnStatistics();
-	
+
 	static void runWorker(Sim &s, size_t from, size_t to, SpinningBarrier &barrier, std::exception_ptr &eptr);
 	static void runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barrier);
-	
+
 	void setMaxDuration(const double Tmax);
 	void print(std::ostream &str) const;
 	void run(size_t jobs);

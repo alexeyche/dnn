@@ -4,6 +4,7 @@
 #include <dnn/util/option_parser.h>
 #include <dnn/util/log/log.h>
 #include <dnn/util/time_series.h>
+#include <dnn/io/stream.h>
 
 #include <shapelets/shapelets_algo.h>
 #include <shapelets/dataset.h>
@@ -53,7 +54,7 @@ int main(int argc, char **argv) {
 
     if(!config_file.empty()) {
         std::ifstream ifs(config_file);
-        Stream(ifs, Stream::Text).readObject<ShapeletsConfig>(&c);
+        c = Stream(ifs, Stream::Text).read<ShapeletsConfig>().ref();
     }
 
     if(verbose) {
@@ -63,8 +64,9 @@ int main(int argc, char **argv) {
     ifstream f(input_file);
     Stream s(f,Stream::Binary);
 
-    Ptr<TimeSeries> ts(s.readObject<TimeSeries>());
+    Ptr<TimeSeries> ts = s.readDynamic<TimeSeries>();
     vector<Ptr<TimeSeries>> chopped = ts->chop();
+    delete ts.ptr();
     Dataset ds(chopped);
     ShapeletsAlgo alg(c);
     alg.run(ds);

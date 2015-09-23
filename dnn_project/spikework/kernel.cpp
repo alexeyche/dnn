@@ -4,10 +4,24 @@
 
 #include <dnn/util/util.h>
 #include <dnn/util/matrix.h>
-
+#include <dnn/base/factory.h>
 
 namespace dnn {
 
+Ptr<TimeSeries> FunKernel::generate(size_t dim, size_t length, double dt) const  {
+    if(fun == nullptr) {
+        throw dnnException() << "Need to specify kernel function before generating\n";
+    }
+    Ptr<TimeSeries> out(Factory::inst().createObject<TimeSeries>());
+    for(size_t di=0; di<dim; ++di) {
+        double max_t = length * dt;
+        for(double s=0; s<max_t; s+=dt) {
+            double v = fun(s);
+            out->addValue(di, v);
+        }
+    }
+    return out;
+}
 
 KernelWorker::~KernelWorker() {
     if(kernel) {
