@@ -40,7 +40,12 @@ public:
 	const double& getValue(const Time &t) {
         s._t += t.dt;
         if(fmod(s._t, c.dt) > 0.0001) return InputBase::def_value;
-        return ts.ref().data[0].values[s.index++];
+        size_t id = localId();
+        if(ts->dim() == 1) return ts.ref().data[0].values[s.index++];;
+        if(id>=ts->dim()) {
+            throw dnnException() << "Got input spike sequence less than neuron count\n";
+        }
+        return ts.ref().data[id].values[s.index++];;
 	}
 
     void setAsInput(Ptr<SerializableBase> b) {
@@ -58,7 +63,8 @@ public:
         return 0.0;
     }
 private:
-    InterfacedPtr<TimeSeries> ts;
+    vector<double> ts;
+    // InterfacedPtr<TimeSeries> ts;
 };
 
 

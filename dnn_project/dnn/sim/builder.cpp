@@ -48,6 +48,9 @@ vector<InterfacedPtr<SpikeNeuronBase>> Builder::buildNeurons() {
                     yi++;
                     xi = 0;
                 }
+                if(n.ref().inputIsSet()) {
+                    n.ref().getInput().ref().setLocalId(n.ref().localId());
+                }
             }
             layer.neurons.push_back(n);
         }
@@ -63,16 +66,13 @@ vector<InterfacedPtr<SpikeNeuronBase>> Builder::buildNeurons() {
             continue;
         }
         // L_DEBUG << "Builder, found input " << fname << " file for " << obj_name;
+        Ptr<SerializableBase> obj = Factory::inst().getCachedObject(fname);
 
         auto slice = Factory::inst().getObjectsSlice(obj_name);
         for(auto it=slice.first; it != slice.second; ++it) {
             Ptr<SerializableBase> o = Factory::inst().getObject(it);
             // L_DEBUG << "Builder, providing input for " << o->name();
-            o->setAsInput(
-                Factory::inst().getCachedObject(
-                    fname
-                )
-            );
+            o->setAsInput(obj);
         }
     }
 

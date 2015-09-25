@@ -13,10 +13,15 @@ struct InputInterface {
 class InputBase : public SerializableBase {
 public:
     typedef InputInterface interface;
-    
+
 
     virtual const double& getValue(const Time &t) = 0;
-    
+    const size_t& localId() const;
+
+    void setLocalId(size_t localId) {
+        _localId = localId;
+    }
+
     template <typename T>
     void provideInterface(InputInterface &i) {
         i.getValue = MakeDelegate(static_cast<T*>(this), &T::getValue);
@@ -29,6 +34,8 @@ public:
     static void provideDefaultInterface(InputInterface &i) {
         i.getValue = &InputBase::getValueDefault;
     }
+private:
+    size_t _localId;
 };
 
 
@@ -46,7 +53,7 @@ public:
 
 template <typename Constants, typename State>
 class Input : public InputBase {
-public:    
+public:
     void serial_process() {
         begin() << "Constants: " << c << ", ";
 
@@ -57,8 +64,8 @@ public:
 
         (*this) << "State: " << s << Self::end;
     }
-    private:    
-    
+    private:
+
 protected:
     Constants c;
     State s;
