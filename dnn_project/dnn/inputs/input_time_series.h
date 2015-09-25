@@ -10,9 +10,9 @@ namespace dnn {
 /*@GENERATE_PROTO@*/
 struct InputTimeSeriesC : public Serializable<Protos::InputTimeSeriesC> {
     InputTimeSeriesC() : dt(1.0) {}
-    
+
     double dt;
-    
+
     void serial_process() {
         begin() << "dt: " << dt << Self::end;
     }
@@ -39,16 +39,16 @@ public:
 
 	const double& getValue(const Time &t) {
         s._t += t.dt;
-        if(fmod(s._t, c.dt) > 0.0001) return InputBase::def_value;        
+        if(fmod(s._t, c.dt) > 0.0001) return InputBase::def_value;
         return ts.ref().data[0].values[s.index++];
 	}
 
-    void setAsInput(SerializableBase *b) {
+    void setAsInput(Ptr<SerializableBase> b) {
         s.index = 0;
         if(ts.ptr()) {
             throw dnnException() << "Trying to set input time series two times\n";
         }
-        ts.set(as<TimeSeries>(b));
+        ts.set(b.as<TimeSeries>().ptr());
     }
 
     double getSimDuration() {

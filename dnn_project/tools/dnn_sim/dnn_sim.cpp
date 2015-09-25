@@ -4,9 +4,12 @@
 //#include <dnn/synapses/static_synapse.h>
 //#include <dnn/inputs/input_time_series.h>
 //#include <dnn/io/stream.h>
+
 #include <dnn/base/constants.h>
 #include <dnn/sim/sim.h>
 #include <dnn/util/option_parser.h>
+#include <dnn/util/log/log.h>
+
 
 using namespace dnn;
 const char * usage = R"USAGE(
@@ -22,14 +25,17 @@ Options:
   --jobs  -j       Parallel jobs to run (default 1)
   --no-learning    Turning off all learning dynamics despite of const.json
                    content. Good for statistics collecting
+
+  --verbose, -v    Turn on verbosing log
   --help           Print usage and exit.
+
 
 Examples:
 % Need to fill %
 )USAGE";
 
 struct DnnSimOpts {
-    DnnSimOpts() : jobs(1), precalc(false), Tmax(-1.0) {}
+    DnnSimOpts() : jobs(1), precalc(false), Tmax(-1.0), verbose(false) {}
     string input;
     string const_file;
     string out_spikes;
@@ -40,6 +46,7 @@ struct DnnSimOpts {
     size_t jobs;
     bool precalc;
     bool no_learning;
+    bool verbose;
     double Tmax;
     dnn::OptMods add_opts;
 };
@@ -67,8 +74,13 @@ int main(int argc, char **argv) {
 	optp.option("--load", "-l", sopt.model_load, false);
 	optp.loption("--stat", sopt.out_stat_file, false);
 	optp.option("--T-max", "-T", sopt.Tmax, false);
+    optp.option("--verbose", "-v", sopt.verbose, false, true);
 
-
+    if(sopt.verbose) {
+        Log::inst().setLogLevel(Log::DEBUG_LEVEL);
+    } else {
+        Log::inst().setLogLevel(Log::INFO_LEVEL);
+    }
 
 	vector<string> rest_opts = optp.getRawOptions();
 	sopt.add_opts = parseArgOptionsPairs(rest_opts);

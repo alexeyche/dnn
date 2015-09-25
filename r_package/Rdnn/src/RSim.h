@@ -13,16 +13,30 @@
 
 class RSim : public dnn::Sim {
 public:
-    RSim(RConstants *rc) try : Sim(*rc)  {
-        global_neuron_index = 0;
-        Sim::build();
-    } catch (std::exception &e) {
-        ERR("\nCan't build Sim: " << e.what() << "\n");
+    RSim() {
+
     }
+    // RSim(RConstants *rc) try : Sim(*rc)  {
+    //     global_neuron_index = 0;
+    //     Sim::build();
+    // } catch (std::exception &e) {
+    //     ERR("\nCan't build Sim: " << e.what() << "\n");
+    // }
     ~RSim() { }
 
     void print() {
         cout << *this;
+    }
+    void build() {
+        try {
+            Sim::build();
+        } catch (std::exception &e) {
+            ERR("\nCan't build Sim: " << e.what() << "\n");
+        }
+    }
+
+    RConstants getConst() {
+        return RConstants(Sim::c);
     }
 
     void run(size_t jobs=1) {
@@ -33,59 +47,14 @@ public:
         }
     }
 
-    void setTimeSeries(const Rcpp::NumericVector &v, const string &obj_name) {
-        Rcpp::List tsl;
-        tsl["values"] = v;
-        TimeSeries* ts = RProto::convertBack<TimeSeries>(tsl, "TimeSeries");
-        auto slice = Factory::inst().getObjectsSlice(obj_name);
-        for(auto it=slice.first; it != slice.second; ++it) {
-            Factory::inst().getObject(it)->setAsInput(
-                ts
-            );
-        }
-        for(auto &n: neurons) {
-            duration = std::max(duration, n.ref().getSimDuration());
-        }
-    }
+    void setTimeSeries(const Rcpp::NumericVector &v, const string &obj_name);
 
-    void setInputSpikes(const Rcpp::List &l, const string &obj_name) {
-        Rcpp::List sl;
-        sl["values"] = l;
-        SpikesList* sp_l = RProto::convertBack<SpikesList>(sl, "SpikesList");
-        auto slice = Factory::inst().getObjectsSlice(obj_name);
-        for(auto it=slice.first; it != slice.second; ++it) {
-            Factory::inst().getObject(it)->setAsInput(
-                sp_l
-            );
-        }
-        for(auto &n: neurons) {
-            duration = std::max(duration, n.ref().getSimDuration());
-        }
-    }
-    Rcpp::List getStat() {
-        Rcpp::List out;
-        for(auto &n: neurons) {
-            if(n.ref().getStat().on()) {
-                stringstream ss;
-                ss << n.ref().name() << "_" << n.ref().id();
-                Statistics st = n.ref().getStat();
-                out[ss.str()] = RProto::convertToList(&st);
-            }
-        }
-        return out;
-    }
-    Rcpp::List getModel() {
-        Rcpp::NumericMatrix w(neurons.size(), neurons.size());
+    void setInputSpikes(const Rcpp::List &l, const string &obj_name);
 
-        for(auto &n: neurons) {
-            for(auto &syn: n.ref().getSynapses()) {
-                w(syn.ref().idPre(), n.ref().id()) = syn.ref().weight();
-            }
-        }
-        return Rcpp::List::create(
-            Rcpp::Named("w") = w
-        );
-    }
+    Rcpp::List getStat();
+
+    Rcpp::List getModel();
+
     void turnOnStatistics() {
         Sim::turnOnStatistics();
     }

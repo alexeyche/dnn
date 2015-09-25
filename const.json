@@ -133,38 +133,23 @@
     "sim_configuration" : {
         "layers" : [
             {
-                "size" : 50,
-                "neuron" : "SpikeSequenceNeuron",
-                "axon_delay" : 0
+                "size" : 100,
+                "neuron" : "SpikeSequenceNeuron"
             },
             {
-                "size" : 49,
-                "neuron" : "SRMNeuron",
-                "act_function" : "ExpThreshold",
-                "axon_delay" : 0,
-                "learning_rule" : "TripleStdp",
-                "weight_normalization" : "SlidingLtd"
+                "size" : 100,
+                "neuron" : "LeakyIntegrateAndFire",
+                "act_function" : "Determ"
             }
         ],
         "conn_map" : {
             "0->1" : [
                 { 
                     "type" : "Stochastic", 
-                    "dendrite_delay" : "Exp(0,0)",
                     "start_weight" : 0.1,
                     "synapse" : "StaticSynapse"
                 }
-            ]//,
-            //"1->1" : [
-            //    { 
-            //        "type" : "DifferenceOfGaussians",
-            //        //"type" : "Stochastic",
-            //        "dendrite_delay" : "Exp(0,0)",
-            //        "start_weight" : 0.01,
-            //        "synapse" : "StaticSynapse",
-            //        "inh_synapse" : "StaticSynapse_inh"
-            //    }
-            //]
+            ]
         },
         "dt" : 1.0,
         "seed" : -1,

@@ -4,21 +4,25 @@
 
 RCPP_MODULE(dnnMod) {
     Rcpp::class_<RSim>("RSim")
-    .constructor<RConstants*>()
+    .constructor()
     .method("print", &RSim::print, "Print Sim instance")
     .method("run", &RSim::run, "Run simulation")
+    .method("build", &RSim::build, "Build and allocate simulation environment")
     .method("getStat", &RSim::getStat, "get stat")
     .method("setTimeSeries", &RSim::setTimeSeries, "Setting time series to object")
     .method("setInputSpikes", &RSim::setInputSpikes, "Setting spikes list to object")
     .method("getSpikes", &RSim::getSpikes, "get spikes")
+    .method("getConst", &RSim::getConst, "getting constants object")
     .method("getModel", &RSim::getModel, "get model")
     .method("saveModel", &RSim::saveModel, "save mode")
     .method("turnOnStatistics", &RSim::turnOnStatistics, "turn on collect stat")
 //    .method("setInputSpikesList", &RSim::setInputSpikesList, "Set LabeledSpikesList as input spikes")
     ;
     Rcpp::class_<RConstants>("RConstants")
-    .constructor<std::string>()
     .method("print", &RConstants::print, "Print constants")
+    .method("setElement", &RConstants::setElement, "Overriding one of element in constants by list")
+    .method("addLayer", &RConstants::addLayer, "add layer")
+    .method("addConnection", &RConstants::addConnection, "add connection")
     ;
     Rcpp::class_<RProto>("RProto")
     .constructor<std::string>()

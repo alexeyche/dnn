@@ -21,7 +21,6 @@ public:
 };
 
 
-
 MplInit::MplInit() {
     #define REG_FILE <mpl/mpl_register.x>
     #include <dnn/base/register_impl.x>
@@ -29,6 +28,9 @@ MplInit::MplInit() {
 
     Factory::inst().addTypeDeducer(new MplTypeDeduce());
 }
+
+MplInit init;
+
 
 MatchingPursuit::MatchingPursuit(const MatchingPursuitConfig &_c) : c(_c) {
     if(c.seed < 0) {
@@ -214,11 +216,10 @@ MatchingPursuit::MPLReturn MatchingPursuit::run(const TimeSeries &ts, const size
 }
 
 Ptr<SpikesList> MatchingPursuit::convertMatchesToSpikes(const vector<FilterMatch> &matches) {
-    Ptr<SpikesList> sl = Factory::inst().createObject<SpikesList>();
+    Ptr<SpikesList> sl = Factory::inst().createDynamicObject<SpikesList>();
     for(const auto& m: matches) {
         sl->addSpike(m.fi, m.t);
     }
-
     return sl;
 }
 

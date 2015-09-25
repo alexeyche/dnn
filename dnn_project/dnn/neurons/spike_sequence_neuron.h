@@ -10,8 +10,8 @@ namespace dnn {
 
 /*@GENERATE_PROTO@*/
 struct SpikeSequenceNeuronC : public Serializable<Protos::SpikeSequenceNeuronC> {
-    SpikeSequenceNeuronC() 
-    : 
+    SpikeSequenceNeuronC()
+    :
       dt(1.0)
     {}
 
@@ -25,13 +25,13 @@ struct SpikeSequenceNeuronC : public Serializable<Protos::SpikeSequenceNeuronC> 
 
 /*@GENERATE_PROTO@*/
 struct SpikeSequenceNeuronState : public Serializable<Protos::SpikeSequenceNeuronState>  {
-    SpikeSequenceNeuronState() 
+    SpikeSequenceNeuronState()
     : p(0.0), index(0)
     {}
 
     void serial_process() {
         begin() << "p: " << p << ", " << "index: " << index << Self::end;
-    }    
+    }
     double p;
     size_t index;
 };
@@ -65,12 +65,12 @@ public:
             setFired(true);
         }
     }
-   
+
     const double& getFiringProbability() {
         return s.p;
     }
-    void setAsInput(SerializableBase *b) {
-        SpikesList *sl = as<SpikesList>(b);
+    void setAsInput(Ptr<SerializableBase> b) {
+        Ptr<SpikesList> sl = b.as<SpikesList>();
         size_t id = localId();
         if(id>=sl->size()) {
             throw dnnException() << "Got input spike sequence less than neuron count\n";
@@ -85,7 +85,7 @@ public:
         if(seq.size() == 0) return 0.0;
         return seq.back() * c.dt;
     }
-private:    
+private:
     vector<double> seq;
 };
 

@@ -22,28 +22,24 @@ public:
 
 	}
 	Rcpp::List run(const Rcpp::NumericVector ts_m) {
-		Factory::inst().registrationOff();
-		TimeSeries *ts = RProto::convertBack<TimeSeries>(
+		Ptr<TimeSeries> ts = RProto::convertBack<TimeSeries>(
 			Rcpp::List::create(
 				Rcpp::Named("values") = ts_m
 			),
 			"TimeSeries"
 		);
-		MatchingPursuit::MPLReturn ret = MatchingPursuit::run(*ts, 0);
-		delete ts;
-		Factory::inst().registrationOff();
+		MatchingPursuit::MPLReturn ret = MatchingPursuit::run(ts.ref(), 0);
+		ts.destroy();
 
-		vector<SerializableBase*> vv;
+		vector<Ptr<SerializableBase>> vv;
 		for(auto &m: ret.matches) {
-			vv.push_back(&m);
+			vv.push_back(Ptr<SerializableBase>(&m));
 		}
 		Rcpp::List matches_l = RProto::convertFilterMatches(vv);
 
-		Factory::inst().registrationOff();
 		Ptr<SpikesList> sl = MatchingPursuit::convertMatchesToSpikes(ret.matches);
 		Rcpp::List spikes_l = RProto::convertToList(sl.ptr());
-		delete sl.ptr();
-		Factory::inst().registrationOn();
+		sl.destroy();
 
 		return Rcpp::List::create(
 			Rcpp::Named("matches") = matches_l
@@ -63,11 +59,9 @@ public:
 	}
 
 	void setConf(const Rcpp::List conf) {
-		Factory::inst().registrationOff();
-		MatchingPursuitConfig *in_c = RProto::convertBack<MatchingPursuitConfig>(conf, "MatchingPursuitConfig");
-		MatchingPursuit::c = *in_c;
-		delete in_c;
-		Factory::inst().registrationOn();
+		Ptr<MatchingPursuitConfig> in_c = RProto::convertBack<MatchingPursuitConfig>(conf, "MatchingPursuitConfig");
+		MatchingPursuit::c = in_c.ref();
+		in_c.destroy();
 	}
 
 	Rcpp::NumericMatrix getFilter() {

@@ -23,6 +23,8 @@
 #include <dnn/weight_normalizations/nonlinear_min_max.h>
 #include <dnn/weight_normalizations/sliding_ltd.h>
 
+#include <dnn/util/log/log.h>
+
 
 #include <dnn/sim/sim.h>
 
@@ -53,8 +55,9 @@ public:
 };
 
 
-
 Factory::Factory() {
+    Log::inst().setLogLevel(Log::DEBUG_LEVEL);
+
     #define REG_FILE <dnn/base/register.x>
     #include <dnn/base/register_impl.x>
     #undef REG_FILE
@@ -67,7 +70,7 @@ Factory::Factory() {
 
 Factory::~Factory() {
 	for (auto &o : objects) {
-		delete o;
+		o.destroy();
 	}
     for(auto &td: type_deducers) {
         delete td;

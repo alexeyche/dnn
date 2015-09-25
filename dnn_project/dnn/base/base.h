@@ -53,7 +53,7 @@ struct SynSpike : public Printable {
     : n_id(_n_id)
     , syn_id(_syn_id)
     , t(_t) {}
-    
+
     double t;
     size_t n_id;
     size_t syn_id;
@@ -66,7 +66,8 @@ struct SynSpike : public Printable {
 };
 
 struct Time {
-    Time(double _dt) : t(0), dt(_dt) {}
+    Time(double _dt) : t(0), dt(_dt) {
+    }
     void operator ++() {
         t+=dt;
     }

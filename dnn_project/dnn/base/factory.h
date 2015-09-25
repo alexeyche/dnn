@@ -15,9 +15,6 @@ namespace dnn {
 class ClassName;
 class SerializableBase;
 
-#define REG_FILE <dnn/base/register.x>
-#include <dnn/base/forward_declarations.x>
-#undef REG_FILE
 
 class Factory {
 public:
@@ -38,7 +35,13 @@ public:
     string deduceType() {
         string t;
         for(const auto& deducer: type_deducers) {
-            t = deducer->deduceType(typeid(T));
+            string type = deducer->deduceType(typeid(T));
+            if(!type.empty() && !t.empty()) {
+                throw dnnException() << "Got ambigous types: " << type << " and " << t << "\n";
+            }
+            if(!type.empty()) {
+                t = type;
+            }
         }
         if(t.empty()) {
             throw dnnException() << "Can't deduce type\n";
@@ -71,7 +74,7 @@ public:
 
     pair<object_iter, object_iter> getObjectsSlice(const string& name);
 
-    SerializableBase* getObject(object_iter &it) {
+    Ptr<SerializableBase> getObject(object_iter &it) {
         return objects[it->second];
     }
 
@@ -92,7 +95,7 @@ public:
     Ptr<SerializableBase> getCachedObject(const string& filename);
 private:
     void registerObject(Ptr<SerializableBase> o) {
-        objects.push_back(o.ptr());
+        objects.push_back(o);
         objects_map.insert(std::make_pair(o->name(), objects.size()-1));
     }
 
@@ -127,7 +130,7 @@ private:
     static proto_map_type prototypemap;
     multimap<string, size_t> objects_map;
 
-    vector<SerializableBase*> objects;
+    vector<Ptr<SerializableBase>> objects;
     vector<ProtoMessage> proto_objects;
     map<string, Ptr<SerializableBase>> cache_map;
 

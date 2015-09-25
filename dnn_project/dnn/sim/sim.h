@@ -16,6 +16,10 @@ namespace dnn {
 
 class Sim : public Printable {
 public:
+	Sim() : duration(0.0) {
+		GlobalCtx::inst().init(sim_info, c);
+	}
+
 	Sim(const Constants &_c) : c(_c), duration(0.0) {
 		GlobalCtx::inst().init(sim_info, c);
 	}
@@ -38,7 +42,7 @@ protected:
 
 	SimInfo sim_info;
 	double duration;
-	const Constants &c;
+	Constants c;
 	vector<InterfacedPtr<SpikeNeuronBase>> neurons;
 	uptr<Network> net;
 };

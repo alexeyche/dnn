@@ -3,6 +3,9 @@
 #include <dnn/base/factory.h>
 #include <dnn/neurons/spike_neuron.h>
 
+#include <dnn/util/log/log.h>
+
+
 namespace dnn {
 
 vector<InterfacedPtr<SpikeNeuronBase>> Builder::buildNeurons() {
@@ -59,9 +62,13 @@ vector<InterfacedPtr<SpikeNeuronBase>> Builder::buildNeurons() {
         if(strStartsWith(fname, "@")) {
             continue;
         }
+        // L_DEBUG << "Builder, found input " << fname << " file for " << obj_name;
+
         auto slice = Factory::inst().getObjectsSlice(obj_name);
         for(auto it=slice.first; it != slice.second; ++it) {
-            Factory::inst().getObject(it)->setAsInput(
+            Ptr<SerializableBase> o = Factory::inst().getObject(it);
+            // L_DEBUG << "Builder, providing input for " << o->name();
+            o->setAsInput(
                 Factory::inst().getCachedObject(
                     fname
                 )

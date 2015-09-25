@@ -9,12 +9,15 @@
 #include <dnn/util/json.h>
 #include <dnn/base/exceptions.h>
 
+
 namespace dnn {
 
 using namespace rapidjson;
 
 
 struct SimConfiguration : public Printable {
+	SimConfiguration() : dt(1.0), seed(-1) {}
+
 	vector<string> layers;
 	multimap< pair<size_t, size_t>, string> conn_map;
 	double dt;
@@ -25,7 +28,7 @@ struct SimConfiguration : public Printable {
 	void print(ostream &o) const {
 		o << "layers: \n";
 		for (auto &v : layers) {
-			o << "\t" <<  v << "\n";
+			o << "  " <<  v << "\n";
 		}
 		o << "conn_map: \n";
 		for (auto &v : conn_map) {
@@ -37,83 +40,40 @@ struct SimConfiguration : public Printable {
 		for (auto &v : neurons_to_listen) { o << v << ", "; }
 		o << "\n";
 	}
+
+	static string getDeaultConnectionConf() {
+		Value cv(kObjectType);
+		cv.AddMember("type", "", Json::d.GetAllocator());
+		cv.AddMember("dendrite_delay", 0, Json::d.GetAllocator());
+		cv.AddMember("start_weight", 0.0, Json::d.GetAllocator());
+		cv.AddMember("synapse", "", Json::d.GetAllocator());
+		cv.AddMember("inh_synapse", "", Json::d.GetAllocator());
+		return Json::stringify(cv);
+	}
+
+	static string getDeaultLayerConf() {
+		Value cv(kObjectType);
+		cv.AddMember("size", 0, Json::d.GetAllocator());
+		cv.AddMember("axon_delay", 0, Json::d.GetAllocator());
+		cv.AddMember("neuron", "", Json::d.GetAllocator());
+		cv.AddMember("act_function", "", Json::d.GetAllocator());
+		cv.AddMember("learning_rule", "", Json::d.GetAllocator());
+		cv.AddMember("weight_normalization", "", Json::d.GetAllocator());
+		return Json::stringify(cv);
+	}
 };
 
 
 struct Constants : public Printable {
 	enum ReadMod {FromString, FromFile};
-	Constants(const string& s, OptMods mods = OptMods(), ReadMod mod = FromFile) {
-		string const_json;
-		if(mod == FromFile) {
-			std::ifstream ifs(s);
-			const_json = std::string((std::istreambuf_iterator<char>(ifs)),
-			                       std::istreambuf_iterator<char>());
-		} else
-		if(mod == FromString) {
-			const_json = s;
-		}
-		for(auto it=mods.begin(); it != mods.end(); ++it) {
-			replaceStr(const_json, it->first, it->second);
-		}
 
-		Document document = Json::parseString(const_json);
+	Constants(OptMods mods = OptMods());
 
-		fill(Json::getVal(document, "neurons"), neurons);
-		fill(Json::getVal(document, "act_functions"), act_functions);
-		fill(Json::getVal(document, "synapses"), synapses);
-		fill(Json::getVal(document, "inputs"), inputs);
-		fill(Json::getVal(document, "learning_rules"), learning_rules);
-		fill(Json::getVal(document, "weight_normalizations"), weight_normalizations);
-		fill(Json::getVal(document, "connections"), connections);
-
-		const Value &sim_conf_doc = Json::getVal(document, "sim_configuration");
-		const Value &layers_doc = Json::getArray(sim_conf_doc, "layers");
-
-		for (SizeType i = 0; i < layers_doc.Size(); i++) {
-			const Value &v = layers_doc[i];
-			sim_conf.layers.push_back(Json::stringify(v));
-		}
-		const Value &conn_map_doc = Json::getVal(sim_conf_doc, "conn_map");
-
-		for (Value::ConstMemberIterator itr = conn_map_doc.MemberBegin(); itr != conn_map_doc.MemberEnd(); ++itr) {
-			const string k = itr->name.GetString();
-			vector<string> aff = splitBySubstr(k, "->");
-			if (aff.size() != 2) {
-				throw dnnException() << "conn_map configuration not right: need 2 afferents separated by \"->\"\n";
-			}
-
-			const pair<size_t, size_t> aff_p(stoi(aff[0]), stoi(aff[1]));
-			const Value &conns = itr->value;
-
-			for (SizeType i = 0; i < conns.Size(); i++) {
-				const Value &v = conns[i];
-				sim_conf.conn_map.insert( pair<pair<size_t, size_t>, string>(aff_p, Json::stringify(v) ));
-			}
-		}
-		sim_conf.dt = Json::getDoubleVal(sim_conf_doc, "dt");
-		sim_conf.seed = Json::getIntVal(sim_conf_doc, "seed");
-		if(sim_conf.seed < 0) {
-			std::srand ( unsigned ( std::time(0) ) );
-		} else {
-			std::srand ( sim_conf.seed );
-		}
-		sim_conf.neurons_to_listen = Json::getUintVector(sim_conf_doc, "neurons_to_listen");
-		const Value &files_doc = Json::getVal(sim_conf_doc, "files");
-		for (Value::ConstMemberIterator itr = files_doc.MemberBegin(); itr != files_doc.MemberEnd(); ++itr) {
-			const string k = itr->name.GetString();
-			sim_conf.files[k] = Json::stringify(itr->value);
-		}
-	}
-
+	Constants(string s, OptMods mods = OptMods(), ReadMod mod = FromFile);
 
 	static void fill(const Value &v, map<string, string> &m) {
 		for (Value::ConstMemberIterator itr = v.MemberBegin(); itr != v.MemberEnd(); ++itr) {
-			Document d;
-			Value cv(kObjectType);
-			Value copy_v;
-			copy_v.CopyFrom(itr->value, d.GetAllocator());
-			cv.AddMember(StringRef(itr->name.GetString()), copy_v, d.GetAllocator());
-			m[itr->name.GetString()] = Json::stringify(cv);
+			m[itr->name.GetString()] = Json::stringify(itr->value);
 		}
 	}
 
@@ -128,12 +88,17 @@ struct Constants : public Printable {
 		o << "sim_configuration: \n";
 		o << sim_conf;
 	}
+
 	static void print_section(const string &sect_name, const map<string, string> &m, ostream &o) {
 		o << sect_name << "\n";
 		for (auto it = m.begin(); it != m.end(); ++it) {
-			o << "\t" << it->first << ": ";
-			for ( auto &s : split(it->second, '\n') ) {
-				o << "\t" <<  s << "\n";
+			o << "\t" << it->first << " :";
+			auto spl_doc = split(it->second, '\n');
+			if(spl_doc.size()>0) {
+				o << " " << spl_doc[0] << "\n";
+			}
+			for(size_t i=1; i<spl_doc.size(); ++i) {
+				o << "\t" <<  spl_doc[i] << "\n";
 			}
 		}
 	}

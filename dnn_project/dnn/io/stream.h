@@ -89,6 +89,12 @@ public:
         throw dnnException()<< "Stream is wrongly opened or used\n";
     }
 
+    template <typename T>
+    void write(Ptr<T> o) {
+        SerializableBase *b = o. template as<SerializableBase>().ptr();
+        writeObject(b);
+    }
+
     void writeObject(SerializableBase *b);
 
     template <typename T>
@@ -103,11 +109,17 @@ public:
 
     Ptr<SerializableBase> readDynamicBase() {
         auto messages = getMessages();
+        if(messages.size() == 0) {
+            return Ptr<SerializableBase>();
+        }
         return deserialize(SerializableBase::getHeader(messages)->class_name(), messages, true);
     }
 
     Ptr<SerializableBase> readBase() {
         auto messages = getMessages();
+        if(messages.size() == 0) {
+            return Ptr<SerializableBase>();
+        }
         return deserialize(SerializableBase::getHeader(messages)->class_name(), messages, false);
     }
 

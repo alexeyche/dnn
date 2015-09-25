@@ -22,4 +22,5 @@
 #undef REG_TYPE_WITH_CONST
 #undef REG_TYPE_WITH_CONST_AND_STATE
 
+//L_DEBUG << "Failed to deduce type for: " << info.name();
 return string("");

@@ -59,6 +59,13 @@ public:
 		if(!t) return Ptr<NT>();
 		return t;
 	}
+
+	void destroy() {
+		if(isSet()) {
+			delete _ptr;
+		}
+	}
+
 private:
 	T *_ptr;
 };

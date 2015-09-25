@@ -5,7 +5,7 @@ PKG_CPPFLAGS=-I"@DNN_INCLUDE@"
 PKG_LIBS = -L"@DNN_LIB@" -ldnn -lshapelets -lmpl $(LIBS)
 
 
-OBJECTS.root=RcppExports.o util.o RSim.o  RMpl.o mod.o
+OBJECTS.root=RcppExports.o util.o RSim.o  RMpl.o RProto.o mod.o
 
 OBJECTS=  $(OBJECTS.root)
 

@@ -5,14 +5,16 @@
 #include <dnn/util/matrix.h>
 #include <mpl/mpl.h>
 #include <shapelets/subsequence.h>
+#include <dnn/util/statistics.h>
+#include <dnn/neurons/spike_neuron.h>
 
-#include <R.h>
-#include <Rinternals.h>
 
 #undef PI
 #define STRICT_R_HEADERS
 #include <Rcpp.h>
 
+// #include <R.h>
+// #include <Rinternals.h>
 
 
 #include "common.h"
@@ -37,14 +39,13 @@ public:
             if(getFileSize(protofile) == 0) return values;
 
             ifstream f(protofile);
-            vector<SerializableBase*> obj;
+            vector<Ptr<SerializableBase>> obj;
 
 
             try {
                 Stream str(f, Stream::Binary);
 
-                Factory::inst().registrationOff();
-                SerializableBase* o = str.readBaseObject();
+                Ptr<SerializableBase> o = str.readDynamicBase();
 
                 if (!o) {
                     ERR("Can't read protofile " << protofile << "\n");
@@ -52,7 +53,7 @@ public:
 
                 while(o) {
                     obj.push_back(o);
-                    o = str.readBaseObject();
+                    o = str.readDynamicBase();
                 }
             } catch(const std::exception &e) {
                 ERR("Can't open " << protofile << " for reading: " <<  e.what() << "\n");
@@ -60,7 +61,7 @@ public:
 
             if((obj.size() == 1)&&(simplify)) {
                 values = convertToList(obj[0]);
-                delete obj[0];
+                delete obj[0].ptr();
             } else {
                 if(obj[0]->name() == "FilterMatch") {
                     values = convertFilterMatches(obj);
@@ -71,28 +72,27 @@ public:
                         if(l.size()>0) {
                             ret.push_back(l);
                         }
-                        delete o;
+                        delete o.ptr();
                     }
                     values = Rcpp::wrap(ret);
                 }
             }
-            Factory::inst().registrationOn();
         }
         return values;
     }
     void write(Rcpp::List &o, const string& name) {
-        SerializableBase* b = convertBack(o, name);
+        Ptr<SerializableBase> b = convertBack(o, name);
         ofstream f(protofile);
         Stream str(f, Stream::Binary);
-        str.writeObject(b);
+        str.write(b);
     }
 
-    static Rcpp::List convertFilterMatches(vector<SerializableBase*> &obj) {
+    static Rcpp::List convertFilterMatches(vector<Ptr<SerializableBase>> &obj) {
         vector<double> t;
         vector<size_t> fi;
         vector<double> s;
         for(auto &o: obj) {
-            FilterMatch *m = dynamic_cast<FilterMatch*>(o);
+            Ptr<FilterMatch> m = o.as<FilterMatch>();
             if(!m) { ERR("Can't cast"); }
             t.push_back(m->t);
             fi.push_back(m->fi);
@@ -106,24 +106,27 @@ public:
         );
     }
 
-    static Rcpp::List convertToList(SerializableBase *o) {
+    static Rcpp::List convertToList(Ptr<SerializableBase> o) {
         Rcpp::List out;
         if(o->name() == "Statistics") {
-            Statistics *od = dynamic_cast<Statistics*>(o);
+            Ptr<Statistics> od = o.as<Statistics>();
             if(!od) { ERR("Can't cast"); }
+
             StatisticsInfo info = od->getInfo();
             for(auto &name: info.stat_names) {
                 out[name] = Rcpp::wrap(od->getStats()[name].values);
             }
         }
         if(o->name() == "Subsequence") {
-            Subsequence *sub = dynamic_cast<Subsequence*>(o);
+            Ptr<Subsequence> sub = o.as<Subsequence>();
             if(!sub) { ERR("Can't cast"); }
+
             o = sub->referent().ptr();
         }
         if(o->name() == "TimeSeries") {
-            TimeSeries *od = dynamic_cast<TimeSeries*>(o);
+            Ptr<TimeSeries> od = o.as<TimeSeries>();
             if(!od) { ERR("Can't cast"); }
+
             vector<vector<double>> ts_vals;
             for(auto &d : od->data) {
                 ts_vals.push_back(d.values);
@@ -138,8 +141,9 @@ public:
             );
         }
         if(o->name() == "TimeSeriesComplex") {
-            TimeSeriesComplex *od = dynamic_cast<TimeSeriesComplex*>(o);
+            Ptr<TimeSeriesComplex> od = o.as<TimeSeriesComplex>();
             if(!od) { ERR("Can't cast"); }
+
             vector<vector<complex<double>>> ts_vals;
             for(auto &d : od->data) {
                 ts_vals.push_back(d.values);
@@ -154,7 +158,7 @@ public:
             );
         }
         if(o->name() == "SpikesList") {
-            SpikesList *od = dynamic_cast<SpikesList*>(o);
+            Ptr<SpikesList> od = o.as<SpikesList>();
             if(!od) { ERR("Can't cast"); }
 
             vector<vector<double>> sp;
@@ -171,7 +175,7 @@ public:
             );
         }
         if(o->name() == "DoubleMatrix") {
-            DoubleMatrix *m = dynamic_cast<DoubleMatrix*>(o);
+            Ptr<DoubleMatrix> m = o.as<DoubleMatrix>();
             if(!m) { ERR("Can't cast"); }
 
             Rcpp::NumericMatrix rm(m->nrow(), m->ncol());
@@ -191,7 +195,7 @@ public:
                 Rcpp::Named("matrix_info") = matrix_info
             );
         }
-        SpikeNeuronBase* nb = dynamic_cast<SpikeNeuronBase*>(o);
+        Ptr<SpikeNeuronBase> nb = o.as<SpikeNeuronBase>();
         if(nb) {
             vector<double> weights;
             vector<double> ids_pre;
@@ -214,7 +218,7 @@ public:
             );
         }
         if(o->name() == "MatchingPursuitConfig") {
-            MatchingPursuitConfig *m = dynamic_cast<MatchingPursuitConfig*>(o);
+            Ptr<MatchingPursuitConfig> m = o.as<MatchingPursuitConfig>();
             if(!m) { ERR("Can't cast"); }
 
             out = Rcpp::List::create(
@@ -233,7 +237,7 @@ public:
 
         }
         if(o->name() == "FilterMatch") {
-            FilterMatch *m = dynamic_cast<FilterMatch*>(o);
+            Ptr<FilterMatch> m = o.as<FilterMatch>();
             if(!m) { ERR("Can't cast"); }
             out = Rcpp::List::create(
                 Rcpp::Named("t") = m->t,
@@ -245,95 +249,16 @@ public:
     }
 
     template <typename T>
-    static T* convertBack(const Rcpp::List &list, const string &name) {
-        SerializableBase* o = convertBack(list, name);
-        T* oc = dynamic_cast<T*>(o);
+    static Ptr<T> convertBack(const Rcpp::List &list, const string &name) {
+        Ptr<SerializableBase> o = convertBack(list, name);
+        Ptr<T> oc = o.as<T>();
         if(!oc) { ERR("Can't cast"); }
         return oc;
     }
 
-    static SerializableBase* convertBack(const Rcpp::List &list, const string &name) {
-        TimeSeriesInfo ts_info;
-        if( (name == "TimeSeries") || (name == "SpikesList") ) {
-            if(list.containsElementNamed("ts_info")) {
-                Rcpp::List ts_info_l = list["ts_info"];
-                ts_info.labels_ids = Rcpp::as<vector<size_t>>(ts_info_l["labels_ids"]);
-                ts_info.unique_labels = Rcpp::as<vector<string>>(ts_info_l["unique_labels"]);
-                ts_info.labels_timeline = Rcpp::as<vector<size_t>>(ts_info_l["labels_timeline"]);
-            }
-        }
-        if(name == "TimeSeries") {
-            TimeSeries* ts = Factory::inst().createObject<TimeSeries>(name);
-            SEXP values = list["values"];
-            if(Rf_isMatrix(values)) {
-                Rcpp::NumericMatrix m(values);
-                ts->dim_info.size = m.nrow();
-                ts->data.resize(ts->dim_info.size);
-                for(size_t i=0; i<m.nrow(); ++i) {
-                    for(size_t j=0; j<m.ncol(); ++j) {
-                        ts->data[i].values.push_back(m(i,j));
-                    }
-                }
 
-            } else {
-                ts->dim_info.size = 1;
-                ts->data.resize(ts->dim_info.size);
-                ts->data[0].values = Rcpp::as<vector<double>>(values);
-            }
+    static Ptr<SerializableBase> convertBack(const Rcpp::List &list, const string &name);
 
-            ts->info = ts_info;
-            return ts;
-        }
-        if(name == "SpikesList") {
-            Rcpp::List spikes = list["values"];
-            SpikesList *sl = Factory::inst().createObject<SpikesList>("SpikesList");
-
-            for(auto &sp_v: spikes) {
-                SpikesSequence sp_seq;
-                sp_seq.values = Rcpp::as<vector<double>>(sp_v);
-                sl->seq.push_back(sp_seq);
-            }
-            sl->ts_info = ts_info;
-            return sl;
-        }
-        if(name == "DoubleMatrix") {
-            Rcpp::NumericMatrix m = list[0];
-            DoubleMatrix *r = Factory::inst().createObject<DoubleMatrix>("DoubleMatrix");
-            r->allocate(m.nrow(), m.ncol());
-            for(size_t i=0; i<m.nrow(); ++i) {
-                for(size_t j=0; j<m.ncol(); ++j) {
-                    r->setElement(i,j, m(i,j));
-                }
-            }
-            return r;
-        }
-        if(name == "MatchingPursuitConfig") {
-            MatchingPursuitConfig *c = Factory::inst().createObject<MatchingPursuitConfig>("MatchingPursuitConfig");
-
-            if(list.containsElementNamed("threshold")) c->threshold = list["threshold"];
-            if(list.containsElementNamed("learn_iterations")) c->learn_iterations = list["learn_iterations"];
-            if(list.containsElementNamed("jobs")) c->jobs = list["jobs"];
-            if(list.containsElementNamed("learning_rate")) c->learning_rate = list["learning_rate"];
-            if(list.containsElementNamed("filters_num")) c->filters_num = list["filters_num"];
-            if(list.containsElementNamed("filter_size")) c->filter_size = list["filter_size"];
-            if(list.containsElementNamed("learn")) c->learn = list["learn"];
-            if(list.containsElementNamed("continue_learning")) c->continue_learning = list["continue_learning"];
-            if(list.containsElementNamed("batch_size")) c->batch_size = list["batch_size"];
-            if(list.containsElementNamed("seed")) c->seed = list["seed"];
-            if(list.containsElementNamed("noise_sd")) c->noise_sd = list["noise_sd"];
-
-            return c;
-        }
-        if(name == "FilterMatch") {
-            FilterMatch *m = Factory::inst().createObject<FilterMatch>("FilterMatch");
-            m->fi = list["fi"];
-            m->t = list["t"];
-            m->s = list["s"];
-
-            return m;
-        }
-        ERR("Can't convert " << name );
-    }
     static vector<FilterMatch> convertBackFilterMatches(const Rcpp::List &matches_l) {
         vector<FilterMatch> matches;
         Rcpp::NumericVector t = matches_l["t"];
@@ -347,6 +272,7 @@ public:
         return matches;
 
     }
+
     void print() {
         cout << "RProto instance. run instance$read() method to read protobuf\n";
     }

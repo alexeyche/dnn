@@ -12,16 +12,11 @@
 namespace dnn {
 namespace mpl {
 
-#define REG_FILE <mpl/mpl_register.x>
-#include <dnn/base/forward_declarations.x>
-#undef REG_FILE
-
 class MplInit {
 public:
 	MplInit();
 };
 
-MplInit init;
 
 
 /*@GENERATE_PROTO@*/

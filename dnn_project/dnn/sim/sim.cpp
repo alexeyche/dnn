@@ -1,10 +1,14 @@
 #include "sim.h"
 
 
+#include <dnn/util/log/log.h>
+
 namespace dnn {
 
 
 void Sim::build(Stream* input_stream) {
+	global_neuron_index = 0;
+
 	Builder b(c);
 	if(input_stream) {
 		sim_info = input_stream->readDynamic<SimInfo>().ref();
@@ -48,13 +52,19 @@ void Sim::runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barr
 	for(size_t i=from; i<to; ++i) {
 		s.neurons[i].ref().resetInternal();
 	}
+
+
 	barrier.wait();
+	L_DEBUG << "Dive in main loop for neurons from " << from << " to " << to;
+
 	for(; t<s.duration; ++t) {
+		// L_DEBUG << "[Layer of neurons " << from << ":" << to << "] Tick at time " << t.t;
 		for(size_t i=from; i<to; ++i) {
+			// L_DEBUG << "[Layer of neurons " << from << ":" << to << "] Simulating neuron " << i;
 			s.neurons[i].ref().calculateDynamicsInternal(t);
 
 			if(s.neurons[i].ref().fired()) {
-				//cout << "Spiked " << s.neurons[i].ref().id() << " at " << t.t << "\n";
+				// L_DEBUG << "\t[Layer of neurons " << from << ":" << to << "] Spiked " << s.neurons[i].ref().id() << " at " << t.t;
 				s.net->propagateSpike(s.neurons[i].ref(), t.t);
 				s.neurons[i].ref().setFired(false);
 			}
