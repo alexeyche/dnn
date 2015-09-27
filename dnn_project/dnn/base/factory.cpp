@@ -113,7 +113,11 @@ Ptr<SerializableBase> Factory::getCachedObject(const string& filename) {
 
 
 pair<Factory::object_iter, Factory::object_iter> Factory::getObjectsSlice(const string& name) {
-	return objects_map.equal_range(name);
+	auto res = objects_map.equal_range(name);
+    if(res.first == res.second) {
+        throw dnnException() << "Can't find object slice with name " << name << " in factory cache\n";
+    }
+    return res;
 }
 
 }

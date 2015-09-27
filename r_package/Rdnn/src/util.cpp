@@ -1,6 +1,5 @@
 
 #include <R.h>
-#include <Rinternals.h>
 
 #undef PI
 #define STRICT_R_HEADERS

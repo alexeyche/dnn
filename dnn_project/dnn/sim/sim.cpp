@@ -131,7 +131,7 @@ void Sim::setMaxDuration(const double Tmax) {
 }
 void Sim::print(std::ostream &str) const {
 	str << "Sim\n";
-	str << "\t" << neurons.size() << " ready to simulate for " << duration << "ms\n";
+	str << "  " << neurons.size() << " neurons ready to simulate for " << duration << "ms\n";
 }
 
 }

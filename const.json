@@ -42,7 +42,7 @@
     },
     "act_functions" : {
         "Determ" : {
-            "treshold" : 1.0
+            "threshold" : 1.0
         },
         "ExpThreshold" : {
             "p_rest" : 0.1,

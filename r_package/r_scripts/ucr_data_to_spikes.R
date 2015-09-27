@@ -11,12 +11,14 @@ norm = function(x) {
 }
 
 ucr_data_to_spikes = function(
+
+ucr_data_to_spikes = function(
     N
   , sample_size
   , dt
   , gap_between_patterns = 0
   , data_name = synth
-  , sel = c(1:10, 51:60, 101:110, 151:160)
+  , sel =c(1:300) #c(1:10, 51:60, 101:110, 151:160)
   , znorm = FALSE
   , vec_norm = FALSE
 ) {

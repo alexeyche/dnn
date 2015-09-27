@@ -47,6 +47,9 @@ void SpikeNeuronBase::resetInternal() {
 	if(lrule.isSet()) {
 		lrule.ref().reset();
 	}
+	if(input.isSet()) {
+		input.ref().reset();
+	}
 	for(auto &s: syns) {
 		s.ref().reset();
 	}

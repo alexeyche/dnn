@@ -60,7 +60,7 @@ public:
             }
 
             if((obj.size() == 1)&&(simplify)) {
-                values = convertToList(obj[0]);
+                values = convertToR(obj[0]);
                 delete obj[0].ptr();
             } else {
                 if(obj[0]->name() == "FilterMatch") {
@@ -68,7 +68,7 @@ public:
                 } else {
                     vector<Rcpp::List> ret;
                     for(auto &o: obj) {
-                        Rcpp::List l = convertToList(o);
+                        Rcpp::List l = convertToR(o);
                         if(l.size()>0) {
                             ret.push_back(l);
                         }
@@ -106,9 +106,9 @@ public:
         );
     }
 
-    static Rcpp::List convertToList(Ptr<SerializableBase> o) {
-        Rcpp::List out;
+    static SEXP convertToR(Ptr<SerializableBase> o) {
         if(o->name() == "Statistics") {
+            Rcpp::List out;
             Ptr<Statistics> od = o.as<Statistics>();
             if(!od) { ERR("Can't cast"); }
 
@@ -116,6 +116,7 @@ public:
             for(auto &name: info.stat_names) {
                 out[name] = Rcpp::wrap(od->getStats()[name].values);
             }
+            return out;
         }
         if(o->name() == "Subsequence") {
             Ptr<Subsequence> sub = o.as<Subsequence>();
@@ -127,12 +128,14 @@ public:
             Ptr<TimeSeries> od = o.as<TimeSeries>();
             if(!od) { ERR("Can't cast"); }
 
-            vector<vector<double>> ts_vals;
-            for(auto &d : od->data) {
-                ts_vals.push_back(d.values);
+            Rcpp::NumericMatrix ts_vals(od->dim(), od->length());
+            for(size_t i=0; i<od->data.size(); ++i) {
+                for(size_t j=0; j<od->data[i].values.size(); ++j) {
+                    ts_vals(i, j) = od->data[i].values[j];    
+                }
             }
-            out = Rcpp::List::create(
-                  Rcpp::Named("values") = Rcpp::wrap(ts_vals)
+            return Rcpp::List::create(
+                  Rcpp::Named("values") = ts_vals
                 , Rcpp::Named("ts_info") = Rcpp::List::create(
                       Rcpp::Named("labels_ids") = Rcpp::wrap(od->info.labels_ids)
                     , Rcpp::Named("unique_labels") = Rcpp::wrap(od->info.unique_labels)
@@ -148,7 +151,7 @@ public:
             for(auto &d : od->data) {
                 ts_vals.push_back(d.values);
             }
-            out = Rcpp::List::create(
+            return Rcpp::List::create(
                   Rcpp::Named("values") = Rcpp::wrap(ts_vals)
                 , Rcpp::Named("ts_info") = Rcpp::List::create(
                       Rcpp::Named("labels_ids") = Rcpp::wrap(od->info.labels_ids)
@@ -165,7 +168,7 @@ public:
             for(auto &seq : od->seq) {
                 sp.push_back(seq.values);
             }
-            out = Rcpp::List::create(
+            return Rcpp::List::create(
                   Rcpp::Named("values") = Rcpp::wrap(sp)
                 , Rcpp::Named("ts_info") = Rcpp::List::create(
                       Rcpp::Named("labels_ids") = Rcpp::wrap(od->ts_info.labels_ids)
@@ -184,16 +187,22 @@ public:
                     rm(i,j) = m->getElement(i,j);
                 }
             }
-            Rcpp::List matrix_info;
             if(m->uniqueLabels().size()>0) {
-                matrix_info["unique_labels"] = Rcpp::wrap(m->uniqueLabels());
-                matrix_info["row_labels_ids"] = Rcpp::wrap(m->rowLabelsIds());
-                matrix_info["col_labels_ids"] = Rcpp::wrap(m->colLabelsIds());
+                Rcpp::CharacterVector rows(m->rowLabelsIds().size());
+                Rcpp::CharacterVector cols(m->colLabelsIds().size());
+                
+                for(size_t el_i=0; el_i<m->rowLabelsIds().size(); ++el_i) {
+                    size_t lid = m->rowLabelsIds()[el_i];
+                    rows(el_i) = m->uniqueLabels()[lid];
+                }
+                for(size_t el_i=0; el_i<m->colLabelsIds().size(); ++el_i) {
+                    size_t lid = m->colLabelsIds()[el_i];
+                    cols(el_i) = m->uniqueLabels()[lid];
+                }
+
+                rm.attr("dimnames") = Rcpp::List::create(rows, cols);                
             }
-            out = Rcpp::List::create(
-                Rcpp::Named("DoubleMatrix") = rm,
-                Rcpp::Named("matrix_info") = matrix_info
-            );
+            return rm;            
         }
         Ptr<SpikeNeuronBase> nb = o.as<SpikeNeuronBase>();
         if(nb) {
@@ -204,7 +213,7 @@ public:
                 ids_pre.push_back(s.ref().idPre());
             }
 
-            out = Rcpp::List::create(
+            return Rcpp::List::create(
                   Rcpp::Named("xi") = nb->xi()
                 , Rcpp::Named("yi") = nb->yi()
                 , Rcpp::Named("axon_delay") = nb->axonDelay()
@@ -221,7 +230,7 @@ public:
             Ptr<MatchingPursuitConfig> m = o.as<MatchingPursuitConfig>();
             if(!m) { ERR("Can't cast"); }
 
-            out = Rcpp::List::create(
+            return Rcpp::List::create(
                 Rcpp::Named("threshold") = m->threshold,
                 Rcpp::Named("learn_iterations") = m->learn_iterations,
                 Rcpp::Named("jobs") = m->jobs,
@@ -239,13 +248,13 @@ public:
         if(o->name() == "FilterMatch") {
             Ptr<FilterMatch> m = o.as<FilterMatch>();
             if(!m) { ERR("Can't cast"); }
-            out = Rcpp::List::create(
+            return Rcpp::List::create(
                 Rcpp::Named("t") = m->t,
                 Rcpp::Named("fi") = m->fi,
                 Rcpp::Named("s") = m->s
             );
         }
-        return out;
+        ERR("Can' recognize " << o->name() << "\n");
     }
 
     template <typename T>

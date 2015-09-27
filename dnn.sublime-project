@@ -6,6 +6,9 @@
 		},
 		{
 			"path": "r_package/Rdnn/src"
+		},
+		{
+			"path": "r_package/Rdnn/R"
 		}
 	]
 }

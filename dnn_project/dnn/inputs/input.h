@@ -2,6 +2,7 @@
 
 #include <dnn/io/serialize.h>
 #include <dnn/util/time_series.h>
+#include <dnn/protos/input.pb.h>
 
 namespace dnn {
 
@@ -16,8 +17,11 @@ public:
 
 
     virtual const double& getValue(const Time &t) = 0;
-    const size_t& localId() const;
-
+    const size_t& localId() const {
+        return _localId;
+    }
+    virtual void reset() {}
+    
     void setLocalId(size_t localId) {
         _localId = localId;
     }
@@ -40,16 +44,16 @@ private:
 
 
 
-// /*@GENERATE_PROTO@*/
-// struct InputInfo : public Serializable<Protos::InputInfo> {
-//     InputInfo() : layer_id(0) {}
+/*@GENERATE_PROTO@*/
+struct InputInfo : public Serializable<Protos::InputInfo> {
+    InputInfo() : localId(0) {}
 
-//     void serial_process() {
-//         begin() << "layer_id: " << layer_id << Self::end;
-//     }
+    void serial_process() {
+        begin() << "localId: " << localId << Self::end;
+    }
 
-//     size_t layer_id;
-// };
+    size_t localId;
+};
 
 template <typename Constants, typename State>
 class Input : public InputBase {
@@ -61,10 +65,13 @@ public:
             (*this) << Self::end;
             return;
         }
-
+        InputInfo info;
+        if (mode == ProcessingOutput) {
+            info.localId = localId();
+        }
+        (*this) << "InputInfo: " << info;
         (*this) << "State: " << s << Self::end;
     }
-    private:
 
 protected:
     Constants c;

@@ -38,7 +38,7 @@ public:
 		Rcpp::List matches_l = RProto::convertFilterMatches(vv);
 
 		Ptr<SpikesList> sl = MatchingPursuit::convertMatchesToSpikes(ret.matches);
-		Rcpp::List spikes_l = RProto::convertToList(sl.ptr());
+		Rcpp::List spikes_l = RProto::convertToR(sl.ptr());
 		sl.destroy();
 
 		return Rcpp::List::create(
@@ -65,7 +65,7 @@ public:
 	}
 
 	Rcpp::NumericMatrix getFilter() {
-		return RProto::convertToList(&filter)[0];
+		return RProto::convertToR(&filter);
 	}
 
 	Rcpp::NumericVector restore(const Rcpp::List matches_l) {

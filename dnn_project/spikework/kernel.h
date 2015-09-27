@@ -88,7 +88,7 @@ public:
     void processArgs(vector<string> &args);
     void start(Spikework::Stack &s);
     void process(Spikework::Stack &s);
-
+    static void descr();
 
 
 private:

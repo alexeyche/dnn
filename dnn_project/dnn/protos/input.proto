@@ -1,0 +1,6 @@
+package Protos;
+
+message InputInfo {
+    required uint32 localId = 1;
+}
+

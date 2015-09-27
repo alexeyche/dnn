@@ -108,7 +108,7 @@ public:
               inst_phase[t] = atan2 ( u0i, u0r );
               /* unwrap it */
               dp = inst_phase[t] - oldphase;
-              if ( abs ( dp ) > M_PI ) {
+              if ( std::abs ( dp ) > M_PI ) {
                  dps = myMod ( dp + M_PI, 2 * M_PI) - M_PI;
                  if ( dps == -M_PI && dp > 0 ) {
                     dps = M_PI;

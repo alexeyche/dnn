@@ -15,25 +15,29 @@ centering = function(K) {
     K = K - J - t(J) - E * matrix(rep(1, ell*ell), nrow=ell, ncol=ell)
 }
 
- 
+
 
 get.labs = function(K) {
     sapply(
-        strsplit(colnames(m), split="[.]"), 
+        strsplit(colnames(K), split="[.]"), 
         function(s) tail(s, 1)
     )
 }
 
-l=10
-
-mm = matrix(0, nrow=l, ncol=l)
-
-for(i in 1:l) {
-    for(j in 1:i) {
-        mm[i, j] = -10
+simple_metric = function(K) {
+    labs = get.labs(K)
+    acc = 0
+    for(li in 1:nrow(K)) {
+        for(lj in 1:ncol(K)) {
+            mult = 0
+            if(labs[li] == labs[lj]) {
+                mult = 1.0   
+            } else {
+                mult = -1.0
+            }
+            acc = acc + mult * K[li, lj] #(K[li, li]^2 - 2 * K[li, lj] + K[lj, lj]^2)
+        }
     }
-    for(j in i:l) {
-        mm[i, j] = 10    
-    }
+    return(acc)
 }
-    
+

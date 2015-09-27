@@ -9,7 +9,7 @@ ts_dir = path.expand('~/dnn/datasets/ucr')
 
 ts_dir = pj(DATASETS_PLACE, "ucr")
 
-sample_size = 1000
+sample_size = 60
 
 data = synth # synthetic control
 #data = starlight_curves

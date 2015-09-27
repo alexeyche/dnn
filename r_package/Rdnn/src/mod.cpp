@@ -45,4 +45,9 @@ RCPP_MODULE(dnnMod) {
    .method("calc", &RGammatoneFB::calc, "Run calculations")
    .method("print", &RGammatoneFB::print, "Print instance")
    ;
+    Rcpp::class_<RKernel>("RKernel")
+    .constructor()
+    .method("print", &RKernel::print, "Print instance")
+    .method("run", &RKernel::run, "Run processing")
+    ;
 }

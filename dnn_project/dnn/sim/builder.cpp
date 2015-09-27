@@ -49,7 +49,7 @@ vector<InterfacedPtr<SpikeNeuronBase>> Builder::buildNeurons() {
                     xi = 0;
                 }
                 if(n.ref().inputIsSet()) {
-                    n.ref().getInput().ref().setLocalId(n.ref().localId());
+                    n.ref().getInput().setLocalId(n.ref().localId());
                 }
             }
             layer.neurons.push_back(n);

@@ -1,10 +1,20 @@
 
+#include <future>
+#include <tuple>
+#include <deque>
+
 #include "kernel.h"
 #include "kernel_factory.h"
 
 #include <dnn/util/util.h>
 #include <dnn/util/matrix.h>
 #include <dnn/base/factory.h>
+
+using std::future;
+using std::async;
+using std::thread;
+using std::tuple;
+using std::deque;
 
 namespace dnn {
 
@@ -33,15 +43,7 @@ KernelWorker::~KernelWorker() {
 }
 
 
-
-
-void KernelWorker::usage() {
-    cout << "KernelWorker applying specifed kernel\n";
-    cout << "\t--kernel,  -k        kernel specification (required)\n";
-    cout << "\t--preprocessor,  -p  preprocessor specification\n";
-    cout << "\t--text FILE,      print to file (- for stdout) kernel matrix in text representation\n";
-    cout << "\n";
-    cout << "available kernels:\n";
+void KernelWorker::descr() {
     for(const auto &k: KernelFactory::inst().getKernelsMap()) {
         cout << "\t" <<  k.first << "\n";
         stringstream ss;
@@ -60,8 +62,17 @@ void KernelWorker::usage() {
             cout << "\t\t" << l << "\n";
         }
     }
-    cout << "\n";
+}
 
+void KernelWorker::usage() {
+    cout << "KernelWorker applying specifed kernel\n";
+    cout << "\t--kernel,  -k        kernel specification (required)\n";
+    cout << "\t--preprocessor,  -p  preprocessor specification\n";
+    cout << "\t--text FILE,      print to file (- for stdout) kernel matrix in text representation\n";
+    cout << "\n";
+    cout << "available kernels:\n";
+    descr();
+    cout << "\n";    
     IOWorker::usage();
 }
 
@@ -106,26 +117,56 @@ void KernelWorker::process(Spikework::Stack &s) {
         IKernel &k = kernel.ref();
 
         Ptr<TimeSeries> ts = s.pop().as<TimeSeries>();
-
+        L_DEBUG << "KernelWorker, Chopping time series data";
         vector<Ptr<TimeSeries>> ts_chopped = ts->chop();
+        L_DEBUG << "KernelWorker, Chopping done";
         if(ts_chopped.size() == 0) {
             throw dnnException() << "Got zero sized time series list, check presence of time series information\n";
         }
         Ptr<DoubleMatrix> gram_matrix(Factory::inst().createObject<DoubleMatrix>());
         DoubleMatrix &m = gram_matrix.ref();
         m.allocate(ts_chopped.size(), ts_chopped.size());
+        
+        typedef tuple<size_t ,size_t, Ptr<TimeSeries>, Ptr<TimeSeries>> kern_corpus;
+        
+        vector<kern_corpus> corpus;
+        
+        L_DEBUG << "KernelWorker, Calculating kernel values in " << jobs << " jobs";
+
         for(size_t i=0; i<ts_chopped.size(); ++i) {
+            for(size_t j=i; j<ts_chopped.size(); ++j) {
+                corpus.push_back(kern_corpus(i, j, ts_chopped[i], ts_chopped[j]));
+            }
+        }
+        vector<thread> workers;
+        auto slices = dispatchOnThreads(corpus.size(), jobs);
+        for(const auto& slice: slices) {
+            workers.emplace_back(
+                [&](size_t from, size_t to) {
+                    L_DEBUG << "KernelWorker, Working on slice " << from << ":" << to;
+                    for(size_t iter=from; iter<to; ++iter) {
+                        const auto &tup = corpus[iter]; 
+                        m(std::get<0>(tup), std::get<1>(tup)) = k.process(std::get<2>(tup), std::get<3>(tup));
+                    }
+                    L_DEBUG << "KernelWorker, " << from << ":" << to << " is done";
+                }, slice.from, slice.to
+            );
+        }
+        for(auto &w: workers) {
+            w.join();
+        }
+        for(size_t i=0; i<m.nrow(); ++i) {
             m.setRowLabel(i, ts_chopped[i]->getLabel());
             for(size_t j=0; j<i; ++j) {
                 m(i, j) = m(j, i);
             }
             for(size_t j=i; j<ts_chopped.size(); ++j) {
                 if(i == 0) {
-                    m.setColLabel(j, ts_chopped[j]->getLabel());
+                    m.setColLabel(j, ts_chopped[j]->getLabel());        
                 }
-                m(i, j) = k.process(ts_chopped[i], ts_chopped[j]);
             }
         }
+
         L_DEBUG << "KernelWorker, End applying kernel";
 
         if(!text_file.empty()) {

@@ -55,6 +55,7 @@ struct SimConfiguration : public Printable {
 		Value cv(kObjectType);
 		cv.AddMember("size", 0, Json::d.GetAllocator());
 		cv.AddMember("axon_delay", 0, Json::d.GetAllocator());
+		cv.AddMember("input", "", Json::d.GetAllocator());
 		cv.AddMember("neuron", "", Json::d.GetAllocator());
 		cv.AddMember("act_function", "", Json::d.GetAllocator());
 		cv.AddMember("learning_rule", "", Json::d.GetAllocator());

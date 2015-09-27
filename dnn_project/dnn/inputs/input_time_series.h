@@ -4,6 +4,7 @@
 
 #include <dnn/protos/input_time_series.pb.h>
 #include <dnn/io/stream.h>
+#include <dnn/util/log/log.h>
 
 namespace dnn {
 
@@ -40,31 +41,40 @@ public:
 	const double& getValue(const Time &t) {
         s._t += t.dt;
         if(fmod(s._t, c.dt) > 0.0001) return InputBase::def_value;
-        size_t id = localId();
-        if(ts->dim() == 1) return ts.ref().data[0].values[s.index++];;
-        if(id>=ts->dim()) {
-            throw dnnException() << "Got input spike sequence less than neuron count\n";
-        }
-        return ts.ref().data[id].values[s.index++];;
+        assert(seq->size() > s.index);
+        return seq->at(s.index++);
 	}
 
     void setAsInput(Ptr<SerializableBase> b) {
+        data_src = b;
+        reset();        
+    }   
+
+    void reset() {
         s.index = 0;
-        if(ts.ptr()) {
-            throw dnnException() << "Trying to set input time series two times\n";
+        Ptr<TimeSeries> ts = data_src.as<TimeSeries>();
+
+        size_t id = localId();
+        if(ts->dim() == 1) {
+            seq.set( &ts.ref().data[0].values );
+        } else {
+            if(id>=ts->dim()) {
+                throw dnnException() << "Got input spike sequence less than neuron count\n";
+            }
+            seq.set( &ts.ref().data[id].values );
         }
-        ts.set(b.as<TimeSeries>().ptr());
     }
 
     double getSimDuration() {
-        if(ts.isSet()) {
-            return ts.ref().length() * c.dt;
+        if(seq.isSet()) {
+            return seq->size();    
         }
-        return 0.0;
+        return 0.0;        
     }
+
 private:
-    vector<double> ts;
-    // InterfacedPtr<TimeSeries> ts;
+    Ptr<SerializableBase> data_src;
+    Ptr<vector<double>> seq;
 };
 
 

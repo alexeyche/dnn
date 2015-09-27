@@ -1,6 +1,6 @@
 package Protos;
 
 message DetermC {
-    required double treshold = 1;
+    required double threshold = 1;
 }
 

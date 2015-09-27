@@ -69,6 +69,7 @@ plot_rastl <- function(raster, lab="",T0=0, Tmax=Inf, i=-1, plen=-1) {
     if("values" %in% names(raster)) {
         raster = raster$values
     }
+    
     x <- c()
     y <- c()
     for(ni in 1:length(raster)) {
@@ -77,6 +78,9 @@ plot_rastl <- function(raster, lab="",T0=0, Tmax=Inf, i=-1, plen=-1) {
         rast = rast[rast < Tmax]
         x <- c(x, rast)
         y <- c(y, rep(ni, length(rast)))
+    }
+    if(length(x) == 0) {
+      stop("Got empty raster plot")
     }
     return(xyplot(y~x,list(x=x, y=y), main=lab, xlim=c(T0, max(x)), col="black"))
 }
@@ -133,4 +137,32 @@ safe.log = function(x) {
 log.seq = function(from, to, length.out) {
     return(exp(seq(safe.log(from), safe.log(to), length.out=length.out)))
 }
+
+
+
+require(zoo)
+
+interpolate_ts = function(ts, interpolate_size) {
+    out_approx = NA
+    
+    while(length(out_approx) != interpolate_size) {
+        out = rep(NA, interpolate_size)
+        iter <- 0
+        for(i in 1:length(ts)) {
+            iter = iter+length(out)/length(ts)
+            ct = floor(signif(iter, digits=5))                                        
+            out[ct] = ts[i]
+        }
+        out_approx = na.approx(out)
+        ts = out_approx
+    }
+    
+    return(out_approx)
+}
+
+cats = function(s, ...) {
+    sf = sprintf(s, ...)
+    cat(sf)
+}
+
 

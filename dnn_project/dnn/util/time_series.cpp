@@ -2,7 +2,7 @@
 
 #include <dnn/io/stream.h>
 #include <dnn/base/factory.h>
-
+#include <dnn/util/log/log.h>
 
 namespace dnn {
 
@@ -49,6 +49,7 @@ vector<Ptr<TimeSeries>> TimeSeries::chop()  {
         labeled_ts->info.addLabelAtPos(label, labeled_ts->length());
         ts_chopped.push_back(labeled_ts);
     }
+    L_DEBUG << "TimeSeries, Successfully chopped time series in " << ts_chopped.size() << " chunks";
     return ts_chopped;
 }
 

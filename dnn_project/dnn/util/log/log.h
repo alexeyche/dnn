@@ -36,6 +36,12 @@ public:
                 throw dnnException() << "Invalig log level\n";
         }
     }
+    ELogLevel getLogLevel() {
+        if(log->level() == spdlog::level::info) {
+            return INFO_LEVEL;
+        }
+        return DEBUG_LEVEL;
+    }
     spdlog::details::line_logger info() {
         return log->info();
     }

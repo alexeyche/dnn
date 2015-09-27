@@ -47,7 +47,7 @@ public:
         }
     }
 
-    void setTimeSeries(const Rcpp::NumericVector &v, const string &obj_name);
+    void setTimeSeries(SEXP v, const string &obj_name);
 
     void setInputSpikes(const Rcpp::List &l, const string &obj_name);
 
@@ -67,7 +67,7 @@ public:
         if(!net.get()) {
             throw dnnException()<< "Sim network was not found. You need to build sim\n";
         }
-        return RProto::convertToList(&net->spikesList());
+        return RProto::convertToR(&net->spikesList());
     }
 };
 

@@ -4,31 +4,56 @@
 #include <dnn/base/factory.h>
 
 
-void RSim::setTimeSeries(const Rcpp::NumericVector &v, const string &obj_name) {
-    Rcpp::List tsl;
-    tsl["values"] = v;
-    Ptr<SerializableBase> ts = RProto::convertBack(tsl, "TimeSeries");
+void RSim::setTimeSeries(SEXP v, const string &obj_name) {
+    Ptr<SerializableBase> ts;
+    if(Rf_isMatrix(v)) {
+        Rcpp::List tsl;  
+        tsl["values"] = v;
+        ts = RProto::convertBack(tsl, "TimeSeries");
+    } else {
+        try {
+            ts = RProto::convertBack(v, "TimeSeries");    
+        } catch(...) {
+            ERR("Expecting matrix with values or TimeSeries list object\n");    
+        }
+    }
+    Factory::inst().registerObject(ts);
+    
     auto slice = Factory::inst().getObjectsSlice(obj_name);
     for(auto it=slice.first; it != slice.second; ++it) {
         Factory::inst().getObject(it)->setAsInput(
             ts
         );
     }
+    net->spikesList().ts_info = ts.as<TimeSeries>()->info;
     for(auto &n: neurons) {
         duration = std::max(duration, n.ref().getSimDuration());
     }
 }
 
 void RSim::setInputSpikes(const Rcpp::List &l, const string &obj_name) {
-    Rcpp::List sl;
-    sl["values"] = l;
-    Ptr<SerializableBase> sp_l = RProto::convertBack(sl, "SpikesList");
+    Ptr<SerializableBase> sp_l;
+    if(l.containsElementNamed("values")) {
+        sp_l = RProto::convertBack(l, "SpikesList");    
+    } else {
+        try {
+            Rcpp::List sl;
+            sl["values"] = l;
+            sp_l = RProto::convertBack(sl, "SpikesList");        
+        } catch (...) {
+            ERR("Expecting list with spike times of neurons or SpikesList list object\n");    
+        }
+    } 
+
+    Factory::inst().registerObject(sp_l);
+
     auto slice = Factory::inst().getObjectsSlice(obj_name);
     for(auto it=slice.first; it != slice.second; ++it) {
         Factory::inst().getObject(it)->setAsInput(
             sp_l
         );
     }
+    net->spikesList().ts_info = sp_l.as<SpikesList>()->ts_info;
     for(auto &n: neurons) {
         duration = std::max(duration, n.ref().getSimDuration());
     }
@@ -42,7 +67,7 @@ Rcpp::List RSim::getStat() {
             stringstream ss;
             ss << n.ref().name() << "_" << n.ref().id();
             Statistics st = n.ref().getStat();
-            out[ss.str()] = RProto::convertToList(&st);
+            out[ss.str()] = RProto::convertToR(&st);
         }
     }
     return out;

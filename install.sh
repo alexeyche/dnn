@@ -10,6 +10,7 @@ PYTHON_LIBS="lib/python2.7/site-packages/libdnn" # in DST
 RUNS_DIR="runs"
 DATASETS_DIR="datasets"
 
+CONFIG_FILE=${CONFIG_FILE:-~/.profile}
 DATASETS=${DATASETS:-0}
 RPACKAGE=${RPACKAGE:-1}
 BUILD=${BUILD:-1}
@@ -43,25 +44,10 @@ if [ $ASKDST -eq 1 ]; then
         elif [ "$choice" == "n" ]; then
             echo "Write destination dir you prefer"
         else 
-            DST="$choice"
+            DST=$choice
         fi
     done
 fi
-#if [ -d $DST ]; then
-#    while true; do
-#        read -p "$DST is already exists, delete it? (y/n):" choice
-#        if [ "$choice" == "y" ]; then 
-#            rm -rf $DST
-#            echo "Done"
-#            break
-#        elif [ "$choice" == "n" ]; then
-#            echo "So, delete it by yourself and then run again this script"
-#            exit 0
-#        else 
-#            echo "Incomprehensible answer, try again"
-#        fi
-#    done
-#fi
 
 function qpushd {
     pushd $1 &>/dev/null
@@ -72,6 +58,13 @@ function qpopd {
 function qmkdir {
     mkdir $@ &> /dev/null
 }
+if ! grep -q "DNN_HOME" $CONFIG_FILE; then 
+    echo "export DNN_HOME=$DST" >> $CONFIG_FILE
+else
+    echo "Found \$DNN_HOME in $CONFIG_FILE"
+    echo "Trying to sed it"
+    sed -i -e "s|^export DNN_HOME=.*|export DNN_HOME=$DST|g" $CONFIG_FILE
+fi    
 
 qmkdir -p $DST
 
@@ -80,7 +73,7 @@ qpushd $DST
         qmkdir $BUILD_DIR
         qpushd $BUILD_DIR 
             if [ $CMAKE -eq 1 ]; then
-                cmake -DDEBUG=$DEBUG -DCMAKE_INSTALL_PREFIX=$DST $CURDIR/sources/
+                cmake -DDEBUG=$DEBUG -DCMAKE_INSTALL_PREFIX=$DST $CURDIR/dnn_project/
             fi
             make -j $CPUNUM
             make install
@@ -90,7 +83,7 @@ qpushd $DST
             [ -f $BIN_DIR/$(basename $f) ] || ln -s $(readlink -f $f) $BIN_DIR
         done
         qmkdir -p $PYTHON_LIBS
-        protoc --python_out=$PYTHON_LIBS --proto_path $CURDIR/sources/dnn/protos $CURDIR/sources/dnn/protos/*.proto
+        protoc --python_out=$PYTHON_LIBS --proto_path $CURDIR/dnn_project/dnn/protos $CURDIR/dnn_project/dnn/protos/*.proto
         for d in $(find $PYTHON_LIBS -type d); do
             touch $d/__init__.py
         done
@@ -125,3 +118,4 @@ qpushd $DST
         qpopd
     fi        
 qpopd #DST
+

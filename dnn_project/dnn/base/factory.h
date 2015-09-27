@@ -93,11 +93,12 @@ public:
     }
 
     Ptr<SerializableBase> getCachedObject(const string& filename);
-private:
     void registerObject(Ptr<SerializableBase> o) {
         objects.push_back(o);
         objects_map.insert(std::make_pair(o->name(), objects.size()-1));
     }
+
+private:
 
     Ptr<SerializableBase> createDynamicObject(string name) {
         if (typemap.find(name) == typemap.end()) {

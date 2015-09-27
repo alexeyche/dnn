@@ -165,6 +165,7 @@ public:
         checkIfExists(layer_conf, "learning_rule", c.learning_rules);
         checkIfExists(layer_conf, "act_function", c.act_functions);
         checkIfExists(layer_conf, "weight_normalization", c.weight_normalizations);
+        checkIfExists(layer_conf, "input", c.inputs);
 
         c.sim_conf.layers.push_back(layer_conf);
     }

@@ -12,6 +12,7 @@ void IOWorker::usage() {
 	cout << "	--output, -o  FILENAME specifying output of worker (optional)\n";
 	cout << "	--tee,    -t  flag meaning to dump output to file without deleting from stack (optional)\n";
     cout << "        --dt,         spike lists converted into time series with specified resolution (default: " << dt << ")\n";
+	cout << "   --jobs,   -j  jobs for parallel works, default " << jobs << "\n";
 	cout << "	--help,   -h  show this help message\n";
 }
 
@@ -19,8 +20,10 @@ void IOWorker::usage() {
 void IOWorker::processArgs(vector<string> &args) {
 	OptionParser op(args);
     bool need_help = false;
+
 	op.option("--input", "-i", input_filename, false);
 	op.option("--output", "-o", output_filename, false);
+	op.option("-j", "--jobs", jobs, /* required */ false, /* as_flag */ false);
     op.option("--help", "-h", need_help, false, true);
     op.loption("--dt", dt, false);
     if(need_help) {
