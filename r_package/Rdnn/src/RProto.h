@@ -61,7 +61,7 @@ public:
 
             if((obj.size() == 1)&&(simplify)) {
                 values = convertToR(obj[0]);
-                delete obj[0].ptr();
+                obj[0].destroy();
             } else {
                 if(obj[0]->name() == "FilterMatch") {
                     values = convertFilterMatches(obj);
@@ -72,7 +72,7 @@ public:
                         if(l.size()>0) {
                             ret.push_back(l);
                         }
-                        delete o.ptr();
+                        o.destroy();
                     }
                     values = Rcpp::wrap(ret);
                 }

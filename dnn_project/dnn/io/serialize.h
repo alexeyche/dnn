@@ -195,6 +195,7 @@ public:
     virtual void setAsInput(Ptr<SerializableBase> b) {
 
     }
+
     virtual double getSimDuration() {
         return 0.0;
     }

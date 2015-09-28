@@ -73,5 +73,6 @@ auto AssertiveCall(Return (*function)(Parameters...), Args&& ...args)
         return Return{};
     }
 }
+void printBackTrace();
 
 }

@@ -109,6 +109,7 @@ void KernelWorker::process(Spikework::Stack &s) {
         IKernelPreprocessor &k = kernel_proc.ref();
         Ptr<TimeSeries> ts = s.pop().as<TimeSeries>();
         Ptr<TimeSeries> ts_out = k(ts);
+        ts.destroy();
         s.push(ts_out);
         L_DEBUG << "KernelWorker, End preprocessing";
     }
@@ -120,6 +121,7 @@ void KernelWorker::process(Spikework::Stack &s) {
         L_DEBUG << "KernelWorker, Chopping time series data";
         vector<Ptr<TimeSeries>> ts_chopped = ts->chop();
         L_DEBUG << "KernelWorker, Chopping done";
+        ts.destroy();
         if(ts_chopped.size() == 0) {
             throw dnnException() << "Got zero sized time series list, check presence of time series information\n";
         }
@@ -181,6 +183,10 @@ void KernelWorker::process(Spikework::Stack &s) {
             }
         }
         s.push(gram_matrix);
+        
+        for(auto &ts_ch: ts_chopped) {
+            ts_ch.destroy();
+        }
     }
 }
 

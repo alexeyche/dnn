@@ -20,6 +20,7 @@ set(SOURCES
     option_parser.cpp
     func_param_parser.cpp
     time_series.cpp
+    ptr.cpp
 )
 
 # add directory name to sources

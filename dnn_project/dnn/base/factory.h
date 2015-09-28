@@ -89,11 +89,13 @@ public:
     template <typename T>
     Ptr<T> createDynamicObject() {
         Ptr<T> o = _createObject<T>();
+        o.owner = true;
         return o;
     }
 
     Ptr<SerializableBase> getCachedObject(const string& filename);
     void registerObject(Ptr<SerializableBase> o) {
+        o.owner = false;
         objects.push_back(o);
         objects_map.insert(std::make_pair(o->name(), objects.size()-1));
     }

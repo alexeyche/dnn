@@ -48,14 +48,16 @@ public:
 		);
 	}
 	void setFilter(const Rcpp::NumericMatrix m) {
-		MatchingPursuit::setFilter(
-			*RProto::convertBack<DoubleMatrix>(
-				Rcpp::List::create(
-					Rcpp::Named("DoubleMatrix") = m
-				),
-				"DoubleMatrix"
-			)
+		Ptr<DoubleMatrix> dm = RProto::convertBack<DoubleMatrix>(
+			Rcpp::List::create(
+				Rcpp::Named("values") = m
+			),
+			"DoubleMatrix"
 		);
+		MatchingPursuit::setFilter(
+			*dm
+		);
+		dm.destroy();
 	}
 
 	void setConf(const Rcpp::List conf) {

@@ -1,13 +1,27 @@
 #pragma once
 
 #include <dnn/core.h>
+#include <dnn/util/log/log.h>
+#include <dnn/util/util.h>
+
+#include <typeinfo>
+
 
 namespace dnn {
 
+class Factory;
+
 template <typename T>
 class Ptr {
+friend class Factory;
 public:
-	Ptr(T *ptr_to_set) : _ptr(ptr_to_set) {
+	Ptr(T *ptr_to_set) : _ptr(ptr_to_set), owner(false) {
+	}
+	~Ptr() {
+		// if(owner && _ptr) {
+		// 	L_DEBUG << "Found object is not destroyed\n";
+		// 	printBackTrace();
+		// }
 	}
 
 	Ptr() : _ptr(nullptr) {
@@ -61,13 +75,15 @@ public:
 	}
 
 	void destroy() {
-		if(isSet()) {
+		if(isSet() && owner) {
 			delete _ptr;
+			_ptr = nullptr;
 		}
 	}
 
 private:
 	T *_ptr;
+	bool owner;
 };
 
 }

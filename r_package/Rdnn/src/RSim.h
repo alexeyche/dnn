@@ -69,6 +69,9 @@ public:
         }
         return RProto::convertToR(&net->spikesList());
     }
+private:
+    Ptr<TimeSeries> last_ts;
+    Ptr<SpikesList> last_sl;
 };
 
 

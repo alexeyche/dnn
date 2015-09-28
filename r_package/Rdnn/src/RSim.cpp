@@ -5,6 +5,9 @@
 
 
 void RSim::setTimeSeries(SEXP v, const string &obj_name) {
+    if(last_ts.isSet()) {
+        last_ts.destroy();
+    }
     Ptr<SerializableBase> ts;
     if(Rf_isMatrix(v)) {
         Rcpp::List tsl;  
@@ -17,8 +20,7 @@ void RSim::setTimeSeries(SEXP v, const string &obj_name) {
             ERR("Expecting matrix with values or TimeSeries list object\n");    
         }
     }
-    Factory::inst().registerObject(ts);
-    
+    last_ts = ts.as<TimeSeries>();
     auto slice = Factory::inst().getObjectsSlice(obj_name);
     for(auto it=slice.first; it != slice.second; ++it) {
         Factory::inst().getObject(it)->setAsInput(
@@ -32,6 +34,9 @@ void RSim::setTimeSeries(SEXP v, const string &obj_name) {
 }
 
 void RSim::setInputSpikes(const Rcpp::List &l, const string &obj_name) {
+    if(last_sl.isSet()) {
+        last_sl.destroy();
+    }
     Ptr<SerializableBase> sp_l;
     if(l.containsElementNamed("values")) {
         sp_l = RProto::convertBack(l, "SpikesList");    
@@ -44,8 +49,7 @@ void RSim::setInputSpikes(const Rcpp::List &l, const string &obj_name) {
             ERR("Expecting list with spike times of neurons or SpikesList list object\n");    
         }
     } 
-
-    Factory::inst().registerObject(sp_l);
+    last_sl = sp_l.as<SpikesList>();
 
     auto slice = Factory::inst().getObjectsSlice(obj_name);
     for(auto it=slice.first; it != slice.second; ++it) {
