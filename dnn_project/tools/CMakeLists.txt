@@ -7,6 +7,7 @@ set(DIRS
     mpl
     spikework
     shapelets
+    tests
 )
 
 foreach(dir ${DIRS})

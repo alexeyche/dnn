@@ -2,10 +2,9 @@
 
 #include <dnn/io/serialize.h>
 #include <dnn/util/ptr.h>
-
+#include <dnn/util/time_series.h>
 
 namespace dnn {
-class TimeSeries;
 namespace shapelets {
 
 

@@ -9,6 +9,7 @@
 #include <dnn/sim/sim.h>
 #include <dnn/util/option_parser.h>
 #include <dnn/util/log/log.h>
+#include <dnn/util/accum.h>
 
 
 using namespace dnn;
@@ -37,7 +38,7 @@ Examples:
 struct DnnSimOpts {
     DnnSimOpts() : jobs(1), precalc(false), Tmax(-1.0), verbose(false) {}
     string input;
-    string const_file;
+    Accum<string> const_file;
     string out_spikes;
     string out_stat_file;
     string out_p_stat_file;
@@ -85,7 +86,7 @@ int main(int argc, char **argv) {
 	vector<string> rest_opts = optp.getRawOptions();
 	sopt.add_opts = parseArgOptionsPairs(rest_opts);
 
-	Constants c(sopt.const_file, sopt.add_opts);
+	Constants c(sopt.const_file.getValues(), sopt.add_opts);
 	Sim s(c);
 
 	if (!sopt.model_load.empty()) {

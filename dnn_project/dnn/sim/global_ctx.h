@@ -2,11 +2,11 @@
 
 #include <dnn/core.h>
 #include <dnn/util/ptr.h>
+#include <dnn/sim/sim_info.h>
+#include <dnn/base/constants.h>
 
 namespace dnn {
 
-class SimInfo;
-class Constants;
 
 class GlobalCtx {
 public:

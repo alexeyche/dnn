@@ -69,8 +69,20 @@ struct Constants : public Printable {
 	enum ReadMod {FromString, FromFile};
 
 	Constants(OptMods mods = OptMods());
+	Constants(const vector<string> &files, OptMods mods = OptMods()) : Constants(mods) {
+		Document d;
+		for(const auto& f: files) {
+	        std::ifstream ifs(f);
+	        std::string const_json(
+	        	(std::istreambuf_iterator<char>(ifs)),
+                std::istreambuf_iterator<char>()
+            );
+            readString(const_json);
+		}
+	}
 
-	Constants(string s, OptMods mods = OptMods(), ReadMod mod = FromFile);
+	void readJson(Document &document);
+	void readString(string s, OptMods mods = OptMods());
 
 	static void fill(const Value &v, map<string, string> &m) {
 		for (Value::ConstMemberIterator itr = v.MemberBegin(); itr != v.MemberEnd(); ++itr) {

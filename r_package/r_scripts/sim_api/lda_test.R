@@ -5,7 +5,7 @@ tr = function(m) {
     sum(diag(m))
 }
 
-KFD = function(K, only_ratio=FALSE, mu=0.001) {
+KFD = function(K, only_scatter=FALSE, mu=0.001) {
     y = colnames(K)
     cls = unique(y)
     
@@ -30,7 +30,7 @@ KFD = function(K, only_ratio=FALSE, mu=0.001) {
     }
     
     A = solve(N+mu*diag(length(y))) %*% M
-    if(only_ratio) {
+    if(only_scatter) {
         return(list(M=M, N=N, A=A))
     }
     Ae = eigen(A)
@@ -47,17 +47,17 @@ Nsamples = 100
 data = NULL
 data = rbind(data, mvrnorm(
     Nsamples
-  , Sigma=diag(2)
+  , Sigma=diag(2)*0.75
   , mu=c(2,2)
 ))
 data = rbind(data, mvrnorm(
     Nsamples
-    , Sigma=diag(2)
+    , Sigma=diag(2)*0.75
     , mu=c(0,3)
 ))
 data = rbind(data, mvrnorm(
     Nsamples
-    , Sigma=diag(2)
+    , Sigma=diag(2)*0.75
     , mu=c(2,5)
 ))
 rownames(data) <- c(rep("1", Nsamples), rep("2", Nsamples), rep("3", Nsamples))
@@ -70,12 +70,11 @@ dv = predict(d, data)
 K = data %*% t(data)
 c(y, M, N, A) := KFD(K)
 
-
-metrics_str = sprintf("Metrics: %f, %f", tr(M)/tr(N), tr(A))
+metrics_str = sprintf("%f, %f", tr(M)/tr(N), tr(A))
 
 ans = K %*% y[, 1:2]
 
 plot(data, col=as.integer(rownames(data)))
 plot(dv$x[,1], col=as.integer(rownames(data)))
-plot(Re(ans[,1]), col=as.integer(rownames(data)), main=metrics_str) # eurica!
+plot(Re(ans[,1]), col=as.integer(rownames(data)), main=metrics_str) # eureka!
 plot(Re(ans), col=as.integer(rownames(data))) # eurica!
