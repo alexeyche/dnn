@@ -7,7 +7,7 @@
     assign("RGammatoneFB", Module("dnnMod")$RGammatoneFB, envir=parent.env(environment()))
     assign("RKernel", Module("dnnMod")$RKernel, envir=parent.env(environment()))
     setMethod( "show", RSim, function(object) {
-        object$print()    
+        object$print()
     } )
     setMethod( "show", RConstants, function(object) {
         object$print()
@@ -16,13 +16,13 @@
         object$print()
     } )
     setMethod( "show", RGammatoneFB, function(object) {
-        object$print()    
+        object$print()
     } )
     setMethod( "show", RMatchingPursuit, function(object) {
         object$print()
     } )
     setMethod( "show", RKernel, function(object) {
-        object$print()    
+        object$print()
     } )
 }
 
@@ -32,10 +32,12 @@ proto.read = function(f) {
     return(Module("dnnMod")$RProto$new(f)$read())
 }
 
+dnn.clean.heap = dnnCleanHeap
+
 proto.write = function(f, l, n) {
     f = path.expand(f)
     return(Module("dnnMod")$RProto$new(f)$write(l, n))
-}    
+}
 
 proto.write.ts = function(f, l) {
     return(proto.write(f, l, "TimeSeries"))
@@ -60,7 +62,7 @@ conv.gammatones = function(x, freqs, samp_rate) {
         data = x$values
         info = x$ts_info
     }
-    
+
     gfb = Module("dnnMod")$RGammatoneFB$new()
     gfb_out = gfb$calc(data, freqs, samp_rate, 0, 0)
     if(!is.null(info)) {

@@ -72,7 +72,7 @@ void KernelWorker::usage() {
     cout << "\n";
     cout << "available kernels:\n";
     descr();
-    cout << "\n";    
+    cout << "\n";
     IOWorker::usage();
 }
 
@@ -109,7 +109,6 @@ void KernelWorker::process(Spikework::Stack &s) {
         IKernelPreprocessor &k = kernel_proc.ref();
         Ptr<TimeSeries> ts = s.pop().as<TimeSeries>();
         Ptr<TimeSeries> ts_out = k(ts);
-        ts.destroy();
         s.push(ts_out);
         L_DEBUG << "KernelWorker, End preprocessing";
     }
@@ -121,18 +120,17 @@ void KernelWorker::process(Spikework::Stack &s) {
         L_DEBUG << "KernelWorker, Chopping time series data";
         vector<Ptr<TimeSeries>> ts_chopped = ts->chop();
         L_DEBUG << "KernelWorker, Chopping done";
-        ts.destroy();
         if(ts_chopped.size() == 0) {
             throw dnnException() << "Got zero sized time series list, check presence of time series information\n";
         }
         Ptr<DoubleMatrix> gram_matrix(Factory::inst().createObject<DoubleMatrix>());
         DoubleMatrix &m = gram_matrix.ref();
         m.allocate(ts_chopped.size(), ts_chopped.size());
-        
+
         typedef tuple<size_t ,size_t, Ptr<TimeSeries>, Ptr<TimeSeries>> kern_corpus;
-        
+
         vector<kern_corpus> corpus;
-        
+
         L_DEBUG << "KernelWorker, Calculating kernel values in " << jobs << " jobs";
 
         for(size_t i=0; i<ts_chopped.size(); ++i) {
@@ -147,7 +145,7 @@ void KernelWorker::process(Spikework::Stack &s) {
                 [&](size_t from, size_t to) {
                     L_DEBUG << "KernelWorker, Working on slice " << from << ":" << to;
                     for(size_t iter=from; iter<to; ++iter) {
-                        const auto &tup = corpus[iter]; 
+                        const auto &tup = corpus[iter];
                         m(std::get<0>(tup), std::get<1>(tup)) = k.process(std::get<2>(tup), std::get<3>(tup));
                     }
                     L_DEBUG << "KernelWorker, " << from << ":" << to << " is done";
@@ -164,7 +162,7 @@ void KernelWorker::process(Spikework::Stack &s) {
             }
             for(size_t j=i; j<ts_chopped.size(); ++j) {
                 if(i == 0) {
-                    m.setColLabel(j, ts_chopped[j]->getLabel());        
+                    m.setColLabel(j, ts_chopped[j]->getLabel());
                 }
             }
         }
@@ -183,10 +181,6 @@ void KernelWorker::process(Spikework::Stack &s) {
             }
         }
         s.push(gram_matrix);
-        
-        for(auto &ts_ch: ts_chopped) {
-            ts_ch.destroy();
-        }
     }
 }
 

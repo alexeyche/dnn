@@ -15,3 +15,12 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// dnnCleanHeap
+void dnnCleanHeap();
+RcppExport SEXP Rdnn_dnnCleanHeap() {
+BEGIN_RCPP
+    Rcpp::RNGScope __rngScope;
+    dnnCleanHeap();
+    return R_NilValue;
+END_RCPP
+}

@@ -29,7 +29,6 @@ public:
 			"TimeSeries"
 		);
 		MatchingPursuit::MPLReturn ret = MatchingPursuit::run(ts.ref(), 0);
-		ts.destroy();
 
 		vector<Ptr<SerializableBase>> vv;
 		for(auto &m: ret.matches) {
@@ -39,7 +38,6 @@ public:
 
 		Ptr<SpikesList> sl = MatchingPursuit::convertMatchesToSpikes(ret.matches);
 		Rcpp::List spikes_l = RProto::convertToR(sl.ptr());
-		sl.destroy();
 
 		return Rcpp::List::create(
 			Rcpp::Named("matches") = matches_l
@@ -57,13 +55,11 @@ public:
 		MatchingPursuit::setFilter(
 			*dm
 		);
-		dm.destroy();
 	}
 
 	void setConf(const Rcpp::List conf) {
 		Ptr<MatchingPursuitConfig> in_c = RProto::convertBack<MatchingPursuitConfig>(conf, "MatchingPursuitConfig");
 		MatchingPursuit::c = in_c.ref();
-		in_c.destroy();
 	}
 
 	Rcpp::NumericMatrix getFilter() {

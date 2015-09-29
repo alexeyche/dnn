@@ -131,29 +131,11 @@
        }
     },
     "sim_configuration" : {
-        "layers" : [
-            {
-                "size" : 100,
-                "neuron" : "SpikeSequenceNeuron"
-            },
-            {
-                "size" : 100,
-                "neuron" : "LeakyIntegrateAndFire",
-                "act_function" : "Determ"
-            }
-        ],
-        "conn_map" : {
-            "0->1" : [
-                { 
-                    "type" : "Stochastic", 
-                    "start_weight" : 0.1,
-                    "synapse" : "StaticSynapse"
-                }
-            ]
-        },
+        "layers" : [],
+        "conn_map" : {},
         "dt" : 1.0,
         "seed" : -1,
-        "neurons_to_listen" : [70],
+        "neurons_to_listen" : [],
         "files" : {
             "InputTimeSeries" : { 
                 "filename" : "@pb-input"

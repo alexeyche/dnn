@@ -18,6 +18,7 @@ public:
 	Ptr(T *ptr_to_set) : _ptr(ptr_to_set), owner(false) {
 	}
 	~Ptr() {
+		destroy();
 		// if(owner && _ptr) {
 		// 	L_DEBUG << "Found object is not destroyed\n";
 		// 	printBackTrace();
@@ -26,6 +27,7 @@ public:
 
 	Ptr() : _ptr(nullptr) {
 	}
+
 	inline T* ptr() {
 		assert(_ptr);
 		return _ptr;

@@ -60,6 +60,7 @@ function qmkdir {
 }
 if ! grep -q "DNN_HOME" $CONFIG_FILE; then 
     echo "export DNN_HOME=$DST" >> $CONFIG_FILE
+    echo "export LD_LIBRARY_PATH=\$DNN_HOME/lib:\$LD_LIBRARY_PATH" >> $CONFIG_FILE
 else
     echo "Found \$DNN_HOME in $CONFIG_FILE"
     echo "Trying to sed it"

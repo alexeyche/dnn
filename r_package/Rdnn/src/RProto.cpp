@@ -17,7 +17,7 @@ Ptr<SerializableBase> RProto::convertBack(const Rcpp::List &list, const string &
         }
     }
     if(name == "TimeSeries") {
-        Ptr<TimeSeries> ts = Factory::inst().createDynamicObject<TimeSeries>();
+        Ptr<TimeSeries> ts = Factory::inst().createObject<TimeSeries>();
         SEXP values = list["values"];
         if(Rf_isMatrix(values)) {
             Rcpp::NumericMatrix m(values);
@@ -40,7 +40,7 @@ Ptr<SerializableBase> RProto::convertBack(const Rcpp::List &list, const string &
     }
     if(name == "SpikesList") {
         Rcpp::List spikes = list["values"];
-        Ptr<SpikesList> sl = Factory::inst().createDynamicObject<SpikesList>();
+        Ptr<SpikesList> sl = Factory::inst().createObject<SpikesList>();
 
         for(auto &sp_v: spikes) {
             SpikesSequence sp_seq;
@@ -52,7 +52,7 @@ Ptr<SerializableBase> RProto::convertBack(const Rcpp::List &list, const string &
     }
     if(name == "DoubleMatrix") {
         Rcpp::NumericMatrix m = list[0];
-        Ptr<DoubleMatrix> r = Factory::inst().createDynamicObject<DoubleMatrix>();
+        Ptr<DoubleMatrix> r = Factory::inst().createObject<DoubleMatrix>();
         r->allocate(m.nrow(), m.ncol());
         for(size_t i=0; i<m.nrow(); ++i) {
             for(size_t j=0; j<m.ncol(); ++j) {
@@ -62,7 +62,7 @@ Ptr<SerializableBase> RProto::convertBack(const Rcpp::List &list, const string &
         return r.as<SerializableBase>();
     }
     if(name == "MatchingPursuitConfig") {
-        Ptr<MatchingPursuitConfig> c = Factory::inst().createDynamicObject<MatchingPursuitConfig>();
+        Ptr<MatchingPursuitConfig> c = Factory::inst().createObject<MatchingPursuitConfig>();
 
         if(list.containsElementNamed("threshold")) c->threshold = list["threshold"];
         if(list.containsElementNamed("learn_iterations")) c->learn_iterations = list["learn_iterations"];
@@ -79,7 +79,7 @@ Ptr<SerializableBase> RProto::convertBack(const Rcpp::List &list, const string &
         return c.as<SerializableBase>();
     }
     if(name == "FilterMatch") {
-        Ptr<FilterMatch> m = Factory::inst().createDynamicObject<FilterMatch>();
+        Ptr<FilterMatch> m = Factory::inst().createObject<FilterMatch>();
         m->fi = list["fi"];
         m->t = list["t"];
         m->s = list["s"];

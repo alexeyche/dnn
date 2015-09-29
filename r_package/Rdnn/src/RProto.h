@@ -131,7 +131,7 @@ public:
             Rcpp::NumericMatrix ts_vals(od->dim(), od->length());
             for(size_t i=0; i<od->data.size(); ++i) {
                 for(size_t j=0; j<od->data[i].values.size(); ++j) {
-                    ts_vals(i, j) = od->data[i].values[j];    
+                    ts_vals(i, j) = od->data[i].values[j];
                 }
             }
             return Rcpp::List::create(
@@ -190,7 +190,7 @@ public:
             if(m->uniqueLabels().size()>0) {
                 Rcpp::CharacterVector rows(m->rowLabelsIds().size());
                 Rcpp::CharacterVector cols(m->colLabelsIds().size());
-                
+
                 for(size_t el_i=0; el_i<m->rowLabelsIds().size(); ++el_i) {
                     size_t lid = m->rowLabelsIds()[el_i];
                     rows(el_i) = m->uniqueLabels()[lid];
@@ -200,9 +200,9 @@ public:
                     cols(el_i) = m->uniqueLabels()[lid];
                 }
 
-                rm.attr("dimnames") = Rcpp::List::create(rows, cols);                
+                rm.attr("dimnames") = Rcpp::List::create(rows, cols);
             }
-            return rm;            
+            return rm;
         }
         Ptr<SpikeNeuronBase> nb = o.as<SpikeNeuronBase>();
         if(nb) {

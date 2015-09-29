@@ -5,3 +5,7 @@ setVerboseLevel <- function(level) {
     invisible(.Call('Rdnn_setVerboseLevel', PACKAGE = 'Rdnn', level))
 }
 
+dnnCleanHeap <- function() {
+    invisible(.Call('Rdnn_dnnCleanHeap', PACKAGE = 'Rdnn'))
+}
+

@@ -9,6 +9,9 @@
 		},
 		{
 			"path": "r_package/Rdnn/R"
+		},
+		{
+			"path": "r_package/r_scripts"
 		}
 	]
 }

@@ -21,7 +21,7 @@ public:
         return _localId;
     }
     virtual void reset() {}
-    
+
     void setLocalId(size_t localId) {
         _localId = localId;
     }

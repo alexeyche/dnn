@@ -100,6 +100,12 @@ public:
         objects_map.insert(std::make_pair(o->name(), objects.size()-1));
     }
 
+    void cleanHeap() {
+        for (auto &o : objects) {
+            o.destroy();
+        }
+    }
+
 private:
 
     Ptr<SerializableBase> createDynamicObject(string name) {

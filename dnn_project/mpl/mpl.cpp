@@ -216,7 +216,7 @@ MatchingPursuit::MPLReturn MatchingPursuit::run(const TimeSeries &ts, const size
 }
 
 Ptr<SpikesList> MatchingPursuit::convertMatchesToSpikes(const vector<FilterMatch> &matches) {
-    Ptr<SpikesList> sl = Factory::inst().createDynamicObject<SpikesList>();
+    Ptr<SpikesList> sl = Factory::inst().createObject<SpikesList>();
     for(const auto& m: matches) {
         sl->addSpike(m.fi, m.t);
     }

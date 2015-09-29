@@ -69,9 +69,7 @@ Factory::Factory() {
 
 
 Factory::~Factory() {
-	for (auto &o : objects) {
-		o.destroy();
-	}
+    cleanHeap();
     for(auto &td: type_deducers) {
         delete td;
     }

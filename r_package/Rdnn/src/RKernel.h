@@ -31,7 +31,7 @@ public:
 
 		KernelWorker w;
 		if(l.containsElementNamed("jobs")) {
-			w.setJobs(l["jobs"]);	
+			w.setJobs(l["jobs"]);
 		}
 
         SEXP values = data["values"];
@@ -41,13 +41,12 @@ public:
         	try {
         		Ptr<SpikesList> sp_l = RProto::convertBack<SpikesList>(data, "SpikesList");
             	stack.push(sp_l->convertToBinaryTimeSeries(1.0));
-            	sp_l.destroy();	
         	} catch (...) {
-        		ERR("Can't deduce type of input data\n");	
+        		ERR("Can't deduce type of input data\n");
         	}
         }
 
-		
+
 		vector<string> args;
 		if(l.containsElementNamed("preprocessor")) {
 			SEXP s = l["preprocessor"];
@@ -80,7 +79,7 @@ public:
 		w.start(stack);
 		w.process(stack);
 		w.end(stack);
-		
+
 		Ptr<SerializableBase> out = stack.pop();
 		return RProto::convertToR(out);
 	}
