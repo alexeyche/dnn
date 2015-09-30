@@ -1,6 +1,8 @@
 
 #include "option_parser.h"
 
+#include <dnn/util/accum.h>
+
 namespace dnn {
 
 template <>
@@ -24,6 +26,12 @@ size_t cast(string &s) {
 template <>
 string cast(string &s) {
 	return string(s);
+}
+
+
+template <>
+Accum<string> cast(string &s) {
+    return Accum<string>(s);
 }
 
 

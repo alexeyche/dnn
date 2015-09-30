@@ -38,6 +38,10 @@ else()
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=gnu99 -O3")
 endif(DEBUG)
 
+if(PERF)
+  add_definitions(-DPERF)
+endif(PERF)
+
 # Profiling CFLAGS.  Turn profiling information on.
 #if(PROFILE)
 #  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")

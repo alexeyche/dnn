@@ -57,6 +57,11 @@ void Sim::runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barr
 	barrier.wait();
 	L_DEBUG << "Dive in main loop for neurons from " << from << " to " << to;
 
+	#ifdef PERF
+	std::time_t start_time = std::time(nullptr);
+	double sim_time = t.t;
+	#endif
+
 	for(; t<s.duration; ++t) {
 		// L_DEBUG << "[Layer of neurons " << from << ":" << to << "] Tick at time " << t.t;
 		for(size_t i=from; i<to; ++i) {
@@ -70,6 +75,14 @@ void Sim::runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barr
 			}
 		}
 		barrier.wait();
+		#ifdef PERF
+		size_t cur_time = std::time(nullptr);
+		if(cur_time - start_time>5) {
+			L_DEBUG << "Sim, perf start: " << ((double)(t.t-sim_time)/1000.0)/((double)(cur_time - start_time));
+			start_time = cur_time;
+			sim_time = t.t;
+		}
+		#endif
 	}
 	barrier.wait();
 }

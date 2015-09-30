@@ -38,6 +38,10 @@ struct SimConfiguration : public Printable {
 		o << "seed: " << seed << "\n";
 		o << "neurons_to_listen: ";
 		for (auto &v : neurons_to_listen) { o << v << ", "; }
+		o << "files: \n";
+		for (auto &v : files) {
+			o << "\t" <<  v.first << "->" << v.second << "\n";
+		}
 		o << "\n";
 	}
 
@@ -77,7 +81,7 @@ struct Constants : public Printable {
 	        	(std::istreambuf_iterator<char>(ifs)),
                 std::istreambuf_iterator<char>()
             );
-            readString(const_json);
+            readString(const_json, mods);
 		}
 	}
 

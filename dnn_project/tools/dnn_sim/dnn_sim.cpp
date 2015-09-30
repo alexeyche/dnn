@@ -87,7 +87,7 @@ int main(int argc, char **argv) {
 	sopt.add_opts = parseArgOptionsPairs(rest_opts);
 
 	Constants c(sopt.const_file.getValues(), sopt.add_opts);
-	Sim s(c);
+    Sim s(c);
 
 	if (!sopt.model_load.empty()) {
 		ifstream fstr(sopt.model_load);
@@ -102,6 +102,7 @@ int main(int argc, char **argv) {
 	if(sopt.Tmax>0.0) {
 		s.setMaxDuration(sopt.Tmax);
 	}
+
 	s.run(sopt.jobs);
 
 	if (!sopt.model_save.empty()) {

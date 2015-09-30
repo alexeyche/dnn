@@ -266,7 +266,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', 
                         '--const', 
                         required=False,
-                        help='Path to const.json file (default: $SCRIPT_DIR/../%s)' % DnnSim.CONST_JSON)
+                        help='Path to const.json file (default: $SCRIPT_DIR/../dnn_project/%s)' % DnnSim.CONST_JSON)
     parser.add_argument('--dnn-sim-bin', 
                         required=False,
                         help='Path to snn sim bin (default: $SCRIPT_DIR/../build/bin/%s)' % DnnSim.DNN_SIM_BIN)

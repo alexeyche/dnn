@@ -25,6 +25,13 @@ size_t cast(string &s);
 template <>
 string cast(string &s);
 
+template <typename T>
+class Accum;
+
+template <>
+Accum<string> cast(string &s);
+
+
 class OptionParser {
 public:
 	OptionParser(int argc, char **argv) {

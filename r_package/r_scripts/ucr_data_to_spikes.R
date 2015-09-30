@@ -11,8 +11,6 @@ norm = function(x) {
 }
 
 ucr_data_to_spikes = function(
-
-ucr_data_to_spikes = function(
     N
   , sample_size
   , dt
