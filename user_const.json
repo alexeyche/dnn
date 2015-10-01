@@ -88,7 +88,7 @@
             "tau_mean" : 10000.0,
             "target_rate" : 5.0,
             "target_rate_factor" : 0.0,
-            "weight_decay" : 0.5,
+            "weight_decay" : 1.5,
             "learning_rate" : "globals/learning_rate"
         }
     },

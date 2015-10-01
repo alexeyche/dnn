@@ -1,8 +1,7 @@
 
 require(Rdnn)
 
-setwd(path.expand("~/dnn/r_scripts"))
-source("gen_poisson.R")
+source(scripts.path("gen_poisson.R"))
 
 Ninput=100
 Noutput=100
