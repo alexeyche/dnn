@@ -50,7 +50,7 @@
             "beta" : 5.0,
             "amp"   : 10.0
         }
-    },        
+    },
     "synapses" : {
         "StaticSynapse" : {
             "psp_decay" : 10.0,
@@ -69,14 +69,14 @@
     },
     "learning_rules" : {
         "Stdp" : {
-            "tau_plus" : 16.0, 
+            "tau_plus" : 16.0,
             "tau_minus" : 33.0,
             "a_plus" : 1.2,
             "a_minus" : 1.0,
             "learning_rate" : "globals/learning_rate"
         },
         "TripleStdp" : {
-            "tau_plus" : 16.0, 
+            "tau_plus" : 16.0,
             "tau_minus" : 33.0,
             "tau_y" : 114.0,
             "a_plus" : 1.0,
@@ -137,7 +137,7 @@
         "seed" : -1,
         "neurons_to_listen" : [],
         "files" : {
-            "InputTimeSeries" : { 
+            "InputTimeSeries" : {
                 "filename" : "@pb-input"
             },
             "SpikeSequenceNeuron" : {
@@ -149,4 +149,4 @@
         "input" : "@net-input",
         "output" : "@net-output"
     }
-}    
+}

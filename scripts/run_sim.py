@@ -52,7 +52,7 @@ class DnnSim(object):
     EPOCHS = 1
     HOME = os.getenv("DNN_HOME", os.path.expanduser("~/dnn"))
     RUNS_DIR = pj(HOME, "runs", "sim")
-    CONST_JSON = pj(HOME, "const.json")
+    CONST_JSON = pj(HOME, "user_const.json")
     DNN_SIM_BIN = pj(HOME, "bin", "dnn_sim")
     INSP_SCRIPT = pj(HOME, "r_scripts", "insp.R")
 

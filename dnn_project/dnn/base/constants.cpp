@@ -12,7 +12,6 @@ namespace dnn {
 
 Constants::Constants(OptMods mods) {
     readString(default_const_json, mods);
-    sim_conf = SimConfiguration();
 }
 
 void Constants::readString(string s, OptMods mods) {

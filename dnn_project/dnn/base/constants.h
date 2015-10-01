@@ -81,6 +81,7 @@ struct Constants : public Printable {
 	        	(std::istreambuf_iterator<char>(ifs)),
                 std::istreambuf_iterator<char>()
             );
+            // cout << *this;
             readString(const_json, mods);
 		}
 	}
