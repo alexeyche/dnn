@@ -14,11 +14,12 @@ namespace dnn {
 
 /*@GENERATE_PROTO@*/
 struct TimeSeriesInfo : public Serializable<Protos::TimeSeriesInfo> {
-	TimeSeriesInfo() {}
+	TimeSeriesInfo(): dt(1.0) {}
 	void serial_process() {
 		begin() << "labels_ids: " 	   << labels_ids 	  << ", " \
 		        << "unique_labels: "   << unique_labels   << ", " \
-		        << "labels_timeline: " << labels_timeline  << Self::end;
+		        << "labels_timeline: " << labels_timeline << ", " \
+		        << "dt: " << dt << Self::end;
 
 	}
 
@@ -35,9 +36,27 @@ struct TimeSeriesInfo : public Serializable<Protos::TimeSeriesInfo> {
 		labels_timeline.push_back(pos);
 	}
 
+	void changeTimeDelta(const double &_dt) {
+		dt = _dt;
+		for(auto &lt: labels_timeline) {
+			lt = ceil(lt/dt);
+		}
+	}
+
+	bool operator == (const TimeSeriesInfo &l) {
+		if(labels_ids != labels_ids) return false;
+		if(unique_labels != unique_labels) return false;
+		if(labels_timeline != labels_timeline) return false;
+		return true;
+	}
+	bool operator != (const TimeSeriesInfo &l) {
+		return ! (*this == l);
+	}
+
 	vector<size_t> labels_ids;
 	vector<string> unique_labels;
 	vector<size_t> labels_timeline;
+	double dt;
 };
 
 /*@GENERATE_PROTO@*/

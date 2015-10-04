@@ -56,22 +56,15 @@ vector<InterfacedPtr<SpikeNeuronBase>> Builder::buildNeurons() {
         }
         layers.push_back(layer);
     }
+    for(const auto& name2fname: getInputFileNames()) {
+        const auto& obj_name = name2fname.first;
+        const auto& fname = name2fname.second;
 
-    for (auto it = c.sim_conf.files.begin(); it != c.sim_conf.files.end(); ++it) {
-        const string &obj_name = it->first;
-        Document file_conf = Json::parseStringC(it->second);
-
-        string fname = Json::getStringVal(file_conf, "filename");
-        if(strStartsWith(fname, "@")) {
-            continue;
-        }
-        // L_DEBUG << "Builder, found input " << fname << " file for " << obj_name;
         Ptr<SerializableBase> obj = Factory::inst().getCachedObject(fname);
 
         auto slice = Factory::inst().getObjectsSlice(obj_name);
         for(auto it=slice.first; it != slice.second; ++it) {
             Ptr<SerializableBase> o = Factory::inst().getObject(it);
-            // L_DEBUG << "Builder, providing input for " << o->name();
             o->setAsInput(obj);
         }
     }
@@ -97,6 +90,24 @@ vector<InterfacedPtr<SpikeNeuronBase>> Builder::buildNeurons() {
         neurons.insert(neurons.end(), l.neurons.begin(), l.neurons.end());
     }
     return neurons;
+}
+
+const TimeSeriesInfo& Builder::getInputTimeSeriesInfo() const {
+    for(const auto& name2fname: getInputFileNames()) {
+        const auto& fname = name2fname.second;
+
+        Ptr<SerializableBase> obj = Factory::inst().getCachedObject(fname);
+
+        if(Ptr<TimeSeries> ts = obj.as<TimeSeries>()) {
+            return ts->info;
+        } else
+        if(Ptr<SpikesList> sl = obj.as<SpikesList>()) {
+            return sl->ts_info;
+        } else {
+            throw dnnException() << "Unknown input, can't deduce time series information\n";
+        }
+    }
+    throw dnnException() << "Can't find any time series information from inputs\n";
 }
 
 

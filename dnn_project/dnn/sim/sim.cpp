@@ -19,6 +19,9 @@ void Sim::build(Stream* input_stream) {
 		duration = std::max(duration, n.ref().getSimDuration());
 	}
 	net = uptr<Network>(new Network(neurons));
+	if(b.getInputFileNames().size()>0) {
+		net->spikesList().ts_info = b.getInputTimeSeriesInfo();
+	}
 }
 
 void Sim::serialize(Stream &output_stream) {
@@ -84,6 +87,7 @@ void Sim::runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barr
 		}
 		#endif
 	}
+	L_DEBUG << "Main loop for neurons from " << from << " to " << to << " is finished";
 	barrier.wait();
 }
 

@@ -13,7 +13,7 @@
     },
     "neurons" : {
         "SpikeSequenceNeuron" : {
-            "dt" : "globals/dt"
+            "dt" : 0.5
         },
         "LeakyIntegrateAndFire" : {
             "tau_m" : 5.0,
@@ -85,7 +85,7 @@
         },
         "OptimalStdp" : {
             "tau_c" : 100.0,
-            "tau_mean" : 10000.0,
+            "tau_mean" : 60000.0,
             "target_rate" : 5.0,
             "target_rate_factor" : 0.0,
             "weight_decay" : 1.5,

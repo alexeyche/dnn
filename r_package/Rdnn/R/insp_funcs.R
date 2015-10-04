@@ -21,4 +21,15 @@ open_pic = function(f) {
     system(sprintf("%s %s", PIC_TOOL, f), wait=FALSE, ignore.stderr=TRUE)
 }
 
+convBool = function(v, def) {
+    if(v=="") return(def)
+    if(v %in% c("yes", "1", "True", "true")) {
+        return(TRUE)
+    }
+    if(v %in% c("no", "0", "False", "false")) {
+        return(FALSE)
+    }
+    stop(sprintf("Failed to cast %s to bool", v))
+}
+
 

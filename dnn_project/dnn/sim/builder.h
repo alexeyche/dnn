@@ -110,6 +110,22 @@ public:
 		input_stream = s;
 	}
 
+	map<string, string> getInputFileNames() const {
+	    map<string, string> fnames;
+	    for (auto it = c.sim_conf.files.begin(); it != c.sim_conf.files.end(); ++it) {
+	        const string &obj_name = it->first;
+	        Document file_conf = Json::parseStringC(it->second);
+
+	        string fname = Json::getStringVal(file_conf, "filename");
+	        if(strStartsWith(fname, "@")) {
+	            continue;
+	        }
+	        fnames[obj_name] = fname;
+	    }
+	    return fnames;
+	}
+
+	const TimeSeriesInfo& getInputTimeSeriesInfo() const;
 
 private:
 	Stream *input_stream;

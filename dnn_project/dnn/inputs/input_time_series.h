@@ -47,8 +47,8 @@ public:
 
     void setAsInput(Ptr<SerializableBase> b) {
         data_src = b;
-        reset();        
-    }   
+        reset();
+    }
 
     void reset() {
         s.index = 0;
@@ -67,9 +67,9 @@ public:
 
     double getSimDuration() {
         if(seq.isSet()) {
-            return seq->size();    
+            return seq->size()/c.dt;
         }
-        return 0.0;        
+        return 0.0;
     }
 
 private:

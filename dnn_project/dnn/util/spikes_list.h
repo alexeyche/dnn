@@ -65,6 +65,19 @@ struct SpikesList : public SerializableBase {
 		(*this) << Self::end;
 	}
 
+	void changeTimeDelta(const double &dt) {
+		ts_info.changeTimeDelta(dt);
+		for(auto &s: seq) {
+			for(auto &t: s.values) {
+				t = ceil(t/dt);
+			}
+		}
+	}
+
+	const double& getTimeDelta() const {
+		return ts_info.dt;
+	}
+
 	vector<double>& operator [](const size_t &i) {
 		return seq[i].values;
 	}
@@ -83,7 +96,6 @@ struct SpikesList : public SerializableBase {
 		}
 		seq[ni].values.push_back(t);
 	}
-
 
 	TimeSeriesInfo ts_info;
 	vector<SpikesSequence> seq;
