@@ -25,7 +25,7 @@ void Constants::readString(string s, OptMods mods) {
 void Constants::readJson(Document &document) {
     #define SAFE_FILL(part) \
         if(Json::checkVal(document, #part)) { \
-            fill(Json::getVal(document, #part), part); \
+            fill(Json::getVal(document, #part), part, #part); \
         } \
 
     SAFE_FILL(neurons);

@@ -1,10 +1,14 @@
 {
     "input_dt": [
         ["inputs", "InputTimeSeries", "dt"]
-      , [1.0, 10.0]
+      , [0.01, 2.0]
     ]
   , "opt_stdp_tau_c": [
         ["learning_rules", "OptimalStdp", "tau_c"]
       , [10.0, 300.0]
+    ]
+  , "input_spikes_dt": [
+        ["neurons", "SpikeSequenceNeuron", "dt"]
+      , [0.01, 2.0]
     ]
 }

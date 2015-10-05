@@ -17,6 +17,9 @@ struct SpikeSequenceNeuronC : public Serializable<Protos::SpikeSequenceNeuronC> 
 
     void serial_process() {
         begin() << "dt: " << dt << Self::end;
+        if(fabs(dt) < 1e-05) {
+            throw dnnException() << "Got very little dt in SpikeSequenceNeuron\n";
+        }
     }
 
     double dt;
@@ -86,7 +89,7 @@ public:
         if(input.isSet()) {
             throw dnnException() << "Got current inputs in SpikeSequenceNeuron. Config is errors prone\n";
         }
-        if(seq->size() == 0) return 0.0;
+        if(!seq.isSet() || seq->size() == 0) return 0.0;
         return seq->back();
     }
 private:

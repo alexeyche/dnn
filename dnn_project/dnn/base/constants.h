@@ -89,7 +89,10 @@ struct Constants : public Printable {
 	void readJson(Document &document);
 	void readString(string s, OptMods mods = OptMods());
 
-	static void fill(const Value &v, map<string, string> &m) {
+	static void fill(const Value &v, map<string, string> &m, const string part_name) {
+		if(!v.IsObject()) {
+			throw dnnException() << "Got strange value for \"" << part_name << "\" part of constants\n";
+		}
 		for (Value::ConstMemberIterator itr = v.MemberBegin(); itr != v.MemberEnd(); ++itr) {
 			m[itr->name.GetString()] = Json::stringify(itr->value);
 		}
