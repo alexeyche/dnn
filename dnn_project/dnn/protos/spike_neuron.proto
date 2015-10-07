@@ -10,5 +10,6 @@ message SpikeNeuronInfo {
     required bool act_function_is_set = 7;
     required bool input_is_set = 8;
     required bool lrule_is_set = 9;
+    required bool reinforce_is_set = 10;
 }
 

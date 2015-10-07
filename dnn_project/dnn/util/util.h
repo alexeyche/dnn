@@ -75,4 +75,6 @@ auto AssertiveCall(Return (*function)(Parameters...), Args&& ...args)
 }
 void printBackTrace();
 
+double atomicDoubleAdd(std::atomic<double> &f, double d);
+
 }

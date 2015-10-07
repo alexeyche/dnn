@@ -5,39 +5,17 @@ import sys
 import os
 import argparse
 import multiprocessing
-from contextlib import contextmanager
 import logging
 import subprocess as sub
 import shutil
 from os.path import join as pj
 
-def add_coloring_to_emit_ansi(fn):
-    # add methods we need to the class
-    def new(*args):
-        levelno = args[0].levelno
-        if(levelno>=50):
-            color = '\x1b[31m' # red
-        elif(levelno>=40):
-            color = '\x1b[31m' # red
-        elif(levelno>=30):
-            color = '\x1b[33m' # yellow
-        elif(levelno>=20):
-            color = '\x1b[32m' # green
-        elif(levelno>=10):
-            color = '\x1b[35m' # pink
-        else:
-            color = '\x1b[0m' # normal
-        args[0].msg = color + args[0].msg +  '\x1b[0m'  # normal
-        return fn(*args)
-    return new 
+import env
 
-@contextmanager
-def pushd(newDir):
-    previousDir = os.getcwd()
-    os.chdir(newDir)
-    yield
-    os.chdir(previousDir)
+from util import add_coloring_to_emit_ansi
+from util import pushd
 
+from env import runs_dir
 
 def opt_to_str(o):
     return o.lstrip("-").replace("-","_")
@@ -45,46 +23,58 @@ def opt_to_str(o):
 def str_to_opt(s):
     return "--" + s.replace("_","-")
 
+
 THIS_FILE = os.path.realpath(__file__)
 
 class DnnSim(object):
     JOBS = multiprocessing.cpu_count()
     EPOCHS = 1
     HOME = os.getenv("DNN_HOME", os.path.expanduser("~/dnn"))
-    RUNS_DIR = pj(HOME, "runs", "sim")
-    CONST_JSON = pj(HOME, "const.json")
+    RUNS_DIR = pj(env.runs_dir, "sim")
+    CONST_JSON = pj(HOME, "user_const.json")
     DNN_SIM_BIN = pj(HOME, "bin", "dnn_sim")
     INSP_SCRIPT = pj(HOME, "r_scripts", "insp.R")
+
+    LOG_FILE_BASE = "run_sim.log"
 
     def __init__(self, **kwargs):
         self.current_epoch = 1
 
         self.old_dir = self.dget(kwargs, "old_dir", False)
+        self.const_as_string = self.dget(kwargs, "const_as_string", False)
         self.const = self.dget(kwargs, "const", self.CONST_JSON)
         self.runs_dir = self.dget(kwargs, "runs_dir", self.RUNS_DIR)
         self.inspection = self.dget(kwargs, "inspection", True)
-        self.working_dir = self.dget(kwargs, "working_dir", self.get_wd())
+        self.working_dir = self.dget(kwargs, "working_dir", None)
+        self.evaluation = self.dget(kwargs, "evaluation", False)
+        self.slave = self.dget(kwargs, "slave", False)
 
         logFormatter = logging.Formatter("%(asctime)s [%(levelname)s]  %(message)-100s")
         rootLogger = logging.getLogger()
         rootLogger.setLevel(logging.DEBUG)
 
-        consoleHandler = logging.StreamHandler(sys.stdout)
-        consoleHandler.emit = add_coloring_to_emit_ansi(consoleHandler.emit)
-        consoleHandler.setFormatter(logFormatter)
-        rootLogger.addHandler(consoleHandler)
+        if not self.slave:
+            consoleHandler = logging.StreamHandler(sys.stdout)
+            consoleHandler.emit = add_coloring_to_emit_ansi(consoleHandler.emit)
+            consoleHandler.setFormatter(logFormatter)
+            rootLogger.addHandler(consoleHandler)
 
-        if os.path.exists(self.working_dir):
-            self.continue_in_wd()
+        if self.working_dir is None:
+            self.working_dir = self.get_wd()
+
+        ask = False
+        if not os.path.exists(self.working_dir):
+            os.makedirs(self.working_dir)
         else:
-            os.mkdir(self.working_dir)
+            ask = True
 
-        
-        fileHandler = logging.FileHandler("{0}/{1}".format(self.working_dir, "run_sim.log"), mode='w')
+        self.log_file = pj(self.working_dir, DnnSim.LOG_FILE_BASE)
+        fileHandler = logging.FileHandler(self.log_file, mode='w')
         fileHandler.setFormatter(logFormatter)
         rootLogger.addHandler(fileHandler)
 
-
+        if ask:
+            self.continue_in_wd()
 
         self.dnn_sim_bin = self.dget(kwargs, "dnn_sim_bin", self.DNN_SIM_BIN)
         self.add_options = self.dget(kwargs, "add_options", {})
@@ -97,12 +87,16 @@ class DnnSim(object):
         for k, v in self.add_options.items():
             if os.path.exists(v):
                 shutil.copy(v, os.path.join(self.working_dir, k) + ".pb")
-        shutil.copy(self.const, self.working_dir)
+
+        wd_const = pj(self.working_dir, os.path.basename(self.const))
+        if wd_const != self.const:
+            shutil.copy(self.const, self.working_dir)
+            self.const = wd_const
 
 
 
-    staticmethod
-    def dget(self, d, n, default):
+    @staticmethod
+    def dget(d, n, default):
         if d.get(n) is None:
             return default
         else:
@@ -148,13 +142,13 @@ class DnnSim(object):
             "EP" : str(self.current_epoch),
             "OPEN_PIC" : "no",
             "SP_PIX0" : "{}".format(1024*2),
+            "EVAL" : "yes" if self.evaluation else "no"
         }
         cmd = [
               self.insp_script
         ]
         return { "cmd" : cmd, "env" : env }
 
-    staticmethod
     def run_proc(self, **args):
         env = os.environ
         add_env = args.get("env", {})
@@ -174,7 +168,10 @@ class DnnSim(object):
                 logging.error("\n\t"+stdout)
             if stderr:
                 logging.error("\n\t"+stderr)
+            if self.slave:
+                print open(self.log_file).read()
             sys.exit(-1)
+        return stdout
 
     def run(self):
         for self.current_epoch in xrange(self.current_epoch, self.current_epoch+self.epochs):
@@ -183,8 +180,13 @@ class DnnSim(object):
             if self.inspection:
                 logging.info("inspecting ... ")
                 with pushd(self.working_dir):
-                    self.run_proc(**self.construct_inspect_cmd())
+                    o = self.run_proc(**self.construct_inspect_cmd())
+                    if self.evaluation:
+                        logging.info("Evaluation score: {}".format(o.strip()))
+
         logging.info("Done")
+        if self.slave:
+            print float(o.strip())
 
     def continue_in_wd(self):
         max_ep = 0
@@ -193,15 +195,21 @@ class DnnSim(object):
             if len(f_spl) > 1 and "model" in f:
                 max_ep = max(max_ep, int(f_spl[0]))
         if max_ep>0:
+            def clean():
+                logging.info("Cleaning %s ... " % self.working_dir)
+                for f in os.listdir(self.working_dir):
+                    if f != DnnSim.LOG_FILE_BASE:
+                        os.remove(os.path.join(self.working_dir, f))
+            if self.slave:
+                clean()
+                return
             while True:
                 ans = raw_input("%s already exists and %s epochs was done here. Continue learning? (y/n): " % (os.path.basename(self.working_dir), max_ep))
                 if ans in ["Y","y"]:
                     self.current_epoch = max_ep + 1
                     break
                 elif ans in ["N", "n"]:
-                    logging.info("Cleaning %s ... " % self.working_dir)
-                    for f in os.listdir(self.working_dir):
-                        os.remove(os.path.join(self.working_dir, f))
+                    clean()
                     break                        
                 else:
                     logging.warning("incomprehensible answer")
@@ -226,11 +234,8 @@ class DnnSim(object):
 
     
 
-
-
-if __name__ == '__main__':
+def main(argv):
     parser = argparse.ArgumentParser(description='Tool for simulating dnn')
-
     parser.add_argument('-e', 
                         '--epochs', 
                         required=False,
@@ -255,6 +260,13 @@ if __name__ == '__main__':
                         '--no-insp',
                         action='store_true',
                         help='No inspection after every epoch')
+    parser.add_argument('-ev', 
+                        '--evaluation',
+                        action='store_true',
+                        help='Turning on evaluation mode, where program will write only final score')
+    parser.add_argument('--slave',
+                        action='store_true',
+                        help='Run script as slave and print only evaluation score')
     parser.add_argument('-r', 
                         '--runs-dir', 
                         required=False,
@@ -270,8 +282,9 @@ if __name__ == '__main__':
     parser.add_argument('--dnn-sim-bin', 
                         required=False,
                         help='Path to snn sim bin (default: $SCRIPT_DIR/../build/bin/%s)' % DnnSim.DNN_SIM_BIN)
-    args, other = parser.parse_known_args(sys.argv[1:])    
-    if len(sys.argv) == 1:
+    args, other = parser.parse_known_args(argv)
+
+    if len(argv) == 0:
         parser.print_help()
         sys.exit(1)
     args = {
@@ -286,6 +299,8 @@ if __name__ == '__main__':
         "jobs" : args.jobs,
         "old_dir" : args.old_dir,
         "inspection" : not args.no_insp,
+        "evaluation" : args.evaluation,
+        "slave" : args.slave,
     }
     if len(other) % 2 != 0:
         raise Exception("Got not paired add options: {}".format(" ".join(other)))
@@ -295,3 +310,6 @@ if __name__ == '__main__':
 
     s = DnnSim(**args)
     s.run()
+    
+if __name__ == '__main__':
+    main(sys.argv[1:])

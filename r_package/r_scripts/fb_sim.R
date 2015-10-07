@@ -12,6 +12,7 @@ run_neurons = function(
     , tau_ref = 2.0
     , thresh = 0.25
     , jobs = 2
+    , dt = 1.0
 ) {
     M = nrow(ts$values)
 
@@ -20,6 +21,10 @@ run_neurons = function(
     const$setElement(
         "LeakyIntegrateAndFire",
         list(tau_m=tau_m, rest_pot=0.0, tau_ref=tau_ref, noise=.0)
+    )
+    const$setElement(
+        "InputTimeSeries",
+        list(dt=dt)
     )
     const$setElement("Determ", list(threshold=thresh))
     const$addLayer(
@@ -51,6 +56,29 @@ plot.kernel.pca = function(K) {
     plot(rotated(kpc), col=y)
 }
 
+get.baseline = function() {
+    c(data_train, data_test) := read_ucr_file(UCR.SYNTH, 60)
+    data = list()
+    for(i in 1:(length(data_train)+length(data_test))) {
+        if(i <= length(data_train)) {
+            data[[i]] = data_train[[i]]    
+        } else {
+            data[[i]] = data_test[[i-length(data_train)]]    
+        }
+    }
+    
+    Kbl = matrix(0, nrow=length(data), ncol=length(data))
+    
+    for(i in 1:length(data)) { 
+        for(j in 1:length(data)) {
+            Kbl[i, j] = sqrt(sum((data[[i]]$values - data[[j]]$values)^2))
+        }
+    }
+    rownames(Kbl) <- sapply(data, function(x) x$label)
+    colnames(Kbl) <- sapply(data, function(x) x$label)
+    return(Kbl)
+}
+
 c(train_ts, test_ts) := prepare.ucr.data(60, UCR.SYNTH, gap_between_patterns = 60)
 
 ts_whole = cat.ts(train_ts, test_ts)
@@ -63,9 +91,16 @@ samp_rate = 1000
 seq.fun = log.seq
 
 data_conv = conv.gammatones(ts_whole, seq.fun(low_f, high_f, length.out=M), samp_rate)
-spikes = run_neurons(data_conv, tau_m=5.0, tau_ref=2.0, thresh=0.1)
+spikes = run_neurons(data_conv, tau_m=5.0, tau_ref=2.0, thresh=0.1, dt=1.0)
+
+c(train_spikes, test_spikes) := split.spikes(spikes, tail(train_ts$ts_info$labels_timeline, n=1))
+
+proto.write.spikes(spikes.path("ucr_train_spikes.pb"), train_spikes) 
+proto.write.spikes(spikes.path("ucr_test_spikes.pb"), test_spikes) 
 
 K = kernel.run(spikes, "Epsp(10)", "RbfDot(0.05)", jobs=8)
+#K = get.baseline()
+
 
 train_size = length(train_ts$ts_info$labels_timeline)
 test_size = length(test_ts$ts_info$labels_timeline)
@@ -77,6 +112,17 @@ run.svm(K, holdout)
 
 dnn.clean.heap()
 
+labs = rownames(K)
+sel = c("1", "2", "3", "4", "5","6")
+idx = which(labs %in% sel)
+Ksel = K[idx, idx]
 
+c(y, M, N, A) := KFD(Ksel)
 
+metrics_str = sprintf("%f, %f", tr(M)/tr(N), tr(A))
 
+ans = Ksel %*% y[, 1:2]
+
+par(mfrow=c(1,2))
+plot(Re(ans[,1]), col=as.integer(rownames(Ksel)), main=metrics_str) 
+plot(Re(ans), col=as.integer(rownames(Ksel)))

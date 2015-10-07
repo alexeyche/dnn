@@ -274,4 +274,19 @@ void printBackTrace() {
 }
 
 
+double atomicDoubleAdd(std::atomic<double> &f, double d) {
+    double old = f.load(std::memory_order_consume);
+    double desired =  old+d;
+    while (!f.compare_exchange_weak(
+            old
+          , desired
+          , std::memory_order_release
+          , std::memory_order_consume
+    )) {
+        desired = old + d;
+    }
+    return desired;
+}
+
+
 }

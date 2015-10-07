@@ -26,6 +26,7 @@ set(DIRS
     inputs
     sim
     learning_rules
+    reinforcements
 )
 
 foreach(dir ${DIRS})

@@ -119,6 +119,10 @@ empty.ts = function() {
     list(values=c(), ts_info=list(labels_ids=NULL, unique_labels=NULL, labels_timeline=NULL))
 }
 
+empty.spikes = function() {
+    list(values=c(), ts_info=list(labels_ids=NULL, unique_labels=NULL, labels_timeline=NULL))
+}
+
 cat.ts = function(...) {
     ts = list(...)
     fts = empty.ts()
@@ -136,3 +140,27 @@ cat.ts = function(...) {
     }
     return(fts)
 }
+
+split.spikes = function(sp, time_to_split) {
+    left_idx = which(sp$ts_info$labels_timeline <= time_to_split)
+    left_sp = empty.spikes()    
+    right_sp = empty.spikes()
+    
+    left_sp$ts_info$labels_timeline = sp$ts_info$labels_timeline[left_idx]
+    right_sp$ts_info$labels_timeline = sp$ts_info$labels_timeline[-left_idx] - time_to_split
+    
+    labs = sp$ts_info$unique_labels[ sp$ts_info$labels_ids+1 ]
+
+    left_labs = labs[left_idx]
+    left_sp$ts_info$unique_labels = unique(left_labs)
+    left_sp$ts_info$labels_ids = sapply(left_labs, function(l) which(l == left_sp$ts_info$unique_labels)-1)
+    left_sp$values = sapply(sp$values, function(spike_times) spike_times[ which(spike_times<=time_to_split) ] )
+    
+    right_labs = labs[-left_idx]
+    right_sp$ts_info$unique_labels = unique(right_labs)
+    right_sp$ts_info$labels_ids = sapply(right_labs, function(l) which(l == right_sp$ts_info$unique_labels)-1)
+    right_sp$values = sapply(sp$values, function(spike_times) spike_times[ which(spike_times>time_to_split) ] - time_to_split)
+    
+    return(list(left_sp, right_sp))    
+}
+

@@ -254,7 +254,7 @@ public:
                 Rcpp::Named("s") = m->s
             );
         }
-        ERR("Can' recognize " << o->name() << "\n");
+        return Rcpp::List();
     }
 
     template <typename T>

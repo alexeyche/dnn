@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
 		cout << usage;
 		return 0;
 	}
-	optp.option("--const", "-c", sopt.const_file, true);
+	optp.option("--const", "-c", sopt.const_file, false);
 	optp.option("--output", "-o", sopt.out_spikes, false);
 	optp.option("--jobs", "-j", sopt.jobs, false);
 	optp.option("--save", "-s", sopt.model_save, false);
@@ -88,7 +88,6 @@ int main(int argc, char **argv) {
 
 	Constants c(sopt.const_file.getValues(), sopt.add_opts);
     Sim s(c);
-
 	if (!sopt.model_load.empty()) {
 		ifstream fstr(sopt.model_load);
 		Stream str_in(fstr, Stream::Binary);

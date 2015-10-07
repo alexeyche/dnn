@@ -1,14 +1,14 @@
 #!/usr/bin/env Rscript
-library(utils)
-library(base)
-library(graphics)
-library(stats)
-library(datasets)
-library(grDevices)
-library(methods)
+library(utils, quietly=TRUE)
+library(base, quietly=TRUE)
+library(graphics, quietly=TRUE)
+library(stats, quietly=TRUE)
+library(datasets, quietly=TRUE)
+library(grDevices, quietly=TRUE)
+library(methods, quietly=TRUE)
 
-require(Rdnn)
-require(rjson)
+require(Rdnn, quietly=TRUE)
+require(rjson, quietly=TRUE)
 
 
 PIC_TOOL = "eog -f"
@@ -20,7 +20,7 @@ T1 = convNum(Sys.getenv('T1'), 1000)
 
 args <- commandArgs(trailingOnly = FALSE)
 if(length(grep("RStudio", args))>0) {    
-    WD = sprintf("~/dnn/runs/sim/%s", system("ls -t ~/dnn/runs/sim | head -n 1", intern=TRUE))
+    WD = simruns.path(system(sprintf("ls -t %s | head -n 1", simruns.path()), intern=TRUE))
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
@@ -33,7 +33,7 @@ if(EP>=0) {
 }
 
 
-CONST_FNAME = convStr(Sys.getenv('CONST'), "const.json")
+CONST_FNAME = convStr(Sys.getenv('CONST'), "user_const.json")
 MODEL_FNAME = convStr(Sys.getenv('MODEL'), pfx_f("model.pb"))
 SPIKES_FNAME = convStr(Sys.getenv('SPIKES'), pfx_f("spikes.pb"))
 STAT_FNAME = convStr(Sys.getenv('STAT'), pfx_f("stat.pb"))
@@ -41,10 +41,16 @@ SP_PIX0 = convNum(Sys.getenv('SP_PIX0'), 1024)
 SP_PIX1 = convNum(Sys.getenv('SP_PIX1'), 768)
 STAT_ID = convNum(Sys.getenv('STAT_ID'), 0) + 1 # C-like indices
 STAT_SYN_ID = convNum(Sys.getenv('STAT_SYN_ID'), NULL)
-COPY_PICS = convStr(Sys.getenv('COPY_PICS'), "no") %in% c("yes", "1", "True", "true")
-OPEN_PIC = convStr(Sys.getenv('OPEN_PIC'), "yes") %in% c("yes", "1", "True", "true")
+COPY_PICS = convBool(Sys.getenv('COPY_PICS'), FALSE)
+OPEN_PIC = convBool(Sys.getenv('OPEN_PIC'), TRUE)
 LAYER_MAP = convStr(Sys.getenv('LAYER_MAP'), NULL)
-SAVE_PIC_IN_FILES = convStr(Sys.getenv('SAVE_PIC_IN_FILES'), "yes") %in% c("yes", "1", "True", "true")
+SAVE_PIC_IN_FILES = convBool(Sys.getenv('SAVE_PIC_IN_FILES'), TRUE)
+EVAL = convBool(Sys.getenv('EVAL'), FALSE)
+EVAL_PROC = convStr(Sys.getenv('EVAL_PROC'), "Epsp(10)")
+EVAL_KERN = convStr(Sys.getenv('EVAL_KERN'), "RbfDot(0.05)")
+EVAL_JOBS = convNum(Sys.getenv('EVAL_JOBS'), 8)
+EVAL_VERBOSE = convBool(Sys.getenv('EVAL_VERBOSE'), TRUE)
+
 
 if(length(grep("RStudio", args))>0) {
     STAT_ID=1
@@ -61,6 +67,7 @@ tmp_d = Rdnn.tempdir()
 input = NULL
 model = NULL
 net = NULL
+spikes = NULL
 
 if(file.exists(CONST_FNAME)) {
     const = fromJSON(readConst(CONST_FNAME))
@@ -84,7 +91,8 @@ if(file.exists(CONST_FNAME)) {
 pic_files = NULL
 
 if(file.exists(SPIKES_FNAME)) {
-    net = RProto$new(SPIKES_FNAME)$read()$values
+    spikes = proto.read(SPIKES_FNAME)
+    net = spikes$values
     
     spikes_pic = sprintf("%s/1_%s", tmp_d, pfx_f("spikes.png"))
     if(SAVE_PIC_IN_FILES) png(spikes_pic, width=SP_PIX0, height=SP_PIX1)
@@ -95,7 +103,7 @@ if(file.exists(SPIKES_FNAME)) {
     if(SAVE_PIC_IN_FILES) {
         dev.off()
         
-        cat("Spikes pic filename: ", spikes_pic, "\n")
+        write(paste("Spikes pic filename: ", spikes_pic), stderr())
         pic_files = c(pic_files, spikes_pic)
     }
 } else {
@@ -114,7 +122,7 @@ if (file.exists(MODEL_FNAME)) {
     print(gr_pl(w))
     if(SAVE_PIC_IN_FILES) { 
         dev.off()
-        cat("Weights pic filename: ", weights_pic, "\n")
+        write(paste("Weights pic filename: ", weights_pic), stderr())
         pic_files = c(pic_files, weights_pic)
     }
     
@@ -146,11 +154,45 @@ if (file.exists(STAT_FNAME)) {
     }
     if(SAVE_PIC_IN_FILES) {
         dev.off()
-        cat("Stat pic filename: ", stat_pic, "\n")
+        write(paste("Stat pic filename: ", stat_pic), stderr())
         pic_files = c(pic_files, stat_pic)
     }
 } else {
     warning(sprintf("Not found %s", STAT_FNAME))
+}
+
+if(EVAL) {
+    if(!file.exists(SPIKES_FNAME)) {
+        stop("Can't eval without spikes")        
+    }
+    
+    setVerboseLevel(0)
+    
+    spikes$values = spikes$values[lsize[1]+1:sum(lsize[-1])]
+    K = kernel.run(spikes, EVAL_PROC, EVAL_KERN, jobs=EVAL_JOBS)
+    if(EVAL_VERBOSE) {
+        c(y, M, N, A) := KFD(K)
+        
+        ans = K %*% y[, 1:2]
+        eval_debug_pic = sprintf("%s/4_%s", tmp_d, pfx_f("eval.png"))
+        if(SAVE_PIC_IN_FILES) png(eval_debug_pic, width=1024, height=768)
+        
+        par(mfrow=c(1,2))
+        
+        metrics_str = sprintf("%f, %f", tr(M)/tr(N), tr(A))
+        plot(Re(ans[,1]), col=as.integer(rownames(K)), main=metrics_str) 
+        plot(Re(ans), col=as.integer(rownames(K)))        
+        
+        if(SAVE_PIC_IN_FILES) {
+            dev.off()
+            write(paste("Eval debug pic filename: ", eval_debug_pic), stderr())
+            pic_files = c(pic_files, eval_debug_pic)
+        }
+    } else {
+        c(M, N, A) := KFD(K, only_scatter=TRUE)        
+    }
+    cat(tr(M)/tr(N), "\n")    
+    
 }
 
 if ( (!is.null(input))&&(!is.null(model))&&(!is.null(net)) ) {

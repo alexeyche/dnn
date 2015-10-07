@@ -1,0 +1,12 @@
+package Protos;
+
+message RewardControlState {
+    required double R = 1;
+    required double meanR = 2;
+}
+
+message RewardControlC {
+    required double tau_trace = 1;
+    required double tau_mean_trace = 2;
+}
+

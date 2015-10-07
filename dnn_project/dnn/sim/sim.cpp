@@ -11,18 +11,33 @@ void Sim::build(Stream* input_stream) {
 
 	Builder b(c);
 	if(input_stream) {
-		sim_info = input_stream->readDynamic<SimInfo>().ref();
+		auto sim_info_serial = input_stream->readDynamic<SimInfo>();
+		sim_info = sim_info_serial.ref();
+		sim_info_serial.destroy();
+
+		auto rc_serial = input_stream->readDynamic<RewardControl>();
+		rc = rc_serial.ref();
+		rc_serial.destroy();
+
 		b.setInputModelStream(input_stream);
+	} else {
+		rc = b.buildRewardControlFromConstants();
 	}
+
 	neurons = b.buildNeurons();
 	for(auto &n: neurons) {
 		duration = std::max(duration, n.ref().getSimDuration());
 	}
 	net = uptr<Network>(new Network(neurons));
+	if(b.getInputFileNames().size()>0) {
+		net->spikesList().ts_info = b.getInputTimeSeriesInfo();
+	}
 }
 
 void Sim::serialize(Stream &output_stream) {
 	output_stream.writeObject(&sim_info);
+	output_stream.writeObject(&rc);
+
 	for(auto &n : neurons) {
 		output_stream.writeObject(n.ptr());
 	}
@@ -34,6 +49,7 @@ void Sim::saveStat(Stream &str) {
 			str.writeObject(&st);
 		}
 	}
+	str.writeObject(&rc.getStat());
 }
 void Sim::saveSpikes(Stream &str) {
 	if(!net.get()) {
@@ -44,9 +60,10 @@ void Sim::saveSpikes(Stream &str) {
 
 void Sim::turnOnStatistics() {
 	Builder::turnOnStatistics(neurons, c.sim_conf.neurons_to_listen);
+	rc.getStat().turnOn();
 }
 
-void Sim::runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barrier) {
+void Sim::runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barrier, bool master_thread) {
 	Time t(s.c.sim_conf.dt);
 
 	for(size_t i=from; i<to; ++i) {
@@ -64,6 +81,10 @@ void Sim::runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barr
 
 	for(; t<s.duration; ++t) {
 		// L_DEBUG << "[Layer of neurons " << from << ":" << to << "] Tick at time " << t.t;
+
+		if(master_thread) GlobalCtx().inst().setCurrentClassId(s.net->getClassId(t));
+
+		barrier.wait();
 		for(size_t i=from; i<to; ++i) {
 			// L_DEBUG << "[Layer of neurons " << from << ":" << to << "] Simulating neuron " << i;
 			s.neurons[i].ref().calculateDynamicsInternal(t);
@@ -75,6 +96,8 @@ void Sim::runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barr
 			}
 		}
 		barrier.wait();
+		if(master_thread) s.rc.calculateDynamics(t);
+
 		#ifdef PERF
 		size_t cur_time = std::time(nullptr);
 		if(cur_time - start_time>5) {
@@ -84,13 +107,14 @@ void Sim::runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barr
 		}
 		#endif
 	}
+	L_DEBUG << "Main loop for neurons from " << from << " to " << to << " is finished";
 	barrier.wait();
 }
 
 
-void Sim::runWorker(Sim &s, size_t from, size_t to, SpinningBarrier &barrier, std::exception_ptr &eptr) {
+void Sim::runWorker(Sim &s, size_t from, size_t to, SpinningBarrier &barrier, bool master_thread, std::exception_ptr &eptr) {
 	try {
-		runWorkerRoutine(s, from, to, barrier);
+		runWorkerRoutine(s, from, to, barrier, master_thread);
 	} catch (const dnnException &e) {
 		eptr = std::current_exception();
 		barrier.fail();
@@ -117,6 +141,7 @@ void Sim::run(size_t jobs) {
 			slice.from,
 			slice.to,
 			std::ref(barrier),
+			slice.from == 0,
 			std::ref(exceptions.back())
 		);
 	}

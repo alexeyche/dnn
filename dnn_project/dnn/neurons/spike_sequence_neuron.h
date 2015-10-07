@@ -17,6 +17,9 @@ struct SpikeSequenceNeuronC : public Serializable<Protos::SpikeSequenceNeuronC> 
 
     void serial_process() {
         begin() << "dt: " << dt << Self::end;
+        if(fabs(dt) < 1e-05) {
+            throw dnnException() << "Got very little dt in SpikeSequenceNeuron\n";
+        }
     }
 
     double dt;
@@ -58,8 +61,9 @@ public:
     }
 
     void calculateDynamics(const Time& t, const double &Iinput, const double &Isyn) {
-        if(s.index>=seq.size()) return;
-        const double &spike_time = seq[s.index];
+        assert(seq.isSet());
+        if(s.index>=seq->size()) return;
+        double spike_time = seq->at(s.index);
         if((spike_time>=t.t)&&(spike_time<(t.t+t.dt))) {
             s.index++;
             setFired(true);
@@ -71,22 +75,25 @@ public:
     }
     void setAsInput(Ptr<SerializableBase> b) {
         Ptr<SpikesList> sl = b.as<SpikesList>();
+        if(fabs(sl->getTimeDelta() - c.dt) > 1e-03) {
+            sl->changeTimeDelta(c.dt);
+        }
         size_t id = localId();
         if(id>=sl->size()) {
             throw dnnException() << "Got input spike sequence less than neuron count\n";
         }
-        seq = sl->seq[id].values;
+        seq.set( &sl->seq[id].values );
     }
 
     double getSimDuration() {
         if(input.isSet()) {
             throw dnnException() << "Got current inputs in SpikeSequenceNeuron. Config is errors prone\n";
         }
-        if(seq.size() == 0) return 0.0;
-        return seq.back() * c.dt;
+        if(!seq.isSet() || seq->size() == 0) return 0.0;
+        return seq->back();
     }
 private:
-    vector<double> seq;
+    Ptr< vector<double> > seq;
 };
 
 }

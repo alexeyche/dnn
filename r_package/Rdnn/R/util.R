@@ -140,7 +140,7 @@ log.seq = function(from, to, length.out) {
 
 
 
-require(zoo)
+require(zoo, quietly=TRUE, warn.conflicts=FALSE)
 
 interpolate_ts = function(ts, interpolate_size) {
     out_approx = NA

@@ -1,54 +1,43 @@
 
 require(Rdnn)
-require(rjson)
 
-setwd(path.expand("~/dnn/r_scripts"))
+source(scripts.path("gen_poisson.R"))
 
-source("env.R")
-source("ucr_ts.R")
-source("ucr_data_to_spikes.R")
-source("gen_poisson.R")
+Ninput=100
+Noutput=100
+rate=10
+len=1000
+jobs = 1
+start_weight = 0.15
 
-cr = fromJSON(readConst(CONST_JSON))
-cr$sim_configuration$layers[[2]][[ 
-    which(names(cr$sim_configuration$layers[[2]]) == "learning_rule")  
-]] <- NULL
-cr$sim_configuration$layers[[2]][[ 
-    which(names(cr$sim_configuration$layers[[2]]) == "weight_normalization")  
-]] <- NULL
-cr$sim_configuration$neurons_to_listen = c(50)
-cr$sim_configuration$seed = 1
-set.seed(1)
-cjson = toJSON(cr)
+s = RSim$new()
+const = s$getConst()
 
-const = RConstants$new(cjson)
+const$setElement(
+    "LeakyIntegrateAndFire", 
+    list(tau_m=5.0, rest_pot=0.0, tau_ref=2.0, noise=0.2)
+)
 
+const$setElement("Stochastic", list(prob=0.5))
 
+const$addLayer(
+    list(neuron="SpikeSequenceNeuron", size=Ninput)
+)
+const$addLayer(
+    list(size=Noutput, neuron="LeakyIntegrateAndFire", act_function="Determ")
+)
+const$addConnection(0, 1, list(
+    type="Stochastic", start_weight=start_weight, synapse="StaticSynapse"
+))
 
-N = cr$sim_configuration$layers[[1]]$size
-
-rates = seq(1, 100, length.out=100)
-out_rates = NULL
-for(rate in rates) {
-    len = 10000
-    spikes = gen_poisson(N, rate, len)
-    
-    s = RSim$new(const)    
-    #s$turnOnStatistics()
-    s$setInputSpikes(spikes, "SpikeSequenceNeuron")
-
-    s$run(1)
-
-    #stat = s$getStat()
-    net = s$getSpikes()
-    #m = s$getModel()
-
-    out_rate = mean(1000*sapply(net$values[51:99], length)/len)
-    out_rates = c(out_rates, out_rate)
-}
-
-#prast(net$values,T0=0,Tmax=1000)
-#plot_stat(stat[[1]], 1)
+s$build()
 
 
 
+spikes = gen_poisson(Ninput, rate, len)
+s$setInputSpikes(spikes, "SpikeSequenceNeuron")
+proto.write("~/dnn/spikes/test_spikes.pb", list(values=spikes), "SpikesList")
+
+s$run(jobs)
+net = s$getSpikes()
+prast(net)

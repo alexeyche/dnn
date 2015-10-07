@@ -23,3 +23,7 @@ ds.path = function(...) {
 scripts.path = function(...) {
     file.path(dnn.env(), "r_scripts", ...)
 }
+
+simruns.path = function(...) {
+    file.path(dnn.env(), "runs", "sim", ...)
+}

@@ -2,6 +2,7 @@ REG_TYPE(SpikeNeuronInfo);
 REG_TYPE(SynapseInfo);
 REG_TYPE(SimInfo);
 REG_TYPE(LearningRuleInfo);
+REG_TYPE_WITH_CONST_AND_STATE(RewardControl);
 
 REG_TYPE_WITH_CONST_AND_STATE(LeakyIntegrateAndFire);
 REG_TYPE_WITH_CONST_AND_STATE(AdaptIntegrateAndFire);
@@ -22,6 +23,7 @@ REG_TYPE_WITH_CONST(PowMinMax);
 REG_TYPE_WITH_CONST(MinMax);
 REG_TYPE_WITH_CONST(NonLinearMinMax);
 REG_TYPE_WITH_CONST_AND_STATE(SlidingLtd);
+REG_TYPE_WITH_CONST(InputClassifier);
 
 REG_TYPE(Statistics);
 REG_TYPE(StatisticsInfo);
@@ -29,6 +31,7 @@ REG_TYPE(Stat);
 REG_TYPE(SpikesList);
 REG_TYPE(SpikesListInfo);
 REG_TYPE(SpikesSequence);
+
 
 REG_TYPE(TimeSeries);
 REG_TYPE(TimeSeriesInfo);
@@ -38,3 +41,4 @@ REG_TYPE(TimeSeriesComplexData);
 REG_TYPE(TimeSeriesComplex);
 
 REG_TYPE(DoubleMatrix);
+

@@ -3,6 +3,7 @@
 #include <dnn/connections/connection.h>
 #include <dnn/base/constants.h>
 #include <dnn/io/stream.h>
+#include <dnn/sim/reward_control.h>
 
 #include <dnn/util/json.h>
 
@@ -22,6 +23,8 @@ public:
 
 	Builder(const Constants &_c) : c(_c), input_stream(nullptr) {
 	}
+
+	RewardControl buildRewardControlFromConstants();
 
 	vector<InterfacedPtr<SpikeNeuronBase>> buildNeurons();
 
@@ -84,17 +87,12 @@ public:
 	static Ptr<T> buildObjectFromConstants(const string &name, const map<string, string> &object_const_map) {
 		auto cptr = object_const_map.find(name);
 		if ( cptr == object_const_map.end() ) {
-			throw dnnException() << "Trying to build " << name << " from constants and can't find him\n";
+			throw dnnException() << "Trying to build " << name << " from constants and can't find it\n";
 		}
 
 		Document const_json = Json::parseStringC(cptr->second);
 
-		Document d;
-		Value cv(kObjectType);
-		Value copy_v;
-		copy_v.CopyFrom(const_json, Json::d.GetAllocator());
-		cv.AddMember(StringRef(name.c_str()), copy_v, Json::d.GetAllocator());
-		string processed_const = Json::stringify(cv);
+		string processed_const = Json::stringify(Json::makeDocument(name, const_json));
 
 		istringstream *ss = new istringstream(processed_const);
 		Stream s(*ss, Stream::Text);
@@ -110,6 +108,22 @@ public:
 		input_stream = s;
 	}
 
+	map<string, string> getInputFileNames() const {
+	    map<string, string> fnames;
+	    for (auto it = c.sim_conf.files.begin(); it != c.sim_conf.files.end(); ++it) {
+	        const string &obj_name = it->first;
+	        Document file_conf = Json::parseStringC(it->second);
+
+	        string fname = Json::getStringVal(file_conf, "filename");
+	        if(strStartsWith(fname, "@")) {
+	            continue;
+	        }
+	        fnames[obj_name] = fname;
+	    }
+	    return fnames;
+	}
+
+	const TimeSeriesInfo& getInputTimeSeriesInfo() const;
 
 private:
 	Stream *input_stream;

@@ -4,6 +4,70 @@
 		"selected_items":
 		[
 			[
+				"confg",
+				"configureRewardControl"
+			],
+			[
+				"seria",
+				"serial_process"
+			],
+			[
+				"output",
+				"output_stream"
+			],
+			[
+				"gath",
+				"gathered_reward"
+			],
+			[
+				"Rewa",
+				"RewardControl"
+			],
+			[
+				"tau_me",
+				"tau_mean_trace"
+			],
+			[
+				"Seri",
+				"Serializable"
+			],
+			[
+				"Spik",
+				"SpikeSequenceNeuron"
+			],
+			[
+				"getTime",
+				"getInputTimeSeriesInfo"
+			],
+			[
+				"labe",
+				"labels_timeline"
+			],
+			[
+				"TIme",
+				"TimeSeries"
+			],
+			[
+				"nam",
+				"name2fname"
+			],
+			[
+				"L_",
+				"L_INFO"
+			],
+			[
+				"TimeSeri",
+				"TimeSeriesInfo"
+			],
+			[
+				"TimeSer",
+				"TimeSeriesInfo"
+			],
+			[
+				"label",
+				"labels_timeline"
+			],
+			[
 				"defa",
 				"default_const_json"
 			],
@@ -264,10 +328,6 @@
 				"membrane"
 			],
 			[
-				"Seri",
-				"SerializableBase"
-			],
-			[
 				"padd",
 				"paddingNfft"
 			],
@@ -454,92 +514,96 @@
 			[
 				"cumu",
 				"cumulativeSums"
-			],
-			[
-				"curren",
-				"currentTs"
-			],
-			[
-				"sub",
-				"subsequence"
-			],
-			[
-				"refere",
-				"referent"
-			],
-			[
-				"serial",
-				"serial_process"
-			],
-			[
-				"curr",
-				"currentTs"
-			],
-			[
-				"TimeS",
-				"TimeSeries"
-			],
-			[
-				"time_",
-				"time_series_stat"
-			],
-			[
-				"chop",
-				"chopped"
-			],
-			[
-				"Tim",
-				"TimeSeries"
-			],
-			[
-				"read",
-				"readObject"
-			],
-			[
-				"input",
-				"input_file"
-			],
-			[
-				"struct",
-				"structures"
-			],
-			[
-				"sha",
-				"shapeletsEndSize"
-			],
-			[
-				"shap",
-				"shapeletsStartSize"
-			],
-			[
-				"Shap",
-				"ShapeletsConfig"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "dnn_project/shapelets/subsequence.h",
+			"file": "dnn_project/dnn/neurons/spike_sequence_neuron.h",
 			"settings":
 			{
-				"buffer_size": 1001,
+				"buffer_size": 2641,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "dnn_project/dnn/util/option_parser.h",
+			"file": "dnn_project/dnn/io/stream.h",
 			"settings":
 			{
-				"buffer_size": 1689,
+				"buffer_size": 5817,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "dnn_project/tools/CMakeLists.txt",
+			"file": "dnn_project/dnn/sim/sim.cpp",
 			"settings":
 			{
-				"buffer_size": 246,
+				"buffer_size": 4158,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/sim/sim.h",
+			"settings":
+			{
+				"buffer_size": 1169,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/sim/reward_control.h",
+			"settings":
+			{
+				"buffer_size": 2223,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/sim/global_ctx.h",
+			"settings":
+			{
+				"buffer_size": 917,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/neurons/spike_neuron.cpp",
+			"settings":
+			{
+				"buffer_size": 5182,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/neurons/spike_neuron.h",
+			"settings":
+			{
+				"buffer_size": 5583,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/sim/builder.h",
+			"settings":
+			{
+				"buffer_size": 4066,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/sim/builder.cpp",
+			"settings":
+			{
+				"buffer_size": 4586,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/sim/network.h",
+			"settings":
+			{
+				"buffer_size": 2056,
 				"line_ending": "Unix"
 			}
 		}
@@ -576,15 +640,42 @@
 	},
 	"file_history":
 	[
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/neurons/spike_neuron.h",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/sim/sim.h",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/sim/network.h",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/base/constants.h",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/base/constants.cpp",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/sim/global_ctx.h",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/time_series.h",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/sim/builder.cpp",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/io/serialize.h",
+		"/home/alexeyche/prog/snn_sim/sources/snnlib/reinforcement/input_classification.h",
+		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RProto.h",
+		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RProto.cpp",
+		"/home/alexeyche/prog/dnn/dnn_project/const.json",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/spikes_list.h",
+		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RSim.h",
+		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RSim.cpp",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/sim/builder.h",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/sim/sim.cpp",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/base/factory.cpp",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/inputs/input_time_series.h",
+		"/home/alexeyche/prog/dnn/dnn_project/tools/dnn_sim/dnn_sim.cpp",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/neurons/spike_sequence_neuron.h",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/json.cpp",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/neurons/leaky_integrate_and_fire.h",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/neurons/srm_neuron.h",
+		"/home/alexeyche/prog/dnn/dnn_project/spikework/kernel.cpp",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/json.h",
+		"/home/alexeyche/prog/dnn/dnn_project/CMakeLists.txt",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/option_parser.cpp",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/option_parser.h",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/protos/spike_sequence_neuron.proto",
+		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/accum.h",
+		"/home/alexeyche/prog/dnn/dnn_project/tools/CMakeLists.txt",
+		"/home/alexeyche/prog/dnn/dnn_project/shapelets/subsequence.h",
 		"/home/alexeyche/prog/dnn/dnn_project/tools/tests/CMakeLists.txt",
 		"/home/alexeyche/prog/dnn/dnn_project/tools/tests/test_constants.cpp",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/json.h",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/base/constants.cpp",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/base/constants.h",
-		"/home/alexeyche/prog/dnn/dnn_project/tools/dnn_sim/dnn_sim.cpp",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/sim/global_ctx.h",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/accum.h",
-		"/home/alexeyche/prog/dnn/dnn_project/shapelets/subsequence.h",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/util.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/contrib/spdlog/details/format.h",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/base/CMakeLists.txt",
@@ -592,35 +683,19 @@
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/R/zzz.R",
 		"/home/alexeyche/prog/dnn/r_package/r_scripts/sim_api/fb_sim.R",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/base/factory.h",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/base/factory.cpp",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/util.h",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/util.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/inputs/input.h",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/neurons/spike_neuron.h",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RMpl.h",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/sim/builder.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/mpl/mpl.cpp",
-		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RSim.cpp",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RcppExports.cpp",
-		"/home/alexeyche/prog/dnn/dnn_project/spikework/kernel.cpp",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RKernel.h",
-		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RSim.h",
-		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RProto.h",
-		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RProto.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/neurons/spike_neuron.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/act_functions/act_function.h",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/sim/sim.h",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/inputs/input_time_series.h",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/mod.cpp",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/sim/builder.h",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/neurons/spike_sequence_neuron.h",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/spikes_list.h",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/time_series.h",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RConstants.h",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/sim/sim.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/base/base.h",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/core.h",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/json.cpp",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/common.h",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/RConstants.cpp",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/Makevars.in",
@@ -631,7 +706,6 @@
 		"/home/alexeyche/prog/dnn/dnn_project/spikework/conv.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/base/deduce_type_impl.x",
 		"/home/alexeyche/prog/dnn/dnn_project/mpl/mpl.h",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/io/serialize.h",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/io/stream.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/io/stream.h",
 		"/home/alexeyche/prog/dnn/r_package/Rdnn/src/mod.h",
@@ -657,7 +731,6 @@
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/spikes_list.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/connections/connection.h",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/sim/CMakeLists.txt",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/sim/network.h",
 		"/home/alexeyche/prog/dnn/dnn_project/spikework/kernels/shoe.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/spikework/spikework.h",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/CMakeLists.txt",
@@ -681,8 +754,6 @@
 		"/home/alexeyche/prog/dnn/dnn_project/spikework/kernels/shoe.h",
 		"/home/alexeyche/prog/dnn/dnn_project/spikework/CMakeLists.txt",
 		"/home/alexeyche/prog/dnn/dnn_project/spikework/kernels/CMakeLists.txt",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/option_parser.h",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/option_parser.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/fastapprox/fastpow.h",
 		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/fastapprox/fastexp.h",
 		"/home/alexeyche/prog/dnn/dnn_project/spikework/kernels/anova_dot.h",
@@ -696,14 +767,7 @@
 		"/home/alexeyche/prog/dnn/dnn_project/spikework/gram.cpp",
 		"/home/alexeyche/prog/dnn/dnn_project/spikework/gram.h",
 		"/home/alexeyche/prog/dnn/dnn_project/spikework/kernel_defs.h",
-		"/home/alexeyche/prog/dnn/dnn_project/spikework/kernel_defs.cpp",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/pretty_print.h",
-		"/home/alexeyche/prog/dnn/dnn_project/spikework/kernel_old.cpp",
-		"/home/alexeyche/prog/dnn/dnn_project/dnn/util/log/log.h",
-		"/home/alexeyche/prog/dnn/dnn_project/spikework/kernel_old.h",
-		"/home/alexeyche/prog/dnn/dnn_project/spikework/kernels.cpp",
-		"/home/alexeyche/prog/dnn/dnn_project/spikework/kernels.h",
-		"/home/alexeyche/prog/dnn/dnn_project/spikework/read.h"
+		"/home/alexeyche/prog/dnn/dnn_project/spikework/kernel_defs.cpp"
 	],
 	"find":
 	{
@@ -726,6 +790,18 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"float",
+			"fill",
+			"obj",
+			"getCachedObject",
+			"parse",
+			"parseJ",
+			"read",
+			"SimInfo",
+			"reco",
+			"Can't re",
+			"Can't recognize",
+			"cast",
 			"getVal",
 			"Errors while finding field",
 			"const_json",
@@ -841,26 +917,15 @@
 			"setNo",
 			"erase",
 			"opts",
-			"erase",
-			"remove",
-			"processor",
-			"Preprocessor",
-			"proc",
-			"processor",
-			"proc_map",
-			"proc",
-			"processors",
-			"KernelOldProcessor",
-			"\\<Kernel",
-			"createOb",
-			"convertToL"
+			"erase"
 		],
 		"highlight": true,
-		"in_selection": false,
+		"in_selection": true,
 		"preserve_case": false,
 		"regex": true,
 		"replace_history":
 		[
+			"double",
 			"createObject",
 			"REG_TYPE_WITH_CONST_AND_STATE",
 			"Shoe",
@@ -951,22 +1016,23 @@
 	"groups":
 	[
 		{
+			"selected": 5,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "dnn_project/shapelets/subsequence.h",
+					"file": "dnn_project/dnn/neurons/spike_sequence_neuron.h",
 					"settings":
 					{
-						"buffer_size": 1001,
+						"buffer_size": 2641,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								103,
-								103
+								90,
+								90
 							]
 						],
 						"settings":
@@ -983,18 +1049,46 @@
 				},
 				{
 					"buffer": 1,
-					"file": "dnn_project/dnn/util/option_parser.h",
+					"file": "dnn_project/dnn/io/stream.h",
 					"settings":
 					{
-						"buffer_size": 1689,
+						"buffer_size": 5817,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								833,
-								833
+								1230,
+								1230
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 188.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "dnn_project/dnn/sim/sim.cpp",
+					"settings":
+					{
+						"buffer_size": 4158,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2303,
+								2303
 							]
 						],
 						"settings":
@@ -1003,33 +1097,222 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 612.0,
+						"translation.y": 1170.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "dnn_project/tools/CMakeLists.txt",
+					"buffer": 3,
+					"file": "dnn_project/dnn/sim/sim.h",
 					"settings":
 					{
-						"buffer_size": 246,
+						"buffer_size": 1169,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								127,
-								127
+								761,
+								761
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 18.0,
+						"translation.y": 350.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "dnn_project/dnn/sim/reward_control.h",
+					"settings":
+					{
+						"buffer_size": 2223,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1873,
+								1873
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1288.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "dnn_project/dnn/sim/global_ctx.h",
+					"settings":
+					{
+						"buffer_size": 917,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "dnn_project/dnn/neurons/spike_neuron.cpp",
+					"settings":
+					{
+						"buffer_size": 5182,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2233,
+								2233
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 1304.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "dnn_project/dnn/neurons/spike_neuron.h",
+					"settings":
+					{
+						"buffer_size": 5583,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								250,
+								250
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "dnn_project/dnn/sim/builder.h",
+					"settings":
+					{
+						"buffer_size": 4066,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								149,
+								149
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "dnn_project/dnn/sim/builder.cpp",
+					"settings":
+					{
+						"buffer_size": 4586,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4570,
+								4570
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1520.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "dnn_project/dnn/sim/network.h",
+					"settings":
+					{
+						"buffer_size": 2056,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1972,
+								1972
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 836.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1095,20 +1378,120 @@
 		"selected_items":
 		[
 			[
-				"dnn",
-				"dnn_project/tools/dnn_sim/dnn_sim.cpp"
+				"net",
+				"dnn_project/dnn/sim/network.h"
+			],
+			[
+				"buil",
+				"dnn_project/dnn/sim/builder.h"
+			],
+			[
+				"spike_ne",
+				"dnn_project/dnn/neurons/spike_neuron.h"
+			],
+			[
+				"sim.c",
+				"dnn_project/dnn/sim/sim.cpp"
 			],
 			[
 				"glo",
 				"dnn_project/dnn/sim/global_ctx.h"
 			],
 			[
-				"opt",
-				"dnn_project/dnn/util/option_parser.h"
+				"time",
+				"dnn_project/dnn/util/time_series.h"
+			],
+			[
+				"ser",
+				"dnn_project/dnn/io/serialize.h"
+			],
+			[
+				"bui",
+				"dnn_project/dnn/sim/builder.cpp"
+			],
+			[
+				"spike_seq",
+				"dnn_project/dnn/neurons/spike_sequence_neuron.h"
+			],
+			[
+				"cons",
+				"dnn_project/dnn/base/constants.cpp"
+			],
+			[
+				"sim",
+				"dnn_project/dnn/sim/sim.cpp"
+			],
+			[
+				"sike",
+				"dnn_project/dnn/util/spikes_list.h"
+			],
+			[
+				"stre",
+				"dnn_project/dnn/io/stream.h"
+			],
+			[
+				"ne",
+				"dnn_project/dnn/sim/network.h"
+			],
+			[
+				"fa",
+				"dnn_project/dnn/base/factory.cpp"
+			],
+			[
+				"spike",
+				"dnn_project/dnn/util/spikes_list.h"
+			],
+			[
+				"spike_s",
+				"dnn_project/dnn/neurons/spike_sequence_neuron.h"
+			],
+			[
+				"dnn",
+				"dnn_project/tools/dnn_sim/dnn_sim.cpp"
+			],
+			[
+				"inpu",
+				"dnn_project/dnn/inputs/input_time_series.h"
+			],
+			[
+				"json",
+				"dnn_project/dnn/util/json.cpp"
+			],
+			[
+				"r",
+				"src/RProto.cpp"
+			],
+			[
+				"con",
+				"dnn_project/const.json"
+			],
+			[
+				"lea",
+				"dnn_project/dnn/neurons/leaky_integrate_and_fire.h"
+			],
+			[
+				"srm",
+				"dnn_project/dnn/neurons/srm_neuron.h"
+			],
+			[
+				"spik_s",
+				"dnn_project/dnn/protos/spike_sequence_neuron.proto"
 			],
 			[
 				"acc",
 				"dnn_project/dnn/util/accum.h"
+			],
+			[
+				"opt",
+				"dnn_project/dnn/util/option_parser.cpp"
+			],
+			[
+				"kern",
+				"dnn_project/spikework/kernel.cpp"
+			],
+			[
+				"sim.",
+				"dnn_project/dnn/sim/sim.cpp"
 			],
 			[
 				"sub",
@@ -1119,20 +1502,12 @@
 				"dnn_project/dnn/util/util.cpp"
 			],
 			[
-				"cons",
-				"dnn_project/dnn/base/constants.h"
-			],
-			[
 				"ptr",
 				"dnn_project/dnn/util/ptr.h"
 			],
 			[
 				"rsi",
 				"src/RSim.cpp"
-			],
-			[
-				"fa",
-				"dnn_project/dnn/base/factory.h"
 			],
 			[
 				"rpr",
@@ -1151,24 +1526,8 @@
 				"dnn_project/dnn/sim/builder.cpp"
 			],
 			[
-				"spike_ne",
-				"dnn_project/dnn/neurons/spike_neuron.cpp"
-			],
-			[
 				"sp",
 				"dnn_project/dnn/neurons/spike_neuron.h"
-			],
-			[
-				"spike",
-				"dnn_project/dnn/util/spikes_list.h"
-			],
-			[
-				"spike_seq",
-				"dnn_project/dnn/neurons/spike_sequence_neuron.h"
-			],
-			[
-				"time",
-				"dnn_project/dnn/util/time_series.h"
 			],
 			[
 				"base",
@@ -1183,28 +1542,12 @@
 				"dnn_project/dnn/act_functions/act_function.h"
 			],
 			[
-				"sim",
-				"dnn_project/dnn/sim/sim.h"
-			],
-			[
 				"mod",
 				"src/mod.cpp"
 			],
 			[
-				"bui",
-				"dnn_project/dnn/sim/builder.cpp"
-			],
-			[
 				"mo",
 				"src/mod.cpp"
-			],
-			[
-				"buil",
-				"dnn_project/dnn/sim/builder.h"
-			],
-			[
-				"json",
-				"dnn_project/dnn/util/json.h"
 			],
 			[
 				"js",
@@ -1227,28 +1570,12 @@
 				"dnn_project/mpl/mpl.cpp"
 			],
 			[
-				"r",
-				"src/RMpl.h"
-			],
-			[
-				"stre",
-				"dnn_project/dnn/io/stream.cpp"
-			],
-			[
 				"stati",
 				"dnn_project/dnn/util/statistics.h"
 			],
 			[
 				"stat",
 				"dnn_project/shapelets/stats.h"
-			],
-			[
-				"spike_s",
-				"dnn_project/dnn/neurons/spike_sequence_neuron.h"
-			],
-			[
-				"ser",
-				"dnn_project/dnn/io/serialize.h"
 			],
 			[
 				"spike_n",
@@ -1355,14 +1682,6 @@
 				"dnn_project/dnn/base/forward_declarations.x"
 			],
 			[
-				"sim.c",
-				"dnn_project/dnn/sim/sim.cpp"
-			],
-			[
-				"net",
-				"dnn_project/dnn/sim/network.h"
-			],
-			[
 				"ma",
 				"dnn_project/dnn/util/matrix.h"
 			],
@@ -1389,10 +1708,6 @@
 			[
 				"sho",
 				"dnn_project/spikework/kernels/shoe.cpp"
-			],
-			[
-				"kern",
-				"dnn_project/spikework/kernel.cpp"
 			],
 			[
 				"rbf",
@@ -1425,10 +1740,6 @@
 			[
 				"optio",
 				"dnn_project/dnn/util/option_parser.cpp"
-			],
-			[
-				"con",
-				"dnn_project/spikework/conv.cpp"
 			],
 			[
 				"gr",
@@ -1577,34 +1888,6 @@
 			[
 				"subse",
 				"sources/shapelets/subsequence.h"
-			],
-			[
-				"dat",
-				"sources/shapelets/dataset.h"
-			],
-			[
-				"op",
-				"sources/dnn/util/option_parser.h"
-			],
-			[
-				"ex",
-				"sources/dnn/base/exceptions.h"
-			],
-			[
-				"exc",
-				"sources/dnn/base/exceptions.h"
-			],
-			[
-				"dif",
-				"sources/dnn/connections/difference_of_gaussians.h"
-			],
-			[
-				"sto",
-				"sources/dnn/connections/stochastic.h"
-			],
-			[
-				"lea",
-				"sources/dnn/learning_rules/learning_rule.h"
 			]
 		],
 		"width": 0.0
