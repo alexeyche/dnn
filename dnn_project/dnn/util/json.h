@@ -267,6 +267,14 @@ public:
 			throw dnnException()<< err << "\n";
 		}
 	}
+	static const Value makeDocument(const string &key, const Value &v) {
+		Value cv(kObjectType);
+		Value copy_v;
+		copy_v.CopyFrom(v, d.GetAllocator());
+		cv.AddMember(StringRef(key.c_str()), copy_v, d.GetAllocator());
+		return cv;
+	}
+
 	static Document d;
 };
 

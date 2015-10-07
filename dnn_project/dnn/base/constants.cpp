@@ -35,6 +35,7 @@ void Constants::readJson(Document &document) {
     SAFE_FILL(learning_rules);
     SAFE_FILL(weight_normalizations);
     SAFE_FILL(connections);
+    SAFE_FILL(reinforcements);
 
     if(Json::checkVal(document, "sim_configuration")) {
         const Value &sim_conf_doc = Json::getVal(document, "sim_configuration");
@@ -86,6 +87,9 @@ void Constants::readJson(Document &document) {
                 const string k = itr->name.GetString();
                 sim_conf.files[k] = Json::stringify(itr->value);
             }
+        }
+        if(Json::checkVal(sim_conf_doc, "reward_dynamics")) {
+            sim_conf.reward_dynamics = Json::stringify(Json::getVal(sim_conf_doc, "reward_dynamics"));
         }
     }
 

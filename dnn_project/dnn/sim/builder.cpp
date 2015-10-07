@@ -42,6 +42,10 @@ vector<InterfacedPtr<SpikeNeuronBase>> Builder::buildNeurons() {
                 if (!input.empty()) {
                     n.ref().setInput(buildObjectFromConstants<InputBase>(input, c.inputs));
                 }
+                const string reinforcement = Json::getStringValDef(layer_conf, "reinforcement", "");
+                if(!reinforcement.empty()) {
+                    n.ref().setReinforcement(buildObjectFromConstants<ReinforcementBase>(reinforcement, c.reinforcements));
+                }
                 n.ref().setCoordinates(xi, yi, col_size);
                 xi++;
                 if(xi % col_size == 0) {
@@ -108,6 +112,20 @@ const TimeSeriesInfo& Builder::getInputTimeSeriesInfo() const {
         }
     }
     throw dnnException() << "Can't find any time series information from inputs\n";
+}
+
+RewardControl Builder::buildRewardControlFromConstants() {
+    RewardControl rc;
+
+    Document rd_c = Json::parseStringC(c.sim_conf.reward_dynamics);
+    string processed_rd_c = Json::stringify(Json::makeDocument("RewardControl", rd_c));
+    istringstream ss(processed_rd_c);
+    Stream s(ss, Stream::Text);
+    Ptr<RewardControl> rc_c = s.readDynamic<RewardControl>();
+    rc = rc_c.ref();
+    rc_c.destroy();
+
+    return rc;
 }
 
 

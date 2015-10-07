@@ -73,6 +73,7 @@ InterfacedPtr<LearningRuleBase>& SpikeNeuronBase::getLearningRule() {
 void SpikeNeuronBase::setActFunction(Ptr<ActFunctionBase> _act_f) {
 	act_f = _act_f;
 }
+
 const InterfacedPtr<ActFunctionBase>& SpikeNeuronBase::getActFunction() const {
 	return act_f;
 }
@@ -89,6 +90,12 @@ InputBase& SpikeNeuronBase::getInput() {
 	}
 	return input.ref();
 }
+
+void SpikeNeuronBase::setReinforcement(Ptr<ReinforcementBase> _reinforce) {
+    reinforce = _reinforce;
+    reinforce.ref().linkWithNeuron(*this);
+}
+
 
 void SpikeNeuronBase::addSynapse(InterfacedPtr<SynapseBase> syn) {
 	syns.push_back(syn);
@@ -178,6 +185,8 @@ void SpikeNeuronBase::calculateDynamicsInternal(const Time &t) {
     ifc.calculateDynamics(t, Iinput, Isyn);
 
     lrule.ifc().calculateDynamicsInternal(t);
+
+    reinforce.ifc().modulateReward();
 
     if(stat.on()) {
    		for(auto &s: syns) {

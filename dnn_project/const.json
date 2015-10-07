@@ -92,6 +92,12 @@
             "learning_rate" : "globals/learning_rate"
         }
     },
+    "reinforcements" : {
+        "InputClassifier" : {
+            "ltp" : 1.0,
+            "ltd" : -1.0
+        }
+    },
     "weight_normalizations" : {
         "MinMax" : {
             "max_weight" : "globals/max_weight",
@@ -133,6 +139,10 @@
     "sim_configuration" : {
         "layers" : [],
         "conn_map" : {},
+        "reward_dynamics" : {
+            "tau_trace" : 100.0, 
+            "tau_mean_trace" : 10000.0
+        },
         "dt" : 1.0,
         "seed" : -1,
         "neurons_to_listen" : [],

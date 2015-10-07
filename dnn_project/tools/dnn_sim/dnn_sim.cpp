@@ -88,7 +88,6 @@ int main(int argc, char **argv) {
 
 	Constants c(sopt.const_file.getValues(), sopt.add_opts);
     Sim s(c);
-
 	if (!sopt.model_load.empty()) {
 		ifstream fstr(sopt.model_load);
 		Stream str_in(fstr, Stream::Binary);

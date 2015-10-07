@@ -12,7 +12,7 @@
 #include <dnn/util/act_vector.h>
 #include <dnn/util/spikes_list.h>
 #include <dnn/protos/spike_neuron.pb.h>
-
+#include <dnn/reinforcements/reinforcement.h>
 
 namespace dnn {
 
@@ -52,6 +52,8 @@ public:
 	InterfacedPtr<LearningRuleBase>& getLearningRule();
 	void setActFunction(Ptr<ActFunctionBase> _act_f);
 	const InterfacedPtr<ActFunctionBase>& getActFunction() const;
+
+	void setReinforcement(Ptr<ReinforcementBase> _reinforce);
 
 	void setInput(Ptr<InputBase> _input);
 	bool inputIsSet();
@@ -107,6 +109,7 @@ protected:
 	InterfacedPtr<ActFunctionBase> act_f;
 	InterfacedPtr<InputBase> input;
 	InterfacedPtr<LearningRuleBase> lrule;
+	InterfacedPtr<ReinforcementBase> reinforce;
 
 	Statistics stat;
 
@@ -126,8 +129,9 @@ struct SpikeNeuronInfo : public Serializable<Protos::SpikeNeuronInfo> {
 		        << "axonDelay: " << axonDelay << ", " \
 		        << "num_of_synapses: " << num_of_synapses << ", " \
 		        << "act_function_is_set: " << act_function_is_set << ", " \
-		        << "input_is_set: " << input_is_set
-		        << "lrule_is_set: " << lrule_is_set << Self::end;
+		        << "input_is_set: " << input_is_set << ", "
+		        << "lrule_is_set: " << lrule_is_set << ", "
+		        << "reinforce_is_set: " << reinforce_is_set << Self::end;
 	}
 	size_t id;
 	size_t xi;
@@ -138,6 +142,7 @@ struct SpikeNeuronInfo : public Serializable<Protos::SpikeNeuronInfo> {
 	bool act_function_is_set;
 	bool input_is_set;
 	bool lrule_is_set;
+	bool reinforce_is_set;
 };
 
 template <typename Constants, typename State>
@@ -154,6 +159,7 @@ public:
 		info.act_function_is_set = act_f.isSet();
 		info.input_is_set = input.isSet();
 		info.lrule_is_set = lrule.isSet();
+		info.reinforce_is_set = reinforce.isSet();
 		return info;
 	}
 
@@ -188,6 +194,10 @@ public:
 		if (info.lrule_is_set) {
 			(*this) << "LearningRule: " << lrule;
 			lrule.ref().linkWithNeuron(*this);
+		}
+		if (info.reinforce_is_set) {
+			(*this) << "Reinforcement: " << reinforce;
+			reinforce.ref().linkWithNeuron(*this);
 		}
 		if(mode == ProcessingInput) {
 			syns.resize(info.num_of_synapses);

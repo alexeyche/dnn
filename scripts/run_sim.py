@@ -64,7 +64,7 @@ class DnnSim(object):
 
         ask = False
         if not os.path.exists(self.working_dir):
-            os.mkdir(self.working_dir)
+            os.makedirs(self.working_dir)
         else:
             ask = True
 

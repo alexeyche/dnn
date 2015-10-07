@@ -62,6 +62,11 @@ public:
 	SpikesList& spikesList() {
 		return spikes_list;
 	}
+
+	const size_t& getClassId(const Time& t) {
+		return spikes_list.ts_info.getClassId(t.t);
+	}
+
 private:
 	vector<vector<Conn>> conn_map;
 	SpikesList spikes_list;

@@ -10,12 +10,12 @@ namespace dnn {
 /*@GENERATE_PROTO@*/
 struct StaticSynapseC : public Serializable<Protos::StaticSynapseC>  {
     StaticSynapseC() : psp_decay(15.0), amp(1.0) {}
-    
+
     void serial_process() {
         begin() << "psp_decay: " << psp_decay << ", " \
                 << "amp: "       << amp       << Self::end;
     }
-    
+
     double psp_decay;
     double amp;
 };

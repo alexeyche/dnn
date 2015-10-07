@@ -14,7 +14,7 @@ namespace dnn {
 
 /*@GENERATE_PROTO@*/
 struct TimeSeriesInfo : public Serializable<Protos::TimeSeriesInfo> {
-	TimeSeriesInfo(): dt(1.0) {}
+	TimeSeriesInfo(): dt(1.0), __current_position(0) {}
 	void serial_process() {
 		begin() << "labels_ids: " 	   << labels_ids 	  << ", " \
 		        << "unique_labels: "   << unique_labels   << ", " \
@@ -53,10 +53,22 @@ struct TimeSeriesInfo : public Serializable<Protos::TimeSeriesInfo> {
 		return ! (*this == l);
 	}
 
+	const size_t& getClassId(const double &t) {
+		while(__current_position < labels_timeline.size()) {
+            if(t <= labels_timeline[__current_position]) {
+                return labels_ids[__current_position];
+            }
+            __current_position += 1;
+		}
+		throw dnnException() << "Trying to get current class for time bigger than Tmax: " << t << "\n";
+	}
+
 	vector<size_t> labels_ids;
 	vector<string> unique_labels;
 	vector<size_t> labels_timeline;
 	double dt;
+
+	size_t __current_position;
 };
 
 /*@GENERATE_PROTO@*/

@@ -24,6 +24,7 @@ struct SimConfiguration : public Printable {
 	int seed;
 	vector<size_t> neurons_to_listen;
 	map<string, string> files;
+	string reward_dynamics;
 
 	void print(ostream &o) const {
 		o << "layers: \n";
@@ -42,6 +43,7 @@ struct SimConfiguration : public Printable {
 		for (auto &v : files) {
 			o << "\t" <<  v.first << "->" << v.second << "\n";
 		}
+		o << "reward_dynamics: " << reward_dynamics << "\n";
 		o << "\n";
 	}
 
@@ -64,6 +66,7 @@ struct SimConfiguration : public Printable {
 		cv.AddMember("act_function", "", Json::d.GetAllocator());
 		cv.AddMember("learning_rule", "", Json::d.GetAllocator());
 		cv.AddMember("weight_normalization", "", Json::d.GetAllocator());
+		cv.AddMember("reinforcement", "", Json::d.GetAllocator());
 		return Json::stringify(cv);
 	}
 };
@@ -106,6 +109,7 @@ struct Constants : public Printable {
 		print_section("learning_rules: ", learning_rules, o);
 		print_section("weight_normalizations: ", weight_normalizations, o);
 		print_section("connections: ", connections, o);
+		print_section("reinforcements: ", reinforcements, o);
 		o << "sim_configuration: \n";
 		o << sim_conf;
 	}
@@ -132,6 +136,7 @@ struct Constants : public Printable {
 	map<string, string> learning_rules;
 	map<string, string> weight_normalizations;
 	map<string, string> connections;
+	map<string, string> reinforcements;
 	SimConfiguration sim_conf;
 };
 
