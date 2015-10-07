@@ -61,7 +61,7 @@ public:
 	const T& operator * () const {
 		return ref();
 	}
-	bool isSet() {
+	bool isSet() const {
 		return _ptr ? true : false;
 	}
 	explicit operator bool() {

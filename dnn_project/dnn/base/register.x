@@ -41,4 +41,4 @@ REG_TYPE(TimeSeriesComplexData);
 REG_TYPE(TimeSeriesComplex);
 
 REG_TYPE(DoubleMatrix);
-
+REG_TYPE(InputInfo);

@@ -21,9 +21,11 @@ struct InputTimeSeriesC : public Serializable<Protos::InputTimeSeriesC> {
 
 /*@GENERATE_PROTO@*/
 struct InputTimeSeriesState : public Serializable<Protos::InputTimeSeriesState> {
-    InputTimeSeriesState() : index(0), _t(0) {}
+    InputTimeSeriesState() : index(0), __t(0) {}
     size_t index;
-    double _t;
+    
+    double __t;
+    
     void serial_process() {
         begin() << "index: " << index << Self::end;
     }
@@ -39,8 +41,8 @@ public:
     }
 
 	const double& getValue(const Time &t) {
-        s._t += t.dt;
-        if(fmod(s._t, c.dt) > 0.0001) return InputBase::def_value;
+        s.__t += c.dt;
+        if(fmod(s.__t, t.dt) > 0.0001) return InputBase::def_value;
         assert(seq->size() > s.index);
         return seq->at(s.index++);
 	}
@@ -53,7 +55,9 @@ public:
     void reset() {
         s.index = 0;
         Ptr<TimeSeries> ts = data_src.as<TimeSeries>();
-
+        if(fabs(ts->getTimeDelta() - c.dt) > 1e-03) {
+            ts->changeTimeDelta(c.dt);
+        }
         size_t id = localId();
         if(ts->dim() == 1) {
             seq.set( &ts.ref().data[0].values );

@@ -8,7 +8,7 @@
     },
     "inputs" : {
         "InputTimeSeries" : {
-            "dt" : "globals/dt"
+            "dt" : 0.25
         }
     },
     "neurons" : {
@@ -19,7 +19,7 @@
             "tau_m" : 5.0,
             "rest_pot" : 0.0,
             "tau_ref" : 2.0,
-            "noise" : 0.2
+            "noise" : 0.0
         },
         "AdaptIntegrateAndFire" : {
             "tau_m" : 5.0,
@@ -42,7 +42,7 @@
     },
     "act_functions" : {
         "Determ" : {
-            "threshold" : 1.0
+            "threshold" : 0.1
         },
         "ExpThreshold" : {
             "p_rest" : 0.1,
@@ -140,24 +140,26 @@
         "layers" : [
             {
                 "size" : 100,
-                "neuron" : "SpikeSequenceNeuron"
-            },
-            {
-                "size" : 6,
-                "neuron" : "SRMNeuron",
-                "act_function" : "ExpThreshold",
-                "learning_rule" : "OptimalStdp",
-                "reinforcement" : "InputClassifier"
+                "neuron" : "LeakyIntegrateAndFire",
+                "act_function" : "Determ",
+                "input" : "InputTimeSeries"
             }
+//            {
+//                "size" : 6,
+//                "neuron" : "SRMNeuron",
+//                "act_function" : "ExpThreshold",
+//                "learning_rule" : "OptimalStdp",
+//                "reinforcement" : "InputClassifier"
+//            }
         ],
         "conn_map" : {
-            "0->1" : [
-                { 
-                    "type" : "Stochastic", 
-                    "start_weight" : 0.1,
-                    "synapse" : "StaticSynapse"
-                }
-            ]
+//            "0->1" : [
+//                { 
+//                    "type" : "Stochastic", 
+//                    "start_weight" : 0.1,
+//                    "synapse" : "StaticSynapse"
+//                }
+//            ]
         },
         "reward_dynamics" : {
             "tau_trace" : 100.0, 
@@ -168,7 +170,7 @@
         "neurons_to_listen" : [],
         "files" : {
             "InputTimeSeries" : {
-                "filename" : "@pb-input"
+                "filename" : "@ts-input"
             },
             "SpikeSequenceNeuron" : {
                 "filename" : "@spike-input"
