@@ -42,7 +42,7 @@ void Constants::readJson(Document &document) {
         if(Json::checkVal(sim_conf_doc, "layers")) {
             const Value &layers_doc = Json::getArray(sim_conf_doc, "layers");
 
-            for (SizeType i = 0; i < layers_doc.Size(); i++) {
+            for (SizeType i = 0; i < layers_doc.Size(); ++i) {
                 const Value &v = layers_doc[i];
                 sim_conf.layers.push_back(Json::stringify(v));
             }
