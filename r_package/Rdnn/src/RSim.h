@@ -13,15 +13,8 @@
 
 class RSim : public dnn::Sim {
 public:
-    RSim() {
+    RSim();
 
-    }
-    // RSim(RConstants *rc) try : Sim(*rc)  {
-    //     global_neuron_index = 0;
-    //     Sim::build();
-    // } catch (std::exception &e) {
-    //     ERR("\nCan't build Sim: " << e.what() << "\n");
-    // }
     ~RSim() { }
 
     void print() {

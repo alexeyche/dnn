@@ -60,6 +60,7 @@ vector<InterfacedPtr<SpikeNeuronBase>> Builder::buildNeurons() {
         }
         layers.push_back(layer);
     }
+
     for(const auto& name2fname: getInputFileNames()) {
         const auto& obj_name = name2fname.first;
         const auto& fname = name2fname.second;

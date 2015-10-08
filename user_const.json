@@ -8,7 +8,7 @@
     },
     "inputs" : {
         "InputTimeSeries" : {
-            "dt" : 0.25
+            "dt" : 0.66
         }
     },
     "neurons" : {

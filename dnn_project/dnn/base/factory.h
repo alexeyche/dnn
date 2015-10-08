@@ -104,6 +104,8 @@ public:
         for (auto &o : objects) {
             o.destroy();
         }
+        objects_map.clear();
+        cache_map.clear();
     }
 
 private:
@@ -137,10 +139,10 @@ private:
 
     static entity_map_type typemap;
     static proto_map_type prototypemap;
+
     multimap<string, size_t> objects_map;
 
     vector<Ptr<SerializableBase>> objects;
-    vector<ProtoMessage> proto_objects;
     map<string, Ptr<SerializableBase>> cache_map;
 
     vector<TypeDeducer*> type_deducers;

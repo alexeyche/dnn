@@ -251,7 +251,7 @@ struct TimeSeriesGeneric {
 		return info.dt;
 	}
 	void changeTimeDelta(const double &dt) {
-		info.changeTimeDelta(dt);		
+		info.changeTimeDelta(dt);
 	}
 
 

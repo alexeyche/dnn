@@ -4,6 +4,10 @@
 #include <dnn/base/factory.h>
 
 
+RSim::RSim() {
+    Factory::inst().cleanHeap();
+}
+
 void RSim::setTimeSeries(SEXP v, const string &obj_name) {
     Ptr<SerializableBase> ts;
     if(Rf_isMatrix(v)) {
