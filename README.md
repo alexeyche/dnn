@@ -67,7 +67,7 @@ After that you can set up simulation configuration in the same file for that neu
 * **act_function** function of activation of neuron, for **Determ** threshold can be set in **Determ** key above
 * **input** is about providing membrane of neuron with some current specified in input time series. Entity with the name **InputTimeSeries** responsible for this.
 
-In the field **sim_configuration->files** you may find information related to **InputTimeSeries** with macro *@macro-name*. Generaly speakning it awaits path to filename, but this macro can be replaced by file while running simulation with option **--macro-name**
+In the field **sim_configuration->files** you may find information related to **InputTimeSeries** with macro *@macro-name*. Generaly speaking it awaits path to filename, but this macro can be replaced by file while running simulation with option **--macro-name**
 
 Simulation can be run through python script:
 ```bash
@@ -78,5 +78,31 @@ Option **--ts-input** related to macro in **user_const.json** which allows to po
 This run will create in **$DNN_HOME/runs/sim** directory where you can find artefacts of running and png pictures of some introspection of simulation (raster plot)
 
 
+# Layer specification
 
+Layer specification can consist:
+```json
+{
+    "size" : 100, // required
+    "neuron" : "NameFromNeurons",  // required
+    "act_function" : "NameFromActFunctions", // required for all neurons with activation
+    "input" : "NameFromInputs", : // non-required
+    "learning_rule" : "NameFromLearningRules", // non-required
+    "weight_normalization" : "NameFromWeightNormalizations", // non-required
+    "reinforcement" : "NameFromReinforcements", // non-required
+    "axon_delay" : double in ms, // non-required, 0 by default
+}
+```
+All names can be found above from corresponding sections
 
+# Connection specification
+```json
+{
+    "synapse" : "NameFromSynapsesAbove", // required
+    "type" : "NameFromConnectionsAbove", // required
+    "start_weight" : double in arbitrary units, // required
+    "dendrite_delay" : double in ms, // non-required, 0 by default
+    "inh_synapse" : "NameFromSynapsesAbove", // required only by special type of connections, e.g. DifferenceOfGaussians
+}
+```
+All names can be found above from corresponding sections, **type** can be found in **connections** section.
