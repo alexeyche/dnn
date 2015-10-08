@@ -81,7 +81,7 @@ This run will create in **$DNN_HOME/runs/sim** directory where you can find arte
 # Layer specification
 
 Layer specification can consist:
-```json
+```javascript
 {
     "size" : 100, // required
     "neuron" : "NameFromNeurons",  // required
@@ -90,18 +90,18 @@ Layer specification can consist:
     "learning_rule" : "NameFromLearningRules", // non-required
     "weight_normalization" : "NameFromWeightNormalizations", // non-required
     "reinforcement" : "NameFromReinforcements", // non-required
-    "axon_delay" : double in ms, // non-required, 0 by default
+    "axon_delay" : double, ms units, // non-required, 0 by default
 }
 ```
 All names can be found above from corresponding sections
 
 # Connection specification
-```json
+```javascript
 {
     "synapse" : "NameFromSynapsesAbove", // required
     "type" : "NameFromConnectionsAbove", // required
-    "start_weight" : double in arbitrary units, // required
-    "dendrite_delay" : double in ms, // non-required, 0 by default
+    "start_weight" : double, arbitrary units, // required
+    "dendrite_delay" : double, ms, // non-required, 0 by default
     "inh_synapse" : "NameFromSynapsesAbove", // required only by special type of connections, e.g. DifferenceOfGaussians
 }
 ```
