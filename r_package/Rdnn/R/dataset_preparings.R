@@ -141,7 +141,8 @@ cat.ts = function(...) {
     return(fts)
 }
 
-split.spikes = function(sp, time_to_split) {
+split.spikes = function(sp, number_to_split) {
+    time_to_split = sp$ts_info$labels_timeline[number_to_split] 
     left_idx = which(sp$ts_info$labels_timeline <= time_to_split)
     left_sp = empty.spikes()    
     right_sp = empty.spikes()

@@ -127,7 +127,7 @@ void Sim::run(size_t jobs) {
 	if(fabs(duration) < 0.00001) {
 		throw dnnException() << "Duration of simulation is " << duration << ". Check that input data was provided\n";
 	}
-
+	L_DEBUG << "Going to run simulation for " << duration << " ms in " << jobs << " jobs";
 	vector<IndexSlice> slices = dispatchOnThreads(neurons.size(), jobs);
 	vector<std::thread> threads;
 	vector<std::exception_ptr> exceptions;

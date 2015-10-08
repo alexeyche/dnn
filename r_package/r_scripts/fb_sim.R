@@ -91,14 +91,16 @@ samp_rate = 1000
 seq.fun = log.seq
 
 data_conv = conv.gammatones(ts_whole, seq.fun(low_f, high_f, length.out=M), samp_rate)
+proto.write.ts(ts.path("ts_gammatones.pb"), data_conv)
+
 spikes = run_neurons(data_conv, tau_m=5.0, tau_ref=2.0, thresh=0.1, dt=1.0)
 
-c(train_spikes, test_spikes) := split.spikes(spikes, tail(train_ts$ts_info$labels_timeline, n=1))
+c(train_spikes, test_spikes) := split.spikes(spikes, length(train_ts$ts_info$labels_ids))
 
 proto.write.spikes(spikes.path("ucr_train_spikes.pb"), train_spikes) 
 proto.write.spikes(spikes.path("ucr_test_spikes.pb"), test_spikes) 
 
-K = kernel.run(spikes, "Epsp(10)", "RbfDot(0.05)", jobs=8)
+K = kernel.run(spikes, "Epsp(10)", "RbfDot(0.01)", jobs=8)
 #K = get.baseline()
 
 
@@ -110,7 +112,7 @@ holdout=(train_size+1):(train_size+test_size)
 plot.kernel.pca(K)
 run.svm(K, holdout)
 
-dnn.clean.heap()
+#dnn.clean.heap()
 
 labs = rownames(K)
 sel = c("1", "2", "3", "4", "5","6")

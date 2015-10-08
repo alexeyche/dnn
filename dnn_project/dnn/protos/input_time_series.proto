@@ -6,6 +6,5 @@ message InputTimeSeriesC {
 
 message InputTimeSeriesState {
     required uint32 index = 1;
-    required double _t = 2;
 }
 

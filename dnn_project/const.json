@@ -148,7 +148,7 @@
         "neurons_to_listen" : [],
         "files" : {
             "InputTimeSeries" : {
-                "filename" : "@pb-input"
+                "filename" : "@ts-input"
             },
             "SpikeSequenceNeuron" : {
                 "filename" : "@spike-input"

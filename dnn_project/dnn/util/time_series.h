@@ -247,6 +247,13 @@ struct TimeSeriesGeneric {
 			dim_info.size = data.size();
 		}
 	}
+	const double& getTimeDelta() const {
+		return info.dt;
+	}
+	void changeTimeDelta(const double &dt) {
+		info.changeTimeDelta(dt);		
+	}
+
 
 	TimeSeriesDimInfo dim_info;
 	TimeSeriesInfo info;
