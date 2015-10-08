@@ -1,21 +1,42 @@
 ﻿# DNN lib and tools
 Library of Dynamic Neural Networks for time series related tasks
 Main library consist of multithreaded simulator of recurrent spiking (impulse) neural networks dynamics written in C++. It contains variety components which can be connected with each other in different combinations
-* Neurons:
-    * LeakyIntegrateAndFire - [Adaptive Exponential Integrate-and-fire](http://www.scholarpedia.org/article/Adaptive_exponential_integrate-and-fire_model)
-    * SRMNeuron - [Spike-Response Model](http://www.scholarpedia.org/article/Spike-response_model)
-* Synapses:
-    * SimpleSynapse - static synapse, can be described by simple exponential decay 
-    * DynamicSynapse - synapse with short-term memory ([Tsodyks et al](https://scholar.google.ru/scholar?hl=ru&q=tsodyks+markram+1997&btnG=))
-* Activation functions:
-    * Determ - Determinate threshold, neuron is firing if membrane reached threshold
-    * ExpThreshold - Exponential version of activation function, it has specific increase near threshold value ([Hennequin et al](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3001990/))
-* Learning rules:
-    * OptimalStdp - Supposed to maximize pre-post information ([Toyoizumi et al](https://scholar.google.ru/citations?view_op=view_citation&hl=ru&user=wUcLR0QAAAAJ&citation_for_view=wUcLR0QAAAAJ:9yKSN-GCB0IC))
-    * Stdp - Simple [spike-timing dependent plasticity](http://www.scholarpedia.org/article/STDP)
-    * TripleStdp (under development) - Complicated version of Stdp with long range dynamics ([Pfister et al](https://scholar.google.ru/citations?view_op=view_citation&hl=ru&user=mzUYoLgAAAAJ&citation_for_view=mzUYoLgAAAAJ:u5HHmVD_uO8C))
-    * MaxLikelihood (under development) - Only works with SRM neuron. It is just maximizing of likelikelhood of spikes, it is makes no sense in unsupervised way, so it needs to be supported by some reward mechanism
+## Neurons
+#### LeakyIntegrateAndFire
+Basic integrate and fire neuron model. Has specification in constants:
+``` javascript
+{
+    "tau_ref" : double, ms, //refractory period
+    "rest_pot" : double, mV, // resting potential
+    "tau_m" : double, ms, // time constant of leaky integrator
+    "noise" : arbitrary units, // factor of white noise on mebrane
+}
+```
+####SRMNeuron
+[Spike-Response Model](http://www.scholarpedia.org/article/Spike-response_model)
 
+####SpikeSequenceNeuron
+Mock neuron for input spike sequences from files
+##Synapses
+####StaticSynapse
+static synapse, can be described by simple exponential decay 
+####STDSynapse
+synapse with short-term memory ([Tsodyks et al](https://scholar.google.ru/scholar?hl=ru&q=tsodyks+markram+1997&btnG=))
+## Activation functions:
+####Determ
+Determinate threshold, neuron is firing if membrane reached threshold
+####ExpThreshold
+Exponential version of activation function, it has specific increase near threshold value ([Hennequin et al](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC3001990/))
+##Learning rules:
+####OptimalStdp
+Supposed to maximize pre-post information ([Toyoizumi et al](https://scholar.google.ru/citations?view_op=view_citation&hl=ru&user=wUcLR0QAAAAJ&citation_for_view=wUcLR0QAAAAJ:9yKSN-GCB0IC))
+####Stdp
+Simple [spike-timing dependent plasticity](http://www.scholarpedia.org/article/STDP)
+####TripleStdp 
+(under development) - Complicated version of Stdp with long range dynamics ([Pfister et al](https://scholar.google.ru/citations?view_op=view_citation&hl=ru&user=mzUYoLgAAAAJ&citation_for_view=mzUYoLgAAAAJ:u5HHmVD_uO8C))
+##Reinforcements:
+####InputClassifier
+will modulate positive reward when layer local id of neuron matches current class id, and negative in another case. Amounts of positive and negative reward can be pointed through constants, ltp and ltd repectively
 # Installation
 To install dnn on UNIX like machine you need to satisfy dependencies:
 * clang >=3.5 or gcc >=4.9.2
@@ -23,7 +44,7 @@ To install dnn on UNIX like machine you need to satisfy dependencies:
 * libprotobuf-dev
 * r-base (for plots and analytics)
 
-To use R API and R scripts you need to install these r packages:
+To use R API and R scripts you need to install these R packages:
 * Rcpp
 * zoo
 * lattice
@@ -42,6 +63,7 @@ Script will build dnn and R package (Rdnn), then trying set through **~/.profile
 export DNN_HOME=~/dnn # or wherever you'd chosen installation path
 export LD_LIBRARY_PATH=$DNN_HOME/lib:$LD_LIBRARY_PATH
 ```
+Last part can be different for different systems.
 
 # Getting started
 
