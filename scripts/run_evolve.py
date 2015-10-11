@@ -153,9 +153,10 @@ class CmaEs(Algo):
     @staticmethod
     def wait_pool(pool, ans_list):
         while True:
-            for id, p in pool:
+            for pi, (id, p) in enumerate(pool):
                 if not p.poll() is None:
                     ans_list.append( (id, communicate(p)) )
+                    del pool[pi]
                     return
                 time.sleep(0.5)
 
@@ -200,7 +201,7 @@ ALGS = dict([(c.__name__, c) for c in Algo.__subclasses__()])
 def main(argv):
     epi = ""
     epi += "List of variables to evolve:\n"
-    for k, v in json.load(open(VAR_SPECS_FILE)).iteritems():
+    for k, v in json.load(open(VAR_SPECS_FILE), object_pairs_hook=OrderedDict).iteritems():
         epi += "\t\t{}\n\t\t\tpath: {}, range: {}-{}\n".format(k, "/".join(v[0]), v[1][0], v[1][1])
     epi += "List of algorithms:\n"
     for a in ALGS:
