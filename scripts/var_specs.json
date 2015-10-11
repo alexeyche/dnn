@@ -3,12 +3,24 @@
         ["inputs", "InputTimeSeries", "dt"]
       , [0.01, 2.0]
     ]
-  , "opt_stdp_tau_c": [
-        ["learning_rules", "OptimalStdp", "tau_c"]
-      , [10.0, 300.0]
-    ]
   , "input_spikes_dt": [
         ["neurons", "SpikeSequenceNeuron", "dt"]
-      , [0.01, 2.0]
+      , [0.1, 2.0]
+    ]
+  , "opt_stdp_tau_c": [
+        ["learning_rules", "OptimalStdp", "tau_c"]
+      , [10.0, 400.0]
+    ]
+  , "opt_stdp_weight_decay": [
+        ["learning_rules", "OptimalStdp", "weight_decay"]
+      , [0.0, 2.0]
+    ]
+  , "opt_stdp_target_rate_factor": [
+        ["learning_rules", "OptimalStdp", "target_rate_factor"]
+      , [0.0, 1.0]
+    ]
+  , "opt_stdp_tau_hebb": [
+        ["learning_rules", "OptimalStdp", "tau_hebb"]
+      , [0.0, 50.0]
     ]
 }

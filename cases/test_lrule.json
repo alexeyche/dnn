@@ -131,7 +131,7 @@
             "0->0" : [
                 {
                     "type" : "IdsConnection",
-                    "synapse" : "StaticSynapse",
+                    "synapse" : "StaticSynapse_inh",
                     "start_weight" : 0.1
                 }
             ]

@@ -293,5 +293,3 @@ get_stat = function(epochs, stname, stat_id, f_template = "%s_stat.pb") {
 }
 #plotl(get_stat(1:10, "OptimalStdp_w_0", 1))
 
-
-

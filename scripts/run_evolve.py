@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from scipy.optimize import differential_evolution
 import cma
 import numpy as np
 
@@ -76,7 +75,7 @@ def communicate(p):
         sys.exit(-1)
     return float(stdout.strip())
 
-def runner(x, vars, working_dir, wait=False, id=None):
+def runner(x, vars, working_dir, wait=False, id=None, min=0.0, max=1.0):
     if id is None:
         id = uuid.uuid1()
     working_dir = pj(working_dir, str(id))
@@ -89,6 +88,8 @@ def runner(x, vars, working_dir, wait=False, id=None):
                 const = json.load(open(DnnSim.CONST_JSON), object_pairs_hook=OrderedDict)
               , var_specs = json.load(open(VAR_SPECS_FILE))
               , vars = dict(zip(vars, x))
+              , min = min
+              , max = max
             )
         )
 
@@ -151,11 +152,12 @@ class CmaEs(Algo):
 
     @staticmethod
     def wait_pool(pool, ans_list):
-        for id, p in pool:
-            if p.poll() is None:
-                ans_list.append( (id, communicate(p)) )
-                return
-            time.sleep(0.05)
+        while True:
+            for id, p in pool:
+                if not p.poll() is None:
+                    ans_list.append( (id, communicate(p)) )
+                    return
+                time.sleep(0.5)
 
     def __call__(self, vars, tag=None):
         tag = "cma_es" if tag is None else tag
@@ -182,14 +184,13 @@ class CmaEs(Algo):
             tells = []
             pool = []
             Xw = X
-            while Xw:
-                while len(Xw)>0:
-                    p = runner(Xw[0], vars, wd, wait=False, id=id)
-                    pool.append( (id, p) )
-                    if len(pool)>GlobalConfig.Jobs:
-                        self.wait_pool(pool, tells)
-                    id+=1
-                    Xw = Xw[1:]
+            while len(Xw)>0:
+                p = runner(Xw[0], vars, wd, wait=False, id=id, min=self.min_bound, max=self.max_bound)
+                pool.append( (id, p) )
+                if len(pool)>=GlobalConfig.Jobs:
+                    self.wait_pool(pool, tells)
+                id+=1
+                Xw = Xw[1:]
             es.tell(X, [ out for id, out in sorted(tells, key=lambda x: x[0]) ])
             es.disp()
 

@@ -79,7 +79,10 @@ get.baseline = function() {
     return(Kbl)
 }
 
-c(train_ts, test_ts) := prepare.ucr.data(60, UCR.SYNTH, gap_between_patterns = 60)
+sel=c(1:10, 50:60, 100:110, 150:160, 200:210, 250:260)
+
+c(train_ts, test_ts) := prepare.ucr.data(60, UCR.SYNTH, gap_between_patterns = 60, sel=sel)
+
 
 ts_whole = cat.ts(train_ts, test_ts)
 
@@ -98,8 +101,8 @@ spikes = run_neurons(data_conv, tau_m=5.0, tau_ref=2.0, thresh=0.05, dt=0.5)
 
 c(train_spikes, test_spikes) := split.spikes(spikes, length(train_ts$ts_info$labels_ids))
 
-proto.write.spikes(spikes.path("ucr_train_spikes.pb"), train_spikes)
-proto.write.spikes(spikes.path("ucr_test_spikes.pb"), test_spikes)
+proto.write.spikes(spikes.path(sprintf("ucr_train_spikes_len%s.pb", length(sel))), train_spikes)
+proto.write.spikes(spikes.path(sprintf("ucr_test_spikes_len%s.pb", length(sel))), test_spikes)
 
 K = kernel.run(spikes, "Epsp(30)", "RbfDot(0.03)", jobs=4)
 #K = get.baseline()

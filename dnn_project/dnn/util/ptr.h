@@ -78,6 +78,7 @@ public:
 
 	void destroy() {
 		if(isSet() && owner) {
+			// printBackTrace();
 			delete _ptr;
 			_ptr = nullptr;
 		}

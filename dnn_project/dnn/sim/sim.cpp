@@ -116,7 +116,7 @@ void Sim::runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barr
 }
 
 
-void Sim::runWorker(Sim &s, size_t from, size_t to, SpinningBarrier &barrier, bool master_thread, std::exception_ptr eptr) {
+void Sim::runWorker(Sim &s, size_t from, size_t to, SpinningBarrier &barrier, bool master_thread, std::exception_ptr &eptr) {
 	try {
 		runWorkerRoutine(s, from, to, barrier, master_thread);
 	} catch (const dnnException &e) {
@@ -139,9 +139,7 @@ void Sim::run(size_t jobs) {
 
 	SpinningBarrier barrier(jobs);
 	for(auto &slice: slices) {
-		exceptions.push_back(
-			std::exception_ptr()
-		);
+		exceptions.emplace_back();
 		threads.emplace_back(
 			Sim::runWorker,
 			std::ref(*this),
