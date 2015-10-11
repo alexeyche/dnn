@@ -74,6 +74,7 @@ public:
             s.y += 1;
         }
         auto &syns = n->getMutSynapses();
+        const auto &norm = n->getWeightNormalization().ifc();
 
         auto x_id_it = s.x.ibegin();
         while(x_id_it != s.x.iend()) {
@@ -84,9 +85,11 @@ public:
                 auto &syn = syns.get(syn_id).ref();
                 const double &w = syn.weight();
 
-                double dw = c.learning_rate * norm.ifc().derivativeModulation(w) * (
-                    c.a_plus  * s.x[x_id_it] * n->fired() * norm.ifc().ltp(w) - \
-                    c.a_minus * s.y * syn.fired() * norm.ifc().ltd(w)
+
+
+                double dw = c.learning_rate * norm.derivativeModulation(w) * (
+                    c.a_plus  * s.x[x_id_it] * n->fired() * norm.ltp(w) - \
+                    c.a_minus * s.y * syn.fired() * norm.ltd(w)
                 );
 
                 syn.mutWeight() += dw;

@@ -8,7 +8,7 @@
     },
     "inputs" : {
         "InputTimeSeries" : {
-            "dt" : 0.66
+            "dt" : 0.5
         }
     },
     "neurons" : {
@@ -84,11 +84,12 @@
             "learning_rate" : "globals/learning_rate"
         },
         "OptimalStdp" : {
-            "tau_c" : 100.0,
+            "tau_c" : 300.0,
             "tau_mean" : 60000.0,
             "target_rate" : 5.0,
             "target_rate_factor" : 0.0,
-            "weight_decay" : 1.5,
+            "weight_decay" : 0.0,
+            "tau_hebb" : 0.0,
             "learning_rate" : "globals/learning_rate"
         }
     },
@@ -126,7 +127,7 @@
     },
     "connections" : {
         "Stochastic" : {
-            "prob" : 1.0
+            "prob" : 0.5
        },
        "DifferenceOfGaussians" : {
            "a" : 3.0,
@@ -140,26 +141,32 @@
         "layers" : [
             {
                 "size" : 100,
-                "neuron" : "LeakyIntegrateAndFire",
-                "act_function" : "Determ",
-                "input" : "InputTimeSeries"
+                "neuron" : "SpikeSequenceNeuron"
+            },
+            {
+                "size" : 100,
+                "neuron" : "SRMNeuron",
+                "act_function" : "ExpThreshold",
+                "learning_rule" : "OptimalStdp",
+                "weight_normalization" : "MinMax"
             }
-//            {
-//                "size" : 6,
-//                "neuron" : "SRMNeuron",
-//                "act_function" : "ExpThreshold",
-//                "learning_rule" : "OptimalStdp",
-//                "reinforcement" : "InputClassifier"
-//            }
         ],
         "conn_map" : {
-//            "0->1" : [
-//                { 
-//                    "type" : "Stochastic", 
-//                    "start_weight" : 0.1,
-//                    "synapse" : "StaticSynapse"
-//                }
-//            ]
+            "0->1" : [
+                { 
+                    "type" : "Stochastic", 
+                    "start_weight" : 0.1,
+                    "synapse" : "StaticSynapse"
+                }
+            ],
+            "1->1" : [
+                {
+                    "type" : "DifferenceOfGaussians",
+                    "start_weight" : 0.1,
+                    "synapse" : "StaticSynapse",
+                    "inh_synapse" : "StaticSynapse_inh"
+                }
+            ]
         },
         "reward_dynamics" : {
             "tau_trace" : 100.0, 
@@ -167,7 +174,7 @@
         },
         "dt" : 1.0,
         "seed" : -1,
-        "neurons_to_listen" : [],
+        "neurons_to_listen" : [100],
         "files" : {
             "InputTimeSeries" : {
                 "filename" : "@ts-input"

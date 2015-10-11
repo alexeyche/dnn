@@ -11,5 +11,6 @@ message SpikeNeuronInfo {
     required bool input_is_set = 8;
     required bool lrule_is_set = 9;
     required bool reinforce_is_set = 10;
+    required bool weight_normalization_is_set = 11;
 }
 

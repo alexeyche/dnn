@@ -40,25 +40,18 @@ void OptimalStdp::calculateDynamics(const Time& t) {
     stat.add("B", s.B);
 
     auto &syns = n->getMutSynapses();
+    const auto &norm = n->getWeightNormalization().ifc();
 
     size_t i=0;
     for(auto &syni: syns) {
         auto &syn = syni.ref();
         const double &w = syn.weight();
-        // stat.add("C0", i,
-        //     n->getActFunction().ifc().probDeriv(n->getMembranePotential())/(
-        //         n->getFiringProbability()/n->getProbabilityModulation()
-        //     )
-        // );
-        // stat.add("C1", i,
-        //     ((double)n->fired() - n->getFiringProbability()) * fabs(syn.potential())
-        // );
 
-        s.C.get(i) += SRMMethods::dLLH_dw(*n, syn);  // not in propagateSpike because we need information about firing of neuron
+        s.C.get(i) += SRMMethods::dLLH_dw(*n, syn, c.tau_hebb);  // not in propagateSpike because we need information about firing of neuron
 
         double decay_part = c.weight_decay * syn.fired() * syn.weight(); //* (s.p_mean*1000.0) * (s.p_mean*1000.0);
-        double dw = norm.ifc().derivativeModulation(w) * c.learning_rate * (
-            s.C.get(i) * s.B * norm.ifc().ltp(w) - decay_part * norm.ifc().ltd(w)
+        double dw = norm.derivativeModulation(w) * c.learning_rate * (
+            s.C.get(i) * s.B * norm.ltp(w) - decay_part * norm.ltd(w)
         );
 
         stat.add("C", i, s.C.get(i));

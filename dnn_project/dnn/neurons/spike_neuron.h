@@ -13,6 +13,7 @@
 #include <dnn/util/spikes_list.h>
 #include <dnn/protos/spike_neuron.pb.h>
 #include <dnn/reinforcements/reinforcement.h>
+#include <dnn/weight_normalizations/weight_normalization.h>
 
 namespace dnn {
 
@@ -49,15 +50,20 @@ public:
 	void setFired(const bool& f);
 
 	void setLearningRule(Ptr<LearningRuleBase> _lrule);
-	InterfacedPtr<LearningRuleBase>& getLearningRule();
+	const InterfacedPtr<LearningRuleBase>& getLearningRule() const;
+
 	void setActFunction(Ptr<ActFunctionBase> _act_f);
 	const InterfacedPtr<ActFunctionBase>& getActFunction() const;
+
+	void setWeightNormalization(Ptr<WeightNormalizationBase> _norm);
+	const InterfacedPtr<WeightNormalizationBase>& getWeightNormalization() const;
 
 	void setReinforcement(Ptr<ReinforcementBase> _reinforce);
 
 	void setInput(Ptr<InputBase> _input);
+
 	bool inputIsSet();
-	InputBase& getInput();
+	const InputBase& getInput() const;
 	void addSynapse(InterfacedPtr<SynapseBase> syn);
 	const ActVector<InterfacedPtr<SynapseBase>>& getSynapses() const;
 	ActVector<InterfacedPtr<SynapseBase>>& getMutSynapses();
@@ -110,6 +116,7 @@ protected:
 	InterfacedPtr<InputBase> input;
 	InterfacedPtr<LearningRuleBase> lrule;
 	InterfacedPtr<ReinforcementBase> reinforce;
+	InterfacedPtr<WeightNormalizationBase> norm;
 
 	Statistics stat;
 
@@ -131,7 +138,8 @@ struct SpikeNeuronInfo : public Serializable<Protos::SpikeNeuronInfo> {
 		        << "act_function_is_set: " << act_function_is_set << ", " \
 		        << "input_is_set: " << input_is_set << ", "
 		        << "lrule_is_set: " << lrule_is_set << ", "
-		        << "reinforce_is_set: " << reinforce_is_set << Self::end;
+		        << "reinforce_is_set: " << reinforce_is_set  << ", "
+		        << "weight_normalization_is_set: " << weight_normalization_is_set << Self::end;
 	}
 	size_t id;
 	size_t xi;
@@ -143,6 +151,7 @@ struct SpikeNeuronInfo : public Serializable<Protos::SpikeNeuronInfo> {
 	bool input_is_set;
 	bool lrule_is_set;
 	bool reinforce_is_set;
+	bool weight_normalization_is_set;
 };
 
 template <typename Constants, typename State>
@@ -160,6 +169,7 @@ public:
 		info.input_is_set = input.isSet();
 		info.lrule_is_set = lrule.isSet();
 		info.reinforce_is_set = reinforce.isSet();
+		info.weight_normalization_is_set = norm.isSet();
 		return info;
 	}
 
@@ -198,6 +208,10 @@ public:
 		if (info.reinforce_is_set) {
 			(*this) << "Reinforcement: " << reinforce;
 			reinforce.ref().linkWithNeuron(*this);
+		}
+		if (info.weight_normalization_is_set) {
+			(*this) << "WeightNormalization: " << norm;
+			norm.ref().linkWithNeuron(*this);
 		}
 		if(mode == ProcessingInput) {
 			syns.resize(info.num_of_synapses);

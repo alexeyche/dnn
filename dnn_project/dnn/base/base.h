@@ -43,7 +43,7 @@ typedef FastDelegate0<const double&> getDoubleDelegate;
 typedef FastDelegate0<double> retDoubleDelegate;
 typedef FastDelegate1<const double&, double> retDoubleAtRefDoubleDelegate;
 typedef FastDelegate1<const Time&,const double&> retRefDoubleAtTimeDelegate;
-typedef FastDelegate1<const Time&,double> getDoubleAtTimeDelegate;
+typedef FastDelegate1<const Time&, const double> getDoubleAtTimeDelegate;
 typedef FastDelegate1<const Time&> calculateDynamicsDelegate;
 typedef FastDelegate1<const size_t&, const double&> getValueAtIndexDelegate;
 typedef FastDelegate3<const Time&, const double&, const double&> calculateNeuronDynamicsDelegate;

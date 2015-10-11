@@ -24,7 +24,7 @@ void TimeSeries::readFromFile(const string &filename, const string &format) {
     if(format == "protobin") {
         Ptr<TimeSeries> inp_ts = Stream(f, Stream::Binary).readDynamic<TimeSeries>();
         (*this) = inp_ts.ref();
-        delete inp_ts.ptr();
+        inp_ts.destroy();
     } else {
         throw dnnException() << "TimeSeries: unknown format " << format << "\n";
     }

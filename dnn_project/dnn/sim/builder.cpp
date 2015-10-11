@@ -33,10 +33,11 @@ vector<InterfacedPtr<SpikeNeuronBase>> Builder::buildNeurons() {
                 const string learning_rule = Json::getStringValDef(layer_conf, "learning_rule", "");
                 if (!learning_rule.empty()) {
                     n.ref().setLearningRule(buildObjectFromConstants<LearningRuleBase>(learning_rule, c.learning_rules));
-                    const string weight_normalization = Json::getStringValDef(layer_conf, "weight_normalization", "");
-                    if(!weight_normalization.empty()) {
-                        n.ref().getLearningRule().ref().setWeightNormalization(buildObjectFromConstants<WeightNormalizationBase>(weight_normalization, c.weight_normalizations));
-                    }
+
+                }
+                const string weight_normalization = Json::getStringValDef(layer_conf, "weight_normalization", "");
+                if(!weight_normalization.empty()) {
+                    n.ref().setWeightNormalization(buildObjectFromConstants<WeightNormalizationBase>(weight_normalization, c.weight_normalizations));
                 }
                 const string input = Json::getStringValDef(layer_conf, "input", "");
                 if (!input.empty()) {
@@ -53,7 +54,7 @@ vector<InterfacedPtr<SpikeNeuronBase>> Builder::buildNeurons() {
                     xi = 0;
                 }
                 if(n.ref().inputIsSet()) {
-                    n.ref().getInput().setLocalId(n.ref().localId());
+                    n.ref().input.ref().setLocalId(n.ref().localId());
                 }
             }
             layer.neurons.push_back(n);

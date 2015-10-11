@@ -260,7 +260,7 @@ public:
         field_descr = descriptor->FindFieldByName(fname);
 
         if(!field_descr) {
-            throw dnnException()<< "Can't find proto field by name " << fname << "\n";
+            throw dnnException()<< "Can't find proto field by name \"" << fname << "\"\n";
         }
 
         return *this;

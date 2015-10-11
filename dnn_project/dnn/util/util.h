@@ -12,6 +12,7 @@ using std::vector;
 
 namespace dnn {
 
+using namespace std;
 using namespace rapidjson;
 
 vector<string> split_into(const string &s, char delim, vector<string> &elems);
@@ -75,6 +76,8 @@ auto AssertiveCall(Return (*function)(Parameters...), Args&& ...args)
 }
 void printBackTrace();
 
-double atomicDoubleAdd(std::atomic<double> &f, double d);
+double atomicDoubleAdd(atomic<double> &f, double d);
+pair<size_t, size_t> parseConnectionSpec(string s);
+
 
 }

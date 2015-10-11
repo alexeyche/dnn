@@ -8,7 +8,7 @@ namespace dnn {
 
 
 struct InputInterface {
-    retRefDoubleAtTimeDelegate getValue;
+    getDoubleAtTimeDelegate getValue;
 };
 
 class InputBase : public SerializableBase {
@@ -16,7 +16,7 @@ public:
     typedef InputInterface interface;
 
 
-    virtual const double& getValue(const Time &t) = 0;
+    virtual const double getValue(const Time &t) = 0;
     const size_t& localId() const {
         return _localId;
     }
@@ -31,7 +31,7 @@ public:
         i.getValue = MakeDelegate(static_cast<T*>(this), &T::getValue);
     }
     static const double def_value;
-    static const double& getValueDefault(const Time &t) {
+    static const double getValueDefault(const Time &t) {
         return def_value;
     }
 

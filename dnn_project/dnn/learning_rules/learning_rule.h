@@ -5,7 +5,6 @@
 #include <dnn/neurons/spike_neuron.h>
 #include <dnn/util/ptr.h>
 #include <dnn/util/interfaced_ptr.h>
-#include <dnn/weight_normalizations/weight_normalization.h>
 #include <dnn/protos/learning_rule.pb.h>
 
 namespace dnn {
@@ -53,38 +52,20 @@ public:
 	}
 	void calculateDynamicsInternal(const Time& t) {
 		ifc.calculateDynamics(t);
-		norm.ifc().calculateDynamics(t);
 	}
 
-	virtual void setWeightNormalization(Ptr<WeightNormalizationBase> _norm) = 0;
 
-	InterfacedPtr<WeightNormalizationBase>& getWeightNormalization() {
-		return norm;
-	}
 
 	virtual void linkWithNeuron(SpikeNeuronBase &_n) = 0;
 protected:
 	Statistics stat;
-	InterfacedPtr<WeightNormalizationBase> norm;
 	LearningRuleInterface ifc;
 };
 
-/*@GENERATE_PROTO@*/
-struct LearningRuleInfo : public Serializable<Protos::LearningRuleInfo> {
-	void serial_process() {
-		begin() << "weight_normalization_is_set: " << weight_normalization_is_set << Self::end;
-	}
-	bool weight_normalization_is_set;
-};
 
 template <typename Constants, typename State, typename Neuron>
 class LearningRule : public LearningRuleBase {
 public:
-	LearningRuleInfo getInfo() {
-		LearningRuleInfo info;
-		info.weight_normalization_is_set = norm.isSet();
-		return info;
-	}
 	void serial_process() {
 		begin() << "Constants: " << c;
 		if (messages->size() == 0) {
@@ -92,35 +73,18 @@ public:
 			return;
 		}
 		(*this) << "State: " << s << Self::end;
-		LearningRuleInfo info;
-		if (mode == ProcessingOutput) {
-			info = getInfo();
-		}
 
-		(*this) << "LearningRuleInfo: "   << info;
-		if(info.weight_normalization_is_set) {
-			(*this) << "WeightNormalization: " << norm;
-		}
 	}
 
 	void linkWithNeuron(SpikeNeuronBase &_n) {
 		try {
 			Neuron &nc = static_cast<Neuron&>(_n);
 			n.set(nc);
-			if (norm.isSet()) {
-				norm.ref().linkWithNeuron(n.ref());
-			}
 		} catch(std::bad_cast exp) {
 			throw dnnException() << "Can't cast neuron for learning rule " << name() << "\n";
 		}
 	}
 
-	void setWeightNormalization(Ptr<WeightNormalizationBase> _norm) {
-		norm = _norm;
-		if(n.isSet()) {
-			norm.ref().linkWithNeuron(n.ref());
-		}
-	}
 protected:
 	Ptr<Neuron> n;
 

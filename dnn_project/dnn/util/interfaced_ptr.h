@@ -40,7 +40,7 @@ public:
 		return *this;
 	}
 
-	bool isSet() {
+	bool isSet() const {
 		return _ptr ? true : false;
 	}
 

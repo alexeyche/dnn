@@ -8,6 +8,7 @@ message OptimalStdpC {
     required double weight_decay = 5;
     required double learning_rate = 6;
     required double tau_mi_stat = 7;
+    required double tau_hebb = 8;
 }
 
 message OptimalStdpState {

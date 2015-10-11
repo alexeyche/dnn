@@ -67,7 +67,12 @@ class DnnSim(object):
             os.makedirs(self.working_dir)
         else:
             ask = True
-
+        
+        if not self.slave:
+            last = os.path.join(self.runs_dir, "..", "last")
+            if os.path.exists(last) or os.path.islink(last):
+                os.remove(last)
+            os.symlink(self.working_dir, last)
         self.log_file = pj(self.working_dir, DnnSim.LOG_FILE_BASE)
         fileHandler = logging.FileHandler(self.log_file, mode='w')
         fileHandler.setFormatter(logFormatter)

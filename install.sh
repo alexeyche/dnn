@@ -74,7 +74,7 @@ qpushd $DST
         qmkdir $BUILD_DIR
         qpushd $BUILD_DIR 
             if [ $CMAKE -eq 1 ]; then
-                cmake -DDEBUG=$DEBUG -DCMAKE_INSTALL_PREFIX=$DST $CURDIR/dnn_project/
+                cmake -DDEBUG=$DEBUG -DPERF=0 -DCMAKE_INSTALL_PREFIX=$DST $CURDIR/dnn_project/
             fi
             make -j $CPUNUM
             make install
@@ -100,7 +100,9 @@ qpushd $DST
     #cp -r $CURDIR/*.json $DST
     rm -rf $DST/*.json
     ln -s $CURDIR/*.json $DST
-
+    
+    rm -rf $DST/cases
+    ln -s $CURDIR/cases $DST/cases
     if [ $RPACKAGE -eq 1 ]; then
         DNN_LIB=$DST/lib DNN_INCLUDE=$DST/include/dnn_project $CURDIR/r_package/build.sh
     fi

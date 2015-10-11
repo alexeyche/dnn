@@ -24,6 +24,7 @@ struct OptimalStdpC : public Serializable<Protos::OptimalStdpC> {
     , weight_decay(0.0026)
     , learning_rate(0.01)
     , tau_mi_stat(30000.0)
+    , tau_hebb(0.0)
     {}
 
     void serial_process() {
@@ -34,7 +35,8 @@ struct OptimalStdpC : public Serializable<Protos::OptimalStdpC> {
             "target_rate_factor: " << target_rate_factor << ", " <<
             "learning_rate: " << learning_rate << ", " <<
             "weight_decay: " << weight_decay  << ", " <<
-            "tau_mi_stat: " << tau_mi_stat << Self::end;
+            "tau_mi_stat: " << tau_mi_stat << ", " <<
+            "tau_hebb: " << tau_hebb << Self::end;
         __target_rate = target_rate/1000.0;
     }
 
@@ -46,6 +48,7 @@ struct OptimalStdpC : public Serializable<Protos::OptimalStdpC> {
     double weight_decay;
     double learning_rate;
     double tau_mi_stat;
+    double tau_hebb;
 };
 
 

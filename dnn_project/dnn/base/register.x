@@ -1,7 +1,6 @@
 REG_TYPE(SpikeNeuronInfo);
 REG_TYPE(SynapseInfo);
 REG_TYPE(SimInfo);
-REG_TYPE(LearningRuleInfo);
 REG_TYPE_WITH_CONST_AND_STATE(RewardControl);
 
 REG_TYPE_WITH_CONST_AND_STATE(LeakyIntegrateAndFire);
@@ -15,6 +14,7 @@ REG_TYPE_WITH_CONST(ExpThreshold);
 REG_TYPE_WITH_CONST(Stochastic);
 REG_TYPE_WITH_CONST(DifferenceOfGaussians);
 REG_TYPE_WITH_CONST_AND_STATE(InputTimeSeries);
+REG_TYPE_WITH_CONST_AND_STATE(WhiteNoiseInput);
 REG_TYPE_WITH_CONST_AND_STATE(Stdp);
 REG_TYPE_WITH_CONST_AND_STATE(StdpTime);
 REG_TYPE_WITH_CONST_AND_STATE(TripleStdp);
@@ -24,6 +24,7 @@ REG_TYPE_WITH_CONST(MinMax);
 REG_TYPE_WITH_CONST(NonLinearMinMax);
 REG_TYPE_WITH_CONST_AND_STATE(SlidingLtd);
 REG_TYPE_WITH_CONST(InputClassifier);
+REG_TYPE_WITH_CONST(IdsConnection);
 
 REG_TYPE(Statistics);
 REG_TYPE(StatisticsInfo);

@@ -52,12 +52,7 @@ void Constants::readJson(Document &document) {
 
             for (Value::ConstMemberIterator itr = conn_map_doc.MemberBegin(); itr != conn_map_doc.MemberEnd(); ++itr) {
                 const string k = itr->name.GetString();
-                vector<string> aff = splitBySubstr(k, "->");
-                if (aff.size() != 2) {
-                    throw dnnException() << "conn_map configuration not right: need 2 afferents separated by \"->\"\n";
-                }
-
-                const pair<size_t, size_t> aff_p(stoi(aff[0]), stoi(aff[1]));
+                const pair<size_t, size_t> aff_p = parseConnectionSpec(k);
                 const Value &conns = itr->value;
 
                 for (SizeType i = 0; i < conns.Size(); i++) {

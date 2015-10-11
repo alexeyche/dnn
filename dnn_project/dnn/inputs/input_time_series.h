@@ -39,7 +39,7 @@ public:
         return "InputTimeSeries";
     }
 
-	const double& getValue(const Time &t) {
+	const double getValue(const Time &t) {
         double index = floor(s.t);
         if(s.t-index < c.dt) {
             s.t += c.dt;

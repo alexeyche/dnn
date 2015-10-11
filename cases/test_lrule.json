@@ -7,9 +7,6 @@
         "dt" : 1.0
     },
     "inputs" : {
-        "InputTimeSeries" : {
-            "dt" : "globals/dt"
-        },
         "WhiteNoiseInput" : {
             "mean" : 0.0,
             "sd" : 1.0,
@@ -17,26 +14,6 @@
         }
     },
     "neurons" : {
-        "SpikeSequenceNeuron" : {
-            "dt" : "globals/dt"
-        },
-        "LeakyIntegrateAndFire" : {
-            "tau_m" : 5.0,
-            "rest_pot" : 0.0,
-            "tau_ref" : 2.0,
-            "noise" : 0.2
-        },
-        "AdaptIntegrateAndFire" : {
-            "tau_m" : 5.0,
-            "rest_pot" : 0.0,
-            "tau_ref" : 5.0,
-            "noise" : 0.1,
-            "tau_adapt" : 80.0,
-            "kd" : 30.0,
-            "vK" : -0.1,
-            "adapt_amp" : 0.01,
-            "gKCa" : 5.0
-        },
         "SRMNeuron" : {
             "u_rest" : 0.0,
             "amp_adapt" : 0.5,
@@ -64,12 +41,6 @@
         "StaticSynapse_inh" : {
             "psp_decay" : 30.0,
             "amp" : -1.0
-        },
-        "STDSynapse" : {
-            "psp_decay" : 2.0,
-            "amp" : 1.0,
-            "gamma" : 0.65,
-            "tau_d" : 400
         }
     },
     "learning_rules" : {
@@ -90,8 +61,8 @@
         },
         "OptimalStdp" : {
             "tau_c" : 200.0,
-            "tau_mean" : 10000.0,
-            "target_rate" : 5.0,
+            "tau_mean" : 60000.0,
+            "target_rate" : 10.0,
             "target_rate_factor" : 0.0,
             "weight_decay" : 0.0,
             "tau_hebb" : 0.0,
@@ -146,26 +117,27 @@
        }
     },
     "sim_configuration" : {
-        "layers" : [],
-        "conn_map" : {},
-        "reward_dynamics" : {
-            "tau_trace" : 100.0, 
-            "tau_mean_trace" : 10000.0
+        "layers" : [
+            {
+                "size" : 10,
+                "neuron" : "SRMNeuron",
+                "input" : "WhiteNoiseInput",
+                "act_function" : "ExpThreshold",
+                "learning_rule" : "OptimalStdp",
+                "weight_normalization" : "MinMax"
+            }        
+        ],
+        "conn_map" : {
+            "0->0" : [
+                {
+                    "type" : "IdsConnection",
+                    "synapse" : "StaticSynapse",
+                    "start_weight" : 0.1
+                }
+            ]
         },
         "dt" : 1.0,
         "seed" : -1,
-        "neurons_to_listen" : [],
-        "files" : {
-            "InputTimeSeries" : {
-                "filename" : "@ts-input"
-            },
-            "SpikeSequenceNeuron" : {
-                "filename" : "@spike-input"
-            }
-        }
-    },
-    "network_configuration" : {
-        "input" : "@net-input",
-        "output" : "@net-output"
+        "neurons_to_listen" : [0, 1]
     }
 }

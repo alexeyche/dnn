@@ -9,6 +9,7 @@
 #include <dnn/synapses/static_synapse.h>
 #include <dnn/synapses/std_synapse.h>
 #include <dnn/inputs/input_time_series.h>
+#include <dnn/inputs/white_noise_input.h>
 #include <dnn/io/serialize.h>
 #include <dnn/util/time_series.h>
 #include <dnn/util/statistics.h>
@@ -24,6 +25,10 @@
 #include <dnn/weight_normalizations/sliding_ltd.h>
 #include <dnn/reinforcements/input_classifier.h>
 #include <dnn/sim/reward_control.h>
+#include <dnn/connections/stochastic.h>
+#include <dnn/connections/difference_of_gaussians.h>
+#include <dnn/connections/ids_connection.h>
+
 
 #include <dnn/util/log/log.h>
 
@@ -31,8 +36,6 @@
 #include <dnn/sim/sim.h>
 
 
-#include <dnn/connections/stochastic.h>
-#include <dnn/connections/difference_of_gaussians.h>
 
 #include "factory.h"
 

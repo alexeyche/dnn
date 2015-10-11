@@ -38,6 +38,12 @@ public:
 		assert(rc.isSet());
 		rc->gatherReward(R);
 	}
+	const double& getReward() const {
+		return rc->getReward();
+	}
+	const double getRewardDelta() const {
+		return rc->getRewardDelta();
+	}
 private:
 	void setCurrentClassId(const size_t &id) {
 		_currentClassId.set(&id);

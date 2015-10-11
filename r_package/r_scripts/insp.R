@@ -283,18 +283,15 @@ if((length(pic_files)>0)&&(OPEN_PIC)) {
     open_pic(pic_files[1])
 }
 
-# 
-# f_template = "%s_stat.pb"
-# epochs = 1:20
-# stname = "Stdp_w_50"
-# stat_acc = NULL
-# STAT_ID = 1
-# 
-# for(ep in epochs) { 
-#     s = RProto$new(sprintf(f_template, ep))$rawRead()
-#     stat_acc = c(stat_acc, s[[STAT_ID]][[stname]])
-# }
-# plotl(stat_acc)
-# 
+get_stat = function(epochs, stname, stat_id, f_template = "%s_stat.pb") {
+    stat_acc = NULL
+    for(ep in epochs) { 
+        s = RProto$new(sprintf(f_template, ep))$rawRead()
+        stat_acc = c(stat_acc, s[[stat_id]][[stname]])
+    }
+    return(stat_acc)
+}
+#plotl(get_stat(1:10, "OptimalStdp_w_0", 1))
+
 
 

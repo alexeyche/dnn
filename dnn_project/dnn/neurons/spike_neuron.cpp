@@ -66,7 +66,7 @@ void SpikeNeuronBase::setLearningRule(Ptr<LearningRuleBase> _lrule) {
 	lrule = _lrule;
 	lrule.ref().linkWithNeuron(*this);
 }
-InterfacedPtr<LearningRuleBase>& SpikeNeuronBase::getLearningRule() {
+const InterfacedPtr<LearningRuleBase>& SpikeNeuronBase::getLearningRule() const {
 	return lrule;
 }
 
@@ -84,7 +84,7 @@ void SpikeNeuronBase::setInput(Ptr<InputBase> _input) {
 bool SpikeNeuronBase::inputIsSet() {
 	return input.isSet();
 }
-InputBase& SpikeNeuronBase::getInput() {
+const InputBase& SpikeNeuronBase::getInput() const {
 	if(!input.isSet()) {
 		throw dnnException() << "Trying to get input which is not set\n";
 	}
@@ -96,6 +96,13 @@ void SpikeNeuronBase::setReinforcement(Ptr<ReinforcementBase> _reinforce) {
     reinforce.ref().linkWithNeuron(*this);
 }
 
+void SpikeNeuronBase::setWeightNormalization(Ptr<WeightNormalizationBase> _norm) {
+    norm = _norm;
+    norm.ref().linkWithNeuron(*this);
+}
+const InterfacedPtr<WeightNormalizationBase>& SpikeNeuronBase::getWeightNormalization() const {
+    return norm;
+}
 
 void SpikeNeuronBase::addSynapse(InterfacedPtr<SynapseBase> syn) {
 	syns.push_back(syn);
@@ -137,10 +144,10 @@ Statistics SpikeNeuronBase::getStat() {
 		}
 
 	}
-	if((lrule.isSet())&&(lrule.ref().getWeightNormalization().isSet())&&(lrule.ref().getWeightNormalization().ref().getStat().on())) {
-		Statistics &lrule_st = lrule.ref().getWeightNormalization().ref().getStat();
-		for(auto it=lrule_st.getStats().begin(); it != lrule_st.getStats().end(); ++it) {
-			rstat[ lrule.ref().getWeightNormalization().ref().name() + "_" + it->first ] = it->second;
+	if((norm.isSet())&&(norm.ref().getStat().on())) {
+		Statistics &norm_st = norm.ref().getStat();
+		for(auto it=norm_st.getStats().begin(); it != norm_st.getStats().end(); ++it) {
+			rstat[ norm.ref().name() + "_" + it->first ] = it->second;
 		}
 	}
 	return statc;
@@ -159,7 +166,6 @@ void SpikeNeuronBase::readInputSpikes(const Time &t) {
         if(sp.t >= t.t) break;
         auto &s = syns[sp.syn_id];
         s.ref().setFired(true);
-        // cout << s.ref().idPre() << " -> " << id() << " spiked at " << t.t << "\n";
         ifc.propagateSynapseSpike(sp);
         input_spikes.pop();
     }
@@ -187,6 +193,8 @@ void SpikeNeuronBase::calculateDynamicsInternal(const Time &t) {
     lrule.ifc().calculateDynamicsInternal(t);
 
     reinforce.ifc().modulateReward();
+
+    norm.ifc().calculateDynamics(t);
 
     if(stat.on()) {
    		for(auto &s: syns) {

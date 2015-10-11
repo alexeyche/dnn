@@ -9,6 +9,7 @@
 #include <dnn/util/json.h>
 #include <dnn/base/exceptions.h>
 
+#include <dnn/util/util.h>
 
 namespace dnn {
 

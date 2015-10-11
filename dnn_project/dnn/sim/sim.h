@@ -32,7 +32,7 @@ public:
 	void saveSpikes(Stream &str);
 	void turnOnStatistics();
 
-	static void runWorker(Sim &s, size_t from, size_t to, SpinningBarrier &barrier, bool master_thread, std::exception_ptr &eptr);
+	static void runWorker(Sim &s, size_t from, size_t to, SpinningBarrier &barrier, bool master_thread, std::exception_ptr eptr);
 	static void runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barrier, bool master_thread);
 
 	void setMaxDuration(const double Tmax);

@@ -76,6 +76,7 @@ public:
 			}
 		}
 	}
+
 	const string name() const {
 		return "Statistics";
 	}

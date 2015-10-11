@@ -31,6 +31,10 @@ void Sim::build(Stream* input_stream) {
 	net = uptr<Network>(new Network(neurons));
 	if(b.getInputFileNames().size()>0) {
 		net->spikesList().ts_info = b.getInputTimeSeriesInfo();
+	} else {
+		TimeSeriesInfo default_info;
+		default_info.addLabelAtPos("default", duration);
+		net->spikesList().ts_info = default_info;
 	}
 }
 
@@ -112,10 +116,11 @@ void Sim::runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barr
 }
 
 
-void Sim::runWorker(Sim &s, size_t from, size_t to, SpinningBarrier &barrier, bool master_thread, std::exception_ptr &eptr) {
+void Sim::runWorker(Sim &s, size_t from, size_t to, SpinningBarrier &barrier, bool master_thread, std::exception_ptr eptr) {
 	try {
 		runWorkerRoutine(s, from, to, barrier, master_thread);
 	} catch (const dnnException &e) {
+		L_DEBUG << "Got error in [" << from << ":" << to << "] thread: " << e.what();
 		eptr = std::current_exception();
 		barrier.fail();
 	} catch (const dnnInterrupt &e) {
@@ -134,7 +139,9 @@ void Sim::run(size_t jobs) {
 
 	SpinningBarrier barrier(jobs);
 	for(auto &slice: slices) {
-		exceptions.emplace_back();
+		exceptions.push_back(
+			std::exception_ptr()
+		);
 		threads.emplace_back(
 			Sim::runWorker,
 			std::ref(*this),

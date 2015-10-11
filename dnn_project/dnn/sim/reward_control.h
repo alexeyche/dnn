@@ -90,7 +90,12 @@ public:
         c = other.c;
         stat = other.stat;
     }
-
+    const double& getReward() const {
+        return s.R;
+    }
+    const double getRewardDelta() const {
+        return s.R - s.meanR;
+    }
 private:
     std::atomic<double> gathered_reward;
 

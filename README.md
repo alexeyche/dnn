@@ -36,7 +36,8 @@ Simple [spike-timing dependent plasticity](http://www.scholarpedia.org/article/S
 (under development) - Complicated version of Stdp with long range dynamics ([Pfister et al](https://scholar.google.ru/citations?view_op=view_citation&hl=ru&user=mzUYoLgAAAAJ&citation_for_view=mzUYoLgAAAAJ:u5HHmVD_uO8C))
 ##Reinforcements:
 ####InputClassifier
-will modulate positive reward when layer local id of neuron matches current class id, and negative in another case. Amounts of positive and negative reward can be pointed through constants, ltp and ltd repectively
+Will modulate positive reward when layer-wise local id of neuron matches current class id, and negative in another case. Amounts of positive and negative reward can be pointed through constants, ltp and ltd repectively in arbitrary units:
+
 # Installation
 To install dnn on UNIX like machine you need to satisfy dependencies:
 * clang >=3.5 or gcc >=4.9.2
@@ -102,7 +103,7 @@ This run will create in **$DNN_HOME/runs/sim** directory where you can find arte
 
 # Layer specification
 
-Layer specification can consist:
+Layer specification consists of:
 ```javascript
 {
     "size" : 100, // required

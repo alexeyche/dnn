@@ -274,18 +274,27 @@ void printBackTrace() {
 }
 
 
-double atomicDoubleAdd(std::atomic<double> &f, double d) {
-    double old = f.load(std::memory_order_consume);
+double atomicDoubleAdd(atomic<double> &f, double d) {
+    double old = f.load(memory_order_consume);
     double desired =  old+d;
     while (!f.compare_exchange_weak(
             old
           , desired
-          , std::memory_order_release
-          , std::memory_order_consume
+          , memory_order_release
+          , memory_order_consume
     )) {
         desired = old + d;
     }
     return desired;
+}
+
+pair<size_t, size_t> parseConnectionSpec(string s) {
+    vector<string> aff = splitBySubstr(s, "->");
+    if (aff.size() != 2) {
+        throw dnnException() << "connection specification not right: need 2 afferents separated by \"->\"\n";
+    }
+
+    return make_pair(stoi(aff[0]), stoi(aff[1]));
 }
 
 
