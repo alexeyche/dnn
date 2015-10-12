@@ -1,6 +1,7 @@
 #pragma once
 
 #include <dnn/io/serialize.h>
+#include <dnn/base/sim_element.h>
 #include <dnn/util/time_series.h>
 #include <dnn/protos/input.pb.h>
 
@@ -11,7 +12,7 @@ struct InputInterface {
     getDoubleAtTimeDelegate getValue;
 };
 
-class InputBase : public SerializableBase {
+class InputBase : public SimElement {
 public:
     typedef InputInterface interface;
 
@@ -20,7 +21,7 @@ public:
     const size_t& localId() const {
         return _localId;
     }
-    virtual void reset() {}
+
 
     void setLocalId(size_t localId) {
         _localId = localId;

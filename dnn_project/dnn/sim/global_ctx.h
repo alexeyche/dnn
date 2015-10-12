@@ -15,10 +15,11 @@ friend class Sim;
 public:
 	GlobalCtx() {}
 
-	void init(const SimInfo &_si, const Constants &_c, RewardControl &_rc) {
+	void init(const SimInfo &_si, const Constants &_c, double &_duration, RewardControl &_rc) {
 		si.set(&_si);
 		c.set(&_c);
 		rc.set(&_rc);
+		duration.set(&_duration);
 	}
 
 	const SimInfo& getSimInfo() const {
@@ -44,6 +45,9 @@ public:
 	const double getRewardDelta() const {
 		return rc->getRewardDelta();
 	}
+	void setSimDuration(const double d) {
+		duration.ref() = std::max(duration.ref(), d);
+	}
 private:
 	void setCurrentClassId(const size_t &id) {
 		_currentClassId.set(&id);
@@ -52,6 +56,7 @@ private:
 	Ptr<const SimInfo> si;
 	Ptr<const Constants> c;
 	Ptr<RewardControl> rc;
+	Ptr<double> duration;
 };
 
 

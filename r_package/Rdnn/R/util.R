@@ -30,8 +30,6 @@ plotl <- function(x) {
 }
 
 
-
-
 require(lattice, quietly=TRUE)
 
 prast_mpl = function(spikes,T0=0, Tmax=Inf) {
@@ -87,9 +85,23 @@ plot_rastl <- function(raster, lab="",T0=0, Tmax=Inf, i=-1, plen=-1) {
 
 prast = plot_rastl
 
-gr_pl = function(m) {
-  levelplot(m, col.regions=colorRampPalette(c("black", "white")))
+plot.SpikesList = function(obj, ...) { 
+    prast(obj, ...) 
 }
+
+gr_pl = function(m, ...) {
+    levelplot(m, col.regions=colorRampPalette(c("black", "white")), ...)
+}
+
+
+plot.TimeSeries = function(obj, ...) {
+    if(nrow(obj$values) == 1) {
+        plot(obj$values[1, ], type="l", ...)
+    } else {
+        gr_pl(t(obj$values), ...)
+    }
+}
+
 
 measureSpikeCor = function(net, dt) {
     N = length(net)

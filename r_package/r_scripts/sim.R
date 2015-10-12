@@ -36,7 +36,7 @@ s$build()
 
 spikes = gen_poisson(Ninput, rate, len)
 s$setInputSpikes(spikes, "SpikeSequenceNeuron")
-proto.write("~/dnn/spikes/test_spikes.pb", list(values=spikes), "SpikesList")
+proto.write(spikes.list(values=spikes), "~/dnn/spikes/test_spikes.pb")
 
 s$run(jobs)
 net = s$getSpikes()

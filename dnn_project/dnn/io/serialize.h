@@ -196,9 +196,7 @@ public:
 
     }
 
-    virtual double getSimDuration() {
-        return 0.0;
-    }
+    // SerializableBase(const SerializableBase &obj) {
     // SerializableBase(const SerializableBase &obj) {
 
     // }

@@ -4,6 +4,7 @@
 #include "spike_neuron.h"
 #include <dnn/protos/spike_sequence_neuron.pb.h>
 #include <dnn/io/serialize.h>
+#include <dnn/sim/global_ctx.h>
 
 namespace dnn {
 
@@ -46,7 +47,9 @@ public:
         return "SpikeSequenceNeuron";
     }
 
-    void reset() {
+    void init() {
+        if(!seq.isSet() || seq->size() == 0) return;
+
         if(input.isSet()) {
             throw dnnException() << "Got current inputs in SpikeSequenceNeuron. Config is errors prone\n";
         }
@@ -56,6 +59,11 @@ public:
         if(act_f.isSet()) {
             throw dnnException() << "Got activation function in SpikeSequenceNeuron. Config is errors prone\n";
         }
+
+        GlobalCtx::inst().setSimDuration(seq->back());
+    }
+
+    void reset() {
         s.p = 0.0;
         s.index = 0;
     }
@@ -85,13 +93,7 @@ public:
         seq.set( &sl->seq[id].values );
     }
 
-    double getSimDuration() {
-        if(input.isSet()) {
-            throw dnnException() << "Got current inputs in SpikeSequenceNeuron. Config is errors prone\n";
-        }
-        if(!seq.isSet() || seq->size() == 0) return 0.0;
-        return seq->back();
-    }
+
 private:
     Ptr< vector<double> > seq;
 };

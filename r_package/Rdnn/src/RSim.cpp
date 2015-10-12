@@ -29,9 +29,6 @@ void RSim::setTimeSeries(SEXP v, const string &obj_name) {
         );
     }
     net->spikesList().ts_info = ts.as<TimeSeries>()->info;
-    for(auto &n: neurons) {
-        duration = std::max(duration, n.ref().getSimDuration());
-    }
 }
 
 void RSim::setInputSpikes(const Rcpp::List &l, const string &obj_name) {
@@ -55,9 +52,6 @@ void RSim::setInputSpikes(const Rcpp::List &l, const string &obj_name) {
         );
     }
     net->spikesList().ts_info = sp_l.as<SpikesList>()->ts_info;
-    for(auto &n: neurons) {
-        duration = std::max(duration, n.ref().getSimDuration());
-    }
 }
 
 

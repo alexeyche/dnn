@@ -2,6 +2,7 @@
 
 #include <dnn/io/serialize.h>
 #include <dnn/base/exceptions.h>
+#include <dnn/base/sim_element.h>
 
 namespace dnn {
 
@@ -11,7 +12,7 @@ struct ReinforcementInterface {
 };
 
 
-class ReinforcementBase : public SerializableBase {
+class ReinforcementBase : public SimElement {
 public:
     typedef ReinforcementInterface interface;
 

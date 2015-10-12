@@ -57,11 +57,10 @@ prepare.ucr.data = function(
                 idx = idx + 1
             }
             ts_info$labels_ids = as.numeric(sapply(labels, function(l) l_ids[[l]]))
-            data_out[[data_part]] = list(values=ts_data, ts_info=ts_info)
-            
+            data_out[[data_part]] = time.series(values=ts_data, ts_info=ts_info)
             if(save_on_disk) {
                 cats("Saving %s in %s\n", data_part, fname)
-                proto.write.ts(fname, data_out[[data_part]])
+                proto.write(data_out[[data_part]], fname)
             }
         }
     }
@@ -116,11 +115,11 @@ UCR.FACE = "FaceAll"
 UCR.STARLIGH = "StarLightCurves"
 
 empty.ts = function() {
-    list(values=c(), ts_info=list(labels_ids=NULL, unique_labels=NULL, labels_timeline=NULL))
+    time.series(values=c(), ts_info=list(labels_ids=NULL, unique_labels=NULL, labels_timeline=NULL))
 }
 
 empty.spikes = function() {
-    list(values=c(), ts_info=list(labels_ids=NULL, unique_labels=NULL, labels_timeline=NULL))
+    spikes.list(values=c(), ts_info=list(labels_ids=NULL, unique_labels=NULL, labels_timeline=NULL))
 }
 
 cat.ts = function(...) {

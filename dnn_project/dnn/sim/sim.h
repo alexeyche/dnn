@@ -18,11 +18,11 @@ namespace dnn {
 class Sim : public Printable {
 public:
 	Sim() : duration(0.0) {
-		GlobalCtx::inst().init(sim_info, c, rc);
+		init();
 	}
 
-	Sim(const Constants &_c) : c(_c), duration(0.0) {
-		GlobalCtx::inst().init(sim_info, c, rc);
+	Sim(const Constants &_c) : c(_c) {
+		init();
 	}
 
 	void build(Stream* input_stream = nullptr);
@@ -40,6 +40,9 @@ public:
 	void run(size_t jobs);
 
 protected:
+	void init() {
+		GlobalCtx::inst().init(sim_info, c, duration, rc);
+	}
 	SimInfo sim_info;
 
 	RewardControl rc;

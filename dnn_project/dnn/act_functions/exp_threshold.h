@@ -11,16 +11,16 @@ namespace dnn {
 
 /*@GENERATE_PROTO@*/
 struct ExpThresholdC : public Serializable<Protos::ExpThresholdC> {
-    ExpThresholdC() 
+    ExpThresholdC()
     : threshold(15.0)
     , p_rest(0.1)
     , beta(2.0)
-    , amp(10.0) 
-    {        
+    , amp(10.0)
+    {
     }
 
     void serial_process() {
-        begin() << "beta: " << beta << ", " 
+        begin() << "beta: " << beta << ", "
                 << "p_rest: " << p_rest << ", "
                 << "amp: " << amp << ", "
                 << "threshold: " << threshold << Self::end;
@@ -38,11 +38,12 @@ public:
     const string name() const {
         return "ExpThreshold";
     }
-    double prob(const double &u) {        
+    double prob(const double &u) {
         double p = (c.p_rest + c.amp * fastlog(1.0 + fastexp( c.beta*(u - c.threshold) )))/1000.0;
         if(p>1.0) return 1.0;
         return p;
     }
+
     double probDeriv(const double &u) {
         double exp_part = c.beta*(u - c.threshold);
         double part;

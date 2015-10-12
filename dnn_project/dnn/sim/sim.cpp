@@ -26,7 +26,7 @@ void Sim::build(Stream* input_stream) {
 
 	neurons = b.buildNeurons();
 	for(auto &n: neurons) {
-		duration = std::max(duration, n.ref().getSimDuration());
+		n.ref().initInternal();
 	}
 	net = uptr<Network>(new Network(neurons));
 	if(b.getInputFileNames().size()>0) {

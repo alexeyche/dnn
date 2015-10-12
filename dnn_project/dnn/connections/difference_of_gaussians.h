@@ -16,6 +16,7 @@ struct DifferenceOfGaussiansC : public Serializable<Protos::DifferenceOfGaussian
                 << "dimension: " << dimension << ", "
                 << "apply_amplitude: " << apply_amplitude << Self::end;
     }
+
     int dimension;
     double a;
     double b;

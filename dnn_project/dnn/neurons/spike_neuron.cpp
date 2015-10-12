@@ -44,17 +44,27 @@ void SpikeNeuronBase::setFired(const bool& f) {
 
 void SpikeNeuronBase::resetInternal() {
 	reset();
-	if(lrule.isSet()) {
-		lrule.ref().reset();
-	}
-	if(input.isSet()) {
-		input.ref().reset();
-	}
-	for(auto &s: syns) {
-		s.ref().reset();
-	}
+    for(auto s: syns) {
+        s.ref().reset();
+    }
+    if(act_f.isSet()) act_f.ref().reset();
+    if(input.isSet()) input.ref().reset();
+    if(lrule.isSet()) lrule.ref().reset();
+    if(reinforce.isSet()) reinforce.ref().reset();
+    if(norm.isSet()) norm.ref().reset();
 }
 
+void SpikeNeuronBase::initInternal() {
+    init();
+    for(auto s: syns) {
+        s.ref().init();
+    }
+    if(act_f.isSet()) act_f.ref().init();
+    if(input.isSet()) input.ref().init();
+    if(lrule.isSet()) lrule.ref().init();
+    if(reinforce.isSet()) reinforce.ref().init();
+    if(norm.isSet()) norm.ref().init();
+}
 
 // runtime
 void SpikeNeuronBase::propagateSynapseSpike(const SynSpike &sp) {
@@ -191,9 +201,7 @@ void SpikeNeuronBase::calculateDynamicsInternal(const Time &t) {
     ifc.calculateDynamics(t, Iinput, Isyn);
 
     lrule.ifc().calculateDynamicsInternal(t);
-
     reinforce.ifc().modulateReward();
-
     norm.ifc().calculateDynamics(t);
 
     if(stat.on()) {
@@ -208,13 +216,6 @@ void SpikeNeuronBase::calculateDynamicsInternal(const Time &t) {
             s.ref().setFired(false);
         }
     }
-}
-
-double SpikeNeuronBase::getSimDuration() {
-	if(input.isSet()) {
-		return input.ref().getSimDuration();
-	}
-	return 0.0;
 }
 
 

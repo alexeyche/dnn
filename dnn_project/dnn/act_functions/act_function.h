@@ -2,6 +2,7 @@
 
 #include <dnn/io/serialize.h>
 #include <dnn/base/exceptions.h>
+#include <dnn/base/sim_element.h>
 
 namespace dnn {
 
@@ -12,7 +13,7 @@ struct ActFunctionInterface {
 };
 
 
-class ActFunctionBase : public SerializableBase {
+class ActFunctionBase : public SimElement {
 public:
 	typedef ActFunctionInterface interface;
 

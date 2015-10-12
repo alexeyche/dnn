@@ -2,6 +2,7 @@
 
 
 #include <dnn/base/base.h>
+#include <dnn/base/sim_element.h>
 #include <dnn/util/interfaced_ptr.h>
 #include <dnn/act_functions/act_function.h>
 #include <dnn/synapses/synapse.h>
@@ -27,7 +28,7 @@ extern size_t global_neuron_index;
 class Builder;
 class Network;
 
-class SpikeNeuronBase : public SerializableBase {
+class SpikeNeuronBase : public SimElement {
 friend class Builder;
 friend class Network;
 public:
@@ -67,7 +68,6 @@ public:
 	void addSynapse(InterfacedPtr<SynapseBase> syn);
 	const ActVector<InterfacedPtr<SynapseBase>>& getSynapses() const;
 	ActVector<InterfacedPtr<SynapseBase>>& getMutSynapses();
-	double getSimDuration();
 
 	template <typename T>
 	void provideInterface(SpikeNeuronInterface &i) {
@@ -88,7 +88,7 @@ public:
 	}
 
 	void resetInternal();
-	virtual void reset() = 0;
+	void initInternal();
 
 	virtual void calculateDynamics(const Time& t, const double &Iinput, const double &Isyn) = 0;
 	virtual void propagateSynapseSpike(const SynSpike &sp);
@@ -235,7 +235,7 @@ public:
         return s.u;
     }
 
-//protected:
+protected:
 	State s;
 	Constants c;
 };

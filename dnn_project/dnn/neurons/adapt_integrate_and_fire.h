@@ -10,10 +10,10 @@ namespace dnn {
 
 /*@GENERATE_PROTO@*/
 struct AdaptIntegrateAndFireC : public Serializable<Protos::AdaptIntegrateAndFireC> {
-    AdaptIntegrateAndFireC() 
-    : 
+    AdaptIntegrateAndFireC()
+    :
       tau_m(1.0)
-    , rest_pot(-70.0) 
+    , rest_pot(-70.0)
     , tau_ref(2.0)
     , noise(1.5)
     , tau_adapt(80.0)
@@ -49,7 +49,7 @@ struct AdaptIntegrateAndFireC : public Serializable<Protos::AdaptIntegrateAndFir
 
 /*@GENERATE_PROTO@*/
 struct AdaptIntegrateAndFireState : public Serializable<Protos::AdaptIntegrateAndFireState>  {
-    AdaptIntegrateAndFireState() 
+    AdaptIntegrateAndFireState()
     : p(0.0)
     , u(0.0)
     , ref_time(0.0)
@@ -57,11 +57,11 @@ struct AdaptIntegrateAndFireState : public Serializable<Protos::AdaptIntegrateAn
     {}
 
     void serial_process() {
-        begin() << "p: "        << p << ", " 
-                << "u: "        << u << ", " 
-                << "ref_time: " << ref_time << ", " 
+        begin() << "p: "        << p << ", "
+                << "u: "        << u << ", "
+                << "ref_time: " << ref_time << ", "
                 << "Ca: "       << Ca << Self::end;
-    }    
+    }
     double p;
     double u;
     double ref_time;
@@ -78,7 +78,7 @@ public:
     void reset() {
         s.p = 0.0;
         s.u = c.rest_pot;
-        s.ref_time = 0.0;        
+        s.ref_time = 0.0;
         s.Ca = 0.0;
     }
 
@@ -86,17 +86,17 @@ public:
         if(s.ref_time < 0.001) {
             double Ia = c.gKCa * (s.Ca/(s.Ca + c.kd)) * (s.u - c.vK);
             stat.add("Ia", Ia);
-            
-            s.u += t.dt * ( 
+
+            s.u += t.dt * (
                 - s.u
-                + c.noise * getNorm() 
-                + Iinput 
-                + Isyn 
+                + c.noise * getNorm()
+                + Iinput
+                + Isyn
                 - Ia
                 ) / c.tau_m;
             s.p = act_f.ifc().prob(s.u);
-            
-            
+
+
             if(getUnif() < s.p) {
                 setFired(true);
                 s.u = c.rest_pot;
@@ -106,11 +106,11 @@ public:
         } else {
             s.ref_time -= t.dt;
         }
-        s.Ca += t.dt * ( - s.Ca/c.tau_adapt ); 
+        s.Ca += t.dt * ( - s.Ca/c.tau_adapt );
         stat.add("u", s.u);
         stat.add("Ca", s.Ca);
     }
-    
+
     const double& getFiringProbability() {
         return s.p;
     }

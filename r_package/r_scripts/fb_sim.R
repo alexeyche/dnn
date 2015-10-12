@@ -94,15 +94,14 @@ samp_rate = 1000
 seq.fun = log.seq
 
 data_conv = conv.gammatones(ts_whole, seq.fun(low_f, high_f, length.out=M), samp_rate)
-proto.write.ts(ts.path("ts_gammatones.pb"), data_conv)
+proto.write(data_conv, ts.path("ts_gammatones.pb"))
 
 spikes = run_neurons(data_conv, tau_m=5.0, tau_ref=2.0, thresh=0.05, dt=0.5)
-#proto.write.spikes(spikes.path("ucr_spikes.pb"), spikes)
 
 c(train_spikes, test_spikes) := split.spikes(spikes, length(train_ts$ts_info$labels_ids))
 
-proto.write.spikes(spikes.path(sprintf("ucr_train_spikes_len%s.pb", length(sel))), train_spikes)
-proto.write.spikes(spikes.path(sprintf("ucr_test_spikes_len%s.pb", length(sel))), test_spikes)
+proto.write(train_spikes, spikes.path(sprintf("ucr_train_spikes_len%s.pb", length(sel))))
+proto.write(test_spikes, spikes.path(sprintf("ucr_test_spikes_len%s.pb", length(sel))))
 
 K = kernel.run(spikes, "Epsp(30)", "RbfDot(0.03)", jobs=4)
 #K = get.baseline()

@@ -5,6 +5,7 @@
 #include <dnn/protos/input_time_series.pb.h>
 #include <dnn/io/stream.h>
 #include <dnn/util/log/log.h>
+#include <dnn/sim/global_ctx.h>
 
 namespace dnn {
 
@@ -55,6 +56,11 @@ public:
         reset();
     }
 
+    void init() {
+        if(!seq.isSet() || seq->size() == 0) return;
+        GlobalCtx::inst().setSimDuration(seq->size()/c.dt);
+    }
+
     void reset() {
         s.t = 0;
         Ptr<TimeSeries> ts = data_src.as<TimeSeries>();
@@ -71,14 +77,9 @@ public:
             }
             seq.set( &ts.ref().data[id].values );
         }
+
     }
 
-    double getSimDuration() {
-        if(seq.isSet()) {
-            return seq->size()/c.dt;
-        }
-        return 0.0;
-    }
 
 private:
     Ptr<SerializableBase> data_src;

@@ -34,18 +34,12 @@ proto.read = function(f) {
 
 dnn.clean.heap = dnnCleanHeap
 
-proto.write = function(f, l, n) {
+proto.write = function(l, f) {
     f = path.expand(f)
-    return(Module("dnnMod")$RProto$new(f)$write(l, n))
+    return(Module("dnnMod")$RProto$new(f)$write(l, class(l)))
 }
 
-proto.write.ts = function(f, l) {
-    return(proto.write(f, l, "TimeSeries"))
-}
 
-proto.write.spikes = function(f, l) {
-    return(proto.write(f, l, "SpikesList"))
-}
 
 get.gammatones = function(freqs, samp_rate, len=100) {
     inp = c(1, rep(0, len-1))
@@ -54,6 +48,17 @@ get.gammatones = function(freqs, samp_rate, len=100) {
     return(gfb_out$membrane)
 }
 
+time.series = function(values, ts_info=list()) {
+    o = list(values = values, ts_info = ts_info)
+    class(o) <- "TimeSeries"
+    return(o)
+}
+
+spikes.list = function(values, ts_info=list()) {
+    o = list(values = values, ts_info = ts_info)
+    class(o) <- "SpikesList"
+    return(o)
+}
 
 conv.gammatones = function(x, freqs, samp_rate) {
     data = x
@@ -66,9 +71,9 @@ conv.gammatones = function(x, freqs, samp_rate) {
     gfb = Module("dnnMod")$RGammatoneFB$new()
     gfb_out = gfb$calc(data, freqs, samp_rate, 0, 0)
     if(!is.null(info)) {
-        return(list(values=gfb_out$membrane, ts_info = info))
+        return(time.series(values=gfb_out$membrane, ts_info = info))
     }
-    return(gfb_out$membrane)
+    return(time.series(gfb_out$membrane))
 }
 
 kernel.run = function(data=NULL, preprocessor=NULL, kernel=NULL, jobs=1) {

@@ -3,6 +3,7 @@
 #include <dnn/io/serialize.h>
 #include <dnn/base/exceptions.h>
 #include <dnn/protos/weight_normalization.pb.h>
+#include <dnn/base/sim_element.h>
 
 namespace dnn {
 
@@ -18,7 +19,7 @@ class Network;
 class Builder;
 
 
-class WeightNormalizationBase : public SerializableBase {
+class WeightNormalizationBase : public SimElement {
 friend class Network;
 friend class Builder;
 public:

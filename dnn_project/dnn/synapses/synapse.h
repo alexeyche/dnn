@@ -3,6 +3,7 @@
 #include <dnn/io/serialize.h>
 #include <dnn/util/statistics.h>
 #include <dnn/protos/synapse.pb.h>
+#include <dnn/base/sim_element.h>
 
 namespace dnn {
 
@@ -16,7 +17,7 @@ class Network;
 class SpikeNeuronBase;
 class Builder;
 
-class SynapseBase : public SerializableBase {
+class SynapseBase : public SimElement {
 friend class Network;
 friend class SpikeNeuronBase;
 friend class Builder;
@@ -33,7 +34,6 @@ public:
 
 	virtual void propagateSpike() = 0;
 	virtual void calculateDynamics(const Time &t) = 0;
-	virtual void reset() = 0;
 
 	template <typename T>
 	void provideInterface(SynapseInterface &i) {

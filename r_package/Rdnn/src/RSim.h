@@ -34,6 +34,9 @@ public:
 
     void run(size_t jobs=1) {
         try {
+            for(auto &n: neurons) {
+               n.ref().initInternal();
+            }
             Sim::run(jobs);
         } catch(std::exception &e) {
             ERR("Sim run failed: " << e.what() << "\n" );

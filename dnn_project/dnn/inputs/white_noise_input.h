@@ -42,6 +42,13 @@ public:
     const string name() const {
         return "WhiteNoiseInput";
     }
+    void reset() {
+        s = WhiteNoiseInputState();
+    }
+
+    void init() {
+        GlobalCtx::inst().setSimDuration(c.T);
+    }
 
     const double genUnitNoise() {
         if(!s.cache) {
@@ -60,13 +67,7 @@ public:
         return c.mean + genUnitNoise()*c.sd;
     }
 
-    void reset() {
-        s = WhiteNoiseInputState();
-    }
 
-    double getSimDuration() {
-        return c.T;
-    }
 };
 
 

@@ -61,6 +61,7 @@ public:
 
             if((obj.size() == 1)&&(simplify)) {
                 values = convertToR(obj[0]);
+                values.attr("class") = obj[0]->name();
                 obj[0].destroy();
             } else {
                 if(obj[0]->name() == "FilterMatch") {
@@ -70,6 +71,7 @@ public:
                     for(auto &o: obj) {
                         Rcpp::List l = convertToR(o);
                         if(l.size()>0) {
+                            l.attr("class") = o->name();
                             ret.push_back(l);
                         }
                         o.destroy();

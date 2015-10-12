@@ -10,7 +10,7 @@ namespace dnn {
 
 /*@GENERATE_PROTO@*/
 struct SlidingLtdC : public Serializable<Protos::SlidingLtdC> {
-    SlidingLtdC() 
+    SlidingLtdC()
     : power(3.0)
     , modulation(1.0)
     , target_rate(5.0)
@@ -21,14 +21,14 @@ struct SlidingLtdC : public Serializable<Protos::SlidingLtdC> {
     }
 
     void serial_process() {
-        begin() << "power: " << power << ", " 
+        begin() << "power: " << power << ", "
                 << "target_rate: " << target_rate << ", "
                 << "modulation: " << modulation << ", "
                 << "tau_mean: " << tau_mean << ", "
                 << "min_weight: " << min_weight << ", "
                 << "max_weight: " << max_weight << Self::end;
 
-    	__target_rate = 1.0/fastpow(target_rate, power);            
+    	__target_rate = 1.0/fastpow(target_rate, power);
     }
 
     double power;
@@ -43,7 +43,7 @@ struct SlidingLtdC : public Serializable<Protos::SlidingLtdC> {
 
 /*@GENERATE_PROTO@*/
 struct SlidingLtdState : public Serializable<Protos::SlidingLtdState>  {
-    SlidingLtdState() 
+    SlidingLtdState()
     : p_mean(0.0)
     {}
 
@@ -61,7 +61,7 @@ public:
         return "SlidingLtd";
     }
     double ltd(const double &w) {
-        if(GlobalCtx::inst().getSimInfo().pastTime < 5*c.tau_mean) { 
+        if(GlobalCtx::inst().getSimInfo().pastTime < 5*c.tau_mean) {
             return c.modulation;
         }
         return c.modulation * fastpow(1000.0*s.p_mean, c.power) * c.__target_rate;
@@ -75,7 +75,7 @@ public:
         if((w >= c.max_weight)||(w <= c.min_weight)) {
             return 0.0;
         }
-        return 1.0; 
+        return 1.0;
     }
 };
 
