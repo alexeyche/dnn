@@ -48,8 +48,11 @@ get.gammatones = function(freqs, samp_rate, len=100) {
     return(gfb_out$membrane)
 }
 
-time.series = function(values, ts_info=list()) {
-    o = list(values = values, ts_info = ts_info)
+time.series = function(values, ts_info=NULL) {
+    o = list(values = values)
+    if(!is.null(ts_info)) {
+        o$ts_info = ts_info
+    }
     class(o) <- "TimeSeries"
     return(o)
 }

@@ -71,7 +71,7 @@ Last part can be different for different systems.
 Lets generate some testing time series:
 ``` R
 require(Rdnn)
-proto.write.ts(ts.path("test_ts.pb"), list(values=rnorm(1000)))
+proto.write(time.series(values=rnorm(1000)), ts.path("test_ts.pb"))
 ```
 last command will create in **$DNN_HOME/ts** file named **test_ts.pb**
 
