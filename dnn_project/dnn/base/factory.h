@@ -148,5 +148,21 @@ private:
     vector<TypeDeducer*> type_deducers;
 };
 
+struct DynamicCreationPolicy {
+    template <typename T>
+    static Ptr<T> create() {
+        return Factory::inst().createDynamicObject<T>();
+    }
+};
+
+
+struct FactoryCreationPolicy {
+    template <typename T>
+    static Ptr<T> create() {
+        return Factory::inst().createObject<T>();
+    }
+};
+
+
 
 }

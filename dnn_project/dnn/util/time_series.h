@@ -8,8 +8,13 @@ using std::vector;
 #include <dnn/protos/time_series.pb.h>
 #include <dnn/util/ptr.h>
 #include <dnn/io/serialize.h>
+#include <dnn/base/factory.h>
 
 namespace dnn {
+
+
+
+
 
 
 /*@GENERATE_PROTO@*/
@@ -315,9 +320,30 @@ struct TimeSeries : public SerializableBase, public TimeSeriesGeneric<TimeSeries
 	   }
 	}
 
-	vector<Ptr<TimeSeries>> chop();
+	template <typename CP = FactoryCreationPolicy>
+	vector<Ptr<TimeSeries>> chop()  {
+	    size_t elem_id = 0;
+	    vector<Ptr<TimeSeries>> ts_chopped;
+	    assert(info.labels_timeline.size() == info.labels_ids.size());
+	    for(size_t li=0; li<info.labels_timeline.size(); ++li) {
+	        const size_t &end_of_label = info.labels_timeline[li];
+	        const size_t &label_id = info.labels_ids[li];
+	        const string &label = info.unique_labels[label_id];
 
+	        Ptr<TimeSeries> labeled_ts(CP::template create<TimeSeries>());
+	        for(; elem_id < end_of_label; ++elem_id) {
+	            for(size_t di=0; di<data.size(); ++di) {
+	                labeled_ts->addValue(di, data[di].values[elem_id]);
+	            }
+	        }
+	        labeled_ts->info.addLabelAtPos(label, labeled_ts->length());
+	        ts_chopped.push_back(labeled_ts);
+	    }
+	    L_DEBUG << "TimeSeries, Successfully chopped time series in " << ts_chopped.size() << " chunks";
+	    return ts_chopped;
+	}
 };
+
 
 /*@GENERATE_PROTO@*/
 struct TimeSeriesComplexData : public Serializable<Protos::TimeSeriesComplexData> {

@@ -9,3 +9,7 @@ dnnCleanHeap <- function() {
     invisible(.Call('Rdnn_dnnCleanHeap', PACKAGE = 'Rdnn'))
 }
 
+chopTimeSeries <- function(l) {
+    .Call('Rdnn_chopTimeSeries', PACKAGE = 'Rdnn', l)
+}
+

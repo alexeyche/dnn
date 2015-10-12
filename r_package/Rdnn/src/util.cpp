@@ -5,10 +5,11 @@
 
 #include <dnn/util/log/log.h>
 #include <dnn/base/factory.h>
+#include <dnn/util/time_series.h>
 
 #include "common.h"
 #include "util.h"
-
+#include "RProto.h"
 
 using namespace dnn;
 
@@ -30,4 +31,21 @@ void setVerboseLevel(int level) {
 // [[Rcpp::export]]
 void dnnCleanHeap() {
     Factory::inst().cleanHeap();
+}
+
+
+// [[Rcpp::export]]
+Rcpp::List chopTimeSeries(Rcpp::List l) {
+	Ptr<TimeSeries> ts = RProto::convertBack<TimeSeries, DynamicCreationPolicy>(l, "TimeSeries");
+	vector<Ptr<TimeSeries>> chopped = ts->chop<DynamicCreationPolicy>();
+	Rcpp::List out;
+
+	for(auto &ts_ch: chopped) {
+		SEXP ts_ch_r = RProto::convertToR(ts_ch.as<SerializableBase>());
+		out.push_back(ts_ch_r);
+		ts_ch.destroy();
+	}
+	ts.destroy();
+
+	return out;
 }

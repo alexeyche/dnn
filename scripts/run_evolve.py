@@ -36,7 +36,7 @@ rootLogger.addHandler(consoleHandler)
 class GlobalConfig(object):
     Epochs = 10
     AddOptions = []
-    Jobs = multiprocessing.cpu_count()
+    Jobs = multiprocessing.cpu_count()/2
 
 VAR_SPECS_FILE = pj(os.path.realpath(os.path.dirname(__file__)), "var_specs.json")
 RUN_SIM_PY = pj(os.path.realpath(os.path.dirname(__file__)), "run_sim.py")

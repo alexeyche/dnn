@@ -24,3 +24,14 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// chopTimeSeries
+Rcpp::List chopTimeSeries(Rcpp::List l);
+RcppExport SEXP Rdnn_chopTimeSeries(SEXP lSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type l(lSEXP);
+    __result = Rcpp::wrap(chopTimeSeries(l));
+    return __result;
+END_RCPP
+}

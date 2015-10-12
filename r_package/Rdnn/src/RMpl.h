@@ -17,12 +17,12 @@ class RMatchingPursuit : public MatchingPursuit {
 public:
 	RMatchingPursuit(const Rcpp::List conf)
 	: MatchingPursuit(
-		*RProto::convertBack<MatchingPursuitConfig>(conf, "MatchingPursuitConfig")
+		*RProto::convertBack<MatchingPursuitConfig, FactoryCreationPolicy>(conf, "MatchingPursuitConfig")
 	  ) {
 
 	}
 	Rcpp::List run(const Rcpp::NumericVector ts_m) {
-		Ptr<TimeSeries> ts = RProto::convertBack<TimeSeries>(
+		Ptr<TimeSeries> ts = RProto::convertBack<TimeSeries, FactoryCreationPolicy>(
 			Rcpp::List::create(
 				Rcpp::Named("values") = ts_m
 			),
@@ -46,7 +46,7 @@ public:
 		);
 	}
 	void setFilter(const Rcpp::NumericMatrix m) {
-		Ptr<DoubleMatrix> dm = RProto::convertBack<DoubleMatrix>(
+		Ptr<DoubleMatrix> dm = RProto::convertBack<DoubleMatrix, FactoryCreationPolicy>(
 			Rcpp::List::create(
 				Rcpp::Named("values") = m
 			),
@@ -58,7 +58,7 @@ public:
 	}
 
 	void setConf(const Rcpp::List conf) {
-		Ptr<MatchingPursuitConfig> in_c = RProto::convertBack<MatchingPursuitConfig>(conf, "MatchingPursuitConfig");
+		Ptr<MatchingPursuitConfig> in_c = RProto::convertBack<MatchingPursuitConfig, FactoryCreationPolicy>(conf, "MatchingPursuitConfig");
 		MatchingPursuit::c = in_c.ref();
 	}
 
