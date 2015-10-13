@@ -192,7 +192,7 @@ if(EVAL) {
     } else {
         c(M, N, A) := KFD(K, only_scatter=TRUE)        
     }
-    cat(tr(M)/tr(N), "\n")    
+    #cat(tr(M)/tr(N), "\n")    
     spike_patterns = chop.spikes.list(spikes)
     labs = sapply(spike_patterns, function(x) x$ts_info$unique_labels)
     ulabs = unique(labs)
@@ -208,31 +208,55 @@ if(EVAL) {
             dim = dim[1]
         }        
     }
-    if(dim == 1) {
-        N = length(spike_patterns[[1]]$values)
-        vv = vector("list", length(ulabs))
-        for(el_i in 1:length(labs)) {
-            l = labs[el_i]
-            li = which(l == ulabs)
-            vv[[li]] = rbind(
-                vv[[li]],
-                sapply(spike_patterns[[el_i]]$values, length)/spike_patterns[[el_i]]$ts_info$labels_timeline[1]
-            )
+    
+    N = length(spike_patterns[[1]]$values)
+    vv = vector("list", length(ulabs))
+    for(el_i in 1:length(labs)) {
+        l = labs[el_i]
+        li = which(l == ulabs)
+        vv[[li]] = rbind(
+            vv[[li]],
+            sapply(spike_patterns[[el_i]]$values, length)/spike_patterns[[el_i]]$ts_info$labels_timeline[1]
+        )
+    }
+    vm = sapply(vv, colMeans)
+    
+    norm = function(x) sqrt(sum(x^2))
+    rect = function(x) { x[x<0] <-0; x }
+    # vm = t(matrix(c(rep(1, 10), rep(0, 10), rep(0,15), rep(1,5)), nrow=2, ncol=20, byrow=TRUE))
+    
+    Kc = matrix(0, nrow=ncol(vm), ncol=ncol(vm))
+    
+    for(li in 1:ncol(vm)) {
+        for(lj in 1:ncol(vm)) {
+            v1 = vm[,li]
+            v2 = vm[,lj]
+            
+            v1n = norm(v1)
+            v2n = norm(v2)
+            
+            if(v1n>0) v1 = v1/v1n
+            if(v2n>0) v2 = v2/v2n
+            
+            Kc[li, lj] = norm(rect(v1 - v2))            
         }
-        vm = sapply(vv, colMeans)
-        eval_ov_debug_pic = sprintf("%s/5_%s", tmp_d, pfx_f("eval_overlap.png"))
-        
-        if(SAVE_PIC_IN_FILES) png(eval_ov_debug_pic, width=1024, height=768)
-        
-        plot(vm[,1], type="l")
-        for(li in 2:ncol(vm)) {
-            lines(vm[,li], col=li)
-        }
-        if(SAVE_PIC_IN_FILES) {
-            dev.off()
-            write(paste("Eval overlap debug pic filename: ", eval_ov_debug_pic), stderr())
-            pic_files = c(pic_files, eval_ov_debug_pic)
-        }
+    }
+    metric = sum(Kc)/(nrow(Kc)*nrow(Kc) - nrow(Kc))
+    cat(sprintf("%1.10f", metric), "\n")
+    
+    
+    eval_ov_debug_pic = sprintf("%s/5_%s", tmp_d, pfx_f("eval_overlap.png"))
+    
+    if(SAVE_PIC_IN_FILES) png(eval_ov_debug_pic, width=1024, height=768)
+    
+    plot(vm[,1], type="l", main=sprintf("Metric: %f", metric))
+    for(li in 2:ncol(vm)) {
+        lines(vm[,li], col=li)
+    }
+    if(SAVE_PIC_IN_FILES) {
+        dev.off()
+        write(paste("Eval overlap debug pic filename: ", eval_ov_debug_pic), stderr())
+        pic_files = c(pic_files, eval_ov_debug_pic)
     }
     
 }
