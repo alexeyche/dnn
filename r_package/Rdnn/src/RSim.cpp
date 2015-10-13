@@ -13,10 +13,11 @@ void RSim::setTimeSeries(SEXP v, const string &obj_name) {
     if(Rf_isMatrix(v)) {
         Rcpp::List tsl;
         tsl["values"] = v;
-        ts = RProto::convertBack<FactoryCreationPolicy>(tsl, "TimeSeries");
+        tsl.attr("class") = "TimeSeries";
+        ts = RProto::convertFromR<SerializableBase>(tsl);
     } else {
         try {
-            ts = RProto::convertBack<FactoryCreationPolicy>(v, "TimeSeries");
+            ts = RProto::convertFromR<SerializableBase>(v);
         } catch(...) {
             ERR("Expecting matrix with values or TimeSeries list object\n");
         }
@@ -34,12 +35,13 @@ void RSim::setTimeSeries(SEXP v, const string &obj_name) {
 void RSim::setInputSpikes(const Rcpp::List &l, const string &obj_name) {
     Ptr<SerializableBase> sp_l;
     if(l.containsElementNamed("values")) {
-        sp_l = RProto::convertBack<FactoryCreationPolicy>(l, "SpikesList");
+        sp_l = RProto::convertFromR<SerializableBase>(l);
     } else {
         try {
             Rcpp::List sl;
             sl["values"] = l;
-            sp_l = RProto::convertBack<FactoryCreationPolicy>(sl, "SpikesList");
+            sl.attr("class") = "SpikesList";
+            sp_l = RProto::convertFromR<SerializableBase>(sl);
         } catch (...) {
             ERR("Expecting list with spike times of neurons or SpikesList list object\n");
         }

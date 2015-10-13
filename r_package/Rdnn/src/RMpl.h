@@ -17,16 +17,15 @@ class RMatchingPursuit : public MatchingPursuit {
 public:
 	RMatchingPursuit(const Rcpp::List conf)
 	: MatchingPursuit(
-		*RProto::convertBack<MatchingPursuitConfig, FactoryCreationPolicy>(conf, "MatchingPursuitConfig")
+		*RProto::convertFromR<MatchingPursuitConfig>(conf)
 	  ) {
 
 	}
 	Rcpp::List run(const Rcpp::NumericVector ts_m) {
-		Ptr<TimeSeries> ts = RProto::convertBack<TimeSeries, FactoryCreationPolicy>(
+		Ptr<TimeSeries> ts = RProto::convertFromR<TimeSeries>(
 			Rcpp::List::create(
 				Rcpp::Named("values") = ts_m
-			),
-			"TimeSeries"
+			)
 		);
 		MatchingPursuit::MPLReturn ret = MatchingPursuit::run(ts.ref(), 0);
 
@@ -46,11 +45,10 @@ public:
 		);
 	}
 	void setFilter(const Rcpp::NumericMatrix m) {
-		Ptr<DoubleMatrix> dm = RProto::convertBack<DoubleMatrix, FactoryCreationPolicy>(
+		Ptr<DoubleMatrix> dm = RProto::convertFromR<DoubleMatrix>(
 			Rcpp::List::create(
 				Rcpp::Named("values") = m
-			),
-			"DoubleMatrix"
+			)
 		);
 		MatchingPursuit::setFilter(
 			*dm
@@ -58,7 +56,7 @@ public:
 	}
 
 	void setConf(const Rcpp::List conf) {
-		Ptr<MatchingPursuitConfig> in_c = RProto::convertBack<MatchingPursuitConfig, FactoryCreationPolicy>(conf, "MatchingPursuitConfig");
+		Ptr<MatchingPursuitConfig> in_c = RProto::convertFromR<MatchingPursuitConfig>(conf);
 		MatchingPursuit::c = in_c.ref();
 	}
 
@@ -67,7 +65,7 @@ public:
 	}
 
 	Rcpp::NumericVector restore(const Rcpp::List matches_l) {
-		vector<FilterMatch> matches = RProto::convertBackFilterMatches(matches_l);
+		vector<FilterMatch> matches = RProto::convertFromRFilterMatches(matches_l);
 		return Rcpp::wrap(MatchingPursuit::restore(matches));
 	}
 	void print() {

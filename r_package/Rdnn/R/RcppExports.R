@@ -5,11 +5,15 @@ setVerboseLevel <- function(level) {
     invisible(.Call('Rdnn_setVerboseLevel', PACKAGE = 'Rdnn', level))
 }
 
-dnnCleanHeap <- function() {
+dnn.clean.heap <- function() {
     invisible(.Call('Rdnn_dnnCleanHeap', PACKAGE = 'Rdnn'))
 }
 
-chopTimeSeries <- function(l) {
+chop.time.series <- function(l) {
     .Call('Rdnn_chopTimeSeries', PACKAGE = 'Rdnn', l)
+}
+
+chop.spikes.list <- function(l) {
+    .Call('Rdnn_chopSpikesList', PACKAGE = 'Rdnn', l)
 }
 

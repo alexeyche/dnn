@@ -61,7 +61,6 @@ public:
 
             if((obj.size() == 1)&&(simplify)) {
                 values = convertToR(obj[0]);
-                values.attr("class") = obj[0]->name();
                 obj[0].destroy();
             } else {
                 if(obj[0]->name() == "FilterMatch") {
@@ -71,7 +70,6 @@ public:
                     for(auto &o: obj) {
                         Rcpp::List l = convertToR(o);
                         if(l.size()>0) {
-                            l.attr("class") = o->name();
                             ret.push_back(l);
                         }
                         o.destroy();
@@ -82,8 +80,8 @@ public:
         }
         return values;
     }
-    void write(Rcpp::List &o, const string& name) {
-        Ptr<SerializableBase> b = convertBack<FactoryCreationPolicy>(o, name);
+    void write(Rcpp::List &o) {
+        Ptr<SerializableBase> b = convertFromR<SerializableBase>(o);
         ofstream f(protofile);
         Stream str(f, Stream::Binary);
         str.write(b);
@@ -109,8 +107,8 @@ public:
     }
 
     static SEXP convertToR(Ptr<SerializableBase> o) {
+        Rcpp::List out;
         if(o->name() == "Statistics") {
-            Rcpp::List out;
             Ptr<Statistics> od = o.as<Statistics>();
             if(!od) { ERR("Can't cast"); }
 
@@ -118,7 +116,6 @@ public:
             for(auto &name: info.stat_names) {
                 out[name] = Rcpp::wrap(od->getStats()[name].values);
             }
-            return out;
         }
         if(o->name() == "Subsequence") {
             Ptr<Subsequence> sub = o.as<Subsequence>();
@@ -136,7 +133,7 @@ public:
                     ts_vals(i, j) = od->data[i].values[j];
                 }
             }
-            return Rcpp::List::create(
+            out = Rcpp::List::create(
                   Rcpp::Named("values") = ts_vals
                 , Rcpp::Named("ts_info") = Rcpp::List::create(
                       Rcpp::Named("labels_ids") = Rcpp::wrap(od->info.labels_ids)
@@ -153,7 +150,7 @@ public:
             for(auto &d : od->data) {
                 ts_vals.push_back(d.values);
             }
-            return Rcpp::List::create(
+            out = Rcpp::List::create(
                   Rcpp::Named("values") = Rcpp::wrap(ts_vals)
                 , Rcpp::Named("ts_info") = Rcpp::List::create(
                       Rcpp::Named("labels_ids") = Rcpp::wrap(od->info.labels_ids)
@@ -170,7 +167,7 @@ public:
             for(auto &seq : od->seq) {
                 sp.push_back(seq.values);
             }
-            return Rcpp::List::create(
+            out = Rcpp::List::create(
                   Rcpp::Named("values") = Rcpp::wrap(sp)
                 , Rcpp::Named("ts_info") = Rcpp::List::create(
                       Rcpp::Named("labels_ids") = Rcpp::wrap(od->ts_info.labels_ids)
@@ -215,7 +212,7 @@ public:
                 ids_pre.push_back(s.ref().idPre());
             }
 
-            return Rcpp::List::create(
+            out = Rcpp::List::create(
                   Rcpp::Named("xi") = nb->xi()
                 , Rcpp::Named("yi") = nb->yi()
                 , Rcpp::Named("axon_delay") = nb->axonDelay()
@@ -232,7 +229,7 @@ public:
             Ptr<MatchingPursuitConfig> m = o.as<MatchingPursuitConfig>();
             if(!m) { ERR("Can't cast"); }
 
-            return Rcpp::List::create(
+            out = Rcpp::List::create(
                 Rcpp::Named("threshold") = m->threshold,
                 Rcpp::Named("learn_iterations") = m->learn_iterations,
                 Rcpp::Named("jobs") = m->jobs,
@@ -250,25 +247,20 @@ public:
         if(o->name() == "FilterMatch") {
             Ptr<FilterMatch> m = o.as<FilterMatch>();
             if(!m) { ERR("Can't cast"); }
-            return Rcpp::List::create(
+            out = Rcpp::List::create(
                 Rcpp::Named("t") = m->t,
                 Rcpp::Named("fi") = m->fi,
                 Rcpp::Named("s") = m->s
             );
         }
-        return Rcpp::List();
+        out.attr("class") = o->name();
+
+        return out;
     }
 
-    template <typename T, typename CP>
-    static Ptr<T> convertBack(const Rcpp::List &list, const string &name) {
-        Ptr<SerializableBase> o = convertBack<CP>(list, name);
-        Ptr<T> oc = o.as<T>();
-        if(!oc) { ERR("Can't cast"); }
-        return oc;
-    }
-
-    template <typename CP>
-    static Ptr<SerializableBase> convertBack(const Rcpp::List &list, const string &name) {
+    template <typename T, typename CP = FactoryCreationPolicy>
+    static Ptr<T> convertFromR(const Rcpp::List &list) {
+        string name = list.attr("class");
         TimeSeriesInfo ts_info;
         if( (name == "TimeSeries") || (name == "SpikesList") ) {
             if(list.containsElementNamed("ts_info")) {
@@ -298,7 +290,7 @@ public:
             }
 
             ts->info = ts_info;
-            return ts.as<SerializableBase>();
+            return ts.as<T>();
         }
         if(name == "SpikesList") {
             Rcpp::List spikes = list["values"];
@@ -310,7 +302,7 @@ public:
                 sl->seq.push_back(sp_seq);
             }
             sl->ts_info = ts_info;
-            return sl.as<SerializableBase>();
+            return sl.as<T>();
         }
         if(name == "DoubleMatrix") {
             Rcpp::NumericMatrix m = list[0];
@@ -321,7 +313,7 @@ public:
                     r->setElement(i,j, m(i,j));
                 }
             }
-            return r.as<SerializableBase>();
+            return r.as<T>();
         }
         if(name == "MatchingPursuitConfig") {
             Ptr<MatchingPursuitConfig> c = Factory::inst().createObject<MatchingPursuitConfig>();
@@ -338,7 +330,7 @@ public:
             if(list.containsElementNamed("seed")) c->seed = list["seed"];
             if(list.containsElementNamed("noise_sd")) c->noise_sd = list["noise_sd"];
 
-            return c.as<SerializableBase>();
+            return c.as<T>();
         }
         if(name == "FilterMatch") {
             Ptr<FilterMatch> m = Factory::inst().createObject<FilterMatch>();
@@ -346,14 +338,14 @@ public:
             m->t = list["t"];
             m->s = list["s"];
 
-            return m.as<SerializableBase>();
+            return m.as<T>();
         }
         ERR("Can't convert " << name );
     }
 
 
 
-    static vector<FilterMatch> convertBackFilterMatches(const Rcpp::List &matches_l) {
+    static vector<FilterMatch> convertFromRFilterMatches(const Rcpp::List &matches_l) {
         vector<FilterMatch> matches;
         Rcpp::NumericVector t = matches_l["t"];
         Rcpp::NumericVector s = matches_l["s"];

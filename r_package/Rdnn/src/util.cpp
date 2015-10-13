@@ -28,24 +28,42 @@ void setVerboseLevel(int level) {
 }
 
 
-// [[Rcpp::export]]
+// [[Rcpp::export(name = "dnn.clean.heap")]]
 void dnnCleanHeap() {
     Factory::inst().cleanHeap();
 }
 
 
-// [[Rcpp::export]]
+// [[Rcpp::export(name = "chop.time.series")]]
 Rcpp::List chopTimeSeries(Rcpp::List l) {
-	Ptr<TimeSeries> ts = RProto::convertBack<TimeSeries, DynamicCreationPolicy>(l, "TimeSeries");
+	Ptr<TimeSeries> ts = RProto::convertFromR<TimeSeries, DynamicCreationPolicy>(l);
 	vector<Ptr<TimeSeries>> chopped = ts->chop<DynamicCreationPolicy>();
 	Rcpp::List out;
 
 	for(auto &ts_ch: chopped) {
 		SEXP ts_ch_r = RProto::convertToR(ts_ch.as<SerializableBase>());
 		out.push_back(ts_ch_r);
+
 		ts_ch.destroy();
 	}
 	ts.destroy();
 
 	return out;
+}
+
+// [[Rcpp::export(name = "chop.spikes.list")]]
+Rcpp::List chopSpikesList(Rcpp::List l) {
+    Ptr<SpikesList> sl = RProto::convertFromR<SpikesList, DynamicCreationPolicy>(l);
+    vector<Ptr<SpikesList>> chopped = sl->chop<DynamicCreationPolicy>();
+    Rcpp::List out;
+
+    for(auto &sl_ch: chopped) {
+        SEXP sl_ch_r = RProto::convertToR(sl_ch.as<SerializableBase>());
+        out.push_back(sl_ch_r);
+
+        sl_ch.destroy();
+    }
+    sl.destroy();
+
+    return out;
 }

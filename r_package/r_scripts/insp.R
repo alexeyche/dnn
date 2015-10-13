@@ -188,10 +188,52 @@ if(EVAL) {
             write(paste("Eval debug pic filename: ", eval_debug_pic), stderr())
             pic_files = c(pic_files, eval_debug_pic)
         }
+        par(mfrow=c(1,1))
     } else {
         c(M, N, A) := KFD(K, only_scatter=TRUE)        
     }
     cat(tr(M)/tr(N), "\n")    
+    spike_patterns = chop.spikes.list(spikes)
+    labs = sapply(spike_patterns, function(x) x$ts_info$unique_labels)
+    ulabs = unique(labs)
+    
+    plot(spike_patterns[[2]])
+    
+    con_types = sapply(const$sim_configuration$conn_map, function(x) sapply(x, function(y) y$type))
+    dog_idx = grep("DifferenceOfGaussians", con_types)
+    if(length(dog_idx) > 0) {
+        dim = unique(sapply(const$connections[con_types[dog_idx] ], function(x) x$dimension))
+        if(length(dim)>1) {
+            warning("Got a lot of DifferenceOfGaussians dimensions in setup. Choosing first for evaluating")
+            dim = dim[1]
+        }        
+    }
+    if(dim == 1) {
+        N = length(spike_patterns[[1]]$values)
+        vv = vector("list", length(ulabs))
+        for(el_i in 1:length(labs)) {
+            l = labs[el_i]
+            li = which(l == ulabs)
+            vv[[li]] = rbind(
+                vv[[li]],
+                sapply(spike_patterns[[el_i]]$values, length)/spike_patterns[[el_i]]$ts_info$labels_timeline[1]
+            )
+        }
+        vm = sapply(vv, colMeans)
+        eval_ov_debug_pic = sprintf("%s/5_%s", tmp_d, pfx_f("eval_overlap.png"))
+        
+        if(SAVE_PIC_IN_FILES) png(eval_ov_debug_pic, width=1024, height=768)
+        
+        plot(vm[,1], type="l")
+        for(li in 2:ncol(vm)) {
+            lines(vm[,li], col=li)
+        }
+        if(SAVE_PIC_IN_FILES) {
+            dev.off()
+            write(paste("Eval overlap debug pic filename: ", eval_ov_debug_pic), stderr())
+            pic_files = c(pic_files, eval_ov_debug_pic)
+        }
+    }
     
 }
 

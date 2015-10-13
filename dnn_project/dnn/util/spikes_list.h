@@ -97,6 +97,38 @@ struct SpikesList : public SerializableBase {
 		seq[ni].values.push_back(t);
 	}
 
+	template <typename CP = FactoryCreationPolicy>
+	vector<Ptr<SpikesList>> chop()  {
+	    vector<Ptr<SpikesList>> sl_chopped;
+	    assert(ts_info.labels_timeline.size() == ts_info.labels_ids.size());
+
+	    vector<size_t> indices(size(), 0);
+
+	    size_t last_label = 0;
+	    for(size_t li=0; li<ts_info.labels_timeline.size(); ++li) {
+	        const size_t &end_of_label = ts_info.labels_timeline[li];
+	        const size_t &label_id = ts_info.labels_ids[li];
+	        const string &label = ts_info.unique_labels[label_id];
+
+
+	        Ptr<SpikesList> labeled_sl(CP::template create<SpikesList>());
+	        for(size_t di=0; di<size(); ++di) {
+	        	while( (indices[di] < seq[di].values.size()) && (seq[di].values[indices[di]] < end_of_label) ) {
+	                labeled_sl->addSpike(di, seq[di].values[indices[di]] - static_cast<double>(last_label));
+	                indices[di]++;
+	        	}
+	        }
+	        while(size() > labeled_sl->size()) {
+	        	labeled_sl->seq.emplace_back();
+	        }
+	        labeled_sl->ts_info.addLabelAtPos(label, end_of_label - last_label);
+	        sl_chopped.push_back(labeled_sl);
+	        last_label = end_of_label;
+	    }
+	    L_DEBUG << "SpikesList, Successfully chopped spike lists in " << sl_chopped.size() << " chunks";
+	    return sl_chopped;
+	}
+
 	TimeSeriesInfo ts_info;
 	vector<SpikesSequence> seq;
 };

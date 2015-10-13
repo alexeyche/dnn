@@ -18,7 +18,7 @@ public:
 	Ptr(T *ptr_to_set) : _ptr(ptr_to_set), owner(false) {
 	}
 	~Ptr() {
-		destroy();
+		// destroy();
 		// if(owner && _ptr) {
 		// 	L_DEBUG << "Found object is not destroyed\n";
 		// 	printBackTrace();
@@ -78,7 +78,6 @@ public:
 
 	void destroy() {
 		if(isSet() && owner) {
-			// printBackTrace();
 			delete _ptr;
 			_ptr = nullptr;
 		}

@@ -35,9 +35,8 @@ struct ExpThresholdC : public Serializable<Protos::ExpThresholdC> {
 
 class ExpThreshold : public ActFunction<ExpThresholdC> {
 public:
-    const string name() const {
-        return "ExpThreshold";
-    }
+    const string name() const { return "ExpThreshold"; }
+
     double prob(const double &u) {
         double p = (c.p_rest + c.amp * fastlog(1.0 + fastexp( c.beta*(u - c.threshold) )))/1000.0;
         if(p>1.0) return 1.0;

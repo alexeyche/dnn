@@ -36,10 +36,10 @@ public:
 
         SEXP values = data["values"];
         if(Rf_isMatrix(values)) {
-        	stack.push( RProto::convertBack<FactoryCreationPolicy>(data, "TimeSeries") );
+        	stack.push(RProto::convertFromR<TimeSeries>(data));
         } else {
         	try {
-        		Ptr<SpikesList> sp_l = RProto::convertBack<SpikesList, FactoryCreationPolicy>(data, "SpikesList");
+        		Ptr<SpikesList> sp_l = RProto::convertFromR<SpikesList>(data);
             	stack.push(sp_l->convertToBinaryTimeSeries(1.0));
         	} catch (...) {
         		ERR("Can't deduce type of input data\n");

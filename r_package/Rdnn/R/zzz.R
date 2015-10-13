@@ -32,7 +32,6 @@ proto.read = function(f) {
     return(Module("dnnMod")$RProto$new(f)$read())
 }
 
-dnn.clean.heap = dnnCleanHeap
 
 proto.write = function(l, f) {
     f = path.expand(f)
