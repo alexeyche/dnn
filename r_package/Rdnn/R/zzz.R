@@ -35,7 +35,7 @@ proto.read = function(f) {
 
 proto.write = function(l, f) {
     f = path.expand(f)
-    return(Module("dnnMod")$RProto$new(f)$write(l, class(l)))
+    return(Module("dnnMod")$RProto$new(f)$write(l))
 }
 
 

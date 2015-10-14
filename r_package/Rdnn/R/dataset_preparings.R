@@ -1,5 +1,13 @@
 
 
+# sample_size = 60
+#  data_name = UCR.SYNTH
+#  sel = NULL
+#  gap_between_patterns = 0
+#  dt = 1.0
+#  save_on_disk=TRUE
+#  use_cache=TRUE
+
 prepare.ucr.data = function(
     sample_size = 60
   , data_name = UCR.SYNTH
@@ -57,7 +65,7 @@ prepare.ucr.data = function(
                 idx = idx + 1
             }
             ts_info$labels_ids = as.numeric(sapply(labels, function(l) l_ids[[l]]))
-            data_out[[data_part]] = time.series(values=ts_data, ts_info=ts_info)
+            data_out[[data_part]] = time.series(values=matrix(ts_data, nrow=1, ncol=length(ts_data)), ts_info=ts_info)
             if(save_on_disk) {
                 cats("Saving %s in %s\n", data_part, fname)
                 proto.write(data_out[[data_part]], fname)
@@ -118,8 +126,12 @@ empty.ts = function() {
     time.series(values=c(), ts_info=list(labels_ids=NULL, unique_labels=NULL, labels_timeline=NULL))
 }
 
-empty.spikes = function() {
-    spikes.list(values=c(), ts_info=list(labels_ids=NULL, unique_labels=NULL, labels_timeline=NULL))
+empty.spikes = function(N=NULL) {
+    l = list()
+    if(!is.null(N)) {
+        l = lapply(1:N, function(i) numeric(0))
+    }
+    spikes.list(values=l, ts_info=list(labels_ids=NULL, unique_labels=NULL, labels_timeline=NULL))
 }
 
 cat.ts = function(...) {
@@ -164,3 +176,40 @@ split.spikes = function(sp, number_to_split) {
     return(list(left_sp, right_sp))    
 }
 
+
+intercept.data.to.spikes = function(ts, N, dim_idx, dt=1, gap_between_patterns=0) {
+    data = ts$values[dim_idx, ]
+    
+    min_val = min(data)
+    max_val = max(data)
+    
+    intercept = seq(min_val, max_val, length.out=N)
+    
+    sp = empty.spikes(N)
+    
+    src_lab_times = ts$ts_info$labels_timeline
+    
+    time = 0
+    i = 0
+    
+    for(x in data) {
+        d = abs(x - intercept)
+        ni = which(d == min(d))
+        sp$values[[ni]] = c(sp$values[[ni]], time)
+        
+        if((i == head(src_lab_times, n=1))&&(length(src_lab_times)>1)) {
+            time = time + gap_between_patterns            
+            src_lab_times = src_lab_times[-1]
+        } else {
+            time = time + dt            
+        }   
+        i = i + 1
+    }
+    
+    lab_times = ts$ts_info$labels_timeline
+    lab_times = lab_times + gap_between_patterns * 1:length(lab_times)
+    lab_times = lab_times * dt
+    sp$ts_info = ts$ts_info
+    sp$ts_info$labels_timeline = lab_times
+    return(sp)
+}

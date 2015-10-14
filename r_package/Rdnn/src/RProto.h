@@ -80,11 +80,13 @@ public:
         }
         return values;
     }
-    void write(Rcpp::List &o) {
-        Ptr<SerializableBase> b = convertFromR<SerializableBase>(o);
+
+    void write(SEXP o) {
+        Ptr<SerializableBase> b = convertFromR<SerializableBase, DynamicCreationPolicy>(o);
         ofstream f(protofile);
         Stream str(f, Stream::Binary);
         str.write(b);
+        b.destroy();
     }
 
     static Rcpp::List convertFilterMatches(vector<Ptr<SerializableBase>> &obj) {
