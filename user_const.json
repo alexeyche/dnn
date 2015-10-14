@@ -88,7 +88,7 @@
             "tau_mean" : 60000.0,
             "target_rate" : 5.0,
             "target_rate_factor" : 0.0,
-            "weight_decay" : 0.0,
+            "weight_decay" : 1.0,
             "tau_hebb" : 0.0,
             "learning_rate" : "globals/learning_rate"
         }
@@ -148,7 +148,14 @@
                 "neuron" : "SRMNeuron",
                 "act_function" : "ExpThreshold",
                 "learning_rule" : "OptimalStdp",
-                "weight_normalization" : "MinMax"
+                "weight_normalization" : "SlidingLtd"
+            },
+            {
+                "size" : 100,
+                "neuron" : "SRMNeuron",
+                "act_function" : "ExpThreshold",
+                "learning_rule" : "OptimalStdp",
+                "weight_normalization" : "SlidingLtd"
             }
         ],
         "conn_map" : {
@@ -160,6 +167,21 @@
                 }
             ],
             "1->1" : [
+                {
+                    "type" : "DifferenceOfGaussians",
+                    "start_weight" : 0.1,
+                    "synapse" : "StaticSynapse",
+                    "inh_synapse" : "StaticSynapse_inh"
+                }
+            ],
+            "1->2" : [
+                { 
+                    "type" : "Stochastic", 
+                    "start_weight" : 0.1,
+                    "synapse" : "StaticSynapse"
+                }
+            ],
+            "2->2" : [
                 {
                     "type" : "DifferenceOfGaussians",
                     "start_weight" : 0.1,

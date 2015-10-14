@@ -95,7 +95,8 @@ class DnnSim(object):
 
         wd_const = pj(self.working_dir, os.path.basename(self.const))
         if wd_const != self.const:
-            shutil.copy(self.const, self.working_dir)
+            if not os.path.exists(wd_const):
+                shutil.copy(self.const, self.working_dir)
             self.const = wd_const
 
 
