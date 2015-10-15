@@ -47,6 +47,8 @@ def scale_to(x, min, max, a, b):
 
 def set_value_in_path(d, path, v):
     p = path[0]
+    if d.get(p) is None:
+        raise Exception("Can't find key {} in constants".format(p))
     if isinstance(d[p], dict):
         return set_value_in_path(d[p], path[1:], v)
     else:
@@ -82,11 +84,12 @@ def runner(x, vars, working_dir, wait=False, id=None, min=0.0, max=1.0):
 
     make_dir(working_dir)
     const_json = pj(working_dir, os.path.basename(DnnSim.CONST_JSON))
+    specs = json.load(open(VAR_SPECS_FILE))
     with open(const_json, "w") as fptr:
         fptr.write(
             proc_vars(
                 const = json.load(open(DnnSim.CONST_JSON), object_pairs_hook=OrderedDict)
-              , var_specs = json.load(open(VAR_SPECS_FILE))
+              , var_specs = specs
               , vars = dict(zip(vars, x))
               , min = min
               , max = max
@@ -102,6 +105,12 @@ def runner(x, vars, working_dir, wait=False, id=None, min=0.0, max=1.0):
       , "--slave"
       , "--jobs", "1"
     ] + GlobalConfig.AddOptions
+    for v in vars:
+        print v
+        path, range = specs[v]
+        if "prepare_data" in path:
+            cmd += ["--prepare-data"]
+            break
     logging.info(" ".join(cmd))
     p = sub.Popen(cmd, stdout=sub.PIPE, stderr=sub.PIPE)
     if wait:

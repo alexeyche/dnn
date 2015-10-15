@@ -23,4 +23,8 @@
         ["learning_rules", "OptimalStdp", "tau_hebb"]
       , [0.0, 50.0]
     ]
+  , "prepare_data_dt" : [
+        ["prepare_data", "dt"]
+      , [1.0, 100.0]
+    ]
 }

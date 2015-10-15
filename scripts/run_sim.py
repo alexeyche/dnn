@@ -6,23 +6,21 @@ import os
 import argparse
 import multiprocessing
 import logging
-import subprocess as sub
 import shutil
 from os.path import join as pj
+import json
 
 import env
 
 from util import add_coloring_to_emit_ansi
 from util import pushd
+from util import run_proc
 
 from env import runs_dir
 
-def opt_to_str(o):
-    return o.lstrip("-").replace("-","_")
-
-def str_to_opt(s):
-    return "--" + s.replace("_","-")
-
+from prepare_data import prepare_data
+from util import str_to_opt
+from util import opt_to_str
 
 THIS_FILE = os.path.realpath(__file__)
 
@@ -31,7 +29,7 @@ class DnnSim(object):
     EPOCHS = 1
     HOME = os.getenv("DNN_HOME", os.path.expanduser("~/dnn"))
     RUNS_DIR = pj(env.runs_dir, "sim")
-    CONST_JSON = pj(HOME, "user_const.json")
+    CONST_JSON = pj(HOME, "const.json")
     DNN_SIM_BIN = pj(HOME, "bin", "dnn_sim")
     INSP_SCRIPT = pj(HOME, "r_scripts", "insp.R")
 
@@ -48,6 +46,7 @@ class DnnSim(object):
         self.working_dir = self.dget(kwargs, "working_dir", None)
         self.evaluation = self.dget(kwargs, "evaluation", False)
         self.slave = self.dget(kwargs, "slave", False)
+        self.prepare_data = self.dget(kwargs, "prepare_data", False)
 
         logFormatter = logging.Formatter("%(asctime)s [%(levelname)s]  %(message)-100s")
         rootLogger = logging.getLogger()
@@ -155,38 +154,20 @@ class DnnSim(object):
         ]
         return { "cmd" : cmd, "env" : env }
 
-    def run_proc(self, **args):
-        env = os.environ
-        add_env = args.get("env", {})
-        env.update(add_env)
-        cmd = args.get("cmd", [])
-        if len(cmd) == 0:
-            raise Exception("Got null command")
-
-        if len(add_env) > 0:
-            logging.info("env: {}".format(add_env))
-        logging.info(" ".join(cmd))
-        p = sub.Popen(cmd, stdout=sub.PIPE, stderr=sub.PIPE, env=env)
-        stdout, stderr = p.communicate()
-        if p.returncode != 0:
-            logging.error("process failed:")
-            if stdout:
-                logging.error("\n\t"+stdout)
-            if stderr:
-                logging.error("\n\t"+stderr)
-            if self.slave:
-                print open(self.log_file).read()
-            sys.exit(-1)
-        return stdout
 
     def run(self):
+        if self.prepare_data:
+            prepare_data_conf = json.load(open(self.const)).get("prepare_data")
+            with pushd(self.working_dir):
+                opt, value = prepare_data(prepare_data_conf)
+            self.add_options[opt_to_str(opt)] = value
         for self.current_epoch in xrange(self.current_epoch, self.current_epoch+self.epochs):
             logging.info("Running epoch {}:".format(self.current_epoch))
-            self.run_proc(**self.construct_cmd())
+            run_proc(**self.construct_cmd())
             if self.inspection:
                 logging.info("inspecting ... ")
                 with pushd(self.working_dir):
-                    o = self.run_proc(**self.construct_inspect_cmd())
+                    o = run_proc(**self.construct_inspect_cmd())
                     if self.evaluation:
                         logging.info("Evaluation score: {}".format(o.strip()))
 
@@ -234,10 +215,6 @@ class DnnSim(object):
             i+=1
     
         return self.working_dir
-
-
-
-
     
 
 def main(argv):
@@ -288,6 +265,10 @@ def main(argv):
     parser.add_argument('--dnn-sim-bin', 
                         required=False,
                         help='Path to snn sim bin (default: $SCRIPT_DIR/../build/bin/%s)' % DnnSim.DNN_SIM_BIN)
+    parser.add_argument('-pd', 
+                        '--prepare-data',
+                        action='store_true',
+                        help='Run prepare data procedure')
     args, other = parser.parse_known_args(argv)
 
     if len(argv) == 0:
@@ -307,6 +288,7 @@ def main(argv):
         "inspection" : not args.no_insp,
         "evaluation" : args.evaluation,
         "slave" : args.slave,
+        "prepare_data" : args.prepare_data,
     }
     if len(other) % 2 != 0:
         raise Exception("Got not paired add options: {}".format(" ".join(other)))

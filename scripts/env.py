@@ -11,3 +11,4 @@ if DNN_HOME is None:
 
 
 runs_dir = pj(DNN_HOME, "runs")
+r_scripts_dir = pj(DNN_HOME, "r_scripts")

@@ -33,7 +33,7 @@ if(EP>=0) {
 }
 
 
-CONST_FNAME = convStr(Sys.getenv('CONST'), "user_const.json")
+CONST_FNAME = convStr(Sys.getenv('CONST'), "const.json")
 MODEL_FNAME = convStr(Sys.getenv('MODEL'), pfx_f("model.pb"))
 SPIKES_FNAME = convStr(Sys.getenv('SPIKES'), pfx_f("spikes.pb"))
 STAT_FNAME = convStr(Sys.getenv('STAT'), pfx_f("stat.pb"))
@@ -359,3 +359,7 @@ get_stat = function(epochs, stname, stat_id, f_template = "%s_stat.pb") {
 }
 #plotl(get_stat(1:10, "OptimalStdp_w_0", 1))
 
+annoying_file = file.path(getwd(), "Rplots.pdf")
+if(file.exists(annoying_file)) {
+    success = file.remove(annoying_file)
+}

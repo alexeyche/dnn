@@ -4,6 +4,8 @@ import logging
 import errno
 import shutil
 from contextlib import contextmanager
+import subprocess as sub
+import sys
 
 def make_dir(path, delete_if_exists=False):
     if delete_if_exists and os.path.exists(path):
@@ -59,5 +61,30 @@ def pushd(newDir):
     yield
     os.chdir(previousDir)
 
+
+def run_proc(cmd, env = {}):
+    osenv = os.environ
+    osenv.update(env)
+
+    if len(env) > 0:
+        logging.info("env: {}".format(env))
+    logging.info(" ".join(cmd))
+    p = sub.Popen(cmd, stdout=sub.PIPE, stderr=sub.PIPE, env=osenv)
+    stdout, stderr = p.communicate()
+    if p.returncode != 0:
+        logging.error("process failed:")
+        if stdout:
+            logging.error("\n\t"+stdout)
+        if stderr:
+            logging.error("\n\t"+stderr)
+        sys.exit(-1)
+    return stdout
+
+
+def opt_to_str(o):
+    return o.lstrip("-").replace("-","_")
+
+def str_to_opt(s):
+    return "--" + s.replace("_","-")
 
 

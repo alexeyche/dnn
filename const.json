@@ -1,6 +1,6 @@
 {
     "globals" : {
-        "learning_rate" : 0.005,
+        "learning_rate" : 0.0005,
         "mean_weight" : 0.2,
         "max_weight" : 1.0,
         "min_weight" : 0.0,
@@ -8,23 +8,18 @@
     },
     "inputs" : {
         "InputTimeSeries" : {
-            "dt" : "globals/dt"
-        },
-        "WhiteNoiseInput" : {
-            "mean" : 0.0,
-            "sd" : 1.0,
-            "T" : 10000.0
+            "dt" : 0.5
         }
     },
     "neurons" : {
         "SpikeSequenceNeuron" : {
-            "dt" : "globals/dt"
+            "dt" : 1.0
         },
         "LeakyIntegrateAndFire" : {
             "tau_m" : 5.0,
             "rest_pot" : 0.0,
             "tau_ref" : 2.0,
-            "noise" : 0.2
+            "noise" : 0.0
         },
         "AdaptIntegrateAndFire" : {
             "tau_m" : 5.0,
@@ -47,7 +42,7 @@
     },
     "act_functions" : {
         "Determ" : {
-            "threshold" : 1.0
+            "threshold" : 0.1
         },
         "ExpThreshold" : {
             "p_rest" : 0.1,
@@ -89,11 +84,11 @@
             "learning_rate" : "globals/learning_rate"
         },
         "OptimalStdp" : {
-            "tau_c" : 200.0,
-            "tau_mean" : 10000.0,
+            "tau_c" : 50.0,
+            "tau_mean" : 60000.0,
             "target_rate" : 5.0,
             "target_rate_factor" : 0.0,
-            "weight_decay" : 0.0,
+            "weight_decay" : 1.0,
             "tau_hebb" : 0.0,
             "learning_rate" : "globals/learning_rate"
         }
@@ -132,7 +127,7 @@
     },
     "connections" : {
         "Stochastic" : {
-            "prob" : 1.0
+            "prob" : 0.5
        },
        "DifferenceOfGaussians" : {
            "a" : 3.0,
@@ -140,21 +135,46 @@
            "r" : 3,
            "dimension" : 1,
            "apply_amplitude" : true
-       },
-       "IdsConnection" : {
-           "ids" : ["0->1", "1->0"]
        }
     },
     "sim_configuration" : {
-        "layers" : [],
-        "conn_map" : {},
+        "layers" : [
+            {
+                "size" : 100,
+                "neuron" : "SpikeSequenceNeuron"
+            },
+            {
+                "size" : 100,
+                "neuron" : "SRMNeuron",
+                "act_function" : "ExpThreshold",
+                "learning_rule" : "TripleStdp",
+                "weight_normalization" : "MinMax"
+            }
+        ],
+        "conn_map" : {
+            "0->1" : [
+                { 
+                    "type" : "Stochastic", 
+                    "start_weight" : 0.3,
+                    "synapse" : "StaticSynapse"
+                }
+            ],
+            "1->1" : [
+                {
+                    "type" : "DifferenceOfGaussians",
+                    "start_weight" : 0.1,
+                    "synapse" : "StaticSynapse",
+                    "inh_synapse" : "StaticSynapse_inh"
+                }
+            ]
+        },
         "reward_dynamics" : {
             "tau_trace" : 100.0, 
             "tau_mean_trace" : 10000.0
         },
         "dt" : 1.0,
         "seed" : -1,
-        "neurons_to_listen" : [],
+        "neurons_to_listen" : [100],
         "files" : {
             "InputTimeSeries" : {
                 "filename" : "@ts-input"
@@ -167,5 +187,10 @@
     "network_configuration" : {
         "input" : "@net-input",
         "output" : "@net-output"
+    },
+    "prepare_data" : {
+        "dt" : 1.0,
+        "dst_file" : "spike_input.pb",
+        "neurons" : 100
     }
 }

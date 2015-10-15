@@ -193,22 +193,21 @@ intercept.data.to.spikes = function(ts, N, dim_idx, dt=1, gap_between_patterns=0
     i = 0
     
     for(x in data) {
+        if((i == head(src_lab_times, n=1))&&(length(src_lab_times)>1)) {
+            time = time + gap_between_patterns            
+            src_lab_times = src_lab_times[-1]
+        }   
         d = abs(x - intercept)
         ni = which(d == min(d))
         sp$values[[ni]] = c(sp$values[[ni]], time)
         
-        if((i == head(src_lab_times, n=1))&&(length(src_lab_times)>1)) {
-            time = time + gap_between_patterns            
-            src_lab_times = src_lab_times[-1]
-        } else {
-            time = time + dt            
-        }   
+        time = time + dt        
         i = i + 1
     }
     
     lab_times = ts$ts_info$labels_timeline
-    lab_times = lab_times + gap_between_patterns * 1:length(lab_times)
     lab_times = lab_times * dt
+    lab_times = lab_times + gap_between_patterns * 1:length(lab_times)    
     sp$ts_info = ts$ts_info
     sp$ts_info$labels_timeline = lab_times
     return(sp)

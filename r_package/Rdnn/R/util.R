@@ -56,17 +56,18 @@ prast_mpl = function(spikes,T0=0, Tmax=Inf) {
     xyplot(y ~ x, list(x = x, y = y), xlim=c(T0, max(x)), cex=cex*pl_size,  col = "black")
 }
 
-plot_rastl <- function(raster, lab="",T0=0, Tmax=Inf, i=-1, plen=-1) {
-    if((i>0)&&(plen>0)) {
-        T0=plen*(i-1)
-        Tmax=plen*i
+plot_rastl <- function(spikes_list, i=NULL, T0=0, Tmax=Inf, xlim=NULL, ...) {
+    if(!is.null(xlim)) {
+        T0 = xlim[1]
+        Tmax = xlim[2]
     }
-    if( "t" %in% names(raster)) {
-        return(prast_mpl(raster, T0, Tmax))
+    if(!is.null(i)) {
+        if(i > 1) {
+          T0=spikes_list$ts_info$labels_timeline[i-1]
+        }
+        Tmax = spikes_list$ts_info$labels_timeline[i]        
     }
-    if("values" %in% names(raster)) {
-        raster = raster$values
-    }
+    raster = spikes_list$values
     
     x <- c()
     y <- c()
@@ -80,7 +81,7 @@ plot_rastl <- function(raster, lab="",T0=0, Tmax=Inf, i=-1, plen=-1) {
     if(length(x) == 0) {
       stop("Got empty raster plot")
     }
-    return(xyplot(y~x,list(x=x, y=y), main=lab, xlim=c(T0, max(x)), col="black"))
+    return(xyplot(y~x,list(x=x, y=y), main=lab, xlim=c(T0, Tmax), col="black", ...))
 }
 
 prast = plot_rastl
@@ -175,6 +176,45 @@ interpolate_ts = function(ts, interpolate_size) {
 cats = function(s, ...) {
     sf = sprintf(s, ...)
     cat(sf)
+}
+
+
+parse.options = function(args, opts) {
+    usage = function() {
+        cat("Available options: \n")
+        for(opt in names(opts)) {
+            o = opts[[opt]]
+            cats("\t%15.15s    %s, default: %s\n", opt, o$description, o$default)
+        }
+        cats("\t%15.15s    for this message\n", "--help")
+        q()
+    }    
+    if((length(args) == 5)||(length(grep("--help", args))>0)) {
+        usage()
+    }
+    for(opt in names(opts)) {
+        o = opts[[opt]]
+        idx = grep(opt, args)
+        if(length(idx)>0) {                        
+            if(length(args)<(idx+1)) {
+                cats("Can't find argument for %s\n", opt)
+                usage()
+            }
+            v = args[idx+1]
+            if("process" %in% names(o)) {
+                v = o$process(v)
+            }
+            opts[[opt]]$value = v
+        } else {
+            if("default" %in% names(o)) {
+                opts[[opt]]$value = o$default    
+            } else {
+                cats("Can't find value for %s. It hasn't any defaults", opt)
+                usage()                
+            }        
+        }
+    }
+    return(lapply(opts, function(x) x$value))
 }
 
 
