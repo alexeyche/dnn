@@ -136,8 +136,9 @@ class State(object):
     def __init__(self, seed):
         self.vals = []
         self.seed = seed
-    def add_val(self, id, vars, value):
-        self.vals.append( (id, vars, value) )
+
+    def add_val(self, X, tells):
+        self.vals.append( (X, tells) )
 
     def dump(self, wd):
         pickle.dump(self, open(pj(wd, "state.p"), "wb"))
@@ -213,10 +214,11 @@ class CmaEs(Algo):
                     break                        
                 else:
                     logging.warning("incomprehensible answer")
-        state.dump(wd)
 
         make_dir(wd)
-        rng = np.random.RandomState(self.seed)
+        state.dump(wd)
+
+        rng = np.random.RandomState(state.seed)
         start_vals = rng.random_sample(len(vars))
 
 
@@ -229,10 +231,13 @@ class CmaEs(Algo):
               , self.max_bound 
              ], 
               'popsize' : self.popsize 
-            , 'seed' : self.seed
+            , 'seed' : state.seed
           }
         )
-        id = 0        
+        for X, tells in state.vals:
+            X = es.ask()
+            es.tell(X, tells)
+        id = len(state.vals)
         while not es.stop():
             X = es.ask()
             tells = []
@@ -245,11 +250,10 @@ class CmaEs(Algo):
                     self.wait_pool(pool, tells)
                 id+=1
                 Xw = Xw[1:]
-            es.tell(X, [ out for id, out in sorted(tells, key=lambda x: x[0]) ])
+            tells = [ out for id, out in sorted(tells, key=lambda x: x[0]) ]
+            es.tell(X, tells)
             es.disp()
-            tells = [ (id, out) for id, out in sorted(tells, key=lambda x: x[0]) ]
-            for xi, x in enumerate(X):
-                state.add_val(tells[xi][0], x, tells[xi][1])
+            state.add_val(X, tells)
             state.dump(wd)
 
 ALGS = dict([(c.__name__, c) for c in Algo.__subclasses__()])
