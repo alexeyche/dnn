@@ -96,7 +96,7 @@ if(file.exists(SPIKES_FNAME)) {
     
     spikes_pic = sprintf("%s/1_%s", tmp_d, pfx_f("spikes.png"))
     if(SAVE_PIC_IN_FILES) png(spikes_pic, width=SP_PIX0, height=SP_PIX1)
-    pspikes = prast(net, T0=T0,Tmax=T1)
+    pspikes = plot(spikes, T0=T0,Tmax=T1)
     
     print(pspikes)
     
@@ -242,7 +242,7 @@ if(EVAL) {
         }
     }
     metric = sum(Kc)/(nrow(Kc)*nrow(Kc) - nrow(Kc))
-    cat(sprintf("%1.10f", metric), "\n")
+    cat(sprintf("%1.10f", 1-metric), "\n")
     
     
     eval_ov_debug_pic = sprintf("%s/5_%s", tmp_d, pfx_f("eval_overlap.png"))

@@ -16,6 +16,9 @@ import uuid
 import time
 from collections import OrderedDict
 import multiprocessing
+import pickle
+import random
+import shutil
 
 from util import make_dir
 from util import parse_attrs
@@ -37,7 +40,7 @@ class GlobalConfig(object):
     Epochs = 10
     AddOptions = []
     Jobs = multiprocessing.cpu_count()/2
-
+    BadValue = 1.0
 VAR_SPECS_FILE = pj(os.path.realpath(os.path.dirname(__file__)), "var_specs.json")
 RUN_SIM_PY = pj(os.path.realpath(os.path.dirname(__file__)), "run_sim.py")
 
@@ -47,13 +50,25 @@ def scale_to(x, min, max, a, b):
 
 def set_value_in_path(d, path, v):
     p = path[0]
-    if d.get(p) is None:
-        raise Exception("Can't find key {} in constants".format(p))
-    if isinstance(d[p], dict):
+    if isinstance(d, dict):
+        if d.get(p) is None:
+            raise Exception("Can't find key {} in constants".format(p))
+    elif isinstance(d, list):
+        if len(d)<=p:
+            raise Exception("Can't find key {} in constants".format(p))
+    else:
+        raise Exception("Got strange type in constants: {}".format(type(d)))
+    if isinstance(d[p], dict) or isinstance(d[p], list):
         return set_value_in_path(d[p], path[1:], v)
     else:
         d[p] = v
 
+
+def propagate_deps(const):
+    weights = [ v["start_weight"]  for it in const["sim_configuration"]["conn_map"].values() for v in it ]
+    mean_start_weight = sum(weights)/len(weights)
+    const["globals"]["max_weight"] = 5 * mean_start_weight
+    const["globals"]["mean_weight"] = mean_start_weight
 
 def proc_vars(const, var_specs, vars, min=0.0, max=1.0):
     for k, v in vars.iteritems():
@@ -62,6 +77,7 @@ def proc_vars(const, var_specs, vars, min=0.0, max=1.0):
         path, (a, b) = var_specs[k]
         new_v = scale_to(v, min, max, a, b)
         set_value_in_path(const, path, new_v)
+    propagate_deps(const)
     return json.dumps(const, indent=2)
 
 
@@ -74,7 +90,7 @@ def communicate(p):
             logging.error("\n\t"+stdout)
         if stderr:
             logging.error("\n\t"+stderr)
-        sys.exit(-1)
+        return GlobalConfig.BadValue
     return float(stdout.strip())
 
 def runner(x, vars, working_dir, wait=False, id=None, min=0.0, max=1.0):
@@ -95,7 +111,6 @@ def runner(x, vars, working_dir, wait=False, id=None, min=0.0, max=1.0):
               , max = max
             )
         )
-
     cmd = [
         RUN_SIM_PY
       , "--working-dir", working_dir
@@ -117,7 +132,20 @@ def runner(x, vars, working_dir, wait=False, id=None, min=0.0, max=1.0):
         return communicate(p)
     return p
 
+class State(object):
+    def __init__(self, seed):
+        self.vals = []
+        self.seed = seed
 
+    def add_val(self, X, tells):
+        self.vals.append( (X, tells) )
+
+    def dump(self, wd):
+        pickle.dump(self, open(pj(wd, "state.p"), "wb"))
+   
+    @staticmethod
+    def read_from_dir(wd):
+        return pickle.load(open(pj(wd, "state.pb"), "rb"))
 
 class Algo(object):
     pass
@@ -157,7 +185,7 @@ class CmaEs(Algo):
         self.min_bound = attrs.get("min_bound", 0)
         self.popsize = attrs.get("popsize", 15)
         self.sigma = attrs.get("sigma", 2)
-        self.seed = attrs.get("seed", 1)
+        self.seed = attrs.get("seed", random.randint(0, 65535))
 
     @staticmethod
     def wait_pool(pool, ans_list):
@@ -171,9 +199,26 @@ class CmaEs(Algo):
 
     def __call__(self, vars, tag=None):
         tag = "cma_es" if tag is None else tag
-        wd = make_dir( pj(env.runs_dir, tag) )
-        
-        rng = np.random.RandomState(self.seed)
+        wd = pj(env.runs_dir, tag)
+        state = None
+        if os.path.exists(wd):
+            while True:
+                ans = raw_input("%s already exists. Continue learning? (y/n): " % (wd))
+                if ans in ["Y","y"]:
+                    state = State.read_from_dir(wd) 
+                    break
+                elif ans in ["N", "n"]:
+                    state = State(self.seed)
+                    shutil.rmtree(wd)
+                    make_dir(wd)
+                    break                        
+                else:
+                    logging.warning("incomprehensible answer")
+
+        make_dir(wd)
+        state.dump(wd)
+
+        rng = np.random.RandomState(state.seed)
         start_vals = rng.random_sample(len(vars))
 
 
@@ -186,9 +231,13 @@ class CmaEs(Algo):
               , self.max_bound 
              ], 
               'popsize' : self.popsize 
+            , 'seed' : state.seed
           }
         )
-        id = 0        
+        for X, tells in state.vals:
+            X = es.ask()
+            es.tell(X, tells)
+        id = len(state.vals)
         while not es.stop():
             X = es.ask()
             tells = []
@@ -201,9 +250,11 @@ class CmaEs(Algo):
                     self.wait_pool(pool, tells)
                 id+=1
                 Xw = Xw[1:]
-            es.tell(X, [ out for id, out in sorted(tells, key=lambda x: x[0]) ])
+            tells = [ out for id, out in sorted(tells, key=lambda x: x[0]) ]
+            es.tell(X, tells)
             es.disp()
-
+            state.add_val(X, tells)
+            state.dump(wd)
 
 ALGS = dict([(c.__name__, c) for c in Algo.__subclasses__()])
 
@@ -211,7 +262,7 @@ def main(argv):
     epi = ""
     epi += "List of variables to evolve:\n"
     for k, v in json.load(open(VAR_SPECS_FILE), object_pairs_hook=OrderedDict).iteritems():
-        epi += "\t\t{}\n\t\t\tpath: {}, range: {}-{}\n".format(k, "/".join(v[0]), v[1][0], v[1][1])
+        epi += "\t\t{}\n\t\t\tpath: {}, range: {}-{}\n".format(k, "/".join([ str(subv) for subv in v[0]]), v[1][0], v[1][1])
     epi += "List of algorithms:\n"
     for a in ALGS:
         epi += "\t{}\n".format(a)
