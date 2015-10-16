@@ -147,7 +147,7 @@
                 "size" : 100,
                 "neuron" : "SRMNeuron",
                 "act_function" : "ExpThreshold",
-                "learning_rule" : "TripleStdp",
+                "learning_rule" : "OptimalStdp",
                 "weight_normalization" : "MinMax"
             }
         ],

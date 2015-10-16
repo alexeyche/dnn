@@ -138,7 +138,7 @@ class DnnSim(object):
         for k, v in self.add_options.items():
             cmd += [str_to_opt(k), v]
 
-        return { "cmd" : cmd }
+        return { "cmd" : cmd, "print_root_log_on_fail" : self.slave }
     
     def construct_inspect_cmd(self):
         env = {
@@ -152,7 +152,7 @@ class DnnSim(object):
         cmd = [
               self.insp_script
         ]
-        return { "cmd" : cmd, "env" : env }
+        return { "cmd" : cmd, "env" : env, "print_root_log_on_fail" : self.slave }
 
 
     def run(self):

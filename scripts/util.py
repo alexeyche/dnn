@@ -62,7 +62,7 @@ def pushd(newDir):
     os.chdir(previousDir)
 
 
-def run_proc(cmd, env = {}):
+def run_proc(cmd, env = {}, print_root_log_on_fail=False):
     osenv = os.environ
     osenv.update(env)
 
@@ -77,6 +77,11 @@ def run_proc(cmd, env = {}):
             logging.error("\n\t"+stdout)
         if stderr:
             logging.error("\n\t"+stderr)
+        if print_root_log_on_fail:
+            root_log = logging.getLogger()
+            logs = [ h.stream.name for h in root_log.handlers if isinstance(h, logging.FileHandler) ]
+            assert(len(logs)>0)
+            print open(logs[0]).read()
         sys.exit(-1)
     return stdout
 
