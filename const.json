@@ -191,6 +191,7 @@
     "prepare_data" : {
         "dt" : 1.0,
         "dst_file" : "spike_input.pb",
-        "neurons" : 100
+        "neurons" : 100,
+        "prolongation" : 60000
     }
 }

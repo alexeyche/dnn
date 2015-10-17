@@ -81,6 +81,9 @@ plot_rastl <- function(spikes_list, i=NULL, T0=0, Tmax=Inf, xlim=NULL, ...) {
     if(length(x) == 0) {
       stop("Got empty raster plot")
     }
+    if(Tmax == Inf) {
+        Tmax = max(x)
+    }
     return(xyplot(y~x,list(x=x, y=y), xlim=c(T0, Tmax), col="black", ...))
 }
 

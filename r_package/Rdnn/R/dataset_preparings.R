@@ -141,6 +141,9 @@ cat.ts = function(...) {
     
     last_t = 0
     for(t in ts) {
+        if(class(t) != "TimeSeries") {
+            stop("Expceting TimeSeries as input")
+        }
         fts$values = c(fts$values, t$values)
         labs = t$ts_info$unique_labels[ t$ts_info$labels_ids+1 ]
         
@@ -150,6 +153,32 @@ cat.ts = function(...) {
         last_t = tail(t$ts_info$labels_timeline, 1)
     }
     return(fts)
+}
+
+cat.spikes = function(...) {
+    spikes = list(...)
+    
+    fsp = empty.spikes(length(spikes[[1]]$values))
+    fsp$ts_info$unique_labels = unique(c(sapply(spikes, function(x) x$ts_info$unique_labels)))
+    
+    last_t = 0
+    for(s in spikes) {
+        if(class(s) != "SpikesList") {
+            stop("Expecting SpikesList as input")
+        }
+        if(length(s$values) != length(fsp$values)) {
+            stop("Got inhomohenious spikes lists")
+        }
+        fsp$values = lapply(1:length(s$values), function(ni) c(fsp$values[[ni]],  s$values[[ni]] + last_t))
+        labs = s$ts_info$unique_labels[ s$ts_info$labels_ids+1 ]
+        
+        fsp$ts_info$labels_ids = c(fsp$ts_info$labels_ids, sapply(labs, function(l) which(l == fsp$ts_info$unique_labels)-1))
+        
+        fsp$ts_info$labels_timeline = c(fsp$ts_info$labels_timeline, s$ts_info$labels_timeline+last_t)
+        
+        last_t = tail(s$ts_info$labels_timeline, 1)
+    }
+    return(fsp)
 }
 
 split.spikes = function(sp, number_to_split) {

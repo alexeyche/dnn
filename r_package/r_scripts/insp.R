@@ -166,32 +166,32 @@ if(EVAL) {
         stop("Can't eval without spikes")        
     }
     
-    setVerboseLevel(0)
-    
-    spikes$values = spikes$values[lsize[1]+1:sum(lsize[-1])]
-    K = kernel.run(spikes, EVAL_PROC, EVAL_KERN, jobs=EVAL_JOBS)
-    if(EVAL_VERBOSE) {
-        c(y, M, N, A) := KFD(K)
-        
-        ans = K %*% y[, 1:2]
-        eval_debug_pic = sprintf("%s/4_%s", tmp_d, pfx_f("eval.png"))
-        if(SAVE_PIC_IN_FILES) png(eval_debug_pic, width=1024, height=768)
-        
-        par(mfrow=c(1,2))
-        
-        metrics_str = sprintf("%f, %f", tr(M)/tr(N), tr(A))
-        plot(Re(ans[,1]), col=as.integer(rownames(K)), main=metrics_str) 
-        plot(Re(ans), col=as.integer(rownames(K)))        
-        
-        if(SAVE_PIC_IN_FILES) {
-            dev.off()
-            write(paste("Eval debug pic filename: ", eval_debug_pic), stderr())
-            pic_files = c(pic_files, eval_debug_pic)
-        }
-        par(mfrow=c(1,1))
-    } else {
-        c(M, N, A) := KFD(K, only_scatter=TRUE)        
-    }
+#     setVerboseLevel(0)
+#     
+#     spikes$values = spikes$values[lsize[1]+1:sum(lsize[-1])]
+#     K = kernel.run(spikes, EVAL_PROC, EVAL_KERN, jobs=EVAL_JOBS)
+#     if(EVAL_VERBOSE) {
+#         c(y, M, N, A) := KFD(K)
+#         
+#         ans = K %*% y[, 1:2]
+#         eval_debug_pic = sprintf("%s/4_%s", tmp_d, pfx_f("eval.png"))
+#         if(SAVE_PIC_IN_FILES) png(eval_debug_pic, width=1024, height=768)
+#         
+#         par(mfrow=c(1,2))
+#         
+#         metrics_str = sprintf("%f, %f", tr(M)/tr(N), tr(A))
+#         plot(Re(ans[,1]), col=as.integer(rownames(K)), main=metrics_str) 
+#         plot(Re(ans), col=as.integer(rownames(K)))        
+#         
+#         if(SAVE_PIC_IN_FILES) {
+#             dev.off()
+#             write(paste("Eval debug pic filename: ", eval_debug_pic), stderr())
+#             pic_files = c(pic_files, eval_debug_pic)
+#         }
+#         par(mfrow=c(1,1))
+#     } else {
+#         c(M, N, A) := KFD(K, only_scatter=TRUE)        
+#     }
     #cat(tr(M)/tr(N), "\n")    
     spike_patterns = chop.spikes.list(spikes)
     labs = sapply(spike_patterns, function(x) x$ts_info$unique_labels)

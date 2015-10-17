@@ -121,7 +121,6 @@ def runner(x, vars, working_dir, wait=False, id=None, min=0.0, max=1.0):
       , "--jobs", "1"
     ] + GlobalConfig.AddOptions
     for v in vars:
-        print v
         path, range = specs[v]
         if "prepare_data" in path:
             cmd += ["--prepare-data"]

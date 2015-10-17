@@ -25,7 +25,7 @@
     ]
   , "prepare_data_dt" : [
         ["prepare_data", "dt"]
-      , [0.1, 10.0]
+      , [1.0, 20.0]
     ]
   , "layer_one_start_weight" : [
         ["sim_configuration", "conn_map", "0->1", 0, "start_weight"]
