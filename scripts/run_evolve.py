@@ -40,7 +40,7 @@ rootLogger.addHandler(consoleHandler)
 class GlobalConfig(object):
     Epochs = 10
     AddOptions = []
-    Jobs = 5
+    Jobs = 8
     BadValue = 1.0
     SimJobs = 1
 

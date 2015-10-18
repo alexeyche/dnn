@@ -11,6 +11,10 @@
         ["learning_rules", "OptimalStdp", "tau_c"]
       , [10.0, 400.0]
     ]
+  , "opt_stdp_tau_c2": [
+        ["learning_rules", "OptimalStdp_l2", "tau_c"]
+      , [10.0, 400.0]
+    ]
   , "opt_stdp_weight_decay": [
         ["learning_rules", "OptimalStdp", "weight_decay"]
       , [0.0, 2.0]
@@ -55,6 +59,18 @@
         ["act_functions", "ExpThreshold", "amp"]
       , [1.0, 20.0]
     ]
+  , "exp_threshold_beta2": [
+        ["act_functions", "ExpThreshold_l2", "beta"]
+      , [2.0, 10.0]
+    ]
+  , "exp_threshold_threshold2": [
+        ["act_functions", "ExpThreshold_l2", "threshold"]
+      , [0.01, 1.0]
+    ]
+  , "exp_threshold_amp2": [
+        ["act_functions", "ExpThreshold_l2", "amp"]
+      , [1.0, 20.0]
+    ]
   , "dog_a": [
         ["connections", "DifferenceOfGaussians", "a"]
       , [0.1, 10.0]
@@ -73,6 +89,14 @@
     ]
   , "inh_syn": [
         ["synapses", "StaticSynapse_inh", "psp_decay"]
+      , [1.0, 50.0]
+    ]
+  , "exc_syn2": [
+        ["synapses", "StaticSynapse_l2", "psp_decay"]
+      , [1.0, 50.0]
+    ]
+  , "inh_syn2": [
+        ["synapses", "StaticSynapse_inh_l2", "psp_decay"]
       , [1.0, 50.0]
     ]
 }

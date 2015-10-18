@@ -49,6 +49,12 @@
             "threshold" : 0.70,
             "beta" : 10.0,
             "amp"   : 20.0
+        },
+        "ExpThreshold_l2" : {
+            "p_rest" : 0.1,
+            "threshold" : 0.70,
+            "beta" : 10.0,
+            "amp"   : 20.0
         }
     },
     "synapses" : {
@@ -57,6 +63,14 @@
             "amp" : 1.0
         },
         "StaticSynapse_inh" : {
+            "psp_decay" : 10.0,
+            "amp" : -1.0
+        },
+        "StaticSynapse_l2" : {
+            "psp_decay" : 10.0,
+            "amp" : 1.0
+        },
+        "StaticSynapse_inh_l2" : {
             "psp_decay" : 10.0,
             "amp" : -1.0
         },
@@ -84,6 +98,15 @@
             "learning_rate" : "globals/learning_rate"
         },
         "OptimalStdp" : {
+            "tau_c" : 400.0,
+            "tau_mean" : 60000.0,
+            "target_rate" : 5.0,
+            "target_rate_factor" : 0.0,
+            "weight_decay" : 0.0,
+            "tau_hebb" : 0.0,
+            "learning_rate" : "globals/learning_rate"
+        },
+        "OptimalStdp_l2" : {
             "tau_c" : 400.0,
             "tau_mean" : 60000.0,
             "target_rate" : 5.0,
@@ -157,8 +180,8 @@
             {
                 "size" : 50,
                 "neuron" : "SRMNeuron",
-                "act_function" : "ExpThreshold",
-                "learning_rule" : "OptimalStdp",
+                "act_function" : "ExpThreshold_l2",
+                "learning_rule" : "OptimalStdp_l2",
                 "weight_normalization" : "MinMax"
             }
         ],
@@ -181,14 +204,14 @@
                 { 
                     "type" : "Stochastic", 
                     "start_weight" : 0.1, 
-                    "synapse" : "StaticSynapse"
+                    "synapse" : "StaticSynapse_l2"
                 }
             ],
             "2->2" : [
                 { 
                     "type" : "Stochastic", 
                     "start_weight" : 3.0, 
-                    "synapse" : "StaticSynapse_inh"
+                    "synapse" : "StaticSynapse_inh_l2"
                 }
             ]
         },
