@@ -96,7 +96,7 @@ seq.fun = log.seq
 data_conv = conv.gammatones(ts_whole, seq.fun(low_f, high_f, length.out=M), samp_rate)
 proto.write(data_conv, ts.path("ts_gammatones.pb"))
 
-spikes = run_neurons(data_conv, tau_m=5.0, tau_ref=2.0, thresh=0.05, dt=0.5)
+spikes = run_neurons(data_conv, tau_m=5.0, tau_ref=2.0, thresh=0.10, dt=0.5)
 
 c(train_spikes, test_spikes) := split.spikes(spikes, length(train_ts$ts_info$labels_ids))
 

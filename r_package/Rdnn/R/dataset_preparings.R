@@ -141,9 +141,8 @@ cat.ts = function(...) {
     
     last_t = 0
     for(t in ts) {
-        if(class(t) != "TimeSeries") {
-            stop("Expceting TimeSeries as input")
-        }
+        if(class(t) != "TimeSeries") stop("Expceting TimeSeries as input")
+        
         fts$values = c(fts$values, t$values)
         labs = t$ts_info$unique_labels[ t$ts_info$labels_ids+1 ]
         
@@ -158,25 +157,26 @@ cat.ts = function(...) {
 cat.spikes = function(...) {
     spikes = list(...)
     
+    if(class(spikes[[1]]) != "SpikesList") stop("Expecting SpikesList as input")
     fsp = empty.spikes(length(spikes[[1]]$values))
-    fsp$ts_info$unique_labels = unique(c(sapply(spikes, function(x) x$ts_info$unique_labels)))
+    fsp$ts_info$unique_labels = unique(c(unlist(sapply(spikes, function(x) x$ts_info$unique_labels))))
     
     last_t = 0
     for(s in spikes) {
-        if(class(s) != "SpikesList") {
-            stop("Expecting SpikesList as input")
-        }
-        if(length(s$values) != length(fsp$values)) {
-            stop("Got inhomohenious spikes lists")
-        }
+        if(length(s$values) != length(fsp$values)) stop("Got inhomohenious spikes lists size")
+        
         fsp$values = lapply(1:length(s$values), function(ni) c(fsp$values[[ni]],  s$values[[ni]] + last_t))
+        
+        if(is.null(s$ts_info$unique_labels)) next
+            
         labs = s$ts_info$unique_labels[ s$ts_info$labels_ids+1 ]
         
         fsp$ts_info$labels_ids = c(fsp$ts_info$labels_ids, sapply(labs, function(l) which(l == fsp$ts_info$unique_labels)-1))
         
         fsp$ts_info$labels_timeline = c(fsp$ts_info$labels_timeline, s$ts_info$labels_timeline+last_t)
         
-        last_t = tail(s$ts_info$labels_timeline, 1)
+        
+        last_t = last_t + tail(s$ts_info$labels_timeline, 1)    
     }
     return(fsp)
 }
@@ -240,4 +240,19 @@ intercept.data.to.spikes = function(ts, N, dim_idx, dt=1, gap_between_patterns=0
     sp$ts_info = ts$ts_info
     sp$ts_info$labels_timeline = lab_times
     return(sp)
+}
+
+
+ts.info = function(labs, times) {
+    if(length(labs) != length(times)) {
+        stop("Need equal size of labels and times")
+    }
+    ulabs = unique(labs)
+    return(
+        list(
+            unique_labels=ulabs
+          , labels_ids=which(labs == ulabs)-1
+          , labels_timeline=times
+        )
+    )
 }

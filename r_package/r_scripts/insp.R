@@ -21,7 +21,7 @@ T1 = convNum(Sys.getenv('T1'), 1000)
 args <- commandArgs(trailingOnly = FALSE)
 if(length(grep("RStudio", args))>0) {    
     WD = simruns.path(system(sprintf("ls -t %s | head -n 1", simruns.path()), intern=TRUE))
-    
+    WD = "/home/alexeyche/dnn/runs/test-run"
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
     #EP=2
@@ -48,13 +48,14 @@ SAVE_PIC_IN_FILES = convBool(Sys.getenv('SAVE_PIC_IN_FILES'), TRUE)
 EVAL = convBool(Sys.getenv('EVAL'), TRUE)
 EVAL_PROC = convStr(Sys.getenv('EVAL_PROC'), "Epsp(10)")
 EVAL_KERN = convStr(Sys.getenv('EVAL_KERN'), "RbfDot(0.05)")
-EVAL_JOBS = convNum(Sys.getenv('EVAL_JOBS'), 8)
+EVAL_JOBS = convNum(Sys.getenv('EVAL_JOBS'), 1)
 EVAL_VERBOSE = convBool(Sys.getenv('EVAL_VERBOSE'), TRUE)
+EVAL_TYPE = convStr(Sys.getenv('EVAL_TYPE'), "fisher")
 
 
 if(length(grep("RStudio", args))>0) {
     STAT_ID=1
-    STAT_SYN_ID=1
+    STAT_SYN_ID=2
     LAYER_MAP= NULL #"1:0:0"
     SAVE_PIC_IN_FILES = FALSE    
 }
@@ -166,99 +167,120 @@ if(EVAL) {
         stop("Can't eval without spikes")        
     }
     
-#     setVerboseLevel(0)
-#     
-#     spikes$values = spikes$values[lsize[1]+1:sum(lsize[-1])]
-#     K = kernel.run(spikes, EVAL_PROC, EVAL_KERN, jobs=EVAL_JOBS)
-#     if(EVAL_VERBOSE) {
-#         c(y, M, N, A) := KFD(K)
-#         
-#         ans = K %*% y[, 1:2]
-#         eval_debug_pic = sprintf("%s/4_%s", tmp_d, pfx_f("eval.png"))
-#         if(SAVE_PIC_IN_FILES) png(eval_debug_pic, width=1024, height=768)
-#         
-#         par(mfrow=c(1,2))
-#         
-#         metrics_str = sprintf("%f, %f", tr(M)/tr(N), tr(A))
-#         plot(Re(ans[,1]), col=as.integer(rownames(K)), main=metrics_str) 
-#         plot(Re(ans), col=as.integer(rownames(K)))        
-#         
-#         if(SAVE_PIC_IN_FILES) {
-#             dev.off()
-#             write(paste("Eval debug pic filename: ", eval_debug_pic), stderr())
-#             pic_files = c(pic_files, eval_debug_pic)
-#         }
-#         par(mfrow=c(1,1))
-#     } else {
-#         c(M, N, A) := KFD(K, only_scatter=TRUE)        
-#     }
-    #cat(tr(M)/tr(N), "\n")    
-    spike_patterns = chop.spikes.list(spikes)
-    labs = sapply(spike_patterns, function(x) x$ts_info$unique_labels)
-    ulabs = unique(labs)
-    
-    plot(spike_patterns[[2]])
-    
-    con_types = sapply(const$sim_configuration$conn_map, function(x) sapply(x, function(y) y$type))
-    dog_idx = grep("DifferenceOfGaussians", con_types)
-    if(length(dog_idx) > 0) {
-        dim = unique(sapply(const$connections[con_types[dog_idx] ], function(x) x$dimension))
-        if(length(dim)>1) {
-            warning("Got a lot of DifferenceOfGaussians dimensions in setup. Choosing first for evaluating")
-            dim = dim[1]
-        }        
-    }
-    
-    N = length(spike_patterns[[1]]$values)
-    vv = vector("list", length(ulabs))
-    for(el_i in 1:length(labs)) {
-        l = labs[el_i]
-        li = which(l == ulabs)
-        vv[[li]] = rbind(
-            vv[[li]],
-            sapply(spike_patterns[[el_i]]$values, length)/spike_patterns[[el_i]]$ts_info$labels_timeline[1]
+    setVerboseLevel(0)
+     
+    spikes$values = spikes$values[lsize[1]+1:sum(lsize[-1])]
+    if(EVAL_TYPE == "fisher") {
+        chopped = chop.spikes.list(spikes)
+        spikes = cat.spikes(
+            chopped[[length(chopped)-7]]
+          , chopped[[length(chopped)-6]]
+          , chopped[[length(chopped)-5]]
+          , chopped[[length(chopped)-4]]
+          , chopped[[length(chopped)-3]]
+          , chopped[[length(chopped)-2]]
+          , chopped[[length(chopped)-1]]
+          , chopped[[length(chopped)]]
         )
-    }
-    vm = sapply(vv, colMeans)
-    
-    norm = function(x) sqrt(sum(x^2))
-    rect = function(x) { x[x<0] <-0; x }
-    # vm = t(matrix(c(rep(1, 10), rep(0, 10), rep(0,15), rep(1,5)), nrow=2, ncol=20, byrow=TRUE))
-    
-    Kc = matrix(0, nrow=ncol(vm), ncol=ncol(vm))
-    
-    for(li in 1:ncol(vm)) {
-        for(lj in 1:ncol(vm)) {
-            v1 = vm[,li]
-            v2 = vm[,lj]
+        K = kernel.run(spikes, EVAL_PROC, EVAL_KERN, jobs=EVAL_JOBS)
+        if(EVAL_VERBOSE) {
+            c(y, M, N, A) := KFD(K)
             
-            v1n = norm(v1)
-            v2n = norm(v2)
+            ans = K %*% y[, 1:2]
+            eval_debug_pic = sprintf("%s/4_%s", tmp_d, pfx_f("eval.png"))
+            if(SAVE_PIC_IN_FILES) png(eval_debug_pic, width=1024, height=768)
             
-            if(v1n>0) v1 = v1/v1n
-            if(v2n>0) v2 = v2/v2n
+            par(mfrow=c(1,2))
             
-            Kc[li, lj] = norm(rect(v1 - v2))            
+            metrics_str = sprintf("%f, %f", tr(M)/tr(N), tr(A))
+            plot(Re(ans[,1]), col=as.integer(rownames(K)), main=metrics_str) 
+            plot(Re(ans), col=as.integer(rownames(K)))        
+            
+            if(SAVE_PIC_IN_FILES) {
+                dev.off()
+                write(paste("Eval debug pic filename: ", eval_debug_pic), stderr())
+                pic_files = c(pic_files, eval_debug_pic)
+            }
+            par(mfrow=c(1,1))
+        } else {
+            c(M, N, A) := KFD(K, only_scatter=TRUE)        
+        }
+        cat(-tr(M)/tr(N), "\n")    
+    } else
+    if(EVAL_TYPE == "overlap") {
+        spike_patterns = chop.spikes.list(spikes)
+        labs = sapply(spike_patterns, function(x) x$ts_info$unique_labels)
+        ulabs = unique(labs)
+        
+        plot(spike_patterns[[2]])
+        
+        con_types = sapply(const$sim_configuration$conn_map, function(x) sapply(x, function(y) y$type))
+        dog_idx = grep("DifferenceOfGaussians", con_types)
+        if(length(dog_idx) > 0) {
+            dim = unique(sapply(const$connections[con_types[dog_idx] ], function(x) x$dimension))
+            if(length(dim)>1) {
+                warning("Got a lot of DifferenceOfGaussians dimensions in setup. Choosing first for evaluating")
+                dim = dim[1]
+            }        
+        }
+        
+        N = length(spike_patterns[[1]]$values)
+        vv = vector("list", length(ulabs))
+        for(el_i in 1:length(labs)) {
+            l = labs[el_i]
+            li = which(l == ulabs)
+            vv[[li]] = rbind(
+                vv[[li]],
+                sapply(spike_patterns[[el_i]]$values, length)/spike_patterns[[el_i]]$ts_info$labels_timeline[1]
+            )
+        }
+        vm = sapply(vv, colMeans)
+        
+        norm = function(x) sqrt(sum(x^2))
+        rect = function(x) { x[x<0] <-0; x }
+        # vm = t(matrix(c(rep(1, 10), rep(0, 10), rep(0,15), rep(1,5)), nrow=2, ncol=20, byrow=TRUE))
+        
+        Kc = matrix(0, nrow=ncol(vm), ncol=ncol(vm))
+        
+        for(li in 1:ncol(vm)) {
+            for(lj in 1:ncol(vm)) {
+                v1 = vm[,li]
+                v2 = vm[,lj]
+                
+                v1n = norm(v1)
+                v2n = norm(v2)
+                
+                if(v1n>0) v1 = v1/v1n
+                if(v2n>0) v2 = v2/v2n
+                
+                Kc[li, lj] = norm(rect(v1 - v2))            
+            }
+        }
+        metric = sum(Kc)/(nrow(Kc)*nrow(Kc) - nrow(Kc))
+        
+        max_rate = 20
+        f = function(p) - (p/max_rate)*log2(p/max_rate) - (1-(p/max_rate))*log2(1-(p/max_rate) )
+        
+        rate = 1000*mean(vm)
+        metric = 1-metric
+        metric = metric * f(rate)
+        cat(sprintf("%1.10f", metric), "\n")
+        
+        
+        eval_ov_debug_pic = sprintf("%s/5_%s", tmp_d, pfx_f("eval_overlap.png"))
+        
+        if(SAVE_PIC_IN_FILES) png(eval_ov_debug_pic, width=1024, height=768)
+        
+        plot(vm[,1], type="l", main=sprintf("Metric: %f", metric))
+        for(li in 2:ncol(vm)) {
+            lines(vm[,li], col=li)
+        }
+        if(SAVE_PIC_IN_FILES) {
+            dev.off()
+            write(paste("Eval overlap debug pic filename: ", eval_ov_debug_pic), stderr())
+            pic_files = c(pic_files, eval_ov_debug_pic)
         }
     }
-    metric = sum(Kc)/(nrow(Kc)*nrow(Kc) - nrow(Kc))
-    cat(sprintf("%1.10f", 1-metric), "\n")
-    
-    
-    eval_ov_debug_pic = sprintf("%s/5_%s", tmp_d, pfx_f("eval_overlap.png"))
-    
-    if(SAVE_PIC_IN_FILES) png(eval_ov_debug_pic, width=1024, height=768)
-    
-    plot(vm[,1], type="l", main=sprintf("Metric: %f", metric))
-    for(li in 2:ncol(vm)) {
-        lines(vm[,li], col=li)
-    }
-    if(SAVE_PIC_IN_FILES) {
-        dev.off()
-        write(paste("Eval overlap debug pic filename: ", eval_ov_debug_pic), stderr())
-        pic_files = c(pic_files, eval_ov_debug_pic)
-    }
-    
 }
 
 if ( (!is.null(input))&&(!is.null(model))&&(!is.null(net)) ) {

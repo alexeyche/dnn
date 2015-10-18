@@ -1,8 +1,8 @@
 {
     "globals" : {
-        "learning_rate" : 0.0005,
+        "learning_rate" : 0.04,
         "mean_weight" : 0.2,
-        "max_weight" : 1.0,
+        "max_weight" : 10.0,
         "min_weight" : 0.0,
         "dt" : 1.0
     },
@@ -46,9 +46,9 @@
         },
         "ExpThreshold" : {
             "p_rest" : 0.1,
-            "threshold" : 0.25,
-            "beta" : 5.0,
-            "amp"   : 10.0
+            "threshold" : 0.70,
+            "beta" : 10.0,
+            "amp"   : 20.0
         }
     },
     "synapses" : {
@@ -57,7 +57,7 @@
             "amp" : 1.0
         },
         "StaticSynapse_inh" : {
-            "psp_decay" : 30.0,
+            "psp_decay" : 10.0,
             "amp" : -1.0
         },
         "STDSynapse" : {
@@ -84,11 +84,11 @@
             "learning_rate" : "globals/learning_rate"
         },
         "OptimalStdp" : {
-            "tau_c" : 50.0,
+            "tau_c" : 400.0,
             "tau_mean" : 60000.0,
             "target_rate" : 5.0,
             "target_rate_factor" : 0.0,
-            "weight_decay" : 1.0,
+            "weight_decay" : 0.0,
             "tau_hebb" : 0.0,
             "learning_rate" : "globals/learning_rate"
         }
@@ -123,6 +123,10 @@
             "modulation" : 1.0,
             "max_weight" : "globals/max_weight",
             "min_weight" : "globals/min_weight"
+        },
+        "StrictBound" : {
+            "unit" : 5.0,
+            "power" : 2.0
         }
     },
     "connections" : {
@@ -130,9 +134,9 @@
             "prob" : 0.5
        },
        "DifferenceOfGaussians" : {
-           "a" : 3.0,
-           "b" : 5.0,
-           "r" : 3,
+           "a" : 2.0,
+           "b" : 6.0,
+           "r" : 1,
            "dimension" : 1,
            "apply_amplitude" : true
        }
@@ -144,7 +148,14 @@
                 "neuron" : "SpikeSequenceNeuron"
             },
             {
-                "size" : 100,
+                "size" : 50,
+                "neuron" : "SRMNeuron",
+                "act_function" : "ExpThreshold",
+                "learning_rule" : "OptimalStdp",
+                "weight_normalization" : "MinMax"
+            },
+            {
+                "size" : 50,
                 "neuron" : "SRMNeuron",
                 "act_function" : "ExpThreshold",
                 "learning_rule" : "OptimalStdp",
@@ -155,16 +166,29 @@
             "0->1" : [
                 { 
                     "type" : "Stochastic", 
-                    "start_weight" : 0.3,
+                    "start_weight" : 0.1, 
                     "synapse" : "StaticSynapse"
                 }
             ],
             "1->1" : [
-                {
-                    "type" : "DifferenceOfGaussians",
-                    "start_weight" : 0.1,
-                    "synapse" : "StaticSynapse",
-                    "inh_synapse" : "StaticSynapse_inh"
+                { 
+                    "type" : "Stochastic", 
+                    "start_weight" : 3.0, 
+                    "synapse" : "StaticSynapse_inh"
+                }
+            ],
+            "1->2" : [
+                { 
+                    "type" : "Stochastic", 
+                    "start_weight" : 0.1, 
+                    "synapse" : "StaticSynapse"
+                }
+            ],
+            "2->2" : [
+                { 
+                    "type" : "Stochastic", 
+                    "start_weight" : 3.0, 
+                    "synapse" : "StaticSynapse_inh"
                 }
             ]
         },
@@ -189,9 +213,9 @@
         "output" : "@net-output"
     },
     "prepare_data" : {
-        "dt" : 1.0,
-        "dst_file" : "spike_input.pb",
+        "dt" : 5.0,
         "neurons" : 100,
-        "prolongation" : 60000
+        "dst_file" : "spike_input.pb",
+        "prolongation" : 240000
     }
 }

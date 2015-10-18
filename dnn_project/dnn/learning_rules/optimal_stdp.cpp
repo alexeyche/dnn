@@ -32,37 +32,47 @@ void OptimalStdp::calculateDynamics(const Time& t) {
     stat.add("mi_stat", s.mi_stat);
 
     //stat.add("p_mean", s.p_mean);
-    if(GlobalCtx::inst().getSimInfo().pastTime < c.tau_mean) {
+    if( (GlobalCtx::inst().getSimInfo().pastTime + t.t) < c.tau_mean) {
         return;
     }
 
     s.B = B_calc();
-    stat.add("B", s.B);
+    // stat.add("B", s.B);
 
     auto &syns = n->getMutSynapses();
     const auto &norm = n->getWeightNormalization().ifc();
 
-    size_t i=0;
-    for(auto &syni: syns) {
-        auto &syn = syni.ref();
+    auto C_id_it = s.C.ibegin();
+    while(C_id_it != s.C.iend()) {
+        const size_t &syn_id = *C_id_it;
+        auto &syn = syns.get(syn_id).ref();
         const double &w = syn.weight();
 
-        s.C.get(i) += SRMMethods::dLLH_dw(*n, syn, c.tau_hebb);  // not in propagateSpike because we need information about firing of neuron
+        s.C[C_id_it] += SRMMethods::dLLH_dw(*n, syn, c.tau_hebb);  // not in propagateSpike because we need information about firing of neuron
 
         double decay_part = c.weight_decay * syn.fired() * syn.weight(); //* (s.p_mean*1000.0) * (s.p_mean*1000.0);
         double dw = norm.derivativeModulation(w) * c.learning_rate * (
-            s.C.get(i) * s.B * norm.ltp(w) - decay_part * norm.ltd(w)
+            s.C[C_id_it] * s.B * norm.ltp(w) - decay_part * norm.ltd(w)
         );
 
-        stat.add("C", i, s.C.get(i));
+        // stat.add("C", syn_id, s.C[C_id_it]);
         // stat.add("decay_part", i, decay_part);
         // stat.add("dw", i, dw);
-        stat.add("w", i, syn.weight());
+        // stat.add("w", syn_id, syn.weight());
 
         syn.mutWeight() += dw;
 
-        s.C.get(i) += - s.C.get(i)/c.tau_c;
-        ++i;
+        s.C[C_id_it] += - s.C[C_id_it]/c.tau_c;
+        if(std::isnan(syn.weight())) {
+            cerr << (double)n->fired() << " * log(" << n->getFiringProbability() << "/" << s.p_mean << ")" << " - (" << n->getFiringProbability() << " - " << s.p_mean << ")\n";
+            throw dnnException() << "Found nan weight. B: " << s.B << ", C: " << s.C[C_id_it] << "\n";
+        }
+        if(fabs(s.C[C_id_it]) < 1e-05) {
+            s.C.setInactive(C_id_it);
+        } else {
+            ++C_id_it;
+        }
+
     }
 
 
@@ -89,15 +99,15 @@ void OptimalStdp::calculateDynamics(const Time& t) {
     //     }
     // }
 
-    // if(stat.on()) {
-    //     size_t i=0;
-    //     for(auto &syn: syns) {
-    //         stat.add("C", i, s.C.get(i));
-    //         stat.add("w", i, syn.ref().weight());
-    //         ++i;
-    //     }
-    //     stat.add("B", s.B);
-    // }
+    if(stat.on()) {
+        size_t i=0;
+        for(auto &syn: syns) {
+            stat.add("C", i, s.C.get(i));
+            stat.add("w", i, syn.ref().weight());
+            ++i;
+        }
+        stat.add("B", s.B);
+    }
 }
 
 

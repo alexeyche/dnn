@@ -23,6 +23,7 @@
 #include <dnn/weight_normalizations/min_max.h>
 #include <dnn/weight_normalizations/nonlinear_min_max.h>
 #include <dnn/weight_normalizations/sliding_ltd.h>
+#include <dnn/weight_normalizations/strict_bound.h>
 #include <dnn/reinforcements/input_classifier.h>
 #include <dnn/sim/reward_control.h>
 #include <dnn/connections/stochastic.h>

@@ -6,6 +6,8 @@ import shutil
 from contextlib import contextmanager
 import subprocess as sub
 import sys
+import json
+from collections import OrderedDict
 
 def make_dir(path, delete_if_exists=False):
     if delete_if_exists and os.path.exists(path):
@@ -92,4 +94,11 @@ def opt_to_str(o):
 def str_to_opt(s):
     return "--" + s.replace("_","-")
 
-
+def read_json(json_f):
+    json_str = ""
+    with open(json_f) as fptr:
+        for l in fptr:
+            l = l.split("//",1)[0]
+            l = l.split("#",1)[0]
+            json_str += l + "\n"
+    return json.loads(json_str, object_pairs_hook=OrderedDict)

@@ -20,6 +20,7 @@ import pickle
 import random
 import shutil
 
+from util import read_json
 from util import make_dir
 from util import parse_attrs
 from util import add_coloring_to_emit_ansi
@@ -39,8 +40,10 @@ rootLogger.addHandler(consoleHandler)
 class GlobalConfig(object):
     Epochs = 10
     AddOptions = []
-    Jobs = multiprocessing.cpu_count()/2
+    Jobs = 5
     BadValue = 1.0
+    SimJobs = 1
+
 VAR_SPECS_FILE = pj(os.path.realpath(os.path.dirname(__file__)), "var_specs.json")
 RUN_SIM_PY = pj(os.path.realpath(os.path.dirname(__file__)), "run_sim.py")
 
@@ -97,14 +100,15 @@ def runner(x, vars, working_dir, wait=False, id=None, min=0.0, max=1.0):
     if id is None:
         id = uuid.uuid1()
     working_dir = pj(working_dir, str(id))
-
+    if os.path.exists(working_dir):
+        raise Exception("Working dir is already exists {}!".format(working_dir))
     make_dir(working_dir)
     const_json = pj(working_dir, os.path.basename(DnnSim.CONST_JSON))
-    specs = json.load(open(VAR_SPECS_FILE))
+    specs = read_json(VAR_SPECS_FILE)
     with open(const_json, "w") as fptr:
         fptr.write(
             proc_vars(
-                const = json.load(open(DnnSim.CONST_JSON), object_pairs_hook=OrderedDict)
+                const = read_json(DnnSim.CONST_JSON)
               , var_specs = specs
               , vars = dict(zip(vars, x))
               , min = min
@@ -118,7 +122,7 @@ def runner(x, vars, working_dir, wait=False, id=None, min=0.0, max=1.0):
       , "--const", const_json
       , "--evaluation"
       , "--slave"
-      , "--jobs", "1"
+      , "--jobs", str(GlobalConfig.SimJobs)
     ] + GlobalConfig.AddOptions
     for v in vars:
         path, range = specs[v]
@@ -132,6 +136,8 @@ def runner(x, vars, working_dir, wait=False, id=None, min=0.0, max=1.0):
     return p
 
 class State(object):
+    FNAME = "state.p"
+
     def __init__(self, seed):
         self.vals = []
         self.seed = seed
@@ -140,11 +146,11 @@ class State(object):
         self.vals.append( (X, tells) )
 
     def dump(self, wd):
-        pickle.dump(self, open(pj(wd, "state.p"), "wb"))
+        pickle.dump(self, open(pj(wd, State.FNAME), "wb"))
    
     @staticmethod
     def read_from_dir(wd):
-        return pickle.load(open(pj(wd, "state.pb"), "rb"))
+        return pickle.load(open(pj(wd, State.FNAME), "rb"))
 
 class Algo(object):
     pass
@@ -199,7 +205,7 @@ class CmaEs(Algo):
     def __call__(self, vars, tag=None):
         tag = "cma_es" if tag is None else tag
         wd = pj(env.runs_dir, tag)
-        state = None
+        state = State(self.seed)
         if os.path.exists(wd):
             while True:
                 ans = raw_input("%s already exists. Continue learning? (y/n): " % (wd))
@@ -207,7 +213,6 @@ class CmaEs(Algo):
                     state = State.read_from_dir(wd) 
                     break
                 elif ans in ["N", "n"]:
-                    state = State(self.seed)
                     shutil.rmtree(wd)
                     make_dir(wd)
                     break                        
@@ -236,20 +241,19 @@ class CmaEs(Algo):
         for X, tells in state.vals:
             X = es.ask()
             es.tell(X, tells)
-        id = len(state.vals)
+        id = sum([ len(v[1]) for v in state.vals ])
         while not es.stop():
             X = es.ask()
-            tells = []
-            pool = []
-            Xw = X
-            while len(Xw)>0:
-                p = runner(Xw[0], vars, wd, wait=False, id=id, min=self.min_bound, max=self.max_bound)
+            tells, pool = [], []
+            for Xi in X:
+                p = runner(Xi, vars, wd, wait=False, id=id, min=self.min_bound, max=self.max_bound)
                 pool.append( (id, p) )
+                id+=1
                 if len(pool)>=GlobalConfig.Jobs:
                     self.wait_pool(pool, tells)
-                id+=1
-                Xw = Xw[1:]
-            tells = [ out for id, out in sorted(tells, key=lambda x: x[0]) ]
+            while len(pool)>0:
+                self.wait_pool(pool, tells)
+            tells = [ out for _, out in sorted(tells, key=lambda x: x[0]) ]
             es.tell(X, tells)
             es.disp()
             state.add_val(X, tells)
@@ -291,6 +295,11 @@ def main(argv):
         help='Attributes for algo: "attr_name=val;attr_name2=val2"', default=""
     )
     parser.add_argument(
+        '-sj', '--sim-jobs', 
+        required=False,
+        help='Sim jobs', default=1
+    )
+    parser.add_argument(
         '-t', '--tag', 
         required=False,
         help='Tag for run, by defailt algo choosing by himself', default=None
@@ -308,6 +317,7 @@ def main(argv):
 
     GlobalConfig.Epochs = args.epochs
     GlobalConfig.AddOptions = other
+    GlobalConfig.SimJobs = args.sim_jobs
     a = algo_cls(parse_attrs(args.attr))
     a([ v.strip() for v in args.vars.split(";") if v.strip() ], tag=args.tag)
 

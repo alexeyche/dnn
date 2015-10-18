@@ -74,7 +74,9 @@ public:
         s.u = c.u_rest + Iinput + Isyn;
         s.M = fastexp(-(s.gr+s.ga));
         s.p = act_f.ifc().prob(s.u) * s.M;
-
+        if(s.p <0.0) {
+            throw dnnException() << "Found negative probability, u: " << s.u << ", p: " << act_f.ifc().prob(s.u) << ", M: " << s.M << "\n";
+        }
         if(s.p > getUnif()) {
             setFired(true);
             s.gr += c.amp_refr;

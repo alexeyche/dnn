@@ -9,12 +9,14 @@ import logging
 import shutil
 from os.path import join as pj
 import json
+import random
 
 import env
 
 from util import add_coloring_to_emit_ansi
 from util import pushd
 from util import run_proc
+from util import read_json
 
 from env import runs_dir
 
@@ -60,7 +62,8 @@ class DnnSim(object):
 
         if self.working_dir is None:
             self.working_dir = self.get_wd()
-
+        else:
+            self.working_dir = os.path.realpath(os.path.expanduser(self.working_dir))
         ask = False
         if not os.path.exists(self.working_dir):
             os.makedirs(self.working_dir)
@@ -147,7 +150,8 @@ class DnnSim(object):
             "EP" : str(self.current_epoch),
             "OPEN_PIC" : "no",
             "SP_PIX0" : "{}".format(1024*2),
-            "EVAL" : "yes" if self.evaluation else "no"
+            "EVAL" : "yes" if self.evaluation else "no",
+            "EVAL_JOBS" : str(self.jobs),
         }
         cmd = [
               self.insp_script
@@ -157,10 +161,11 @@ class DnnSim(object):
 
     def run(self):
         if self.prepare_data:
-            prepare_data_conf = json.load(open(self.const)).get("prepare_data")
+            prepare_data_conf = read_json(self.const).get("prepare_data")
             with pushd(self.working_dir):
                 opt, value = prepare_data(prepare_data_conf)
             self.add_options[opt_to_str(opt)] = value
+        evals = []
         for self.current_epoch in xrange(self.current_epoch, self.current_epoch+self.epochs):
             logging.info("Running epoch {}:".format(self.current_epoch))
             run_proc(**self.construct_cmd())
@@ -169,11 +174,12 @@ class DnnSim(object):
                 with pushd(self.working_dir):
                     o = run_proc(**self.construct_inspect_cmd())
                     if self.evaluation:
-                        logging.info("Evaluation score: {}".format(o.strip()))
+                        evals.append(float(o.strip()))
+                        logging.info("Evaluation score: {}".format(evals[-1]))
 
         logging.info("Done")
         if self.slave:
-            print float(o.strip())
+            print sum(evals)/len(evals)
 
     def continue_in_wd(self):
         max_ep = 0
