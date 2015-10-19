@@ -19,6 +19,7 @@ import multiprocessing
 import pickle
 import random
 import shutil
+import re
 
 from util import read_json
 from util import make_dir
@@ -40,43 +41,71 @@ rootLogger.addHandler(consoleHandler)
 class GlobalConfig(object):
     Epochs = 10
     AddOptions = []
-    Jobs = 8
+    Jobs = 5
     BadValue = 1.0
     SimJobs = 1
 
 VAR_SPECS_FILE = pj(os.path.realpath(os.path.dirname(__file__)), "var_specs.json")
 RUN_SIM_PY = pj(os.path.realpath(os.path.dirname(__file__)), "run_sim.py")
 
+
+class Distribution(object):
+    @staticmethod
+    def parse_distribution(s, val=None):
+        if isinstance(s, basestring):
+            m = re.match("Exp\((.*?)\)", s)
+            if m:
+                return ExpDistribution(float(m.group(1)) if val is None else val)
+        return None
+
+class ExpDistribution(object):
+    def __init__(self, r):
+        self.rate = r
+
+    def __getitem__(self, idx):
+        assert(idx == 0)
+        return self.rate
+
+    def __str__(self):
+        return "Exp({})".format(self.rate)
+
+    def __repr__(self):
+        return str(self)
+
+
 def scale_to(x, min, max, a, b):
     return ((b-a)*(x - min)/(max-min)) + a
 
+def proc_element(d, p):
+    if isinstance(d, dict):
+        if d.get(p) is None:
+            raise Exception("Can't find key {} in constants".format(p))
+        return d
+    elif isinstance(d, list):
+        if len(d)<=p:
+            raise Exception("Can't find key {} in constants".format(p))
+        return d
+    elif isinstance(d, basestring):
+        return Distribution.parse_distribution(d)
+    else:        
+        raise Exception("Got strange type in constants: {}".format(type(d)))
 
 def set_value_in_path(d, path, v):
     p = path[0]
-    if isinstance(d, dict):
-        if d.get(p) is None:
-            raise Exception("Can't find key {} in constants".format(p))
-    elif isinstance(d, list):
-        if len(d)<=p:
-            raise Exception("Can't find key {} in constants".format(p))
-    else:
-        raise Exception("Got strange type in constants: {}".format(type(d)))
+    d = proc_element(d, p)
     if isinstance(d[p], dict) or isinstance(d[p], list):
         return set_value_in_path(d[p], path[1:], v)
     else:
-        d[p] = v
+        distr = Distribution.parse_distribution(d[p], v)
+        if distr:
+            d[p] = str(distr)
+        else:
+            d[p] = v
 
 def get_value_in_path(d, path):
     p = path[0]
-    if isinstance(d, dict):
-        if d.get(p) is None:
-            raise Exception("Can't find key {} in constants".format(p))
-    elif isinstance(d, list):
-        if len(d)<=p:
-            raise Exception("Can't find key {} in constants".format(p))
-    else:
-        raise Exception("Got strange type in constants: {}".format(type(d)))
-    if isinstance(d[p], dict) or isinstance(d[p], list):
+    d = proc_element(d, p)
+    if isinstance(d[p], dict) or isinstance(d[p], list) or Distribution.parse_distribution(d[p]):
         return get_value_in_path(d[p], path[1:])
     else:
         return d[p]
@@ -108,6 +137,10 @@ def get_vars(const, var_specs, vars, min=0.0, max=1.0):
             raise Exception("Can't find specs for variable {}".format(k))
         path, (a, b) = var_specs[k]
         v = get_value_in_path(const, path)        
+        print type(v)
+        print a, b, min, max
+        print k
+        print v
         scaled_v = scale_to(v, a, b, min, max)
         var_values.append(scaled_v)    
     return dict(zip(vars, var_values))
@@ -251,15 +284,15 @@ class CmaEs(Algo):
 
         start_vals = get_vars(
             const = read_json(DnnSim.CONST_JSON)
-          , var_specs = specs
-          , vars = dict(zip(vars, x))
-          , min = min
-          , max = max
+          , var_specs = read_json(VAR_SPECS_FILE)
+          , vars = vars
+          , min = self.min_bound
+          , max = self.max_bound
         )
 
 
         es = cma.CMAEvolutionStrategy(
-            start_vals
+            [ start_vals[v] for v in vars ]
           , self.sigma
           , { 
               'bounds' : [ 
@@ -296,7 +329,7 @@ ALGS = dict([(c.__name__, c) for c in Algo.__subclasses__()])
 def main(argv):
     epi = ""
     epi += "List of variables to evolve:\n"
-    for k, v in json.load(open(VAR_SPECS_FILE), object_pairs_hook=OrderedDict).iteritems():
+    for k, v in read_json(VAR_SPECS_FILE).iteritems():
         epi += "\t\t{}\n\t\t\tpath: {}, range: {}-{}\n".format(k, "/".join([ str(subv) for subv in v[0]]), v[1][0], v[1][1])
     epi += "List of algorithms:\n"
     for a in ALGS:
@@ -313,8 +346,8 @@ def main(argv):
     )
     parser.add_argument(
         '-v', '--vars', 
-        required=True,
-        help='Variables included in evolving, separated by ;'
+        required=False,
+        help='Variables included in evolving, separated by ;. Or use all variables'
     )
     parser.add_argument(
         '-e', '--epochs', 
@@ -350,8 +383,12 @@ def main(argv):
     GlobalConfig.Epochs = args.epochs
     GlobalConfig.AddOptions = other
     GlobalConfig.SimJobs = args.sim_jobs
+
     a = algo_cls(parse_attrs(args.attr))
-    a([ v.strip() for v in args.vars.split(";") if v.strip() ], tag=args.tag)
+
+    vars = [ v.strip() for v in args.vars.split(";") if v.strip() ] if args.vars else read_json(VAR_SPECS_FILE).keys()
+
+    a(vars, tag=args.tag)
 
 if __name__ == '__main__':
     main(sys.argv[1:])

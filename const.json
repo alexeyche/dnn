@@ -84,6 +84,10 @@
             "psp_decay" : 10.0,
             "amp" : -1.0
         },
+        "StaticSynapse_rec" : {
+            "psp_decay" : 10.0,
+            "amp" : 1.0
+        },
         "StaticSynapse_l2" : {
             "psp_decay" : 10.0,
             "amp" : 1.0
@@ -174,7 +178,10 @@
         "Stochastic" : {
             "prob" : 0.5
        },
-        "Stochastic_low" : {
+        "Stochastic_inh" : {
+            "prob" : 0.1
+       },
+        "Stochastic_rec" : {
             "prob" : 0.1
        },
        "DifferenceOfGaussians" : {
@@ -211,9 +218,15 @@
             ],
             "1->1" : [
                 { 
-                    "type" : "Stochastic", 
+                    "type" : "Stochastic_inh", 
                     "start_weight" : 3.0, 
                     "synapse" : "StaticSynapse_inh",
+                    "dendrite_delay" : "Exp(0.1)"
+                },
+                { 
+                    "type" : "Stochastic_rec", 
+                    "start_weight" : 3.0, 
+                    "synapse" : "StaticSynapse_rec",
                     "dendrite_delay" : "Exp(0.1)"
                 }
             ]

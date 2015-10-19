@@ -1,36 +1,36 @@
 {
-    "input_dt": [
-        ["inputs", "InputTimeSeries", "dt"]
-      , [0.01, 2.0]
-    ]
-  , "input_spikes_dt": [
-        ["neurons", "SpikeSequenceNeuron", "dt"]
-      , [0.1, 2.0]
-    ]
-  , "opt_stdp_tau_c": [
+//    "input_dt": [
+//        ["inputs", "InputTimeSeries", "dt"]
+//      , [0.01, 2.0]
+//    ]
+//  , "input_spikes_dt": [
+//        ["neurons", "SpikeSequenceNeuron", "dt"]
+//      , [0.1, 2.0]
+//    ]
+    "opt_stdp_tau_c": [
         ["learning_rules", "OptimalStdp", "tau_c"]
       , [10.0, 400.0]
     ]
-  , "opt_stdp_tau_c2": [
-        ["learning_rules", "OptimalStdp_l2", "tau_c"]
-      , [10.0, 400.0]
-    ]
+//  , "opt_stdp_tau_c2": [
+//        ["learning_rules", "OptimalStdp_l2", "tau_c"]
+//      , [10.0, 400.0]
+//    ]
   , "opt_stdp_weight_decay": [
         ["learning_rules", "OptimalStdp", "weight_decay"]
       , [0.0, 2.0]
     ]
-  , "opt_stdp_target_rate_factor": [
-        ["learning_rules", "OptimalStdp", "target_rate_factor"]
-      , [0.0, 1.0]
-    ]
-  , "opt_stdp_tau_hebb": [
-        ["learning_rules", "OptimalStdp", "tau_hebb"]
-      , [0.0, 50.0]
-    ]
-  , "prepare_data_dt" : [
-        ["prepare_data", "dt"]
-      , [1.0, 10.0]
-    ]
+//  , "opt_stdp_target_rate_factor": [
+//        ["learning_rules", "OptimalStdp", "target_rate_factor"]
+//      , [0.0, 1.0]
+//    ]
+//  , "opt_stdp_tau_hebb": [
+//        ["learning_rules", "OptimalStdp", "tau_hebb"]
+//      , [0.0, 50.0]
+//    ]
+//  , "prepare_data_dt" : [
+//        ["prepare_data", "dt"]
+//      , [1.0, 10.0]
+//    ]
   , "layer_01_start_weight" : [
         ["sim_configuration", "conn_map", "0->1", 0, "start_weight"]
       , [0.1, 3.0]
@@ -39,49 +39,61 @@
         ["sim_configuration", "conn_map", "1->1", 0, "start_weight"]
       , [0.1, 3.0]
     ]
-  , "layer_12_start_weight" : [
-        ["sim_configuration", "conn_map", "1->2", 0, "start_weight"]
+  , "layer_11_rec_start_weight" : [
+        ["sim_configuration", "conn_map", "1->1", 1, "start_weight"]
       , [0.1, 3.0]
     ]
-  , "layer_22_start_weight" : [
-        ["sim_configuration", "conn_map", "2->2", 0, "start_weight"]
-      , [0.1, 3.0]
+//  , "layer_12_start_weight" : [
+//        ["sim_configuration", "conn_map", "1->2", 0, "start_weight"]
+//      , [0.1, 3.0]
+//    ]
+//  , "layer_22_start_weight" : [
+//        ["sim_configuration", "conn_map", "2->2", 0, "start_weight"]
+//      , [0.1, 3.0]
+//    ]
+//  , "exp_threshold_beta": [
+//        ["act_functions", "ExpThreshold", "beta"]
+//      , [2.0, 10.0]
+//    ]
+//  , "exp_threshold_threshold": [
+//        ["act_functions", "ExpThreshold", "threshold"]
+//      , [0.01, 1.0]
+//    ]
+//  , "exp_threshold_amp": [
+//        ["act_functions", "ExpThreshold", "amp"]
+//      , [1.0, 20.0]
+//    ]
+//  , "exp_threshold_beta2": [
+//        ["act_functions", "ExpThreshold_l2", "beta"]
+//      , [2.0, 10.0]
+//    ]
+//  , "exp_threshold_threshold2": [
+//        ["act_functions", "ExpThreshold_l2", "threshold"]
+//      , [0.01, 1.0]
+//    ]
+//  , "exp_threshold_amp2": [
+//        ["act_functions", "ExpThreshold_l2", "amp"]
+//      , [1.0, 20.0]
+//    ]
+//  , "dog_a": [
+//        ["connections", "DifferenceOfGaussians", "a"]
+//      , [0.1, 10.0]
+//    ]
+//  , "dog_b": [
+//        ["connections", "DifferenceOfGaussians", "b"]
+//      , [0.1, 10.0]
+//    ]
+//  , "dog_r": [
+//        ["connections", "DifferenceOfGaussians", "r"]
+//      , [0.1, 10.0]
+//    ]
+  , "sigmoid_slope": [
+        ["act_functions", "Sigmoid", "slope"]
+      , [0.1, 50.0]
     ]
-  , "exp_threshold_beta": [
-        ["act_functions", "ExpThreshold", "beta"]
-      , [2.0, 10.0]
-    ]
-  , "exp_threshold_threshold": [
-        ["act_functions", "ExpThreshold", "threshold"]
-      , [0.01, 1.0]
-    ]
-  , "exp_threshold_amp": [
-        ["act_functions", "ExpThreshold", "amp"]
-      , [1.0, 20.0]
-    ]
-  , "exp_threshold_beta2": [
-        ["act_functions", "ExpThreshold_l2", "beta"]
-      , [2.0, 10.0]
-    ]
-  , "exp_threshold_threshold2": [
-        ["act_functions", "ExpThreshold_l2", "threshold"]
-      , [0.01, 1.0]
-    ]
-  , "exp_threshold_amp2": [
-        ["act_functions", "ExpThreshold_l2", "amp"]
-      , [1.0, 20.0]
-    ]
-  , "dog_a": [
-        ["connections", "DifferenceOfGaussians", "a"]
-      , [0.1, 10.0]
-    ]
-  , "dog_b": [
-        ["connections", "DifferenceOfGaussians", "b"]
-      , [0.1, 10.0]
-    ]
-  , "dog_r": [
-        ["connections", "DifferenceOfGaussians", "r"]
-      , [0.1, 10.0]
+  , "sigmoid_threshold": [
+        ["act_functions", "Sigmoid", "threshold"]
+      , [0.01, 10.0]
     ]
   , "exc_syn": [
         ["synapses", "StaticSynapse", "psp_decay"]
@@ -91,12 +103,44 @@
         ["synapses", "StaticSynapse_inh", "psp_decay"]
       , [1.0, 50.0]
     ]
-  , "exc_syn2": [
-        ["synapses", "StaticSynapse_l2", "psp_decay"]
+  , "rec_syn": [
+        ["synapses", "StaticSynapse_rec", "psp_decay"]
       , [1.0, 50.0]
     ]
-  , "inh_syn2": [
-        ["synapses", "StaticSynapse_inh_l2", "psp_decay"]
-      , [1.0, 50.0]
-    ]
+  , "connection_prob_01" : [
+        ["connections", "Stochastic", "prob"]
+      , [0.01, 1.0]
+  ]
+  , "connection_prob_11" : [
+        ["connections", "Stochastic_inh", "prob"]
+      , [0.01, 1.0]
+  ]
+  , "connection_prob_11_exc" : [
+        ["connections", "Stochastic_rec", "prob"]
+      , [0.01, 1.0]
+  ]
+  , "axon_delay" : [
+        ["sim_configuration", "layers", 1, "axon_delay", 0]
+      , [0.05, 1000000]
+  ]
+  , "dendrite_delay" : [
+        ["sim_configuration", "conn_map", "0->1", 0, "dendrite_delay", 0]
+      , [0.05, 1000000]
+  ]
+  , "dendrite_delay_inh" : [
+        ["sim_configuration", "conn_map", "1->1", 0, "dendrite_delay", 0]
+      , [0.05, 1000000]
+  ]
+  , "dendrite_delay_rec" : [
+        ["sim_configuration", "conn_map", "1->1", 1, "dendrite_delay", 0]
+      , [0.05, 1000000]
+  ]
+//  , "exc_syn2": [
+//        ["synapses", "StaticSynapse_l2", "psp_decay"]
+//      , [1.0, 50.0]
+//    ]
+//  , "inh_syn2": [
+//        ["synapses", "StaticSynapse_inh_l2", "psp_decay"]
+//      , [1.0, 50.0]
+//    ]
 }
