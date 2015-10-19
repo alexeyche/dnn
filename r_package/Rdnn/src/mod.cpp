@@ -23,6 +23,7 @@ RCPP_MODULE(dnnMod) {
     .method("setElement", &RConstants::setElement, "Overriding one of element in constants by list")
     .method("addLayer", &RConstants::addLayer, "add layer")
     .method("addConnection", &RConstants::addConnection, "add connection")
+    .method("setNeuronsToListen", &RConstants::setNeuronsToListen, "setting neurons to listen")
     ;
     Rcpp::class_<RProto>("RProto")
     .constructor<std::string>()

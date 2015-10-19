@@ -54,6 +54,10 @@
             "threshold" : 0.25,
             "beta" : 5.0,
             "amp"   : 10.0
+        },
+        "Sigmoid" : {
+            "threshold": 1.0,
+            "slope" : 5.0
         }
     },
     "synapses" : {

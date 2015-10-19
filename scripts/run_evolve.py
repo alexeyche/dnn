@@ -66,6 +66,23 @@ def set_value_in_path(d, path, v):
     else:
         d[p] = v
 
+def get_value_in_path(d, path):
+    p = path[0]
+    if isinstance(d, dict):
+        if d.get(p) is None:
+            raise Exception("Can't find key {} in constants".format(p))
+    elif isinstance(d, list):
+        if len(d)<=p:
+            raise Exception("Can't find key {} in constants".format(p))
+    else:
+        raise Exception("Got strange type in constants: {}".format(type(d)))
+    if isinstance(d[p], dict) or isinstance(d[p], list):
+        return get_value_in_path(d[p], path[1:])
+    else:
+        return d[p]
+
+
+
 
 def propagate_deps(const):
     weights = [ v["start_weight"]  for it in const["sim_configuration"]["conn_map"].values() for v in it ]
@@ -84,6 +101,16 @@ def proc_vars(const, var_specs, vars, min=0.0, max=1.0):
     return json.dumps(const, indent=2)
 
 
+def get_vars(const, var_specs, vars, min=0.0, max=1.0):
+    var_values = []
+    for k in vars:
+        if k not in var_specs:
+            raise Exception("Can't find specs for variable {}".format(k))
+        path, (a, b) = var_specs[k]
+        v = get_value_in_path(const, path)        
+        scaled_v = scale_to(v, a, b, min, max)
+        var_values.append(scaled_v)    
+    return dict(zip(vars, var_values))
 
 def communicate(p):
     stdout, stderr = p.communicate()
@@ -222,8 +249,13 @@ class CmaEs(Algo):
         make_dir(wd)
         state.dump(wd)
 
-        rng = np.random.RandomState(state.seed)
-        start_vals = rng.random_sample(len(vars))
+        start_vals = get_vars(
+            const = read_json(DnnSim.CONST_JSON)
+          , var_specs = specs
+          , vars = dict(zip(vars, x))
+          , min = min
+          , max = max
+        )
 
 
         es = cma.CMAEvolutionStrategy(

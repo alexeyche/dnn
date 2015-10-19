@@ -99,6 +99,9 @@ gr_pl = function(m, ...) {
 
 
 plot.TimeSeries = function(obj, ...) {
+    if(is.null(nrow(obj$values))) {
+        plot(obj$values, type="l", ...)
+    } else
     if(nrow(obj$values) == 1) {
         plot(obj$values[1, ], type="l", ...)
     } else {

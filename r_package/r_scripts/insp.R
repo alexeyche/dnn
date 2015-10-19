@@ -168,11 +168,11 @@ if(EVAL) {
     }
     
     setVerboseLevel(0)
-     
-    spikes$values = spikes$values[lsize[1]+1:sum(lsize[-1])]
+    eval_spikes = spikes 
+    eval_spikes$values = eval_spikes$values[lsize[1]+1:sum(lsize[-1])]
     if(EVAL_TYPE == "fisher") {
-        chopped = chop.spikes.list(spikes)
-        spikes = cat.spikes(
+        chopped = chop.spikes.list(eval_spikes)
+        eval_spikes = cat.spikes(
             chopped[[length(chopped)-7]]
           , chopped[[length(chopped)-6]]
           , chopped[[length(chopped)-5]]
@@ -182,7 +182,7 @@ if(EVAL) {
           , chopped[[length(chopped)-1]]
           , chopped[[length(chopped)]]
         )
-        K = kernel.run(spikes, EVAL_PROC, EVAL_KERN, jobs=EVAL_JOBS)
+        K = kernel.run(eval_spikes, EVAL_PROC, EVAL_KERN, jobs=EVAL_JOBS)
         if(EVAL_VERBOSE) {
             c(y, M, N, A) := KFD(K)
             

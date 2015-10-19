@@ -221,7 +221,12 @@ public:
             ERR("Can't find specification of " << name << " in const\n");
         }
     }
-
+    void setNeuronsToListen(Rcpp::IntegerVector v) {
+        c.sim_conf.neurons_to_listen = vector<size_t>();
+        for(auto val: v) {
+            c.sim_conf.neurons_to_listen.push_back(val);
+        }
+    }
 private:
     Constants &c;
 

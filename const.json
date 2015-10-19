@@ -34,10 +34,24 @@
         },
         "SRMNeuron" : {
             "u_rest" : 0.0,
-            "amp_adapt" : 0.5,
             "amp_refr" : 100,
             "tau_refr" : 2.0,
+            "amp_adapt" : 0.5,
             "tau_adapt" : 100.0
+        },
+        "SRMNeuron_l2" : {
+            "u_rest" : 0.0,
+            "amp_refr" : 100,
+            "tau_refr" : 2.0,
+            "amp_adapt" : 0.5,
+            "tau_adapt" : 500.0
+        },
+        "SRMNeuron_l3" : {
+            "u_rest" : 0.0,
+            "amp_refr" : 100,
+            "tau_refr" : 2.0,
+            "amp_adapt" : 0.5,
+            "tau_adapt" : 1000.0
         }
     },
     "act_functions" : {
@@ -55,6 +69,10 @@
             "threshold" : 0.70,
             "beta" : 10.0,
             "amp"   : 20.0
+        },
+        "Sigmoid" : {
+            "threshold": 1.0,
+            "slope" : 10.0 
         }
     },
     "synapses" : {
@@ -111,7 +129,7 @@
             "tau_mean" : 60000.0,
             "target_rate" : 5.0,
             "target_rate_factor" : 0.0,
-            "weight_decay" : 0.0,
+            "weight_decay" : 0.1,
             "tau_hebb" : 0.0,
             "learning_rate" : "globals/learning_rate"
         }
@@ -156,6 +174,9 @@
         "Stochastic" : {
             "prob" : 0.5
        },
+        "Stochastic_low" : {
+            "prob" : 0.1
+       },
        "DifferenceOfGaussians" : {
            "a" : 2.0,
            "b" : 6.0,
@@ -175,43 +196,25 @@
                 "neuron" : "SRMNeuron",
                 "act_function" : "ExpThreshold",
                 "learning_rule" : "OptimalStdp",
-                "weight_normalization" : "MinMax"
-            },
-            {
-                "size" : 50,
-                "neuron" : "SRMNeuron",
-                "act_function" : "ExpThreshold_l2",
-                "learning_rule" : "OptimalStdp_l2",
-                "weight_normalization" : "MinMax"
+                "weight_normalization" : "MinMax",
+                "axon_delay" : "Exp(0.1)"
             }
         ],
         "conn_map" : {
             "0->1" : [
                 { 
                     "type" : "Stochastic", 
-                    "start_weight" : 0.1, 
-                    "synapse" : "StaticSynapse"
+                    "start_weight" : 0.25, 
+                    "synapse" : "StaticSynapse",
+                    "dendrite_delay" : "Exp(0.1)"
                 }
             ],
             "1->1" : [
                 { 
                     "type" : "Stochastic", 
                     "start_weight" : 3.0, 
-                    "synapse" : "StaticSynapse_inh"
-                }
-            ],
-            "1->2" : [
-                { 
-                    "type" : "Stochastic", 
-                    "start_weight" : 0.1, 
-                    "synapse" : "StaticSynapse_l2"
-                }
-            ],
-            "2->2" : [
-                { 
-                    "type" : "Stochastic", 
-                    "start_weight" : 3.0, 
-                    "synapse" : "StaticSynapse_inh_l2"
+                    "synapse" : "StaticSynapse_inh",
+                    "dendrite_delay" : "Exp(0.1)"
                 }
             ]
         },

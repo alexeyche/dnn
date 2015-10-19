@@ -6,6 +6,7 @@
 #include <dnn/neurons/srm_neuron.h>
 #include <dnn/act_functions/determ.h>
 #include <dnn/act_functions/exp_threshold.h>
+#include <dnn/act_functions/sigmoid.h>
 #include <dnn/synapses/static_synapse.h>
 #include <dnn/synapses/std_synapse.h>
 #include <dnn/inputs/input_time_series.h>
