@@ -72,7 +72,6 @@ void OptimalStdp::calculateDynamics(const Time& t) {
         } else {
             ++C_id_it;
         }
-
     }
 
 

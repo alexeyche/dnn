@@ -129,7 +129,7 @@
             "learning_rate" : "globals/learning_rate"
         },
         "OptimalStdp_l2" : {
-            "tau_c" : 400.0,
+            "tau_c" : 100.0,
             "tau_mean" : 60000.0,
             "target_rate" : 5.0,
             "target_rate_factor" : 0.0,
@@ -199,7 +199,7 @@
                 "neuron" : "SpikeSequenceNeuron"
             },
             {
-                "size" : 50,
+                "size" : 100,
                 "neuron" : "SRMNeuron",
                 "act_function" : "ExpThreshold",
                 "learning_rule" : "OptimalStdp",

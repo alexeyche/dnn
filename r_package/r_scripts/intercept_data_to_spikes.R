@@ -15,7 +15,7 @@ opts[["--dst-file"]] = list(
 )
 opts[["--dt"]] = list(
     description="delta t for spikes",
-    default = 5,
+    default = 1,
     process = as.numeric
 )
 opts[["--sample-size"]] = list(
