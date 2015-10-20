@@ -36,7 +36,7 @@ Examples:
 )USAGE";
 
 struct DnnSimOpts {
-    DnnSimOpts() : jobs(1), precalc(false), Tmax(-1.0), verbose(false) {}
+    DnnSimOpts() : jobs(1), precalc(false), Tmax(-1.0), verbose(false), no_learning(false) {}
     string input;
     Accum<string> const_file;
     string out_spikes;
@@ -76,6 +76,7 @@ int main(int argc, char **argv) {
 	optp.loption("--stat", sopt.out_stat_file, false);
 	optp.option("--T-max", "-T", sopt.Tmax, false);
     optp.option("--verbose", "-v", sopt.verbose, false, true);
+    optp.option("--no-learning", "-nl", sopt.no_learning, false, true);
 
     if(sopt.verbose) {
         Log::inst().setLogLevel(Log::DEBUG_LEVEL);
@@ -84,6 +85,7 @@ int main(int argc, char **argv) {
     }
 
 	vector<string> rest_opts = optp.getRawOptions();
+	
 	sopt.add_opts = parseArgOptionsPairs(rest_opts);
 
 	Constants c(sopt.const_file.getValues(), sopt.add_opts);
@@ -95,13 +97,17 @@ int main(int argc, char **argv) {
 	} else {
 		s.build();
 	}
+	if(sopt.no_learning) {
+		L_INFO << "Turning off learning";
+		s.turnOffLearning();
+	}
 	if(!sopt.out_stat_file.empty()) {
 		s.turnOnStatistics();
 	}
 	if(sopt.Tmax>0.0) {
+		L_INFO << "Setting maximum sim duration " << sopt.Tmax;
 		s.setMaxDuration(sopt.Tmax);
 	}
-
 	s.run(sopt.jobs);
 
 	if (!sopt.model_save.empty()) {

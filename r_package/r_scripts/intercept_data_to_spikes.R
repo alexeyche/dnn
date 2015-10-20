@@ -13,6 +13,10 @@ opts[["--dst-file"]] = list(
     description="destination file for spikes",
     default = spikes.path("intercept_spikes.pb")
 )
+opts[["--test-dst-file"]] = list(
+    description="destination file for testing spikes",
+    default = spikes.path("intercept_spikes_test.pb")
+)
 opts[["--dt"]] = list(
     description="delta t for spikes",
     default = 1,
@@ -20,7 +24,7 @@ opts[["--dt"]] = list(
 )
 opts[["--sample-size"]] = list(
     description="size of one sample",
-    default = 500,
+    default = 240,
     process = as.integer
 )
 opts[["--ts-name"]] = list(
@@ -40,22 +44,23 @@ opts[["--prolongation"]] = list(
 
 args <- commandArgs()
 
-c(neurons, dst_file, dt, sample_size, ts_name, sample_gap, prolongation) :=
+c(neurons, dst_file, test_dst_file, dt, sample_size, ts_name, sample_gap, prolongation) :=
     parse.options(args, opts)
 
 
-#sel=c(1:10, 50:60, 100:110, 150:160, 200:210, 250:260)
+# ts = time.series(
+#     matrix(c(1:100, 100:1), nrow=1)
+#   , ts.info(c("1","2"), c(100, 200))
+# )
+
+sel=c(1:10, 50:60, 100:110, 150:160, 200:210, 250:260)
 #sapply(1:6, function(x) sample((x-1)*50+1:50, 1))
 #sel=c(38, 89, 137, 163, 244, 285)
 
-test_ts = time.series(
-    matrix(c(1:100, 100:1), nrow=1)
-  , ts.info(c("1","2"), c(100, 200))
-)
 
-#c(train_ts, test_ts) := prepare.ucr.data(sample_size, ts_name, gap_between_patterns = 0, sel=sel)
+c(ts, test_ts) := prepare.ucr.data(sample_size, ts_name, gap_between_patterns = 0, sel=sel)
 
-ts = test_ts
+
 
 res_sp = empty.spikes(neurons)
 
@@ -72,7 +77,15 @@ while(TRUE) {
         break
     }
 }
-
 proto.write(res_sp, dst_file)
+
+sp = intercept.data.to.spikes(
+    ts
+    , neurons
+    , 1
+    , dt
+    , sample_gap
+)
+proto.write(sp, test_dst_file)
 
 

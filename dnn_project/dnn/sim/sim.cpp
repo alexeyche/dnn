@@ -38,6 +38,15 @@ void Sim::build(Stream* input_stream) {
 	}
 }
 
+void Sim::turnOffLearning() {
+	for(auto &n: neurons) {
+		n.ref().lrule.clear();
+		n.ref().reinforce.clear();
+		n.ref().norm.clear();
+	}
+}
+
+
 void Sim::serialize(Stream &output_stream) {
 	output_stream.writeObject(&sim_info);
 	output_stream.writeObject(&rc);

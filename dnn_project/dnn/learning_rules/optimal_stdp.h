@@ -85,7 +85,6 @@ public:
 
     void propagateSynapseSpike(const SynSpike &sp);
 
-    inline double B_calc();
     void calculateDynamics(const Time& t);
 
 };

@@ -49,11 +49,14 @@ public:
 			if ( (*it == long_opt) || ( (!short_opt.empty()) && (*it == short_opt)) ) {
 				if (as_flag) {
 					src = true;
+					// cout << "Flag " << *it << "\n";
 					it = opts.erase(it);
+
 				} else {
 					if ( (it + 1) == opts.end() ) {
 						throw dnnException()<< "Can't find value for option " << long_opt << "\n";
 					}
+					// cout << "Opt " << *it << "\n";
 					src = cast<T>(*(++it));
 					it = opts.erase(it - 1, it + 1);
 				}

@@ -36,6 +36,7 @@ if(EP>=0) {
 CONST_FNAME = convStr(Sys.getenv('CONST'), "const.json")
 MODEL_FNAME = convStr(Sys.getenv('MODEL'), pfx_f("model.pb"))
 SPIKES_FNAME = convStr(Sys.getenv('SPIKES'), pfx_f("spikes.pb"))
+EVAL_SPIKES_FNAME = convStr(Sys.getenv('EVAL_SPIKES'), pfx_f("eval_spikes.pb"))
 STAT_FNAME = convStr(Sys.getenv('STAT'), pfx_f("stat.pb"))
 SP_PIX0 = convNum(Sys.getenv('SP_PIX0'), 1024)
 SP_PIX1 = convNum(Sys.getenv('SP_PIX1'), 768)
@@ -91,6 +92,9 @@ if(file.exists(CONST_FNAME)) {
 
 pic_files = NULL
 
+if(file.exists(EVAL_SPIKES_FNAME)) {
+    SPIKES_FNAME = EVAL_SPIKES_FNAME
+}
 if(file.exists(SPIKES_FNAME)) {
     spikes = proto.read(SPIKES_FNAME)
     net = spikes$values
@@ -170,18 +174,11 @@ if(EVAL) {
     setVerboseLevel(0)
     eval_spikes = spikes 
     eval_spikes$values = eval_spikes$values[lsize[1]+1:sum(lsize[-1])]
+    if(sum(sapply(eval_spikes$values, length)) == 0) {
+        cat("1.0\n")
+    } else
     if(EVAL_TYPE == "fisher") {
         chopped = chop.spikes.list(eval_spikes)
-        eval_spikes = cat.spikes(
-            chopped[[length(chopped)-7]]
-          , chopped[[length(chopped)-6]]
-          , chopped[[length(chopped)-5]]
-          , chopped[[length(chopped)-4]]
-          , chopped[[length(chopped)-3]]
-          , chopped[[length(chopped)-2]]
-          , chopped[[length(chopped)-1]]
-          , chopped[[length(chopped)]]
-        )
         K = kernel.run(eval_spikes, EVAL_PROC, EVAL_KERN, jobs=EVAL_JOBS)
         if(EVAL_VERBOSE) {
             c(y, M, N, A) := KFD(K)

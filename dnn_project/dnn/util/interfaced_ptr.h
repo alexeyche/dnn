@@ -18,6 +18,11 @@ public:
 		T::provideDefaultInterface(i);
 	}
 
+	void clear() {
+		T::provideDefaultInterface(i);	
+		_ptr = nullptr;
+	}
+
 	inline T* ptr() {
 		return _ptr;
 	}

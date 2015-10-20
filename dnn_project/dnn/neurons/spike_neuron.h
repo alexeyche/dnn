@@ -27,10 +27,12 @@ extern size_t global_neuron_index;
 
 class Builder;
 class Network;
+class Sim;
 
 class SpikeNeuronBase : public SimElement {
 friend class Builder;
 friend class Network;
+friend class Sim;
 public:
 	SpikeNeuronBase() : input_queue_lock(ATOMIC_FLAG_INIT), _fired(false) {
 		_id = global_neuron_index++;

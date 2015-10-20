@@ -176,10 +176,10 @@
     },
     "connections" : {
         "Stochastic" : {
-            "prob" : 0.5
+            "prob" : 0.4
        },
         "Stochastic_inh" : {
-            "prob" : 0.1
+            "prob" : 0.25
        },
         "Stochastic_rec" : {
             "prob" : 0.1
@@ -210,7 +210,7 @@
             "0->1" : [
                 { 
                     "type" : "Stochastic", 
-                    "start_weight" : 0.25, 
+                    "start_weight" : 0.20, 
                     "synapse" : "StaticSynapse"
                 }
             ],

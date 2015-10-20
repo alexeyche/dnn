@@ -33,11 +33,11 @@
 //    ]
   , "layer_01_start_weight" : [
         ["sim_configuration", "conn_map", "0->1", 0, "start_weight"]
-      , [0.1, 3.0]
+      , [0.1, 5.0]
     ]
   , "layer_11_start_weight" : [
         ["sim_configuration", "conn_map", "1->1", 0, "start_weight"]
-      , [0.1, 3.0]
+      , [0.1, 5.0]
     ]
 //  , "layer_12_start_weight" : [
 //        ["sim_configuration", "conn_map", "1->2", 0, "start_weight"]
@@ -106,6 +106,18 @@
   , "connection_prob_11" : [
         ["connections", "Stochastic_inh", "prob"]
       , [0.01, 1.0]
+  ]
+  , "srm_neuron_tau_refr" : [
+        ["neurons", "SRMNeuron", "tau_refr"]
+      , [0.0, 50.0]
+  ]
+  , "srm_neuron_tau_adapt" : [
+        ["neurons", "SRMNeuron", "tau_adapt"]
+      , [0.0, 500.0]
+  ]
+  , "srm_neuron_amp_adapt" : [
+        ["neurons", "SRMNeuron", "amp_adapt"]
+      , [0.0, 10.0]
   ]
 //  , "exc_syn2": [
 //        ["synapses", "StaticSynapse_l2", "psp_decay"]

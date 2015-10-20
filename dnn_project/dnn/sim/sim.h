@@ -31,6 +31,7 @@ public:
 	void saveStat(Stream &str);
 	void saveSpikes(Stream &str);
 	void turnOnStatistics();
+	void turnOffLearning();
 
 	static void runWorker(Sim &s, size_t from, size_t to, SpinningBarrier &barrier, bool master_thread, std::exception_ptr &eptr);
 	static void runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barrier, bool master_thread);
@@ -38,7 +39,8 @@ public:
 	void setMaxDuration(const double Tmax);
 	void print(std::ostream &str) const;
 	void run(size_t jobs);
-
+double duration;
+	
 protected:
 	void init() {
 		GlobalCtx::inst().init(sim_info, c, duration, rc);
@@ -47,7 +49,6 @@ protected:
 
 	RewardControl rc;
 
-	double duration;
 	Constants c;
 	vector<InterfacedPtr<SpikeNeuronBase>> neurons;
 	uptr<Network> net;

@@ -49,6 +49,7 @@ class DnnSim(object):
         self.evaluation = self.dget(kwargs, "evaluation", False)
         self.slave = self.dget(kwargs, "slave", False)
         self.prepare_data = self.dget(kwargs, "prepare_data", False)
+        self.evaluation_data = self.dget(kwargs, "evaluation_data", None)
 
         logFormatter = logging.Formatter("%(asctime)s [%(levelname)s]  %(message)-100s")
         rootLogger = logging.getLogger()
@@ -114,13 +115,44 @@ class DnnSim(object):
 
     def get_fname(self, f, ep=None):
         return os.path.join(self.working_dir, "{}_{}".format(ep if not ep is None else self.current_epoch, f)) 
+    
 
-    def construct_cmd(self):
+    def construct_default_run_cmd(self):
         cmd = [
-              self.dnn_sim_bin
+            self.dnn_sim_bin
         ]
         cmd += list(self.get_opt("const"))
         cmd += list(self.get_opt("jobs")) 
+
+        if not self.T_max is None:
+            cmd += list(self.get_opt("T_max"))
+
+        return cmd
+
+    def construct_eval_run_cmd(self):
+        cmd = self.construct_default_run_cmd()
+        cmd += [
+            "--output", self.get_fname("eval_spikes.pb")
+        ]
+        if self.stat:
+            cmd += [
+                "--stat", self.get_fname("eval_stat.pb")
+            ]
+        model = self.get_fname("model.pb")
+        if not os.path.exists(model):
+            raise Exception("Can't find current model to run evaluation run")
+
+        cmd += [
+            "--load", model,
+            "--no-learning"
+        ]
+        if len(self.add_options) != 1:
+            raise Exception("Need one additional option with sim data to run evaluation")
+        cmd += [str_to_opt(self.add_options.keys()[0]), self.evaluation_data]
+        return { "cmd" : cmd, "print_root_log_on_fail" : self.slave }
+
+    def construct_cmd(self):
+        cmd = self.construct_default_run_cmd()
         cmd += [
             "--save", self.get_fname("model.pb"),
             "--output", self.get_fname("spikes.pb"),
@@ -134,9 +166,6 @@ class DnnSim(object):
             cmd += [
                 "--load", prev_model
             ]
-        if not self.T_max is None:
-            cmd += list(self.get_opt("T_max"))
-
         for k, v in self.add_options.items():
             cmd += [str_to_opt(k), v]
 
@@ -169,6 +198,9 @@ class DnnSim(object):
             logging.info("Running epoch {}:".format(self.current_epoch))
             run_proc(**self.construct_cmd())
             if self.inspection:
+                if self.evaluation_data:
+                    logging.info("running on evaluation data ...")
+                    run_proc(**self.construct_eval_run_cmd())
                 logging.info("inspecting ... ")
                 with pushd(self.working_dir):
                     o = run_proc(**self.construct_inspect_cmd())
@@ -274,6 +306,10 @@ def main(argv):
                         '--prepare-data',
                         action='store_true',
                         help='Run prepare data procedure')
+    parser.add_argument('-evd', 
+                        '--evaluation-data',
+                        required=False,
+                        help='Run evaluation on special testing data. If not pointed evaluation will be runned on train data')
     args, other = parser.parse_known_args(argv)
 
     if len(argv) == 0:
@@ -294,6 +330,7 @@ def main(argv):
         "evaluation" : args.evaluation,
         "slave" : args.slave,
         "prepare_data" : args.prepare_data,
+        "evaluation_data" : args.evaluation_data,
     }
     if len(other) % 2 != 0:
         raise Exception("Got not paired add options: {}".format(" ".join(other)))

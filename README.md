@@ -75,7 +75,7 @@ proto.write(time.series(values=rnorm(1000)), ts.path("test_ts.pb"))
 ```
 last command will create in **$DNN_HOME/ts** file named **test_ts.pb**
 
-To run simulation you need to set up constants for neccessary neuron specification, e.g. **LeakyIntegrateAndFire** in **$DNN_HOME/user_const.json** file. 
+To run simulation you need to set up constants for neccessary neuron specification, e.g. **LeakyIntegrateAndFire** in **$DNN_HOME/const.json** file. 
 After that you can set up simulation configuration in the same file for that neuron. You need to add spec into **sim_configuration->layers**":
 ``` json
 {
