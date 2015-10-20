@@ -203,8 +203,7 @@
                 "neuron" : "SRMNeuron",
                 "act_function" : "ExpThreshold",
                 "learning_rule" : "OptimalStdp",
-                "weight_normalization" : "MinMax",
-                "axon_delay" : "Exp(0.1)"
+                "weight_normalization" : "MinMax"
             }
         ],
         "conn_map" : {
@@ -212,22 +211,14 @@
                 { 
                     "type" : "Stochastic", 
                     "start_weight" : 0.25, 
-                    "synapse" : "StaticSynapse",
-                    "dendrite_delay" : "Exp(0.1)"
+                    "synapse" : "StaticSynapse"
                 }
             ],
             "1->1" : [
                 { 
                     "type" : "Stochastic_inh", 
                     "start_weight" : 3.0, 
-                    "synapse" : "StaticSynapse_inh",
-                    "dendrite_delay" : "Exp(0.1)"
-                },
-                { 
-                    "type" : "Stochastic_rec", 
-                    "start_weight" : 3.0, 
-                    "synapse" : "StaticSynapse_rec",
-                    "dendrite_delay" : "Exp(0.1)"
+                    "synapse" : "StaticSynapse_inh"
                 }
             ]
         },

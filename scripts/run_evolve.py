@@ -41,7 +41,7 @@ rootLogger.addHandler(consoleHandler)
 class GlobalConfig(object):
     Epochs = 10
     AddOptions = []
-    Jobs = 5
+    Jobs = 8
     BadValue = 1.0
     SimJobs = 1
 
@@ -137,10 +137,6 @@ def get_vars(const, var_specs, vars, min=0.0, max=1.0):
             raise Exception("Can't find specs for variable {}".format(k))
         path, (a, b) = var_specs[k]
         v = get_value_in_path(const, path)        
-        print type(v)
-        print a, b, min, max
-        print k
-        print v
         scaled_v = scale_to(v, a, b, min, max)
         var_values.append(scaled_v)    
     return dict(zip(vars, var_values))
@@ -352,7 +348,12 @@ def main(argv):
     parser.add_argument(
         '-e', '--epochs', 
         required=False,
-        help='Epochs to run sim on each run', default=10
+        help='Epochs to run sim on each run', default=1
+    )
+    parser.add_argument(
+        '-j', '--jobs', 
+        required=False, type=int,
+        help='Number of parallel jobs for evolving procedure', default=multiprocessing.cpu_count()
     )
     parser.add_argument(
         '-a', '--attr', 
@@ -383,7 +384,7 @@ def main(argv):
     GlobalConfig.Epochs = args.epochs
     GlobalConfig.AddOptions = other
     GlobalConfig.SimJobs = args.sim_jobs
-
+    GlobalConfig.Jobs = args.jobs
     a = algo_cls(parse_attrs(args.attr))
 
     vars = [ v.strip() for v in args.vars.split(";") if v.strip() ] if args.vars else read_json(VAR_SPECS_FILE).keys()

@@ -15,10 +15,10 @@
 //        ["learning_rules", "OptimalStdp_l2", "tau_c"]
 //      , [10.0, 400.0]
 //    ]
-  , "opt_stdp_weight_decay": [
-        ["learning_rules", "OptimalStdp", "weight_decay"]
-      , [0.0, 2.0]
-    ]
+//  , "opt_stdp_weight_decay": [
+//        ["learning_rules", "OptimalStdp", "weight_decay"]
+//      , [0.0, 2.0]
+//    ]
 //  , "opt_stdp_target_rate_factor": [
 //        ["learning_rules", "OptimalStdp", "target_rate_factor"]
 //      , [0.0, 1.0]
@@ -37,10 +37,6 @@
     ]
   , "layer_11_start_weight" : [
         ["sim_configuration", "conn_map", "1->1", 0, "start_weight"]
-      , [0.1, 3.0]
-    ]
-  , "layer_11_rec_start_weight" : [
-        ["sim_configuration", "conn_map", "1->1", 1, "start_weight"]
       , [0.1, 3.0]
     ]
 //  , "layer_12_start_weight" : [
@@ -103,10 +99,6 @@
         ["synapses", "StaticSynapse_inh", "psp_decay"]
       , [1.0, 50.0]
     ]
-  , "rec_syn": [
-        ["synapses", "StaticSynapse_rec", "psp_decay"]
-      , [1.0, 50.0]
-    ]
   , "connection_prob_01" : [
         ["connections", "Stochastic", "prob"]
       , [0.01, 1.0]
@@ -114,26 +106,6 @@
   , "connection_prob_11" : [
         ["connections", "Stochastic_inh", "prob"]
       , [0.01, 1.0]
-  ]
-  , "connection_prob_11_exc" : [
-        ["connections", "Stochastic_rec", "prob"]
-      , [0.01, 1.0]
-  ]
-  , "axon_delay" : [
-        ["sim_configuration", "layers", 1, "axon_delay", 0]
-      , [0.05, 1000000]
-  ]
-  , "dendrite_delay" : [
-        ["sim_configuration", "conn_map", "0->1", 0, "dendrite_delay", 0]
-      , [0.05, 1000000]
-  ]
-  , "dendrite_delay_inh" : [
-        ["sim_configuration", "conn_map", "1->1", 0, "dendrite_delay", 0]
-      , [0.05, 1000000]
-  ]
-  , "dendrite_delay_rec" : [
-        ["sim_configuration", "conn_map", "1->1", 1, "dendrite_delay", 0]
-      , [0.05, 1000000]
   ]
 //  , "exc_syn2": [
 //        ["synapses", "StaticSynapse_l2", "psp_decay"]
