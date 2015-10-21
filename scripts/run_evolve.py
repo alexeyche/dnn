@@ -39,7 +39,7 @@ consoleHandler.setFormatter(logFormatter)
 rootLogger.addHandler(consoleHandler)
 
 class GlobalConfig(object):
-    Epochs = 10
+    Epochs = 1
     AddOptions = []
     Jobs = 8
     BadValue = 1.0

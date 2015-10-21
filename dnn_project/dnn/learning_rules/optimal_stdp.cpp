@@ -12,17 +12,17 @@ void OptimalStdp::propagateSynapseSpike(const SynSpike &sp) {
 // inline double OptimalStdp::B_calc() {
 //     // cout << s.p_mean << "\n";
 //     if( fabs(s.p_mean) < 0.00001 ) return 0.0;
-    
+
 //     // stat.add("B0",  (double)n->fired() * log(n->getFiringProbability()/s.p_mean));
 //     // stat.add("B1", (n->getFiringProbability() - s.p_mean));
 //     // cout << (double)n->fired() << " * " << log(n->getFiringProbability()/s.p_mean) << " - (" << n->getFiringProbability() << " - " << s.p_mean << ")\n";
-//     return  
+//     return
 
 // }
 
 void OptimalStdp::calculateDynamics(const Time& t) {
     double p = n->getFiringProbability();
-    
+
     if(fabs(p) < 1e-05) p = 1e-05;
 
     s.p_mean += (-s.p_mean + (double)n->fired())/c.tau_mean;

@@ -523,7 +523,7 @@
 			"file": "dnn_project/dnn/learning_rules/optimal_stdp.cpp",
 			"settings":
 			{
-				"buffer_size": 3836,
+				"buffer_size": 4042,
 				"line_ending": "Unix"
 			}
 		}
@@ -950,15 +950,15 @@
 					"file": "dnn_project/dnn/learning_rules/optimal_stdp.cpp",
 					"settings":
 					{
-						"buffer_size": 3836,
+						"buffer_size": 4042,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								1092,
+								1092
 							]
 						],
 						"settings":

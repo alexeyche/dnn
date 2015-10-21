@@ -85,11 +85,11 @@
 //    ]
   , "sigmoid_slope": [
         ["act_functions", "Sigmoid", "slope"]
-      , [0.1, 50.0]
+      , [0.1, 10.0]
     ]
   , "sigmoid_threshold": [
         ["act_functions", "Sigmoid", "threshold"]
-      , [0.01, 10.0]
+      , [0.01, 1.0]
     ]
   , "exc_syn": [
         ["synapses", "StaticSynapse", "psp_decay"]
@@ -101,7 +101,7 @@
     ]
   , "connection_prob_01" : [
         ["connections", "Stochastic", "prob"]
-      , [0.01, 1.0]
+      , [0.25, 1.0]
   ]
   , "connection_prob_11" : [
         ["connections", "Stochastic_inh", "prob"]
@@ -111,14 +111,14 @@
         ["neurons", "SRMNeuron", "tau_refr"]
       , [0.0, 50.0]
   ]
-  , "srm_neuron_tau_adapt" : [
-        ["neurons", "SRMNeuron", "tau_adapt"]
-      , [0.0, 500.0]
-  ]
-  , "srm_neuron_amp_adapt" : [
-        ["neurons", "SRMNeuron", "amp_adapt"]
-      , [0.0, 10.0]
-  ]
+//  , "srm_neuron_tau_adapt" : [
+//        ["neurons", "SRMNeuron", "tau_adapt"]
+//      , [0.0, 500.0]
+//  ]
+//  , "srm_neuron_amp_adapt" : [
+//        ["neurons", "SRMNeuron", "amp_adapt"]
+//      , [0.0, 10.0]
+//  ]
 //  , "exc_syn2": [
 //        ["synapses", "StaticSynapse_l2", "psp_decay"]
 //      , [1.0, 50.0]
