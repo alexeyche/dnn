@@ -15,7 +15,7 @@ KFD = function(K, only_scatter=FALSE, mu=0.001) {
         l_idx = which(y == lab)
         l = length(l_idx)
         
-        Mi = rowSums(K[, l_idx])/l
+        Mi = rowSums(as.matrix(K[, l_idx]))/l
         Ki = K[,l_idx]
         eye = diag(l)
         eye_l = matrix(1/l, nrow=l, ncol=l)

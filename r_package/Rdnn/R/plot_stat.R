@@ -154,7 +154,7 @@ plot_st =function(stat, name) {
 }
 
 getWeightMaps = function(xi, yi, w, lsize) {
-    prev_l_size = 1
+    prev_l_size = 0
     maps = vector("list")
     for(l in lsize) {
         col_size = sqrt(l)
@@ -162,7 +162,7 @@ getWeightMaps = function(xi, yi, w, lsize) {
         for(i in 1:col_size) {
             for(j in 1:col_size) {
                 src_neuron_id = prev_l_size + xi + (yi-1)*col_size
-                dst_neuron_id = prev_l_size + i + (j-1)*col_size            
+                dst_neuron_id = prev_l_size + i + (j-1)*col_size
                 map[i, j] = w[src_neuron_id, dst_neuron_id]
             }
         }

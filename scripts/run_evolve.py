@@ -44,8 +44,9 @@ class GlobalConfig(object):
     Jobs = 8
     BadValue = 1.0
     SimJobs = 1
+    ConstFilename = DnnSim.CONST_JSON
+    VarSpecsFile = pj(os.path.realpath(os.path.dirname(__file__)), "var_specs.json")
 
-VAR_SPECS_FILE = pj(os.path.realpath(os.path.dirname(__file__)), "var_specs.json")
 RUN_SIM_PY = pj(os.path.realpath(os.path.dirname(__file__)), "run_sim.py")
 
 
@@ -159,12 +160,12 @@ def runner(x, vars, working_dir, wait=False, id=None, min=0.0, max=1.0):
     if os.path.exists(working_dir):
         raise Exception("Working dir is already exists {}!".format(working_dir))
     make_dir(working_dir)
-    const_json = pj(working_dir, os.path.basename(DnnSim.CONST_JSON))
-    specs = read_json(VAR_SPECS_FILE)
+    const_json = pj(working_dir, os.path.basename(GlobalConfig.ConstFilename))
+    specs = read_json(GlobalConfig.VarSpecsFile)
     with open(const_json, "w") as fptr:
         fptr.write(
             proc_vars(
-                const = read_json(DnnSim.CONST_JSON)
+                const = read_json(GlobalConfig.ConstFilename)
               , var_specs = specs
               , vars = dict(zip(vars, x))
               , min = min
@@ -279,8 +280,8 @@ class CmaEs(Algo):
         state.dump(wd)
 
         start_vals = get_vars(
-            const = read_json(DnnSim.CONST_JSON)
-          , var_specs = read_json(VAR_SPECS_FILE)
+            const = read_json(GlobalConfig.ConstFilename)
+          , var_specs = read_json(GlobalConfig.VarSpecsFile)
           , vars = vars
           , min = self.min_bound
           , max = self.max_bound
@@ -325,7 +326,7 @@ ALGS = dict([(c.__name__, c) for c in Algo.__subclasses__()])
 def main(argv):
     epi = ""
     epi += "List of variables to evolve:\n"
-    for k, v in read_json(VAR_SPECS_FILE).iteritems():
+    for k, v in read_json(GlobalConfig.VarSpecsFile).iteritems():
         epi += "\t\t{}\n\t\t\tpath: {}, range: {}-{}\n".format(k, "/".join([ str(subv) for subv in v[0]]), v[1][0], v[1][1])
     epi += "List of algorithms:\n"
     for a in ALGS:
@@ -343,7 +344,7 @@ def main(argv):
     parser.add_argument(
         '-v', '--vars', 
         required=False,
-        help='Variables included in evolving, separated by ;. Or use all variables'
+        help='Variables included in evolving, separated by ;. Or use all variables; Or if it is a file use all variables from that file'
     )
     parser.add_argument(
         '-e', '--epochs', 
@@ -371,6 +372,11 @@ def main(argv):
         help='Tag for run, by defailt algo choosing by himself', default=None
     )
     parser.add_argument(
+        '-c', '--const', 
+        required=False,
+        help='Constants to work with, default %(default)s', default=DnnSim.CONST_JSON
+    )
+    parser.add_argument(
         'algo_name', nargs=1
     )
     if len(argv) == 0:
@@ -385,9 +391,15 @@ def main(argv):
     GlobalConfig.AddOptions = other
     GlobalConfig.SimJobs = args.sim_jobs
     GlobalConfig.Jobs = args.jobs
+    GlobalConfig.ConstFilename = args.const
     a = algo_cls(parse_attrs(args.attr))
-
-    vars = [ v.strip() for v in args.vars.split(";") if v.strip() ] if args.vars else read_json(VAR_SPECS_FILE).keys()
+    vars_str = None
+    if args.vars:
+        if os.path.isfile(args.vars):
+            GlobalConfig.VarSpecsFile = args.vars
+        else:
+            vars_str = args.vars
+    vars = [ v.strip() for v in vars_str.split(";") if v.strip() ] if vars_str else read_json(GlobalConfig.VarSpecsFile).keys()
 
     a(vars, tag=args.tag)
 

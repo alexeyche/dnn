@@ -49,9 +49,15 @@ get.gammatones = function(freqs, samp_rate, len=100) {
 
 time.series = function(values, ts_info=NULL) {
     o = list(values = values)
-    if(!is.null(ts_info)) {
-        o$ts_info = ts_info
+    if(is.null(ts_info)) {
+        if(is.matrix(values)) {
+            l = ncol(values)    
+        } else {
+            l = length(values)
+        }
+        ts_info = ts.info("unknown_label", l)
     }
+    o$ts_info = ts_info
     class(o) <- "TimeSeries"
     return(o)
 }

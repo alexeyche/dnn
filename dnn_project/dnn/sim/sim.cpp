@@ -125,13 +125,16 @@ void Sim::runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barr
 }
 
 
-void Sim::runWorker(Sim &s, size_t from, size_t to, SpinningBarrier &barrier, bool master_thread, std::exception_ptr &eptr) {
+void Sim::runWorker(Sim &s, size_t from, size_t to, SpinningBarrier &barrier,
+	bool master_thread, vector<std::exception_ptr> &exc_v, std::mutex &exc_v_mut) 
+{
 	try {
 		runWorkerRoutine(s, from, to, barrier, master_thread);
 	} catch (const dnnException &e) {
 		L_DEBUG << "Got error in [" << from << ":" << to << "] thread: " << e.what();
-		eptr = std::current_exception();
 		barrier.fail();
+		std::lock_guard<std::mutex> lock(exc_v_mut);
+		exc_v.push_back(std::current_exception());
 	} catch (const dnnInterrupt &e) {
 		// pass
 	}
@@ -145,10 +148,10 @@ void Sim::run(size_t jobs) {
 	vector<IndexSlice> slices = dispatchOnThreads(neurons.size(), jobs);
 	vector<std::thread> threads;
 	vector<std::exception_ptr> exceptions;
-
+	std::mutex exceptions_mut;
+	
 	SpinningBarrier barrier(jobs);
 	for(auto &slice: slices) {
-		exceptions.emplace_back();
 		threads.emplace_back(
 			Sim::runWorker,
 			std::ref(*this),
@@ -156,7 +159,8 @@ void Sim::run(size_t jobs) {
 			slice.to,
 			std::ref(barrier),
 			slice.from == 0,
-			std::ref(exceptions.back())
+			std::ref(exceptions),
+			std::ref(exceptions_mut)
 		);
 	}
 
@@ -164,12 +168,8 @@ void Sim::run(size_t jobs) {
 		t.join();
 	}
 	for(auto eptr: exceptions) {
-		try {
-			if(eptr) {
-				std::rethrow_exception(eptr);
-			}
-		} catch(const dnnException &dnn_e) {
-			throw;
+		if(eptr) {
+			std::rethrow_exception(eptr);
 		}
 	}
 	sim_info.pastTime += duration;

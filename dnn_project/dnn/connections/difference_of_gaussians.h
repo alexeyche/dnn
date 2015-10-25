@@ -38,14 +38,30 @@ public:
     }
     ConnectionRecipe getConnectionRecipe(const SpikeNeuronBase &left, const SpikeNeuronBase &right) {
     	ConnectionRecipe recipe;
-    	double v;
+    	double v = 0.0;
         if(c.dimension == 1) {
-            v = (1+c.a) * gaussFunction(right.localId(), left.localId(), c.r) - \
-    				  c.a * gaussFunction(right.localId(), left.localId(), c.b*c.r);
+            int right_circled = right.localId()-getPostLayerSize();
+            int left_circled = left.localId()-getPreLayerSize();
+            v += (1.0+c.a) * gaussFunction(left.localId(), right.localId(), c.r) - 
+    				  c.a * gaussFunction(left.localId(), right.localId(), c.b*c.r);
+            v += (1.0+c.a) * gaussFunction(left.localId(), right_circled, c.r) - 
+                      c.a * gaussFunction(left.localId(), right_circled, c.b*c.r);
+            v += (1.0+c.a) * gaussFunction(left_circled, right.localId(), c.r) - 
+                      c.a * gaussFunction(left_circled, right.localId(), c.b*c.r);
+            
         } else
         if(c.dimension == 2) {
-            v = (1+c.a) * gaussFunction2d(right.xi(), right.yi(), left.xi(), left.yi(), c.r) - \
+            int right_xi_circled = right.xi()-right.colSize();
+            int left_xi_circled = left.xi()-left.colSize();
+            int right_yi_circled = right.yi()-right.colSize();
+            int left_yi_circled = left.yi()-left.colSize();
+            
+            v += (1.0+c.a) * gaussFunction2d(right.xi(), right.yi(), left.xi(), left.yi(), c.r) - 
                       c.a * gaussFunction2d(right.xi(), right.yi(), left.xi(), left.yi(), c.b*c.r);
+            v += (1.0+c.a) * gaussFunction2d(right.xi(), right.yi(), left_xi_circled, left_yi_circled, c.r) - 
+                      c.a * gaussFunction2d(right.xi(), right.yi(), left_xi_circled, left_yi_circled, c.b*c.r);
+            v += (1.0+c.a) * gaussFunction2d(right_xi_circled, right_yi_circled, left.xi(), left.yi(), c.r) - 
+                      c.a * gaussFunction2d(right_xi_circled, right_yi_circled, left.xi(), left.yi(), c.b*c.r);
         } else {
             throw dnnException() << "Can't build DifferenceOfGaussians with dimension like this: " << c.dimension << "\n"
                                  << "Only 1 or 2 dimension supported\n";

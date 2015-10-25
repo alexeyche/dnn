@@ -180,6 +180,9 @@ class DnnSim(object):
             "SP_PIX0" : "{}".format(1024*2),
             "EVAL" : "yes" if self.evaluation else "no",
             "EVAL_JOBS" : str(self.jobs),
+            "CONST" : self.const,
+            "INSP_SPIKES" : "no",
+            "INSP_MODEL" : "no",
         }
         cmd = [
               self.insp_script

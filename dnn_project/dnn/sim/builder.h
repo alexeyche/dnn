@@ -16,7 +16,10 @@ using namespace rapidjson;
 class Builder {
 public:
 	struct Layer {
-		vector<InterfacedPtr<SpikeNeuronBase>> neurons;
+		size_t size() const {
+			return neurons.size();
+		}
+		vector<InterfacedPtr<SpikeNeuronBase>> neurons;		
 	};
 
 
@@ -50,6 +53,9 @@ public:
 		Document conn_conf = Json::parseStringC(conn_conf_s);
 		Ptr<ConnectionBase> conn = buildObjectFromConstants<ConnectionBase>(Json::getStringVal(conn_conf, "type"), c.connections);
 
+		conn->setPreLayerSize(pre.size());
+		conn->setPostLayerSize(post.size());
+		
 		for (auto &npre : pre.neurons) {
 			for (auto &npost : post.neurons) {
 				if(npre.ref().id() == npost.ref().id()) {
