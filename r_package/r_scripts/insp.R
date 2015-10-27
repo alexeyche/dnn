@@ -11,7 +11,7 @@ require(Rdnn, quietly=TRUE)
 require(rjson, quietly=TRUE)
 
 
-PIC_TOOL = "eog -f"
+PIC_TOOL = convStr(Sys.getenv("PIC_TOOL"), "eog -f")
 
 EP = convNum(Sys.getenv('EP'), -1)
 WD = convStr(Sys.getenv('WD'), getwd())
