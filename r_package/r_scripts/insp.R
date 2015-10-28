@@ -21,8 +21,8 @@ T1 = convNum(Sys.getenv('T1'), 1000)
 args <- commandArgs(trailingOnly = FALSE)
 if(length(grep("RStudio", args))>0) {    
     WD = simruns.path(system(sprintf("ls -t %s | head -n 1", simruns.path()), intern=TRUE))
-    WD = file.path(dnn.env(), "runs/test-run")
-    WD="/home/alexeyche/dnn/runs/cma_es/1"
+    #WD = file.path(dnn.env(), "runs/test-run")
+    #WD="/home/alexeyche/dnn/runs/cma_es/1"
     Sys.setenv(CONST=file.path(WD, "dog_find.json"))
     
     system(sprintf("ls -t %s | head -n 1", WD))
@@ -40,7 +40,7 @@ if(EP>=0) {
 CONST_FNAME = convStr(Sys.getenv('CONST'), "const.json")
 MODEL_FNAME = convStr(Sys.getenv('MODEL'), pfx_f("model.pb"))
 SPIKES_FNAME = convStr(Sys.getenv('SPIKES'), pfx_f("spikes.pb"))
-INSP_SPIKES = convBool(Sys.getenv('INSP_SPIKES'), TRUE)
+INSP_SPIKES = convBool(Sys.getenv('INSP_SPIKES'), FALSE)
 INSP_MODEL = convBool(Sys.getenv('INSP_MODEL'), TRUE)
 EVAL_SPIKES_FNAME = convStr(Sys.getenv('EVAL_SPIKES'), pfx_f("eval_spikes.pb"))
 STAT_FNAME = convStr(Sys.getenv('STAT'), pfx_f("stat.pb"))
@@ -187,10 +187,11 @@ if(EVAL) {
     if(!is.null(spikes)) {
         eval_spikes = spikes     
     } else {
-        eval_spikes = spikes = proto.read(SPIKES_FNAME)
+        eval_spikes = proto.read(SPIKES_FNAME)
     }
+    c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$ts_info$labels_timeline)-65)
     
-    #eval_spikes$values = eval_spikes$values[lsize[1]+1:sum(lsize[-1])]
+    eval_spikes$values = eval_spikes$values[101:150]
     if(sum(sapply(eval_spikes$values, length)) == 0) {
         cat("1.0\n")
     } else

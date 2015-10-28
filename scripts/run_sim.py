@@ -181,8 +181,8 @@ class DnnSim(object):
             "EVAL" : "yes" if self.evaluation else "no",
             "EVAL_JOBS" : str(self.jobs),
             "CONST" : self.const,
-            "INSP_SPIKES" : "no",
-            "INSP_MODEL" : "no",
+            "INSP_SPIKES" : "yes",
+            "INSP_MODEL" : "yes",
         }
         cmd = [
               self.insp_script

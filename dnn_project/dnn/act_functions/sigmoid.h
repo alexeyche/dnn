@@ -33,7 +33,11 @@ public:
     const string name() const { return "Sigmoid"; }
 
     double prob(const double &u) {
-        return 1.0/(1.0+exp( - c.slope * (u - c.threshold) ));
+        double p = 1.0/(1.0+exp( - c.slope * (u - c.threshold) ));
+        if(fabs(p)<1e-04) {
+            return 1e-04;
+        }
+        return p;
     }
 
     double probDeriv(const double &u) {

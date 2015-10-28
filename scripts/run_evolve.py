@@ -279,17 +279,18 @@ class CmaEs(Algo):
         make_dir(wd)
         state.dump(wd)
 
-        start_vals = get_vars(
-            const = read_json(GlobalConfig.ConstFilename)
-          , var_specs = read_json(GlobalConfig.VarSpecsFile)
-          , vars = vars
-          , min = self.min_bound
-          , max = self.max_bound
-        )
-
+        #start_vals = get_vars(
+        #    const = read_json(GlobalConfig.ConstFilename)
+        #  , var_specs = read_json(GlobalConfig.VarSpecsFile)
+        #  , vars = vars
+        #  , min = self.min_bound
+        #  , max = self.max_bound
+        #)
+        rng = np.random.RandomState(state.seed)
+        start_vals = self.min_bound + self.max_bound*rng.random_sample(len(vars))
 
         es = cma.CMAEvolutionStrategy(
-            [ start_vals[v] for v in vars ]
+            start_vals
           , self.sigma
           , { 
               'bounds' : [ 
