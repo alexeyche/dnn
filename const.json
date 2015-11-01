@@ -202,7 +202,7 @@
                 "size" : 100,
                 "neuron" : "SRMNeuron",
                 "act_function" : "Sigmoid",
-                "learning_rule" : "OptimalStdp",
+                "learning_rule" : "Stdp",
                 "weight_normalization" : "MinMax"
             }
         ],
@@ -216,10 +216,9 @@
             ],
             "1->1" : [
                 { 
-                    "type" : "DifferenceOfGaussians", 
+                    "type" : "Stochastic", 
                     "start_weight" : 3.0, 
-                    "synapse" : "StaticSynapse",
-                    "inh_synapse" : "StaticSynapse_inh"
+                    "synapse" : "StaticSynapse_inh"
                 }
             ]
         },

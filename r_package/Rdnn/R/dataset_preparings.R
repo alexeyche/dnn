@@ -170,13 +170,13 @@ cat.spikes = function(...) {
         if(is.null(s$ts_info$unique_labels)) next
             
         labs = s$ts_info$unique_labels[ s$ts_info$labels_ids+1 ]
-        
-        fsp$ts_info$labels_ids = c(fsp$ts_info$labels_ids, sapply(labs, function(l) which(l == fsp$ts_info$unique_labels)-1))
-        
-        fsp$ts_info$labels_timeline = c(fsp$ts_info$labels_timeline, s$ts_info$labels_timeline+last_t)
-        
-        
-        last_t = last_t + tail(s$ts_info$labels_timeline, 1)    
+        if(length(labs)>0) {
+            fsp$ts_info$labels_ids = c(fsp$ts_info$labels_ids, sapply(labs, function(l) which(l == fsp$ts_info$unique_labels)-1))
+        }
+        if(!is.null(s$ts_info$labels_timeline)) {
+            fsp$ts_info$labels_timeline = c(fsp$ts_info$labels_timeline, s$ts_info$labels_timeline+last_t)
+            last_t = last_t + tail(s$ts_info$labels_timeline, 1)
+        }
     }
     return(fsp)
 }
