@@ -8,8 +8,6 @@ message LeakyIntegrateAndFireC {
 }
 
 message LeakyIntegrateAndFireState {
-    required double p = 1;
-    required double u = 2;
-    required double ref_time = 3;
+    required double ref_time = 1;
 }
 

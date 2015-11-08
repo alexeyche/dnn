@@ -17,7 +17,7 @@ public:
     static inline double dLLH_dw(const SRMNeuron &n, const SynapseBase &syn, const double &tau_hebb) {
     	return dLLH_dw_formula(
     		n.getFiringProbability()
-    	  , n.getActFunction().ifc().probDeriv(n.getMembranePotential())
+    	  , n.getActFunction().ifc().probDeriv(n.getMembrane()/n.getProbabilityModulation())
     	  , n.getProbabilityModulation()
     	  , (double)n.fired()
     	  , syn.potential()
@@ -28,7 +28,7 @@ public:
     static inline double dLLH_dw_given_Y(const SRMNeuron &n, const SynapseBase &syn, const double &fired, const double &tau_hebb) {
 		return dLLH_dw_formula(
 			n.getFiringProbability()
-		  , n.getActFunction().ifc().probDeriv(n.getMembranePotential())
+		  , n.getActFunction().ifc().probDeriv(n.getMembrane())
 		  , n.getProbabilityModulation()
 		  , (double)n.fired()
 		  , syn.potential()

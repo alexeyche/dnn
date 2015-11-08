@@ -58,7 +58,7 @@ void OptimalStdp::calculateDynamics(const Time& t) {
 
         s.C[C_id_it] += SRMMethods::dLLH_dw_formula(
             p
-          , n->getActFunction().ifc().probDeriv(n->getMembranePotential())
+          , n->getActFunction().ifc().probDeriv(n->getMembrane())
           , n->getProbabilityModulation()
           , (double)n->fired()
           , syn.potential()

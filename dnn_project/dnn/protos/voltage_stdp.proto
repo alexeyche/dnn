@@ -1,0 +1,19 @@
+package Protos;
+
+message VoltageStdpC {
+    required double sigma_minus = 1;
+    required double sigma_plus = 2;
+    required double tau_x = 3;
+    required double tau_minus = 4;
+    required double tau_plus = 5;
+    required double a_plus = 6;
+    required double a_minus = 7;
+    required double learning_rate = 8;
+}
+
+message VoltageStdpState {
+    required double u_minus = 1;
+    required double u_plus = 2;
+    repeated double x = 3;
+}
+

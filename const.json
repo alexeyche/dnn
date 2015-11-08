@@ -1,6 +1,6 @@
 {
     "globals" : {
-        "learning_rate" : 0.04,
+        "learning_rate" : 0.01,
         "mean_weight" : 0.2,
         "max_weight" : 10.0,
         "min_weight" : 0.0,
@@ -115,7 +115,17 @@
             "tau_plus" : 16.0,
             "tau_minus" : 33.0,
             "tau_y" : 114.0,
-            "a_plus" : 1.0,
+            "a_plus" : 0.3,
+            "a_minus" : 1.0,
+            "learning_rate" : "globals/learning_rate"
+        },
+        "VoltageStdp" : {
+            "tau_x" : 16.0,
+            "tau_minus" : 33.0,
+            "tau_plus" : 10.0,
+            "sigma_minus" : 0.0,
+            "sigma_plus" : 0.75,
+            "a_plus" : 30.0,
             "a_minus" : 1.0,
             "learning_rate" : "globals/learning_rate"
         },
@@ -185,9 +195,9 @@
             "prob" : 0.1
        },
        "DifferenceOfGaussians" : {
-           "a" : 1.0,
-           "b" : 3.0,
-           "r" : 5,
+           "sigma_pos" : 3.0,
+           "sigma_neg" : 10.0,
+           "neg_amp" : 2.0,
            "dimension" : 1,
            "apply_amplitude" : true
        }
@@ -202,7 +212,7 @@
                 "size" : 100,
                 "neuron" : "SRMNeuron",
                 "act_function" : "Sigmoid",
-                "learning_rule" : "Stdp",
+                "learning_rule" : "VoltageStdp",
                 "weight_normalization" : "MinMax"
             }
         ],
@@ -210,14 +220,14 @@
             "0->1" : [
                 { 
                     "type" : "Stochastic", 
-                    "start_weight" : 0.20, 
+                    "start_weight" : 0.5, 
                     "synapse" : "StaticSynapse"
                 }
             ],
             "1->1" : [
                 { 
                     "type" : "Stochastic", 
-                    "start_weight" : 3.0, 
+                    "start_weight" : 0.5, 
                     "synapse" : "StaticSynapse_inh"
                 }
             ]
@@ -227,8 +237,8 @@
             "tau_mean_trace" : 10000.0
         },
         "dt" : 1.0,
-        "seed" : -1,
-        "neurons_to_listen" : [100],
+        "seed" : 2,
+        "neurons_to_listen" : [184],
         "files" : {
             "InputTimeSeries" : {
                 "filename" : "@ts-input"

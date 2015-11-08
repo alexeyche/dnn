@@ -85,14 +85,15 @@ public:
                 auto &syn = syns.get(syn_id).ref();
                 const double &w = syn.weight();
 
-
-
                 double dw = c.learning_rate * norm.derivativeModulation(w) * (
                     c.a_plus  * s.x[x_id_it] * n->fired() * norm.ltp(w) - \
                     c.a_minus * s.y * syn.fired() * norm.ltd(w)
                 );
-
-                syn.mutWeight() += dw;
+                if(syn.potential()<0) {
+                    dw = -dw;
+                }
+                syn.mutWeight() += dw; 
+                
 
                 s.x[x_id_it] += - s.x[x_id_it]/c.tau_plus;
                 ++x_id_it;

@@ -12,15 +12,15 @@ ts = time.series(
 )
 
 
-a=2.0
-b=10.0
-r=3
+sigma_pos=3.0
+sigma_neg=10.0
+neg_amp=2.0
 start = 1.0
 
 s = RSim$new()
 const = s$getConst()
 
-const$setElement("DifferenceOfGaussians", list(a=a, b=b, r=r, dimension=1, apply_amplitude=TRUE))
+const$setElement("DifferenceOfGaussians", list(neg_amp=neg_amp, sigma_pos=sigma_pos, sigma_neg=sigma_neg, dimension=1, apply_amplitude=TRUE))
 const$setElement("Sigmoid", list(threshold=1.0, slope=10.0))
 const$addLayer(list(
     size=M, neuron="SRMNeuron", act_function="Sigmoid", input="InputTimeSeries"

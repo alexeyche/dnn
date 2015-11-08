@@ -50,20 +50,14 @@ struct AdaptIntegrateAndFireC : public Serializable<Protos::AdaptIntegrateAndFir
 /*@GENERATE_PROTO@*/
 struct AdaptIntegrateAndFireState : public Serializable<Protos::AdaptIntegrateAndFireState>  {
     AdaptIntegrateAndFireState()
-    : p(0.0)
-    , u(0.0)
-    , ref_time(0.0)
+    : ref_time(0.0)
     , Ca(0.0)
     {}
 
     void serial_process() {
-        begin() << "p: "        << p << ", "
-                << "u: "        << u << ", "
-                << "ref_time: " << ref_time << ", "
+        begin() << "ref_time: " << ref_time << ", "
                 << "Ca: "       << Ca << Self::end;
     }
-    double p;
-    double u;
     double ref_time;
     double Ca;
 };
@@ -76,30 +70,30 @@ public:
     }
 
     void reset() {
-        s.p = 0.0;
-        s.u = c.rest_pot;
+        firingProbability() = 0.0;
+        membrane() = c.rest_pot;
         s.ref_time = 0.0;
         s.Ca = 0.0;
     }
 
     void calculateDynamics(const Time& t, const double &Iinput, const double &Isyn) {
         if(s.ref_time < 0.001) {
-            double Ia = c.gKCa * (s.Ca/(s.Ca + c.kd)) * (s.u - c.vK);
+            double Ia = c.gKCa * (s.Ca/(s.Ca + c.kd)) * (membrane() - c.vK);
             stat.add("Ia", Ia);
 
-            s.u += t.dt * (
-                - s.u
+            membrane() += t.dt * (
+                - membrane()
                 + c.noise * getNorm()
                 + Iinput
                 + Isyn
                 - Ia
                 ) / c.tau_m;
-            s.p = act_f.ifc().prob(s.u);
+            firingProbability() = act_f.ifc().prob(membrane());
 
 
-            if(getUnif() < s.p) {
+            if(getUnif() < firingProbability()) {
                 setFired(true);
-                s.u = c.rest_pot;
+                membrane() = c.rest_pot;
                 s.ref_time = c.tau_ref;
                 s.Ca += c.adapt_amp;
             }
@@ -107,13 +101,10 @@ public:
             s.ref_time -= t.dt;
         }
         s.Ca += t.dt * ( - s.Ca/c.tau_adapt );
-        stat.add("u", s.u);
+        stat.add("u", membrane());
         stat.add("Ca", s.Ca);
     }
 
-    const double& getFiringProbability() {
-        return s.p;
-    }
 };
 
 }

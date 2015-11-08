@@ -7,20 +7,20 @@ namespace dnn {
 
 /*@GENERATE_PROTO@*/
 struct DifferenceOfGaussiansC : public Serializable<Protos::DifferenceOfGaussiansC> {
-    DifferenceOfGaussiansC() : a(3.0), b(3.0), r(1), dimension(2), apply_amplitude(true) {}
+    DifferenceOfGaussiansC() : sigma_pos(1.0), sigma_neg(3.0), neg_amp(1.0), dimension(2), apply_amplitude(true) {}
 
     void serial_process() {
-        begin() << "a: " << a << ", "
-                << "b: " << b << ", "
-        		<< "r: " << r << ", "
-                << "dimension: " << dimension << ", "
+        begin() << "sigma_pos: " << sigma_pos << ", "
+                << "sigma_neg: " << sigma_neg << ", "
+                << "neg_amp: " << neg_amp << ", "
+        		<< "dimension: " << dimension << ", "
                 << "apply_amplitude: " << apply_amplitude << Self::end;
     }
 
     int dimension;
-    double a;
-    double b;
-    double r;
+    double sigma_pos;
+    double sigma_neg;
+    double neg_amp;
     bool apply_amplitude;
 };
 
@@ -31,10 +31,10 @@ public:
         return "DifferenceOfGaussians";
     }
     static double gaussFunction2d(double x, double y, double xc, double yc, double sigma) {
-    	return exp( - ( (x-xc)*(x-xc) + (y-yc)*(y-yc) )/(2*sigma*sigma) ) ;
+    	return (1/(sqrt(2*PI)*sigma)) * exp( - ( (x-xc)*(x-xc) + (y-yc)*(y-yc) )/(2*sigma*sigma) ) ;
     }
     static double gaussFunction(double x, double xc, double sigma) {
-        return exp( - ( (x-xc)*(x-xc) )/(2*sigma*sigma) ) ;
+        return (1/(sqrt(2*PI)*sigma)) * exp( - ( (x-xc)*(x-xc) )/(2*sigma*sigma) ) ;
     }
     ConnectionRecipe getConnectionRecipe(const SpikeNeuronBase &left, const SpikeNeuronBase &right) {
     	ConnectionRecipe recipe;
@@ -42,12 +42,12 @@ public:
         if(c.dimension == 1) {
             int right_circled = right.localId()-getPostLayerSize();
             int left_circled = left.localId()-getPreLayerSize();
-            v += (1.0+c.a) * gaussFunction(left.localId(), right.localId(), c.r) - 
-    				  c.a * gaussFunction(left.localId(), right.localId(), c.b*c.r);
-            v += (1.0+c.a) * gaussFunction(left.localId(), right_circled, c.r) - 
-                      c.a * gaussFunction(left.localId(), right_circled, c.b*c.r);
-            v += (1.0+c.a) * gaussFunction(left_circled, right.localId(), c.r) - 
-                      c.a * gaussFunction(left_circled, right.localId(), c.b*c.r);
+            v += gaussFunction(left.localId(), right.localId(), c.sigma_pos) - 
+    				  c.neg_amp * gaussFunction(left.localId(), right.localId(), c.sigma_neg);
+            v += gaussFunction(left.localId(), right_circled, c.sigma_pos) - 
+                      c.neg_amp * gaussFunction(left.localId(), right_circled, c.sigma_neg);
+            v += gaussFunction(left_circled, right.localId(), c.sigma_pos) - 
+                      c.neg_amp * gaussFunction(left_circled, right.localId(), c.sigma_neg);
             
         } else
         if(c.dimension == 2) {
@@ -56,12 +56,12 @@ public:
             int right_yi_circled = right.yi()-right.colSize();
             int left_yi_circled = left.yi()-left.colSize();
             
-            v += (1.0+c.a) * gaussFunction2d(right.xi(), right.yi(), left.xi(), left.yi(), c.r) - 
-                      c.a * gaussFunction2d(right.xi(), right.yi(), left.xi(), left.yi(), c.b*c.r);
-            v += (1.0+c.a) * gaussFunction2d(right.xi(), right.yi(), left_xi_circled, left_yi_circled, c.r) - 
-                      c.a * gaussFunction2d(right.xi(), right.yi(), left_xi_circled, left_yi_circled, c.b*c.r);
-            v += (1.0+c.a) * gaussFunction2d(right_xi_circled, right_yi_circled, left.xi(), left.yi(), c.r) - 
-                      c.a * gaussFunction2d(right_xi_circled, right_yi_circled, left.xi(), left.yi(), c.b*c.r);
+            v += gaussFunction2d(right.xi(), right.yi(), left.xi(), left.yi(), c.sigma_pos) - 
+                      c.neg_amp * gaussFunction2d(right.xi(), right.yi(), left.xi(), left.yi(), c.sigma_neg);
+            v += gaussFunction2d(right.xi(), right.yi(), left_xi_circled, left_yi_circled, c.sigma_pos) - 
+                      c.neg_amp * gaussFunction2d(right.xi(), right.yi(), left_xi_circled, left_yi_circled, c.sigma_neg);
+            v += gaussFunction2d(right_xi_circled, right_yi_circled, left.xi(), left.yi(), c.sigma_pos) - 
+                      c.neg_amp * gaussFunction2d(right_xi_circled, right_yi_circled, left.xi(), left.yi(), c.sigma_neg);
         } else {
             throw dnnException() << "Can't build DifferenceOfGaussians with dimension like this: " << c.dimension << "\n"
                                  << "Only 1 or 2 dimension supported\n";

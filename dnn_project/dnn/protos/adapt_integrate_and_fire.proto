@@ -13,9 +13,7 @@ message AdaptIntegrateAndFireC {
 }
 
 message AdaptIntegrateAndFireState {
-    required double p = 1;
-    required double u = 2;
-    required double ref_time = 3;
-    required double Ca = 4;
+    required double ref_time = 1;
+    required double Ca = 2;
 }
 

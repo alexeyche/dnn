@@ -20,6 +20,7 @@
 #include <dnn/learning_rules/optimal_stdp.h>
 #include <dnn/learning_rules/stdp_time.h>
 #include <dnn/learning_rules/triple_stdp.h>
+#include <dnn/learning_rules/voltage_stdp.h>
 #include <dnn/weight_normalizations/pow_min_max.h>
 #include <dnn/weight_normalizations/min_max.h>
 #include <dnn/weight_normalizations/nonlinear_min_max.h>

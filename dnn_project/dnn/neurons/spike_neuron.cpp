@@ -43,6 +43,8 @@ void SpikeNeuronBase::setFired(const bool& f) {
 }
 
 void SpikeNeuronBase::resetInternal() {
+	membrane() = 0;
+	firingProbability() = 0;
 	reset();
     for(auto s: syns) {
         s.ref().reset();

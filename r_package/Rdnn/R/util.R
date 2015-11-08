@@ -56,7 +56,7 @@ prast_mpl = function(spikes,T0=0, Tmax=Inf) {
     xyplot(y ~ x, list(x = x, y = y), xlim=c(T0, max(x)), cex=cex*pl_size,  col = "black")
 }
 
-plot_rastl <- function(spikes_list, i=NULL, T0=0, Tmax=Inf, xlim=NULL, ...) {
+plot_rastl <- function(spikes_list, i=NULL, nids=NULL, T0=0, Tmax=Inf, xlim=NULL, ...) {
     if(!is.null(xlim)) {
         T0 = xlim[1]
         Tmax = xlim[2]
@@ -71,7 +71,10 @@ plot_rastl <- function(spikes_list, i=NULL, T0=0, Tmax=Inf, xlim=NULL, ...) {
     
     x <- c()
     y <- c()
-    for(ni in 1:length(raster)) {
+    if(is.null(nids)) {
+        nids = 1:length(raster)    
+    }
+    for(ni in nids) {
         rast = raster[[ni]]
         rast = rast[rast >= T0]
         rast = rast[rast < Tmax]

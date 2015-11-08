@@ -92,6 +92,16 @@
             "a_minus" : 1.0,
             "learning_rate" : "globals/learning_rate"
         },
+        "VoltageStdp" : {
+            "tau_x" : 15.0,
+            "tau_minus" : 10.0,
+            "tau_plus" : 5.0,
+            "sigma_minus" : 0.0,
+            "sigma_plus" : 1.2,
+            "a_plus" : 1.0,
+            "a_minus" : 1.0,
+            "learning_rate" : "globals/learning_rate"
+        },
         "OptimalStdp" : {
             "tau_c" : 200.0,
             "tau_mean" : 10000.0,
@@ -143,9 +153,9 @@
             "prob" : 1.0
        },
        "DifferenceOfGaussians" : {
-           "a" : 3.0,
-           "b" : 5.0,
-           "r" : 3,
+           "sigma_pos" : 1.0,
+           "sigma_neg" : 3.0,
+           "neg_amp" : 2.0,
            "dimension" : 1,
            "apply_amplitude" : true
        },

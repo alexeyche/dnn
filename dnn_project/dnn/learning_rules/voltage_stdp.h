@@ -1,39 +1,48 @@
 #pragma once
 
-
 #include "learning_rule.h"
-#include <dnn/protos/triple_stdp.pb.h>
+
+#include <dnn/protos/voltage_stdp.pb.h>
 #include <dnn/io/serialize.h>
 #include <dnn/util/fastapprox/fastexp.h>
 
-#include <dnn/contrib/kiss_fft/kiss_fft.h>
+#include <limits>
 
 namespace dnn {
 
 
 /*@GENERATE_PROTO@*/
-struct TripleStdpC : public Serializable<Protos::TripleStdpC> {
-    TripleStdpC()
-    : tau_plus(16.0)
-    , tau_minus(33.0)
-    , tau_y(114.0)
-    , a_plus(1.0)
-    , a_minus(1.5)
-    , learning_rate(1.0)
-    {}
+struct VoltageStdpC : public Serializable<Protos::VoltageStdpC> {
+    VoltageStdpC()
+        : sigma_minus(0.0)
+        , sigma_plus(1.2)        
+        , tau_x(15.0)
+        , tau_minus(10)
+        , tau_plus(5)
+        , a_plus(1.0)
+        , a_minus(1.0)
+        , learning_rate(0.04)
+    {
+    }
 
     void serial_process() {
-        begin() << "tau_plus: " << tau_plus << ", "
+        begin() << "sigma_minus: " << sigma_minus << ", " 
+                << "sigma_plus: " << sigma_plus << ", " 
+                << "tau_x: " << tau_x << ", "
+                << "tau_plus: " << tau_plus << ", "
                 << "tau_minus: " << tau_minus << ", "
-                << "tau_y: " << tau_y << ", "
                 << "a_plus: " << a_plus << ", "
                 << "a_minus: " << a_minus << ", "
                 << "learning_rate: " << learning_rate << Self::end;
     }
 
-    double tau_plus;
+    
+    double sigma_minus;
+    double sigma_plus;
+    
+    double tau_x;
     double tau_minus;
-    double tau_y;
+    double tau_plus;
     double a_plus;
     double a_minus;
     double learning_rate;
@@ -41,32 +50,36 @@ struct TripleStdpC : public Serializable<Protos::TripleStdpC> {
 
 
 /*@GENERATE_PROTO@*/
-struct TripleStdpState : public Serializable<Protos::TripleStdpState>  {
-    TripleStdpState()
-    : y(0.0), y_long(0.0)
-    {}
-
-    void serial_process() {
-        begin() << "y: "        << y << ", "
-                << "y_long: "   << y_long << ", "
-                << "x: "        << x << Self::end;
+struct VoltageStdpState : public Serializable<Protos::VoltageStdpState>  {
+    VoltageStdpState()
+        : u_minus(0.0), u_plus(0.0)
+    {
     }
 
-    double y;
-    double y_long;
+    void serial_process() {
+        begin() << "u_minus: " << u_minus << ", "
+                << "u_plus: " << u_plus << ", "
+                << Self::end;
+    }
+
+    double u_minus;
+    double u_plus;
     ActVector<double> x;
 };
 
+double rectifier(const double &&u) {
+    return u < 0.0 ? 0.0 : u;
+}
 
-class TripleStdp : public LearningRule<TripleStdpC, TripleStdpState, SpikeNeuronBase> {
+class VoltageStdp : public LearningRule<VoltageStdpC, VoltageStdpState, SpikeNeuronBase> {
 public:
     const string name() const {
-        return "TripleStdp";
+        return "VoltageStdp";
     }
 
     void reset() {
-        s.y = 0;
-        s.y_long = 0;
+        s.u_minus = 0;
+        s.u_plus = 0;
         s.x.resize(n->getSynapses().size());
         for(auto &v: s.x) {
             v = 0;
@@ -74,13 +87,15 @@ public:
     }
 
     void propagateSynapseSpike(const SynSpike &sp) {
-        s.x[sp.syn_id] += 1;
+        s.x[sp.syn_id] += 1.0/c.tau_x;
     }
 
     void calculateDynamics(const Time& t) {
-        if(n.ref().fired()) {
-            s.y += 1;
-        }
+        const double &u = n->getMembrane();
+
+        s.u_minus += (-s.u_minus + u)/c.tau_minus;
+        s.u_plus += (-s.u_plus + u)/c.tau_plus;
+
         auto &syns = n->getMutSynapses();
         const auto &norm = n->getWeightNormalization().ifc();
 
@@ -94,21 +109,19 @@ public:
                 const double &w = syn.weight();
 
                 double dw = c.learning_rate * norm.derivativeModulation(w) * (
-                    c.a_plus  * s.y_long * s.x[x_id_it] * n->fired() * norm.ltp(w) - \
-                    c.a_minus * s.y * syn.fired() * norm.ltd(w)
+                    norm.ltp(w) * c.a_plus * s.x[x_id_it] * rectifier(u - c.sigma_plus) * rectifier(s.u_plus - c.sigma_minus) - 
+                    norm.ltd(w) * c.a_minus * syn.fired() * rectifier(s.u_minus - c.sigma_minus)
                 );
                 if(syn.potential()<0) {
                     dw = -dw;
                 }
                 syn.mutWeight() += dw;
 
-                s.x[x_id_it] += - s.x[x_id_it]/c.tau_plus;
+                s.x[x_id_it] += - s.x[x_id_it]/c.tau_x;
                 ++x_id_it;
             }
         }
-
-        s.y += - s.y/c.tau_minus;
-        s.y_long += - s.y_long/c.tau_y + (double)n.ref().fired(); // using y_long before update
+        
 
         if(stat.on()) {
             size_t i=0;
@@ -119,11 +132,12 @@ public:
                 stat.add("ltd", i, norm.ltd(syn.ref().weight()));
                 ++i;
             }
-            stat.add("y", s.y);
-            stat.add("y_long", s.y_long);
+            stat.add("u_minus", s.u_minus);
+            stat.add("u_plus", s.u_plus);
         }
     }
 
 };
 
 }
+

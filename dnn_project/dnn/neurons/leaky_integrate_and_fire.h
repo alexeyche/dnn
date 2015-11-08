@@ -35,18 +35,12 @@ struct LeakyIntegrateAndFireC : public Serializable<Protos::LeakyIntegrateAndFir
 /*@GENERATE_PROTO@*/
 struct LeakyIntegrateAndFireState : public Serializable<Protos::LeakyIntegrateAndFireState>  {
     LeakyIntegrateAndFireState()
-    : p(0.0)
-    , u(0.0)
-    , ref_time(0.0)
+        : ref_time(0.0)
     {}
 
     void serial_process() {
-        begin() << "p: "        << p << ", "
-                << "u: "        << u << ", "
-                << "ref_time: " << ref_time << Self::end;
+        begin() << "ref_time: " << ref_time << Self::end;
     }
-    double p;
-    double u;
     double ref_time;
 };
 
@@ -58,30 +52,26 @@ public:
     }
 
     void reset() {
-        s.p = 0.0;
-        s.u = c.rest_pot;
+        membrane() = c.rest_pot;
+        firingProbability() = 0.0;
         s.ref_time = 0.0;
     }
 
     void calculateDynamics(const Time& t, const double &Iinput, const double &Isyn) {
         if(s.ref_time < 0.001) {
-            s.u += t.dt * ( - s.u  + c.noise*getNorm() + Iinput + Isyn) / c.tau_m;
-            s.p = act_f.ifc().prob(s.u);
+            membrane() += t.dt * ( - membrane()  + c.noise*getNorm() + Iinput + Isyn) / c.tau_m;
+            firingProbability() = act_f.ifc().prob(membrane());
 
-            if(s.p > getUnif()) {
+            if(firingProbability() > getUnif()) {
                 setFired(true);
-                s.u = c.rest_pot;
+                membrane() = c.rest_pot;
                 s.ref_time = c.tau_ref;
             }
         } else {
             s.ref_time -= t.dt;
         }
-        stat.add("u", s.u);
-        stat.add("p", s.p);
-    }
-
-    const double& getFiringProbability() {
-        return s.p;
+        stat.add("u", membrane());
+        stat.add("p", firingProbability());
     }
 };
 

@@ -173,7 +173,8 @@ class DnnSim(object):
     
     def construct_inspect_cmd(self):
         env = {
-            "T1" : "2000",
+            "T0" : os.environ.get("T0", "0"),
+            "T1" : os.environ.get("T1", "2000"),
             "COPY_PICS" : "yes",
             "EP" : str(self.current_epoch),
             "OPEN_PIC" : "no",

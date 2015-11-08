@@ -37,23 +37,17 @@ struct SRMNeuronC : public Serializable<Protos::SRMNeuronC> {
 /*@GENERATE_PROTO@*/
 struct SRMNeuronState : public Serializable<Protos::SRMNeuronState>  {
     SRMNeuronState()
-    : p(0.0)
-    , u(0.0)
-    , M(1.0)
+    : M(1.0)
     , gr(0.0)
     , ga(0.0)
     {}
 
     void serial_process() {
-        begin() << "p: " << p << ", "
-                << "u: " << u << ", "
-                << "gr: " << gr << ", "
+        begin() << "gr: " << gr << ", "
                 << "ga: " << ga << ", "
                 << "M: " << M << Self::end;
     }
 
-    double u;
-    double p;
     double M;
     double gr;
     double ga;
@@ -67,17 +61,17 @@ public:
     }
 
     void reset() {
-        s = SRMNeuronState();
+        s = SRMNeuronState();        
     }
 
     void calculateDynamics(const Time& t, const double &Iinput, const double &Isyn) {
-        s.u = c.u_rest + Iinput + Isyn;
+        membrane() = c.u_rest + Iinput + Isyn;
         s.M = fastexp(-(s.gr+s.ga));
-        s.p = act_f.ifc().prob(s.u) * s.M;
-        if(s.p <0.0) {
-            throw dnnException() << "Found negative probability, u: " << s.u << ", p: " << act_f.ifc().prob(s.u) << ", M: " << s.M << "\n";
-        }
-        if(s.p > getUnif()) {
+        firingProbability() = act_f.ifc().prob(membrane()) * s.M;
+        
+        membrane()*=s.M;
+
+        if(firingProbability() > getUnif()) {
             setFired(true);
             s.gr += c.amp_refr;
             s.ga += c.amp_adapt;
@@ -85,8 +79,8 @@ public:
         s.gr += - s.gr/c.tau_refr;
         s.ga += - s.ga/c.tau_adapt;
 
-        stat.add("u", s.u);
-        stat.add("p", s.p);
+        stat.add("u", membrane());
+        stat.add("p", firingProbability());
         stat.add("M", s.M);
         stat.add("ga", s.ga);
     }

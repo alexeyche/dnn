@@ -102,7 +102,18 @@ public:
 	void readInputSpikes(const Time &t);
 	void calculateDynamicsInternal(const Time &t);
 
-
+	const double& getFiringProbability() const {
+        return _p;
+    }
+    const double& getMembrane() const {
+        return _u;
+    }
+    double& membrane() {
+    	return _u;
+    }
+	double& firingProbability() {
+    	return _p;
+    }
 
 protected:
 	bool _fired;
@@ -110,7 +121,10 @@ protected:
 	size_t _xi;
 	size_t _yi;
 	size_t _colSize;
-
+	
+	double _p;
+	double _u;
+	
 	double _axonDelay;
 	ActVector<InterfacedPtr<SynapseBase>> syns;
 
@@ -131,18 +145,22 @@ protected:
 /*@GENERATE_PROTO@*/
 struct SpikeNeuronInfo : public Serializable<Protos::SpikeNeuronInfo> {
 	void serial_process() {
-		begin() << "id: " << id << ", " \
-				<< "xi: " << xi << ", " \
-				<< "yi: " << yi << ", " \
-				<< "colSize: " << colSize << ", " \
-		        << "axonDelay: " << axonDelay << ", " \
-		        << "num_of_synapses: " << num_of_synapses << ", " \
-		        << "act_function_is_set: " << act_function_is_set << ", " \
+		begin() << "id: " << id << ", "
+				<< "p: " << p << ", "
+				<< "u: " << u << ", "
+				<< "xi: " << xi << ", "
+				<< "yi: " << yi << ", "
+				<< "colSize: " << colSize << ", "
+		        << "axonDelay: " << axonDelay << ", "
+		        << "num_of_synapses: " << num_of_synapses << ", "
+		        << "act_function_is_set: " << act_function_is_set << ", "
 		        << "input_is_set: " << input_is_set << ", "
 		        << "lrule_is_set: " << lrule_is_set << ", "
 		        << "reinforce_is_set: " << reinforce_is_set  << ", "
 		        << "weight_normalization_is_set: " << weight_normalization_is_set << Self::end;
 	}
+	double u;
+	double p;
 	size_t id;
 	size_t xi;
 	size_t yi;
@@ -162,6 +180,8 @@ public:
 	SpikeNeuronInfo getInfo() {
 		SpikeNeuronInfo info;
 		info.id = id();
+		info.u = getMembrane();
+		info.p = getFiringProbability();
 		info.xi = xi();
 		info.yi = yi();
 		info.colSize = colSize();
@@ -230,12 +250,6 @@ public:
 		}
 		(*this) << Self::end;
 	}
-	const double& getFiringProbability() const {
-        return s.p;
-    }
-    const double& getMembranePotential() const {
-        return s.u;
-    }
 
 protected:
 	State s;
