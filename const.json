@@ -1,4 +1,4 @@
-{
+{//test
     "globals" : {
         "learning_rate" : 0.01,
         "mean_weight" : 0.2,
