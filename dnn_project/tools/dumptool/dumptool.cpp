@@ -25,9 +25,11 @@ int main(int argc, char **argv) {
     OptionParser optp(argc, argv);
     
     string input_file;
-    bool need_help;
-    optp.option("--input", "-i", input_file, true);
+    bool need_help = false;
+    
+    optp.option("--input", "-i", input_file, false);
     optp.option("--help", "-h", need_help, false, true);
+    
     if(need_help) {
         cout << usage;
         return 0;
