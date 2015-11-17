@@ -2,7 +2,7 @@
     "globals" : {
         "learning_rate" : 0.04,
         "mean_weight" : 0.2,
-        "max_weight" : 10.0,
+        "max_weight" : 20.0,
         "min_weight" : 0.0,
         "dt" : 1.0
     },
@@ -71,7 +71,7 @@
             "amp"   : 20.0
         },
         "Sigmoid" : {
-            "threshold": 1.0,
+            "threshold": 1.5,
             "slope" : 10.0 
         }
     },
@@ -176,10 +176,10 @@
     },
     "connections" : {
         "Stochastic" : {
-            "prob" : 0.4
+            "prob" : 0.5
        },
         "Stochastic_inh" : {
-            "prob" : 0.25
+            "prob" : 0.9
        },
         "Stochastic_rec" : {
             "prob" : 0.1
@@ -210,14 +210,14 @@
             "0->1" : [
                 { 
                     "type" : "Stochastic", 
-                    "start_weight" : 0.20, 
+                    "start_weight" : 5.0, 
                     "synapse" : "StaticSynapse"
                 }
             ],
             "1->1" : [
                 { 
                     "type" : "Stochastic_inh", 
-                    "start_weight" : 3.0, 
+                    "start_weight" : 10.0, 
                     "synapse" : "StaticSynapse_inh"
                 }
             ]

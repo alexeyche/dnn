@@ -92,8 +92,8 @@ public:
                 if(syn.potential()<0) {
                     dw = -dw;
                 }
-                syn.mutWeight() += dw; 
-                
+                syn.mutWeight() += dw;
+
 
                 s.x[x_id_it] += - s.x[x_id_it]/c.tau_plus;
                 ++x_id_it;

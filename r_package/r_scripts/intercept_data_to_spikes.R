@@ -19,12 +19,12 @@ opts[["--test-dst-file"]] = list(
 )
 opts[["--dt"]] = list(
     description="delta t for spikes",
-    default = 5,
+    default = 1,
     process = as.numeric
 )
 opts[["--sample-size"]] = list(
     description="size of one sample",
-    default = 60,
+    default = 300,
     process = as.integer
 )
 opts[["--ts-name"]] = list(

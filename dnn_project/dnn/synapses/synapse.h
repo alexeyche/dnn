@@ -22,7 +22,7 @@ friend class Network;
 friend class SpikeNeuronBase;
 friend class Builder;
 public:
-	SynapseBase() : _fired(false), _potential(0.0), _weight(0.0), _dendriteDelay(0.0) {}
+	SynapseBase() : _fired(false), _potential(0.0), _weight(0.0), _dendriteDelay(0.0), _amplitude(0.0) {}
 	typedef SynapseInterface interface;
 
 	inline const size_t& idPre() const {
@@ -32,7 +32,10 @@ public:
 		return _idPre;
 	}
 
-	virtual void propagateSpike() = 0;
+	virtual void propagateSpike() {
+	    mutPotential() += amplitude();
+	}
+
 	virtual void calculateDynamics(const Time &t) = 0;
 
 	template <typename T>
@@ -40,6 +43,7 @@ public:
         i.propagateSpike = MakeDelegate(static_cast<T*>(this), &T::propagateSpike);
         i.calculateDynamics = MakeDelegate(static_cast<T*>(this), &T::calculateDynamics);
     }
+
 	static void __defaultPropagateSpike() {
 		throw dnnException() << "Calling inapropriate default interface function\n";
 	}
@@ -51,6 +55,7 @@ public:
 		i.propagateSpike = &SynapseBase::__defaultPropagateSpike;
         i.calculateDynamics = &SynapseBase::__defaultCalculateDynamics;
 	}
+
 	Statistics& getStat() {
 		return stat;
 	}
@@ -81,12 +86,28 @@ public:
 	inline double getWeightedPotential() const {
 		return weight() * potential();
 	}
+	inline const double& amplitude() const {
+		return _amplitude;
+	}
+	inline double& mutAmplitude() {
+		return _amplitude;
+	}
+	const bool isExcitatory() const {
+		return amplitude()>0;
+	}
+	const bool isInhibitory() const {
+		return !isExcitatory();
+	}
+
+
 protected:
 	size_t _idPre;
 	double _dendriteDelay;
 	double _weight;
 	double _potential;
 	bool _fired;
+
+	double _amplitude;
 
 	Statistics stat;
 };
