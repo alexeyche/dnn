@@ -1,0 +1,13 @@
+package Protos;
+
+message OjaC {
+    required double tau_x = 1;
+    required double tau_y = 2;
+    required double learning_rate = 3;
+}
+
+message OjaState {
+    required double y = 1;
+    repeated double x = 2;
+}
+
