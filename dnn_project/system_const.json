@@ -110,6 +110,11 @@
             "weight_decay" : 0.0,
             "tau_hebb" : 0.0,
             "learning_rate" : "globals/learning_rate"
+        },
+        "Oja" : {
+            "tau_x": 100.0,
+            "tau_y": 100.0,
+            "learning_rate" : "globals/learning_rate"
         }
     },
     "reinforcements" : {
@@ -167,7 +172,7 @@
         "layers" : [],
         "conn_map" : {},
         "reward_dynamics" : {
-            "tau_trace" : 100.0, 
+            "tau_trace" : 100.0,
             "tau_mean_trace" : 10000.0
         },
         "dt" : 1.0,

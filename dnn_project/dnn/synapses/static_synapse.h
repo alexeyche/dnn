@@ -35,11 +35,10 @@ public:
         return "StaticSynapse";
     }
     void reset() {
+        mutAmplitude() = c.amp;
         mutPotential() = 0;
     }
-    void propagateSpike() {
-        mutPotential() += c.amp;
-    }
+
     void calculateDynamics(const Time &t) {
         stat.add("x", potential());
         mutPotential() += - t.dt * potential()/c.psp_decay;

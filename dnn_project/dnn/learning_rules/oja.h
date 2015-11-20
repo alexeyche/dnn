@@ -2,7 +2,7 @@
 
 
 #include "learning_rule.h"
-#include <dnn/protos/stdp.pb.h>
+#include <dnn/protos/oja.pb.h>
 #include <dnn/io/serialize.h>
 #include <dnn/util/fastapprox/fastexp.h>
 
@@ -10,34 +10,28 @@ namespace dnn {
 
 
 /*@GENERATE_PROTO@*/
-struct StdpC : public Serializable<Protos::StdpC> {
-    StdpC()
-    : tau_plus(30.0)
-    , tau_minus(50.0)
-    , a_plus(1.0)
-    , a_minus(1.5)
+struct OjaC : public Serializable<Protos::OjaC> {
+    OjaC()
+    : tau_x(100.0)
+    , tau_y(100.0)
     , learning_rate(1.0)
     {}
 
     void serial_process() {
-        begin() << "tau_plus: " << tau_plus << ", "
-                << "tau_minus: " << tau_minus << ", "
-                << "a_plus: " << a_plus << ", "
-                << "a_minus: " << a_minus << ", "
+        begin() << "tau_x: " << tau_x << ", "
+                << "tau_y: " << tau_y << ", "
                 << "learning_rate: " << learning_rate << Self::end;
     }
 
-    double tau_plus;
-    double tau_minus;
-    double a_plus;
-    double a_minus;
+    double tau_x;
+    double tau_y;
     double learning_rate;
 };
 
 
 /*@GENERATE_PROTO@*/
-struct StdpState : public Serializable<Protos::StdpState>  {
-    StdpState()
+struct OjaState : public Serializable<Protos::OjaState>  {
+    OjaState()
     : y(0.0)
     {}
 
@@ -48,30 +42,38 @@ struct StdpState : public Serializable<Protos::StdpState>  {
 
     double y;
     ActVector<double> x;
+    vector<double> syn_amp;
 };
 
 
-class Stdp : public LearningRule<StdpC, StdpState, SpikeNeuronBase> {
+class Oja : public LearningRule<OjaC, OjaState, SpikeNeuronBase> {
 public:
     const string name() const {
-        return "Stdp";
+        return "Oja";
     }
 
     void reset() {
         s.y = 0;
-        s.x.resize(n->getSynapses().size());
-        for(auto &v: s.x) {
-            v = 0;
+        auto syns = n->getSynapses();
+        s.x.resize(syns.size());
+        s.syn_amp.resize(syns.size());
+        for(size_t syn_i=0; syn_i < syns.size(); ++syn_i) {
+            s.x[syn_i] = 0;
+            if(syns.get(syn_i).ref().isExcitatory()) {
+                s.syn_amp[syn_i] = 1.0;
+            } else {
+                s.syn_amp[syn_i] = -1.0;
+            }
         }
     }
 
     void propagateSynapseSpike(const SynSpike &sp) {
-        s.x[sp.syn_id] += 1;
+        s.x[sp.syn_id] += s.syn_amp[sp.syn_id]/c.tau_x;
     }
 
     void calculateDynamics(const Time& t) {
         if(n.ref().fired()) {
-            s.y += 1;
+            s.y += (double)n->fired()/c.tau_y;
         }
         auto &syns = n->getMutSynapses();
         const auto &norm = n->getWeightNormalization().ifc();
@@ -84,22 +86,17 @@ public:
                 const size_t &syn_id = *x_id_it;
                 auto &syn = syns.get(syn_id).ref();
                 const double &w = syn.weight();
-
                 double dw = c.learning_rate * norm.derivativeModulation(w) * (
-                    c.a_plus  * s.x[x_id_it] * n->fired() * norm.ltp(w) - \
-                    c.a_minus * s.y * syn.fired() * norm.ltd(w)
+                    norm.ltp(w) * s.y * s.x[x_id_it] - norm.ltd(w) * s.y * s.y * w
                 );
-                if(syn.potential()<0) {
-                    dw = -dw;
-                }
+
                 syn.mutWeight() += dw;
 
-
-                s.x[x_id_it] += - s.x[x_id_it]/c.tau_plus;
+                s.x[x_id_it] += - s.x[x_id_it]/c.tau_x;
                 ++x_id_it;
             }
         }
-        s.y += - s.y/c.tau_minus;
+        s.y += - s.y/c.tau_y;
 
         if(stat.on()) {
             size_t i=0;
