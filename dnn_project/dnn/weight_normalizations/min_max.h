@@ -9,7 +9,7 @@ namespace dnn {
 
 /*@GENERATE_PROTO@*/
 struct MinMaxC : public Serializable<Protos::MinMaxC> {
-    MinMaxC() 
+    MinMaxC()
     : min_weight(0.0)
     , max_weight(1.0)
     {
@@ -34,7 +34,7 @@ public:
 	    if((w >= c.max_weight)||(w <= c.min_weight)) {
 	    	return 0.0;
 	    }
-        return 1.0; 
+        return 1.0;
     }
 };
 

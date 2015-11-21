@@ -26,8 +26,8 @@ if(length(grep("RStudio", args))>0) {
     #Sys.setenv(CONST=file.path(WD, "dog_find.json"))
     
     system(sprintf("ls -t %s | head -n 1", WD))
-    #EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
-    EP = 1
+    EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
+    #EP = 1
     #EP=2
 }
 
@@ -227,7 +227,7 @@ if(EVAL) {
         
         if(SAVE_PIC_IN_FILES) png(eval_ov_debug_pic, width=1024, height=768)
         
-        plot(vm[,1], type="l", main=sprintf("Metric: %f", metric))
+        plot(vm[,1], type="l", main=sprintf("Metric: %f", metric), ylim=c(min(vm), max(vm)))
         for(li in 2:ncol(vm)) {
             lines(vm[,li], col=li)
         }

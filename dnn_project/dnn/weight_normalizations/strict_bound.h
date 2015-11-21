@@ -11,13 +11,13 @@ namespace dnn {
 /*@GENERATE_PROTO@*/
 struct StrictBoundC : public Serializable<Protos::StrictBoundC> {
     StrictBoundC()
-    : unit(1.0) 
+    : unit(1.0)
     , power(2.0)
     {
     }
 
     void serial_process() {
-        begin() << "unit: " << unit << ", " 
+        begin() << "unit: " << unit << ", "
                 << "power: " << power << Self::end;
     }
 
@@ -45,7 +45,7 @@ public:
         }
         double mod = c.unit/fastpow(denominator, 1.0/c.power);
         for(auto s: syns) {
-            s.ref().mutWeight() = s.ref().weight()*mod;            
+            s.ref().mutWeight() = s.ref().weight()*mod;
         }
     }
 };

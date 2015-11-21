@@ -61,15 +61,15 @@ public:
     }
 
     void reset() {
-        s = SRMNeuronState();        
+        s = SRMNeuronState();
     }
 
     void calculateDynamics(const Time& t, const double &Iinput, const double &Isyn) {
         membrane() = c.u_rest + Iinput + Isyn;
         s.M = fastexp(-(s.gr+s.ga));
         firingProbability() = act_f.ifc().prob(membrane()) * s.M;
-        
-        membrane()*=s.M;
+
+        // membrane()*=s.M;
 
         if(firingProbability() > getUnif()) {
             setFired(true);

@@ -523,7 +523,15 @@
 			"file": "dnn_project/dnn/learning_rules/optimal_stdp.cpp",
 			"settings":
 			{
-				"buffer_size": 4033,
+				"buffer_size": 4042,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/learning_rules/srm_methods.h",
+			"settings":
+			{
+				"buffer_size": 1769,
 				"line_ending": "Unix"
 			}
 		},
@@ -580,6 +588,62 @@
 			"settings":
 			{
 				"buffer_size": 3795,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/weight_normalizations/sliding_ltd.h",
+			"settings":
+			{
+				"buffer_size": 1907,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/weight_normalizations/strict_bound.h",
+			"settings":
+			{
+				"buffer_size": 1154,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/weight_normalizations/min_max.h",
+			"settings":
+			{
+				"buffer_size": 741,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/weight_normalizations/pow_min_max.h",
+			"settings":
+			{
+				"buffer_size": 1130,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/weight_normalizations/nonlinear_min_max.h",
+			"settings":
+			{
+				"buffer_size": 1093,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/neurons/srm_neuron.h",
+			"settings":
+			{
+				"buffer_size": 2063,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "dnn_project/dnn/connections/difference_of_gaussians.h",
+			"settings":
+			{
+				"buffer_size": 3484,
 				"line_ending": "Unix"
 			}
 		}
@@ -1002,7 +1066,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 15,
 			"sheets":
 			[
 				{
@@ -1010,15 +1074,15 @@
 					"file": "dnn_project/dnn/learning_rules/optimal_stdp.cpp",
 					"settings":
 					{
-						"buffer_size": 4033,
+						"buffer_size": 4042,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								823,
-								823
+								726,
+								726
 							]
 						],
 						"settings":
@@ -1028,13 +1092,41 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 252.0,
+						"translation.y": 270.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
+					"file": "dnn_project/dnn/learning_rules/srm_methods.h",
+					"settings":
+					{
+						"buffer_size": 1769,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1622,
+								1622
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 476.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
 					"file": "dnn_project/dnn/learning_rules/oja.h",
 					"settings":
 					{
@@ -1062,7 +1154,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 3,
 					"file": "dnn_project/dnn/act_functions/sigmoid.h",
 					"settings":
 					{
@@ -1090,7 +1182,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 4,
 					"file": "dnn_project/spikework/kernel.cpp",
 					"settings":
 					{
@@ -1118,7 +1210,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 5,
 					"file": "dnn_project/dnn/base/factory.h",
 					"settings":
 					{
@@ -1146,7 +1238,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 6,
 					"file": "dnn_project/system_const.json",
 					"settings":
 					{
@@ -1174,7 +1266,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 7,
 					"file": "dnn_project/dnn/synapses/static_synapse.h",
 					"settings":
 					{
@@ -1202,7 +1294,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 8,
 					"file": "dnn_project/dnn/synapses/synapse.h",
 					"settings":
 					{
@@ -1224,6 +1316,202 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 1224.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "dnn_project/dnn/weight_normalizations/sliding_ltd.h",
+					"settings":
+					{
+						"buffer_size": 1907,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1581,
+								1581
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 856.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "dnn_project/dnn/weight_normalizations/strict_bound.h",
+					"settings":
+					{
+						"buffer_size": 1154,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								946,
+								946
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 388.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "dnn_project/dnn/weight_normalizations/min_max.h",
+					"settings":
+					{
+						"buffer_size": 741,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								741,
+								741
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 172.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "dnn_project/dnn/weight_normalizations/pow_min_max.h",
+					"settings":
+					{
+						"buffer_size": 1130,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1112,
+								1112
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 370.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "dnn_project/dnn/weight_normalizations/nonlinear_min_max.h",
+					"settings":
+					{
+						"buffer_size": 1093,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								967,
+								967
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 316.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"file": "dnn_project/dnn/neurons/srm_neuron.h",
+					"settings":
+					{
+						"buffer_size": 2063,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1584,
+								1584
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1072.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "dnn_project/dnn/connections/difference_of_gaussians.h",
+					"settings":
+					{
+						"buffer_size": 3484,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1632,
+								1632
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 576.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1289,6 +1577,26 @@
 		"selected_items":
 		[
 			[
+				"diff",
+				"dnn_project/dnn/connections/difference_of_gaussians.h"
+			],
+			[
+				"srm",
+				"dnn_project/dnn/neurons/srm_neuron.h"
+			],
+			[
+				"opt",
+				"dnn_project/dnn/learning_rules/optimal_stdp.cpp"
+			],
+			[
+				"stri",
+				"dnn_project/dnn/weight_normalizations/strict_bound.h"
+			],
+			[
+				"sli",
+				"dnn_project/dnn/weight_normalizations/sliding_ltd.h"
+			],
+			[
 				"act",
 				"dnn_project/dnn/util/act_vector.h"
 			],
@@ -1341,10 +1649,6 @@
 				"dnn_project/dnn/act_functions/sigmoid.h"
 			],
 			[
-				"opt",
-				"dnn_project/dnn/learning_rules/optimal_stdp.cpp"
-			],
-			[
 				"mod",
 				"src/mod.cpp"
 			],
@@ -1377,14 +1681,6 @@
 				"dnn_project/dnn/util/util.cpp"
 			],
 			[
-				"srm",
-				"dnn_project/dnn/learning_rules/srm_methods.h"
-			],
-			[
-				"diff",
-				"dnn_project/dnn/connections/difference_of_gaussians.h"
-			],
-			[
 				"strict",
 				"dnn_project/dnn/weight_normalizations/strict_bound.h"
 			],
@@ -1407,10 +1703,6 @@
 			[
 				"reg",
 				"dnn_project/dnn/base/register.x"
-			],
-			[
-				"stri",
-				"dnn_project/dnn/weight_normalizations/strict_bound.h"
 			],
 			[
 				"sl",
@@ -1795,10 +2087,6 @@
 			[
 				"log.",
 				"dnn_project/dnn/util/log/log.h"
-			],
-			[
-				"comm",
-				"src/common.h"
 			]
 		],
 		"width": 0.0

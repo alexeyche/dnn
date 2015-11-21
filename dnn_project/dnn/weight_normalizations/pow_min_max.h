@@ -10,7 +10,7 @@ namespace dnn {
 
 /*@GENERATE_PROTO@*/
 struct PowMinMaxC : public Serializable<Protos::PowMinMaxC> {
-    PowMinMaxC() 
+    PowMinMaxC()
     : power(4.0)
     , mean_weight(0.2)
     , min_weight(0.0)
@@ -19,12 +19,12 @@ struct PowMinMaxC : public Serializable<Protos::PowMinMaxC> {
     }
 
     void serial_process() {
-        begin() << "power: " << power << ", " 
+        begin() << "power: " << power << ", "
                 << "mean_weight: " << mean_weight << ", "
                 << "min_weight: " << min_weight << ", "
                 << "max_weight: " << max_weight << Self::end;
 
-    	__mean_weight = fastpow(mean_weight, power);            
+    	__mean_weight = fastpow(mean_weight, power);
     }
 
     double power;
