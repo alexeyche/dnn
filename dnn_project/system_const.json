@@ -69,6 +69,14 @@
             "psp_decay" : 30.0,
             "amp" : -1.0
         },
+        "HedonisticSynapse" : {
+            "psp_decay" : 10.0,
+            "amp" : 1.0,
+            "delta_catalyst" : 0.1,
+            "tau_catalyst" : 500.0,
+            "tau_trace" : 100.0,
+            "learning_rate" : 0.5
+        },
         "STDSynapse" : {
             "psp_decay" : 2.0,
             "amp" : 1.0,

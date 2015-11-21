@@ -8,6 +8,7 @@
 #include <dnn/act_functions/exp_threshold.h>
 #include <dnn/act_functions/sigmoid.h>
 #include <dnn/synapses/static_synapse.h>
+#include <dnn/synapses/hedonistic_synapse.h>
 #include <dnn/synapses/std_synapse.h>
 #include <dnn/inputs/input_time_series.h>
 #include <dnn/inputs/white_noise_input.h>

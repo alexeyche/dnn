@@ -1,0 +1,18 @@
+package Protos;
+
+message HedonisticSynapseC {
+    required double psp_decay = 1;
+    required double amp = 2;
+    required double delta_catalyst = 3;
+    required double tau_catalyst = 4;
+    required double tau_trace = 5;
+    required double learning_rate = 6;
+}
+
+message HedonisticSynapseState {
+    required double probability = 1;
+    required double catalyst = 2;
+    required double prob_weight = 3;
+    required double spike_trace = 4;
+}
+
