@@ -42,25 +42,25 @@ public:
         if(c.dimension == 1) {
             int right_circled = right.localId()-getPostLayerSize();
             int left_circled = left.localId()-getPreLayerSize();
-            v += gaussFunction(left.localId(), right.localId(), c.sigma_pos) - 
+            v += gaussFunction(left.localId(), right.localId(), c.sigma_pos) -
     				  c.neg_amp * gaussFunction(left.localId(), right.localId(), c.sigma_neg);
-            v += gaussFunction(left.localId(), right_circled, c.sigma_pos) - 
+            v += gaussFunction(left.localId(), right_circled, c.sigma_pos) -
                       c.neg_amp * gaussFunction(left.localId(), right_circled, c.sigma_neg);
-            v += gaussFunction(left_circled, right.localId(), c.sigma_pos) - 
+            v += gaussFunction(left_circled, right.localId(), c.sigma_pos) -
                       c.neg_amp * gaussFunction(left_circled, right.localId(), c.sigma_neg);
-            
+
         } else
         if(c.dimension == 2) {
             int right_xi_circled = right.xi()-right.colSize();
             int left_xi_circled = left.xi()-left.colSize();
             int right_yi_circled = right.yi()-right.colSize();
             int left_yi_circled = left.yi()-left.colSize();
-            
-            v += gaussFunction2d(right.xi(), right.yi(), left.xi(), left.yi(), c.sigma_pos) - 
+
+            v += gaussFunction2d(right.xi(), right.yi(), left.xi(), left.yi(), c.sigma_pos) -
                       c.neg_amp * gaussFunction2d(right.xi(), right.yi(), left.xi(), left.yi(), c.sigma_neg);
-            v += gaussFunction2d(right.xi(), right.yi(), left_xi_circled, left_yi_circled, c.sigma_pos) - 
+            v += gaussFunction2d(right.xi(), right.yi(), left_xi_circled, left_yi_circled, c.sigma_pos) -
                       c.neg_amp * gaussFunction2d(right.xi(), right.yi(), left_xi_circled, left_yi_circled, c.sigma_neg);
-            v += gaussFunction2d(right_xi_circled, right_yi_circled, left.xi(), left.yi(), c.sigma_pos) - 
+            v += gaussFunction2d(right_xi_circled, right_yi_circled, left.xi(), left.yi(), c.sigma_pos) -
                       c.neg_amp * gaussFunction2d(right_xi_circled, right_yi_circled, left.xi(), left.yi(), c.sigma_neg);
         } else {
             throw dnnException() << "Can't build DifferenceOfGaussians with dimension like this: " << c.dimension << "\n"

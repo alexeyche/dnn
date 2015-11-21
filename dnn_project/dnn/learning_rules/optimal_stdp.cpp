@@ -63,11 +63,13 @@ void OptimalStdp::calculateDynamics(const Time& t) {
           , (double)n->fired()
           , syn.potential()
           , c.tau_hebb
+          , norm.ltp(w)
+          , norm.ltd(w)
         );
 
-        double decay_part = c.weight_decay * syn.fired() * syn.weight(); //* (s.p_mean*1000.0) * (s.p_mean*1000.0);
+        //double decay_part = c.weight_decay * syn.fired() * syn.weight(); //* (s.p_mean*1000.0) * (s.p_mean*1000.0);
         double dw = norm.derivativeModulation(w) * c.learning_rate * (
-            s.C[C_id_it] * s.B * norm.ltp(w) - decay_part * norm.ltd(w)
+            s.C[C_id_it] * s.B
         );
 
         // stat.add("C", syn_id, s.C[C_id_it]);

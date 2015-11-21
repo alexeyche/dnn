@@ -1,8 +1,8 @@
 {
     "globals" : {
-        "learning_rate" : 0.05,
+        "learning_rate" : 0.001,
         "mean_weight" : 0.2,
-        "max_weight" : 10.0,
+        "max_weight" : 5.0,
         "min_weight" : 0.0,
         "dt" : 1.0
     },
@@ -84,18 +84,6 @@
             "psp_decay" : 10.0,
             "amp" : -1.0
         },
-        "StaticSynapse_rec" : {
-            "psp_decay" : 10.0,
-            "amp" : 1.0
-        },
-        "StaticSynapse_l2" : {
-            "psp_decay" : 10.0,
-            "amp" : 1.0
-        },
-        "StaticSynapse_inh_l2" : {
-            "psp_decay" : 10.0,
-            "amp" : -1.0
-        },
         "STDSynapse" : {
             "psp_decay" : 2.0,
             "amp" : 1.0,
@@ -130,11 +118,11 @@
             "learning_rate" : "globals/learning_rate"
         },
         "OptimalStdp" : {
-            "tau_c" : 400.0,
+            "tau_c" : 200.0,
             "tau_mean" : 60000.0,
             "target_rate" : 5.0,
             "target_rate_factor" : 0.0,
-            "weight_decay" : 0.0,
+            "weight_decay" : 1.0,
             "tau_hebb" : 0.0,
             "learning_rate" : "globals/learning_rate"
         },
@@ -170,8 +158,8 @@
         "SlidingLtd" : {
             "power" : 3.0,
             "tau_mean" : 10000,
-            "target_rate" : 10.0,
-            "modulation" : 1.0,
+            "target_rate" : 5.0,
+            "modulation" : 0.1,
             "max_weight" : "globals/max_weight",
             "min_weight" : "globals/min_weight"
         },
@@ -208,7 +196,7 @@
                 "size" : 100,
                 "neuron" : "SRMNeuron",
                 "act_function" : "Sigmoid",
-                "learning_rule" : "Oja",
+                "learning_rule" : "OptimalStdp",
                 "weight_normalization" : "SlidingLtd"
             }
         ],
@@ -216,15 +204,16 @@
             "0->1" : [
                 {
                     "type" : "Stochastic",
-                    "start_weight" : 1.5,
+                    "start_weight" : 0.5,
                     "synapse" : "StaticSynapse"
                 }
             ],
             "1->1" : [
                 {
-                    "type" : "Stochastic",
-                    "start_weight" : 0.5,
-                    "synapse" : "StaticSynapse_inh"
+                    "type" : "DifferenceOfGaussians",
+                    "start_weight" : 3.0,
+                    "inh_synapse" : "StaticSynapse_inh",
+                    "synapse" : "StaticSynapse"
                 }
             ]
         },
@@ -233,8 +222,8 @@
             "tau_mean_trace" : 10000.0
         },
         "dt" : 1.0,
-        "seed" : 2,
-        "neurons_to_listen" : [184],
+        "seed" : -1,
+        "neurons_to_listen" : [100],
         "files" : {
             "InputTimeSeries" : {
                 "filename" : "@ts-input"

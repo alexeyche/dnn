@@ -7,7 +7,7 @@ neurons = 100
 sample_gap = 100
 sample_duration = 500
 classes = 2 
-high_rate = 10
+high_rate = 20
 
 patterns_spikes = empty.spikes(neurons)
 for(cl in 1:classes) {
