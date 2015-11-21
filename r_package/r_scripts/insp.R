@@ -176,6 +176,12 @@ if (file.exists(STAT_FNAME)) {
     warning(sprintf("Not found %s", STAT_FNAME))
 }
 
+cut_first_layer = function(sp) {
+    first_layer_size = const$sim_configuration$layers[[1]]$size
+    sp$values = sp$values[-(1:first_layer_size)] # w/o first layer
+    return(sp)
+}
+
 if(EVAL) {
     source(scripts.path("eval.R"))
     
@@ -189,13 +195,13 @@ if(EVAL) {
     } else {
         eval_spikes = proto.read(SPIKES_FNAME)
     }
-    c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$ts_info$labels_timeline)-65)
     
-    eval_spikes$values = eval_spikes$values[101:150]
     if(sum(sapply(eval_spikes$values, length)) == 0) {
         cat("1.0\n")
     } else
     if(EVAL_TYPE == "fisher") {
+        c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$ts_info$labels_timeline)-65)
+        eval_spikes = cut_first_layer(eval_spikes)
         c(metric, K, y, M, N, A) := fisher_eval(eval_spikes, EVAL_VERBOSE)
         
         ans = K %*% y[, 1:2]
@@ -218,6 +224,8 @@ if(EVAL) {
         cat(metric, "\n") 
     } else
     if(EVAL_TYPE == "overlap") {
+        c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$ts_info$labels_timeline)-65)
+        eval_spikes = cut_first_layer(eval_spikes)
         c(metric, vm) := overlap_eval(eval_spikes, const)
         
         cat(sprintf("%1.10f", metric), "\n")
