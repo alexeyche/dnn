@@ -50,6 +50,7 @@ class DnnSim(object):
         self.slave = self.dget(kwargs, "slave", False)
         self.prepare_data = self.dget(kwargs, "prepare_data", False)
         self.evaluation_data = self.dget(kwargs, "evaluation_data", None)
+        self.no_learning = self.dget(kwargs, "no_learning", False)
 
         logFormatter = logging.Formatter("%(asctime)s [%(levelname)s]  %(message)-100s")
         rootLogger = logging.getLogger()
@@ -166,6 +167,10 @@ class DnnSim(object):
             cmd += [
                 "--load", prev_model
             ]
+        if self.no_learning:
+            cmd += [
+                "--no-learning"
+            ]
         for k, v in self.add_options.items():
             cmd += [str_to_opt(k), v]
 
@@ -232,7 +237,7 @@ class DnnSim(object):
                 clean()
                 return
             while True:
-                ans = raw_input("%s already exists and %s epochs was done here. Continue learning? (y/n): " % (os.path.basename(self.working_dir), max_ep))
+                ans = raw_input("%s already exists and %s epochs was done here. Continue simulation? (y/n): " % (os.path.basename(self.working_dir), max_ep))
                 if ans in ["Y","y"]:
                     self.current_epoch = max_ep + 1
                     break
@@ -284,6 +289,10 @@ def main(argv):
                         '--no-insp',
                         action='store_true',
                         help='No inspection after every epoch')
+    parser.add_argument('-nl', 
+                        '--no-learning',
+                        action='store_true',
+                        help='Turn off learning')
     parser.add_argument('-ev', 
                         '--evaluation',
                         action='store_true',
@@ -335,6 +344,7 @@ def main(argv):
         "slave" : args.slave,
         "prepare_data" : args.prepare_data,
         "evaluation_data" : args.evaluation_data,
+        "no_learning" : args.no_learning,
     }
     if len(other) % 2 != 0:
         raise Exception("Got not paired add options: {}".format(" ".join(other)))
