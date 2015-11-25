@@ -1,7 +1,6 @@
 
 #include <dnn/base/base.h>
 #include <dnn/neurons/leaky_integrate_and_fire.h>
-#include <dnn/neurons/adapt_integrate_and_fire.h>
 #include <dnn/neurons/spike_sequence_neuron.h>
 #include <dnn/neurons/srm_neuron.h>
 #include <dnn/act_functions/determ.h>

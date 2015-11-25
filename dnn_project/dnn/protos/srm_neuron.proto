@@ -9,8 +9,7 @@ message SRMNeuronC {
 }
 
 message SRMNeuronState {
-    required double M = 1;
-    required double gr = 2;
-    required double ga = 3;
+    required double gr = 1;
+    required double ga = 2;
 }
 

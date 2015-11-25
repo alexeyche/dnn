@@ -42,7 +42,6 @@ struct OjaState : public Serializable<Protos::OjaState>  {
 
     double y;
     ActVector<double> x;
-    vector<double> syn_amp;
 };
 
 
@@ -55,20 +54,11 @@ public:
     void reset() {
         s.y = 0;
         auto syns = n->getSynapses();
-        s.x.resize(syns.size());
-        s.syn_amp.resize(syns.size());
-        for(size_t syn_i=0; syn_i < syns.size(); ++syn_i) {
-            s.x[syn_i] = 0;
-            if(syns.get(syn_i).ref().isExcitatory()) {
-                s.syn_amp[syn_i] = 1.0;
-            } else {
-                s.syn_amp[syn_i] = -1.0;
-            }
-        }
+        s.x.resize(syns.size());        
     }
 
     void propagateSynapseSpike(const SynSpike &sp) {
-        s.x[sp.syn_id] += s.syn_amp[sp.syn_id]/c.tau_x;
+        s.x[sp.syn_id] += 1.0/c.tau_x;
     }
 
     void calculateDynamics(const Time& t) {
@@ -86,10 +76,13 @@ public:
                 const size_t &syn_id = *x_id_it;
                 auto &syn = syns.get(syn_id).ref();
                 const double &w = syn.weight();
+                
                 double dw = c.learning_rate * norm.derivativeModulation(w) * (
                     norm.ltp(w) * s.y * s.x[x_id_it] - norm.ltd(w) * s.y * s.y * w
                 );
-
+                if(syn.isInhibitory()) {
+                    dw = -dw;
+                }
                 syn.mutWeight() += dw;
 
                 s.x[x_id_it] += - s.x[x_id_it]/c.tau_x;

@@ -3,44 +3,44 @@
 
 namespace dnn {
 
-class SpinningBarrier
-{
+class SpinningBarrier {
 public:
-    SpinningBarrier (unsigned int n) : n_ (n), nwait_ (0), step_(0), _fail(false) {}
+    SpinningBarrier (unsigned int _n) : n (_n), bar(0), passed(0) {}
 
-    bool wait ()
+    void wait ()
     {
-        unsigned int step = step_.load ();
-        if(_fail.load()) {
+        char passed_old = passed.load(std::memory_order_relaxed);
+        
+        if(passed_old < 0) {
             throw dnnInterrupt();
         }
-        if (nwait_.fetch_add (1) == n_ - 1)
-        {
-            /* OK, last thread to come.  */
-            nwait_.store (0); // XXX: maybe can use relaxed ordering here ??
-            step_.fetch_add (1);
-            return true;
-        }
-        else
-        {
-            /* Run in circles and scream like a little girl.  */
-            while (step_.load () == step) { if(_fail.load()) break; }
-            return false;
+
+        if(bar.fetch_add(1) == (n - 1)) {
+            // The last thread, faced barrier.
+            bar = 0;
+            // Synchronize and store in one operation.
+            passed.store(passed_old ^ 1, std::memory_order_release);
+        } else {
+            // Not the last thread. Wait others.
+            while(true) {
+                char passed_new = passed.load(std::memory_order_relaxed);
+                if((passed_new != passed_old)||(passed_new<0)) {
+                    break;
+                }
+            }
+            // Need to synchronize cache with other threads, passed barrier.
+            // std::atomic_thread_fence(std::memory_order_acquire);
         }
     }
     void fail() {
-        _fail.store(true);
+        passed.store(-1);
     }
 protected:
     /* Number of synchronized threads. */
-    const unsigned int n_;
-    std::atomic<bool> _fail;
-    /* Number of threads currently spinning.  */
-    std::atomic<unsigned int> nwait_;
-
-    /* Number of barrier syncronizations completed so far, 
-     * it's OK to wrap.  */
-    std::atomic<unsigned int> step_;
+    const unsigned int n;
+    
+    std::atomic<int> bar; // Counter of threads, faced barrier.
+    std::atomic<char> passed ; // Number of barriers, passed by all threads.
 };
 
 }

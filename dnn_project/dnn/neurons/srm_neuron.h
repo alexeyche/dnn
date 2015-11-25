@@ -37,18 +37,15 @@ struct SRMNeuronC : public Serializable<Protos::SRMNeuronC> {
 /*@GENERATE_PROTO@*/
 struct SRMNeuronState : public Serializable<Protos::SRMNeuronState>  {
     SRMNeuronState()
-    : M(1.0)
-    , gr(0.0)
+    : gr(0.0)
     , ga(0.0)
     {}
 
     void serial_process() {
         begin() << "gr: " << gr << ", "
-                << "ga: " << ga << ", "
-                << "M: " << M << Self::end;
+                << "ga: " << ga << Self::end;
     }
 
-    double M;
     double gr;
     double ga;
 };
@@ -56,37 +53,30 @@ struct SRMNeuronState : public Serializable<Protos::SRMNeuronState>  {
 
 class SRMNeuron : public SpikeNeuron<SRMNeuronC, SRMNeuronState> {
 public:
-    const string name() const {
+    const string name() const override final {
         return "SRMNeuron";
     }
 
-    void reset() {
+    void reset() override final {
         s = SRMNeuronState();
     }
 
-    void calculateDynamics(const Time& t, const double &Iinput, const double &Isyn) {
+    void postSpikeDynamics(const Time& t) override final {
+        s.gr += c.amp_refr;
+        s.ga += c.amp_adapt;
+    }
+
+    void calculateDynamics(const Time& t, const double &Iinput, const double &Isyn) override final {
         membrane() = c.u_rest + Iinput + Isyn;
-        s.M = fastexp(-(s.gr+s.ga));
-        firingProbability() = act_f.ifc().prob(membrane()) * s.M;
-
-        // membrane()*=s.M;
-
-        if(firingProbability() > getUnif()) {
-            setFired(true);
-            s.gr += c.amp_refr;
-            s.ga += c.amp_adapt;
-        }
+        probabilityModulation() = fastexp(-(s.gr+s.ga));
+        
         s.gr += - s.gr/c.tau_refr;
         s.ga += - s.ga/c.tau_adapt;
 
         stat.add("u", membrane());
         stat.add("p", firingProbability());
-        stat.add("M", s.M);
+        stat.add("M", probabilityModulation());
         stat.add("ga", s.ga);
-    }
-
-    const double& getProbabilityModulation() const {
-        return s.M;
     }
 };
 

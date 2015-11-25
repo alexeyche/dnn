@@ -101,7 +101,7 @@ gr_pl = function(m, ...) {
 }
 
 
-plot.TimeSeries = function(obj, ...) {
+plot.TimeSeries = function(obj, i=NULL, ...) {
     if(is.null(nrow(obj$values))) {
         plot(obj$values, type="l", ...)
     } else

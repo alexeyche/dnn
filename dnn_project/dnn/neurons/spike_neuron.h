@@ -21,7 +21,7 @@ namespace dnn {
 
 struct SpikeNeuronInterface {
 	calculateNeuronDynamicsDelegate calculateDynamics;
-	propSynSpikeDelegate propagateSynapseSpike;
+	calculateDynamicsDelegate postSpikeDynamics;
 };
 extern size_t global_neuron_index;
 
@@ -34,7 +34,7 @@ friend class Builder;
 friend class Network;
 friend class Sim;
 public:
-	SpikeNeuronBase() : input_queue_lock(ATOMIC_FLAG_INIT), _fired(false) {
+	SpikeNeuronBase() : input_queue_lock(ATOMIC_FLAG_INIT), _fired(false), _u(0.0), _p(0.0), _mod(1.0) {
 		_id = global_neuron_index++;
 	}
 
@@ -74,26 +74,26 @@ public:
 	template <typename T>
 	void provideInterface(SpikeNeuronInterface &i) {
         i.calculateDynamics = MakeDelegate(static_cast<T*>(this), &T::calculateDynamics);
-        i.propagateSynapseSpike = MakeDelegate(static_cast<T*>(this), &T::propagateSynapseSpike);
+        i.postSpikeDynamics = MakeDelegate(static_cast<T*>(this), &T::postSpikeDynamics);
         ifc = i;
 	}
 	static void __calculateDynamicsDefault(const Time &t, const double &Iinput, const double &Isyn) {
 		throw dnnException()<< "Calling inapropriate default interface function\n";
 	}
-	static void __propagateSynapseSpikeDefault(const SynSpike &s) {
+	static void __postSpikeDynamicDefault(const Time &t) {
 		throw dnnException()<< "Calling inapropriate default interface function\n";
 	}
 
 	static void provideDefaultInterface(SpikeNeuronInterface &i) {
 		i.calculateDynamics = &SpikeNeuronBase::__calculateDynamicsDefault;
-		i.propagateSynapseSpike =  &SpikeNeuronBase::__propagateSynapseSpikeDefault;
+		i.postSpikeDynamics =  &SpikeNeuronBase::__postSpikeDynamicDefault;
 	}
 
 	void resetInternal();
 	void initInternal();
 
 	virtual void calculateDynamics(const Time& t, const double &Iinput, const double &Isyn) = 0;
-	virtual void propagateSynapseSpike(const SynSpike &sp);
+	virtual void postSpikeDynamics(const Time& t) {}
 
 	Statistics getStat();
 
@@ -108,12 +108,18 @@ public:
     const double& getMembrane() const {
         return _u;
     }
+    const double& getProbabilityModulation() const {
+        return _mod;
+    }
     double& membrane() {
     	return _u;
     }
 	double& firingProbability() {
     	return _p;
     }
+   	double& probabilityModulation() {
+   		return _mod;
+   	}
 
 protected:
 	bool _fired;
@@ -124,7 +130,8 @@ protected:
 	
 	double _p;
 	double _u;
-	
+	double _mod;
+
 	double _axonDelay;
 	ActVector<InterfacedPtr<SynapseBase>> syns;
 

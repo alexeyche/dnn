@@ -5,7 +5,6 @@ message SpikeSequenceNeuronC {
 }
 
 message SpikeSequenceNeuronState {
-    required double p = 1;
-    required uint32 index = 2;
+    required uint32 index = 1;
 }
 

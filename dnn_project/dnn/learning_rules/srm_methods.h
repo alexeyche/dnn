@@ -50,8 +50,8 @@ public:
       , const double &ltp
       , const double &ltd
     ) {
- 		double part = (p_stroke/(p/M));
-        return ltp * part * fired * x - ltd * part * (p/(1.0+tau_hebb*p)) * x;
+   		double part = (p_stroke/(p/M)) * x;
+        return ltp * part * fired - ltd * part * (p/(1.0+tau_hebb*p));
         //return (p_stroke/(p/M))  * (fired - p/(1.0+tau_hebb*p)) * x;
 	}
 };
