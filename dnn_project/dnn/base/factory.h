@@ -115,6 +115,7 @@ private:
             throw dnnException()<< "Failed to find method to construct type " << name << "\n";
         }
         SerializableBase* o = typemap[name]();
+        o->mutName() = name;
         return Ptr<SerializableBase>(o);
     }
 

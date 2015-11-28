@@ -1,5 +1,4 @@
 #define REG_TYPE(name) \
-	name::mutName() = #name; \
     Factory::registerType<name>(#name);\
 
 #define REG_TYPE_WITH_CONST(name) \

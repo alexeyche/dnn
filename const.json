@@ -193,11 +193,11 @@
                 "neuron" : "SpikeSequenceNeuron"
             },
             {
-                "size" : 100,
+                "size" : 50,
                 "neuron" : "SRMNeuron",
                 "act_function" : "Sigmoid",
-                "learning_rule" : "Oja",
-                "weight_normalization" : "SlidingLtd"
+                "learning_rule" : "Stdp",
+                "weight_normalization" : "MinMax"
             }
         ],
         "conn_map" : {
@@ -210,10 +210,9 @@
             ],
             "1->1" : [
                 {
-                    "type" : "DifferenceOfGaussians",
+                    "type" : "Stochastic_inh",
                     "start_weight" : 3.0,
-                    "inh_synapse" : "StaticSynapse_inh",
-                    "synapse" : "StaticSynapse"
+                    "synapse" : "StaticSynapse_inh"
                 }
             ]
         },
@@ -222,7 +221,7 @@
             "tau_mean_trace" : 10000.0
         },
         "dt" : 1.0,
-        "seed" : -1,
+        "seed" : 1,
         "neurons_to_listen" : [100],
         "files" : {
             "InputTimeSeries" : {

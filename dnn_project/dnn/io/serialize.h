@@ -206,16 +206,17 @@ public:
     // SerializableBase& operator =(const SerializableBase &obj) { return *this; }
 
 
-    static string& mutName() {
+    
+protected:
+    string& mutName() {
         return _name;
     }
-protected:
-
+    
     vector<ProtoMessage> *messages;
     Protos::ClassName *header;
     ProcessMode mode;
 
-    static string _name;
+    string _name;
 };
 
 void protobinSave(SerializableBase *b, const string fname);
