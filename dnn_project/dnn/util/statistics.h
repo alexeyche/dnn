@@ -77,9 +77,6 @@ public:
 		}
 	}
 
-	const string name() const {
-		return "Statistics";
-	}
 	StatisticsInfo getInfo() {
 		StatisticsInfo info;
 		for (auto it = stats.begin(); it != stats.end(); ++it) {

@@ -53,9 +53,6 @@ struct StdpState : public Serializable<Protos::StdpState>  {
 
 class Stdp : public LearningRule<StdpC, StdpState, SpikeNeuronBase> {
 public:
-    const string name() const {
-        return "Stdp";
-    }
 
     void reset() {
         s.y = 0;

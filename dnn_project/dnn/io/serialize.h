@@ -53,7 +53,10 @@ public:
     }
 
     virtual void serial_process() = 0;
-    virtual const string name() const = 0;
+    
+    const string& name() const {
+        return _name;
+    }
 
     static ProtoMessage copyM(ProtoMessage m) {
         ProtoMessage copy_m = m->New();
@@ -203,10 +206,16 @@ public:
     // SerializableBase& operator =(const SerializableBase &obj) { return *this; }
 
 
+    static string& mutName() {
+        return _name;
+    }
 protected:
+
     vector<ProtoMessage> *messages;
     Protos::ClassName *header;
     ProcessMode mode;
+
+    static string _name;
 };
 
 void protobinSave(SerializableBase *b, const string fname);

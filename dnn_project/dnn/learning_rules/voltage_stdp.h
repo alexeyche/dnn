@@ -73,9 +73,6 @@ double rectifier(const double &&u) {
 
 class VoltageStdp : public LearningRule<VoltageStdpC, VoltageStdpState, SpikeNeuronBase> {
 public:
-    const string name() const {
-        return "VoltageStdp";
-    }
 
     void reset() {
         s.u_minus = 0;

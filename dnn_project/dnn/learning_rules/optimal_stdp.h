@@ -73,9 +73,6 @@ struct OptimalStdpState : public Serializable<Protos::OptimalStdpState>  {
 
 class OptimalStdp : public LearningRule<OptimalStdpC, OptimalStdpState, SRMNeuron> {
 public:
-    const string name() const {
-        return "OptimalStdp";
-    }
 
     void reset() {
         s.B = 0.0;

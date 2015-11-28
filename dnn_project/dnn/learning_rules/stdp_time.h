@@ -59,9 +59,6 @@ struct StdpTimeState : public Serializable<Protos::StdpTimeState>  {
 
 class StdpTime : public LearningRule<StdpTimeC, StdpTimeState, SpikeNeuronBase> {
 public:
-    const string name() const {
-        return "StdpTime";
-    }
 
     void reset() {
         s.y = -1.0;

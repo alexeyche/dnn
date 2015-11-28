@@ -39,9 +39,6 @@ class WhiteNoiseInput : public Input<WhiteNoiseInputC, WhiteNoiseInputState> {
 public:
     typedef Input<WhiteNoiseInputC, WhiteNoiseInputState> Parent;
 
-    const string name() const {
-        return "WhiteNoiseInput";
-    }
     void reset() {
         s = WhiteNoiseInputState();
     }

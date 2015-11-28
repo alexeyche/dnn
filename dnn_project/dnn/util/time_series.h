@@ -266,9 +266,6 @@ struct TimeSeriesGeneric {
 };
 
 struct TimeSeries : public SerializableBase, public TimeSeriesGeneric<TimeSeriesData, double> {
-	const string name() const {
-		return "TimeSeries";
-	}
 	typedef TimeSeriesInterface interface;
 
 	TimeSeries() {}
@@ -355,9 +352,6 @@ struct TimeSeriesComplexData : public Serializable<Protos::TimeSeriesComplexData
 };
 
 struct TimeSeriesComplex : public SerializableBase, public TimeSeriesGeneric<TimeSeriesComplexData, std::complex<double>> {
-	const string name() const {
-		return "TimeSeriesComplex";
-	}
 
 	void serial_process() {
 		begin() << "dim_info: " << dim_info;

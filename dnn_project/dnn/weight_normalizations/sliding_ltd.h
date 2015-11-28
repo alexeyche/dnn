@@ -57,9 +57,6 @@ struct SlidingLtdState : public Serializable<Protos::SlidingLtdState>  {
 
 class SlidingLtd : public WeightNormalization<SlidingLtdC, SlidingLtdState> {
 public:
-    const string name() const {
-        return "SlidingLtd";
-    }
     double ltd(const double &w) {
         if(GlobalCtx::inst().getSimInfo().pastTime < 5*c.tau_mean) {
             return c.modulation;

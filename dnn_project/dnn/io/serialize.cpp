@@ -16,5 +16,7 @@ Ptr<SerializableBase> SerializableBase::createObject(string name) {
     return Factory::inst().createObject(name);
 }
 
+string SerializableBase::_name;
+
 
 }

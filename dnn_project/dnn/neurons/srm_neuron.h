@@ -53,10 +53,6 @@ struct SRMNeuronState : public Serializable<Protos::SRMNeuronState>  {
 
 class SRMNeuron : public SpikeNeuron<SRMNeuronC, SRMNeuronState> {
 public:
-    const string name() const override final {
-        return "SRMNeuron";
-    }
-
     void reset() override final {
         s = SRMNeuronState();
     }

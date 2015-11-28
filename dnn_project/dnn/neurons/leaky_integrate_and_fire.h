@@ -47,10 +47,6 @@ struct LeakyIntegrateAndFireState : public Serializable<Protos::LeakyIntegrateAn
 
 class LeakyIntegrateAndFire : public SpikeNeuron<LeakyIntegrateAndFireC, LeakyIntegrateAndFireState> {
 public:
-    const string name() const override final {
-        return "LeakyIntegrateAndFire";
-    }
-
     void reset() override final {
         membrane() = c.rest_pot;
         firingProbability() = 0.0;

@@ -27,9 +27,6 @@ struct DifferenceOfGaussiansC : public Serializable<Protos::DifferenceOfGaussian
 
 class DifferenceOfGaussians : public Connection<DifferenceOfGaussiansC> {
 public:
-    const string name() const {
-        return "DifferenceOfGaussians";
-    }
     static double gaussFunction2d(double x, double y, double xc, double yc, double sigma) {
     	return (1/(sqrt(2*PI)*sigma)) * exp( - ( (x-xc)*(x-xc) + (y-yc)*(y-yc) )/(2*sigma*sigma) ) ;
     }

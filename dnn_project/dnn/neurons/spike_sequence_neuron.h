@@ -41,9 +41,6 @@ struct SpikeSequenceNeuronState : public Serializable<Protos::SpikeSequenceNeuro
 
 class SpikeSequenceNeuron : public SpikeNeuron<SpikeSequenceNeuronC, SpikeSequenceNeuronState> {
 public:
-    const string name() const {
-        return "SpikeSequenceNeuron";
-    }
 
     void init() {
         if(!seq.isSet() || seq->size() == 0) return;

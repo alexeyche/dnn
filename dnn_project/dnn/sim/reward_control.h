@@ -44,8 +44,6 @@ struct RewardControlC : public Serializable<Protos::RewardControlC> {
 
 class RewardControl : public SerializableBase {
 public:
-    const string name() const { return "RewardControl"; }
-
     RewardControl() : gathered_reward(0.0) {}
 
     void calculateDynamics(const Time& t) {

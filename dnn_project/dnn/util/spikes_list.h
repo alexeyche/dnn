@@ -35,9 +35,6 @@ struct SpikesList : public SerializableBase {
 		seq.resize(size);
 	}
 
-	const string name() const {
-		return "SpikesList";
-	}
 
 	SpikesListInfo getInfo() {
 		SpikesListInfo info;

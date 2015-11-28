@@ -30,7 +30,6 @@ struct SigmoidC : public Serializable<Protos::SigmoidC> {
 
 class Sigmoid : public ActFunction<SigmoidC> {
 public:
-    const string name() const { return "Sigmoid"; }
 
     double prob(const double &u) {
         double p = 1.0/(1.0+exp( - c.slope * (u - c.threshold) ));
