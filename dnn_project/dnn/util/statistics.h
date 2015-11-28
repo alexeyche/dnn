@@ -65,6 +65,8 @@ struct stringLessThan : public std::binary_function< string, string, bool >
 class Statistics : public SerializableBase {
 public:
 	Statistics() : low_lim(-1), high_lim(10000), _on(false) {
+		mutName() = "Statistics";
+		
 		const char* stat_limit_str = std::getenv("STAT_LIMIT");
 		if (stat_limit_str) {
 			vector<string> spl = split(stat_limit_str, ':');
