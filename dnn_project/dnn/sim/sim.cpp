@@ -72,7 +72,14 @@ void Sim::saveSpikes(Stream &str) {
 }
 
 void Sim::turnOnStatistics() {
-	Builder::turnOnStatistics(neurons, c.sim_conf.neurons_to_listen);
+	vector<InterfacedPtr<SpikeNeuronBase>> neuronsToListen;
+	for(const size_t& n_id: c.sim_conf.neurons_to_listen) {
+		if(n_id >= neurons.size()) {
+			throw dnnException() << "Can't find neuron " << n_id << " to listen\n";
+		}
+		neuronsToListen.push_back(neurons[n_id]);
+	}
+	Builder::turnOnStatistics(neuronsToListen);
 	rc.getStat().turnOn();
 }
 

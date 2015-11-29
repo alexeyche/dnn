@@ -84,6 +84,10 @@
             "psp_decay" : 10.0,
             "amp" : -1.0
         },
+        "StaticSynapse_rec" : {
+            "psp_decay" : 10.0,
+            "amp" : -1.0
+        },
         "STDSynapse" : {
             "psp_decay" : 2.0,
             "amp" : 1.0,
@@ -95,8 +99,7 @@
         "Stdp" : {
             "tau_plus" : 16.0,
             "tau_minus" : 33.0,
-            "a_plus" : 1.2,
-            "a_minus" : 1.0,
+            "ltp_ratio" : 0.8,
             "learning_rate" : "globals/learning_rate"
         },
         "TripleStdp" : {
@@ -176,7 +179,7 @@
             "prob" : 0.25
        },
         "Stochastic_rec" : {
-            "prob" : 0.1
+            "prob" : 0.25
        },
        "DifferenceOfGaussians" : {
            "sigma_pos" : 3.0,
@@ -206,13 +209,18 @@
                     "type" : "Stochastic",
                     "start_weight" : 0.2,
                     "synapse" : "StaticSynapse"
-                }
+                },
+                {
+                    "type" : "Stochastic_inh",
+                    "start_weight" : 0.2,
+                    "synapse" : "StaticSynapse_inh"
+                }            
             ],
             "1->1" : [
                 {
-                    "type" : "Stochastic_inh",
+                    "type" : "Stochastic_rec",
                     "start_weight" : 3.0,
-                    "synapse" : "StaticSynapse_inh"
+                    "synapse" : "StaticSynapse_rec"
                 }
             ]
         },
@@ -221,7 +229,7 @@
             "tau_mean_trace" : 10000.0
         },
         "dt" : 1.0,
-        "seed" : 1,
+        "seed" : -1,
         "neurons_to_listen" : [100],
         "files" : {
             "InputTimeSeries" : {

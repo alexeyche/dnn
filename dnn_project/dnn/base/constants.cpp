@@ -74,7 +74,7 @@ void Constants::readJson(Document &document) {
             }
         }
         if(Json::checkVal(sim_conf_doc, "neurons_to_listen")) {
-            sim_conf.neurons_to_listen = Json::getUintVector(sim_conf_doc, "neurons_to_listen");
+            sim_conf.neurons_to_listen = Json::getUintVector(sim_conf_doc, "neurons_to_listen");    
         }
         if(Json::checkVal(sim_conf_doc, "files")) {
             const Value &files_doc = Json::getVal(sim_conf_doc, "files");

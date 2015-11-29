@@ -27,7 +27,7 @@ if(length(grep("RStudio", args))>0) {
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
-    #EP = 1
+    #EP = 5
     #EP=2
 }
 
@@ -200,7 +200,7 @@ if(EVAL) {
         cat("1.0\n")
     } else
     if(EVAL_TYPE == "fisher") {
-        c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$ts_info$labels_timeline)-65)
+        c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$ts_info$labels_timeline)-floor(length(eval_spikes$ts_info$labels_timeline)/4))
         eval_spikes = cut_first_layer(eval_spikes)
         c(metric, K, y, M, N, A) := fisher_eval(eval_spikes, EVAL_VERBOSE)
         
@@ -348,6 +348,7 @@ get_stat = function(epochs, stname, stat_id, f_template = "%s_stat.pb") {
     }
     return(stat_acc)
 }
+
 #plotl(get_stat(1:10, "OptimalStdp_w_0", 1))
 
 annoying_file = file.path(getwd(), "Rplots.pdf")
