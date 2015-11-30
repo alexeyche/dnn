@@ -41,8 +41,8 @@ public:
         	try {
         		Ptr<SpikesList> sp_l = RProto::convertFromR<SpikesList>(data);
             	stack.push(sp_l->convertToBinaryTimeSeries(1.0));
-        	} catch (...) {
-        		ERR("Can't deduce type of input data\n");
+        	} catch (const std::exception &e) {
+        		ERR("Can't deduce type of input data: " << e.what() << "\n");
         	}
         }
 

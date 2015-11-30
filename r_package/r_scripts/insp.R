@@ -22,7 +22,7 @@ args <- commandArgs(trailingOnly = FALSE)
 if(length(grep("RStudio", args))>0) {    
     WD = simruns.path(system(sprintf("ls -t %s | head -n 1", simruns.path()), intern=TRUE))
     WD = file.path(dnn.env(), "runs/test-run")
-    #WD="/home/alexeyche/dnn/runs/cma_es/1"
+    #WD="/home/alexeyche/dnn/runs/cma_es/134"
     #Sys.setenv(CONST=file.path(WD, "dog_find.json"))
     
     system(sprintf("ls -t %s | head -n 1", WD))

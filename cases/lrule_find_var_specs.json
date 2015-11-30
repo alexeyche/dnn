@@ -13,7 +13,7 @@
     ]
   , "stdp_ltp_ratio": [
         ["learning_rules", "Stdp", "ltp_ratio"]
-      , [0.0, 5.0]
+      , [0.01, 5.0]
     ]
   , "layer_01_start_weight" : [
         ["sim_configuration", "conn_map", "0->1", 0, "start_weight"]
@@ -37,10 +37,6 @@
   ]
   , "srm_neuron_tau_refr" : [
         ["neurons", "SRMNeuron", "tau_refr"]
-      , [0.0, 50.0]
-  ]
-  , "srm_neuron_tau_adapt" : [
-        ["neurons", "SRMNeuron", "tau_adapt"]
-      , [0.01, 1000.0]
+      , [1.0, 50.0]
   ]
 }
