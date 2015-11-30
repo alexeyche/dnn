@@ -54,7 +54,7 @@ public:
     void reset() {
         s.y = 0;
         auto syns = n->getSynapses();
-        s.x.resize(syns.size());        
+        s.x.resize(syns.size());
     }
 
     void propagateSynapseSpike(const SynSpike &sp) {
@@ -76,7 +76,7 @@ public:
                 const size_t &syn_id = *x_id_it;
                 auto &syn = syns.get(syn_id).ref();
                 const double &w = syn.weight();
-                
+
                 double dw = c.learning_rate * norm.derivativeModulation(w) * (
                     norm.ltp(w) * s.y * s.x[x_id_it] - norm.ltd(w) * s.y * s.y * w
                 );
