@@ -80,8 +80,7 @@
         "Stdp" : {
             "tau_plus" : 16.0,
             "tau_minus" : 33.0,
-            "a_plus" : 1.2,
-            "a_minus" : 1.0,
+            "ltp_ratio" : 0.8,
             "learning_rate" : "globals/learning_rate"
         },
         "TripleStdp" : {

@@ -60,9 +60,6 @@ struct TripleStdpState : public Serializable<Protos::TripleStdpState>  {
 
 class TripleStdp : public LearningRule<TripleStdpC, TripleStdpState, SpikeNeuronBase> {
 public:
-    const string name() const {
-        return "TripleStdp";
-    }
 
     void reset() {
         s.y = 0;

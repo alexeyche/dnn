@@ -53,7 +53,10 @@ public:
     }
 
     virtual void serial_process() = 0;
-    virtual const string name() const = 0;
+    
+    const string& name() const {
+        return _name;
+    }
 
     static ProtoMessage copyM(ProtoMessage m) {
         ProtoMessage copy_m = m->New();
@@ -150,7 +153,9 @@ public:
 
         messages = new vector<ProtoMessage>;
 
-
+        if(_name.empty()) {
+            throw dnnException() << "Trying to serialize object without a name. Seems that object was created in some place except Factory";
+        }
         serial_process();
         return *messages;
     }
@@ -203,10 +208,17 @@ public:
     // SerializableBase& operator =(const SerializableBase &obj) { return *this; }
 
 
+    
 protected:
+    string& mutName() {
+        return _name;
+    }
+
     vector<ProtoMessage> *messages;
     Protos::ClassName *header;
     ProcessMode mode;
+
+    string _name;
 };
 
 void protobinSave(SerializableBase *b, const string fname);
@@ -214,16 +226,7 @@ void protobinSave(SerializableBase *b, const string fname);
 template <typename Proto>
 class Serializable : public SerializableBase {
 public:
-    #define ASSERT_FIELDS() \
-    if((messages->size() == 0)||(!field_descr)) {\
-        throw dnnException()<< "Wrong using of Serializable class.\n"; \
-    }\
-
-    typedef Serializable<Proto> Self;
-    typedef Proto ProtoType;
-    static const bool hasProto = true;
-
-    const string name() const {
+    Serializable() {
         Proto _fake_m;
         vector<string> spl = split(_fake_m.GetTypeName(), '.');
         if(spl[0] != "Protos") {
@@ -233,8 +236,17 @@ public:
         for(size_t i=1; i<spl.size(); ++i) {
             ret += spl[i];
         }
-        return ret;
+        mutName() = ret;
     }
+
+    #define ASSERT_FIELDS() \
+    if((messages->size() == 0)||(!field_descr)) {\
+        throw dnnException()<< "Wrong using of Serializable class.\n"; \
+    }\
+
+    typedef Serializable<Proto> Self;
+    typedef Proto ProtoType;
+    static const bool hasProto = true;
 
     ProtoMessage newProto() {
         return new Proto;

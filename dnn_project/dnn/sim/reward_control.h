@@ -44,9 +44,9 @@ struct RewardControlC : public Serializable<Protos::RewardControlC> {
 
 class RewardControl : public SerializableBase {
 public:
-    const string name() const { return "RewardControl"; }
-
-    RewardControl() : gathered_reward(0.0) {}
+    RewardControl() : gathered_reward(0.0) {
+        mutName() = "RewardControl";
+    }
 
     void calculateDynamics(const Time& t) {
         s.meanR += t.dt * ( - (s.meanR - s.R)/c.tau_mean_trace );

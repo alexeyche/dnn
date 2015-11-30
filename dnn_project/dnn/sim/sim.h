@@ -47,7 +47,8 @@ public:
 	void setMaxDuration(const double Tmax);
 	void print(std::ostream &str) const;
 	void run(size_t jobs);
-double duration;
+	
+	double duration;
 	
 protected:
 	void init() {

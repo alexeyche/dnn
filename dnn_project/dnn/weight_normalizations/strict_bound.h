@@ -28,9 +28,6 @@ struct StrictBoundC : public Serializable<Protos::StrictBoundC> {
 
 class StrictBound : public WeightNormalization<StrictBoundC> {
 public:
-    const string name() const {
-        return "StrictBound";
-    }
     double derivativeModulation(const double &w) {
         if((w >= c.unit)||(w <= 0.0)) {
             return 0.0;

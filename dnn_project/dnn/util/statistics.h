@@ -2,6 +2,7 @@
 
 #include <dnn/protos/statistics.pb.h>
 #include <dnn/io/serialize.h>
+#include <dnn/util/util.h>
 #include <regex>
 
 namespace dnn {
@@ -65,6 +66,8 @@ struct stringLessThan : public std::binary_function< string, string, bool >
 class Statistics : public SerializableBase {
 public:
 	Statistics() : low_lim(-1), high_lim(10000), _on(false) {
+		mutName() = "Statistics";
+
 		const char* stat_limit_str = std::getenv("STAT_LIMIT");
 		if (stat_limit_str) {
 			vector<string> spl = split(stat_limit_str, ':');
@@ -75,11 +78,12 @@ public:
 				high_lim = std::stoi(stat_limit_str);
 			}
 		}
+		const char *save_only_str = std::getenv("STAT_SAVE_ONLY");
+		if(save_only_str) {
+			save_only = save_only_str;
+		}
 	}
 
-	const string name() const {
-		return "Statistics";
-	}
 	StatisticsInfo getInfo() {
 		StatisticsInfo info;
 		for (auto it = stats.begin(); it != stats.end(); ++it) {
@@ -118,6 +122,10 @@ public:
 	inline void add(const char* name_cptr, const double &v) {
 		if (!_on) return;
 		string name(name_cptr);
+		if((!save_only.empty())&&(!strStartsWith(name, save_only))) {
+			return;
+		} 
+		
 		if (stats.find(name) == stats.end()) {
 			Stat s;
 			s.low_lim = low_lim;
@@ -135,6 +143,7 @@ public:
 	int low_lim;
 	int high_lim;
 	bool _on;
+	string save_only;
 };
 
 

@@ -84,6 +84,10 @@
             "psp_decay" : 10.0,
             "amp" : -1.0
         },
+        "StaticSynapse_rec" : {
+            "psp_decay" : 10.0,
+            "amp" : -1.0
+        },
         "STDSynapse" : {
             "psp_decay" : 2.0,
             "amp" : 1.0,
@@ -95,8 +99,7 @@
         "Stdp" : {
             "tau_plus" : 16.0,
             "tau_minus" : 33.0,
-            "a_plus" : 1.2,
-            "a_minus" : 1.0,
+            "ltp_ratio" : 0.8,
             "learning_rate" : "globals/learning_rate"
         },
         "TripleStdp" : {
@@ -176,7 +179,7 @@
             "prob" : 0.25
        },
         "Stochastic_rec" : {
-            "prob" : 0.1
+            "prob" : 0.25
        },
        "DifferenceOfGaussians" : {
            "sigma_pos" : 3.0,
@@ -193,11 +196,11 @@
                 "neuron" : "SpikeSequenceNeuron"
             },
             {
-                "size" : 100,
+                "size" : 50,
                 "neuron" : "SRMNeuron",
                 "act_function" : "Sigmoid",
-                "learning_rule" : "Oja",
-                "weight_normalization" : "SlidingLtd"
+                "learning_rule" : "Stdp",
+                "weight_normalization" : "MinMax"
             }
         ],
         "conn_map" : {
@@ -206,14 +209,18 @@
                     "type" : "Stochastic",
                     "start_weight" : 0.2,
                     "synapse" : "StaticSynapse"
-                }
+                },
+                {
+                    "type" : "Stochastic_inh",
+                    "start_weight" : 0.2,
+                    "synapse" : "StaticSynapse_inh"
+                }            
             ],
             "1->1" : [
                 {
-                    "type" : "DifferenceOfGaussians",
+                    "type" : "Stochastic_rec",
                     "start_weight" : 3.0,
-                    "inh_synapse" : "StaticSynapse_inh",
-                    "synapse" : "StaticSynapse"
+                    "synapse" : "StaticSynapse_rec"
                 }
             ]
         },

@@ -35,9 +35,6 @@ struct NonLinearMinMaxC : public Serializable<Protos::NonLinearMinMaxC> {
 
 class NonLinearMinMax : public WeightNormalization<NonLinearMinMaxC> {
 public:
-    const string name() const {
-        return "NonLinearMinMax";
-    }
     double ltp(const double &w) {
         return fastpow( 1 - w/c.max_weight, c.mu );
     }

@@ -70,7 +70,6 @@ public:
 private:
 	vector<vector<Conn>> conn_map;
 	SpikesList spikes_list;
-
 };
 
 

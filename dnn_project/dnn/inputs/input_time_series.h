@@ -36,9 +36,6 @@ class InputTimeSeries : public Input<InputTimeSeriesC, InputTimeSeriesState> {
 public:
     typedef Input<InputTimeSeriesC, InputTimeSeriesState> Parent;
 
-    const string name() const {
-        return "InputTimeSeries";
-    }
 
 	const double getValue(const Time &t) {
         double index = floor(s.t);

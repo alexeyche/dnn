@@ -37,9 +37,6 @@ struct STDSynapseState : public Serializable<Protos::STDSynapseState>  {
 
 class STDSynapse : public Synapse<STDSynapseC, STDSynapseState> {
 public:
-    const string name() const {
-        return "STDSynapse";
-    }
     
     void reset() {
         mutPotential() = 0.0;

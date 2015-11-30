@@ -27,9 +27,6 @@ struct InputClassifierC : public Serializable<Protos::InputClassifierC> {
 
 class InputClassifier : public Reinforcement<InputClassifierC> {
 public:
-    const string name() const {
-        return "InputClassifier";
-    }
     void modulateReward() {
         if(n->fired()) {
             if(n->localId() == GlobalCtx::inst().getCurrentClassId()) {

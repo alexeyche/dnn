@@ -47,9 +47,6 @@ struct OjaState : public Serializable<Protos::OjaState>  {
 
 class Oja : public LearningRule<OjaC, OjaState, SpikeNeuronBase> {
 public:
-    const string name() const {
-        return "Oja";
-    }
 
     void reset() {
         s.y = 0;

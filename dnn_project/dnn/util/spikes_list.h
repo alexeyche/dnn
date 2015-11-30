@@ -29,15 +29,15 @@ struct SpikesListInfo : public Serializable<Protos::SpikesListInfo> {
 
 
 struct SpikesList : public SerializableBase {
-	SpikesList() {}
+	SpikesList() {
+		mutName() = "SpikesList";
+	}
 
 	SpikesList(const size_t& size) {
+		mutName() = "SpikesList";
 		seq.resize(size);
 	}
 
-	const string name() const {
-		return "SpikesList";
-	}
 
 	SpikesListInfo getInfo() {
 		SpikesListInfo info;
