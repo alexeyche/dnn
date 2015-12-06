@@ -77,7 +77,7 @@ struct TimeSeriesInfo : public Serializable<Protos::TimeSeriesInfo> {
             }
             __current_ahead_position += 1;
         }
-        throw dnnException() << "Trying to get current class for time bigger than Tmax: " << t << "\n";
+        return Nothing<size_t>();
     }
 
     vector<pair<string, size_t>> unique_labels; // (label name, duration)
