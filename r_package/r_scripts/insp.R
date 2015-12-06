@@ -200,7 +200,7 @@ if(EVAL) {
         cat("1.0\n")
     } else
     if(EVAL_TYPE == "fisher") {
-        c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$ts_info$labels_timeline)-floor(length(eval_spikes$ts_info$labels_timeline)/4))
+        c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$info)-floor(length(eval_spikes$info)/4))
         eval_spikes = cut_first_layer(eval_spikes)
         c(metric, K, y, M, N, A) := fisher_eval(eval_spikes, EVAL_VERBOSE)
         
