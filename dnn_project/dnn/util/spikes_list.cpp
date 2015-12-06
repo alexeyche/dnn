@@ -9,7 +9,7 @@ namespace dnn {
 Ptr<TimeSeries> SpikesList::convertToBinaryTimeSeries(const double &dt) const {
     Ptr<TimeSeries> out(Factory::inst().createObject<TimeSeries>());
 
-    out->info = ts_info;
+    out->info = info;
     out->setDimSize(seq.size());
     double max_spike_time = std::numeric_limits<double>::min();
     size_t max_size = std::numeric_limits<size_t>::min();

@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message SRMNeuronC {
     required double u_rest = 1;
     required double amp_refr = 2;

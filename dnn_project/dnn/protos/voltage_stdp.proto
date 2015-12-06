@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message VoltageStdpC {
     required double sigma_minus = 1;
     required double sigma_plus = 2;

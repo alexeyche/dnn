@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message RewardControlState {
     required double R = 1;
     required double meanR = 2;

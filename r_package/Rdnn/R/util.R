@@ -62,10 +62,8 @@ plot_rastl <- function(spikes_list, i=NULL, nids=NULL, T0=0, Tmax=Inf, xlim=NULL
         Tmax = xlim[2]
     }
     if(!is.null(i)) {
-        if(i > 1) {
-          T0=spikes_list$ts_info$labels_timeline[i-1]
-        }
-        Tmax = spikes_list$ts_info$labels_timeline[i]        
+        T0 = min(sapply(spikes_list$info[i], function(i) i$start_time))
+        Tmax = max(sapply(spikes_list$info[i], function(i) i$start_time + i$duration))
     }
     raster = spikes_list$values
     

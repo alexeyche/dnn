@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message WhiteNoiseInputC {
     required double mean = 1;
     required double sd = 2;

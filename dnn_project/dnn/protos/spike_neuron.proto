@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message SpikeNeuronInfo {
     required double u = 1;
     required double p = 2;

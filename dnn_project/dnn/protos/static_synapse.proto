@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message StaticSynapseC {
     required double psp_decay = 1;
     required double amp = 2;

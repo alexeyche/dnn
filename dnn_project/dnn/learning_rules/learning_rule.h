@@ -5,7 +5,6 @@
 #include <dnn/neurons/spike_neuron.h>
 #include <dnn/util/ptr.h>
 #include <dnn/util/interfaced_ptr.h>
-#include <dnn/protos/learning_rule.pb.h>
 #include <dnn/base/sim_element.h>
 
 namespace dnn {

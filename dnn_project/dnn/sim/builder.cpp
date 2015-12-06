@@ -108,7 +108,7 @@ const TimeSeriesInfo& Builder::getInputTimeSeriesInfo() const {
             return ts->info;
         } else
         if(Ptr<SpikesList> sl = obj.as<SpikesList>()) {
-            return sl->ts_info;
+            return sl->info;
         } else {
             throw dnnException() << "Unknown input, can't deduce time series information\n";
         }

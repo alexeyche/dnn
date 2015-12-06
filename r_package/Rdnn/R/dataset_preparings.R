@@ -8,6 +8,11 @@
 #  save_on_disk=TRUE
 #  use_cache=TRUE
 
+add.to.list = function(l, v) {
+    l[[length(l)+1]] = v
+    return(l)
+}
+
 prepare.ucr.data = function(
     sample_size = 60
   , data_name = UCR.SYNTH
@@ -43,29 +48,24 @@ prepare.ucr.data = function(
             data_out[[data_part]] = proto.read(fname)
             cats("Using cached time series from %s\n", fname)
         } else {
-            ts_info = list(labels_timeline=c())
+            ts_info = list()
             labels = c()
             
             time = 0
             ts_data = c()
             for(i in sample(sel.w)) {
+                ts_info = add.to.list(
+                    ts_info, 
+                    list(start_time = time, label = as.character(ts[[i]]$label), duration = length(ts[[i]]$values))
+                )                
                 for(x in ts[[i]]$values) {
                     time = time + dt    
                 }
                 time = time + gap_between_patterns
-                ts_info$labels_timeline = c(ts_info$labels_timeline, time)
-                labels = c(labels, as.character(ts[[i]]$label))
+                
                 ts_data =c(ts_data, ts[[i]]$values, rep(0, gap_between_patterns))
             }
-            ts_info$unique_labels = unique(labels)
-            l_ids = list()
-            idx = 0
-            for(l in ts_info$unique_labels) {
-                l_ids[[l]] = idx
-                idx = idx + 1
-            }
-            ts_info$labels_ids = as.numeric(sapply(labels, function(l) l_ids[[l]]))
-            data_out[[data_part]] = time.series(values=matrix(ts_data, nrow=1, ncol=length(ts_data)), ts_info=ts_info)
+            data_out[[data_part]] = time.series(values=matrix(ts_data, nrow=1, ncol=length(ts_data)), info=ts_info)
             if(save_on_disk) {
                 cats("Saving %s in %s\n", data_part, fname)
                 proto.write(data_out[[data_part]], fname)
@@ -123,7 +123,7 @@ UCR.FACE = "FaceAll"
 UCR.STARLIGH = "StarLightCurves"
 
 empty.ts = function() {
-    time.series(values=c(), ts_info=list(labels_ids=NULL, unique_labels=NULL, labels_timeline=NULL))
+    time.series(values=c(), info=list())
 }
 
 empty.spikes = function(N=NULL) {
@@ -131,25 +131,49 @@ empty.spikes = function(N=NULL) {
     if(!is.null(N)) {
         l = lapply(1:N, function(i) numeric(0))
     }
-    spikes.list(values=l, ts_info=list(labels_ids=NULL, unique_labels=NULL, labels_timeline=NULL))
+    spikes.list(values=l, info=list())
+}
+
+add.to.ts = function(ts, new_ts) {
+    last_time = length(ts$values)
+    ts$values = c(ts$values, new_ts$values)
+    for(inf in new_ts$info) {
+        ts$info = add.to.list(
+            ts$info
+          , list(label=info$label, duration=info$duration, start_time = last_time + info$start_time)
+        )
+    }
+    return(ts)
+}
+
+add.to.spikes = function(sp, new_sp, gap=0, from=NULL) {
+    if(length(sp$values) != length(new_sp$values)) {
+        stop("Trying to add spikes with another size of population")
+    }
+    if(is.null(from)) {
+        from = spikes.list.max.t(sp)    
+    }    
+    sp$values = lapply(
+        1:length(sp$values)
+      , function(ni) {
+          c(sp$values[[ni]],  new_sp$values[[ni]] + from + gap)
+      }
+    )
+    for(inf in new_sp$info) {
+        sp$info = add.to.list(
+            sp$info
+          , list(label=inf$label, duration=inf$duration, start_time = from + inf$start_time + gap)
+        )
+    }
+    return(sp)
 }
 
 cat.ts = function(...) {
     ts = list(...)
     fts = empty.ts()
-    fts$ts_info$unique_labels = unique(c(sapply(ts, function(x) x$ts_info$unique_labels)))
-    
-    last_t = 0
     for(t in ts) {
-        if(class(t) != "TimeSeries") stop("Expceting TimeSeries as input")
-        
-        fts$values = c(fts$values, t$values)
-        labs = t$ts_info$unique_labels[ t$ts_info$labels_ids+1 ]
-        
-        fts$ts_info$labels_ids = c(fts$ts_info$labels_ids, sapply(labs, function(l) which(l == fts$ts_info$unique_labels)-1))
-        
-        fts$ts_info$labels_timeline = c(fts$ts_info$labels_timeline, t$ts_info$labels_timeline+last_t)     
-        last_t = tail(t$ts_info$labels_timeline, 1)
+        if(class(t) != "TimeSeries") stop("Expecting TimeSeries as input")
+        fts = add.to.ts(fts, t)
     }
     return(fts)
 }
@@ -159,50 +183,24 @@ cat.spikes = function(...) {
     
     if(class(spikes[[1]]) != "SpikesList") stop("Expecting SpikesList as input")
     fsp = empty.spikes(length(spikes[[1]]$values))
-    fsp$ts_info$unique_labels = unique(c(unlist(sapply(spikes, function(x) x$ts_info$unique_labels))))
     
-    last_t = 0
     for(s in spikes) {
-        if(length(s$values) != length(fsp$values)) stop("Got inhomohenious spikes lists size")
-        
-        fsp$values = lapply(1:length(s$values), function(ni) c(fsp$values[[ni]],  s$values[[ni]] + last_t))
-        
-        if(is.null(s$ts_info$unique_labels)) next
-            
-        labs = s$ts_info$unique_labels[ s$ts_info$labels_ids+1 ]
-        if(length(labs)>0) {
-            fsp$ts_info$labels_ids = c(fsp$ts_info$labels_ids, sapply(labs, function(l) which(l == fsp$ts_info$unique_labels)-1))
-        }
-        if(!is.null(s$ts_info$labels_timeline)) {
-            fsp$ts_info$labels_timeline = c(fsp$ts_info$labels_timeline, s$ts_info$labels_timeline+last_t)
-            last_t = last_t + tail(s$ts_info$labels_timeline, 1)
-        }
+        fsp = add.to.spikes(fsp, s)
     }
     return(fsp)
 }
 
 split.spikes = function(sp, number_to_split) {
-    time_to_split = sp$ts_info$labels_timeline[number_to_split] 
+    time_to_split = sp$info[number_to_split]$start_time
     left_idx = which(sp$ts_info$labels_timeline <= time_to_split)
     left_sp = empty.spikes()    
     right_sp = empty.spikes()
-    
-    left_sp$ts_info$labels_timeline = sp$ts_info$labels_timeline[left_idx]
-    right_sp$ts_info$labels_timeline = sp$ts_info$labels_timeline[-left_idx] - time_to_split
-    
-    labs = sp$ts_info$unique_labels[ sp$ts_info$labels_ids+1 ]
-
-    left_labs = labs[left_idx]
-    left_sp$ts_info$unique_labels = unique(left_labs)
-    left_sp$ts_info$labels_ids = sapply(left_labs, function(l) which(l == left_sp$ts_info$unique_labels)-1)
+        
     left_sp$values = sapply(sp$values, function(spike_times) spike_times[ which(spike_times<=time_to_split) ] )
-    
-    right_labs = labs[-left_idx]
-    right_sp$ts_info$unique_labels = unique(right_labs)
-    right_sp$ts_info$labels_ids = sapply(right_labs, function(l) which(l == right_sp$ts_info$unique_labels)-1)
     right_sp$values = sapply(sp$values, function(spike_times) spike_times[ which(spike_times>time_to_split) ] - time_to_split)
-    
-    return(list(left_sp, right_sp))    
+    left_sp$info = sp$info[1:(number_to_split-1)]
+    right_sp$info = sp$info[number_to_split:length(sp$info)]
+    return(list(left_sp, right_sp))
 }
 
 
@@ -216,7 +214,8 @@ intercept.data.to.spikes = function(ts, N, dim_idx, dt=1, gap_between_patterns=0
     
     sp = empty.spikes(N)
     
-    src_lab_times = ts$ts_info$labels_timeline
+    src_lab_times = sapply(ts$info, function(i) i$start_time + i$duration)
+    
     
     time = 0
     i = 0
@@ -225,6 +224,8 @@ intercept.data.to.spikes = function(ts, N, dim_idx, dt=1, gap_between_patterns=0
         if((i == head(src_lab_times, n=1))&&(length(src_lab_times)>1)) {
             time = time + gap_between_patterns            
             src_lab_times = src_lab_times[-1]
+            ts_info = head(ts$info, n=1)
+#            sp$info = add.to.list(sp$info, list(start_time=time))
         }   
         d = abs(x - intercept)
         ni = which(d == min(d))
@@ -242,17 +243,16 @@ intercept.data.to.spikes = function(ts, N, dim_idx, dt=1, gap_between_patterns=0
     return(sp)
 }
 
-
-ts.info = function(labs, times) {
-    if(length(labs) != length(times)) {
-        stop("Need equal size of labels and times")
+spikes.list.max.t = function(sp) {
+    max_t = max(sapply(sp$values, function(l) {
+        if(length(l) == 0) {
+            return(0)
+        } else {
+            return(max(l))
+        }
+    }))
+    for(inf in sp$info) {
+        max_t = max(max_t, inf$start_time + inf$duration)
     }
-    ulabs = unique(labs)
-    return(
-        list(
-            unique_labels=ulabs
-          , labels_ids=which(labs == ulabs)-1
-          , labels_timeline=times
-        )
-    )
+    return(max_t)
 }

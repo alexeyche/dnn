@@ -63,8 +63,8 @@ public:
 		return spikes_list;
 	}
 
-	const size_t& getClassId(const Time& t) {
-		return spikes_list.ts_info.getClassId(t.t);
+	Maybe<size_t> getClassId(const Time& t) {
+		return spikes_list.info.getClassId(t.t);
 	}
 
 private:

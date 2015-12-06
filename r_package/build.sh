@@ -9,5 +9,5 @@ popd
 DNN_INCLUDE=${DNN_INCLUDE:-$DNN_HOME/include/dnn_project}
 DNN_LIB=${DNN_LIB:-$DNN_HOME/lib}
 R CMD build $packagename
-R CMD INSTALL --build ${packagename}_${ver}.tar.gz --configure-args="--with-dnn-include=$DNN_INCLUDE --with-dnn-lib=$DNN_LIB"
+R CMD INSTALL --build ${packagename}_${ver}.tar.gz --configure-args="--with-dnn-include=$DNN_INCLUDE --with-dnn-lib=$DNN_LIB" 
 popd

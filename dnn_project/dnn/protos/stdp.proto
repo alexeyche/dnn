@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message StdpC {
     required double tau_plus = 1;
     required double tau_minus = 2;

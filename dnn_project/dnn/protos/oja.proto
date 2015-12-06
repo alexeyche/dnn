@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message OjaC {
     required double tau_x = 1;
     required double tau_y = 2;

@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message SpikeSequenceNeuronC {
     required double dt = 1;
 }

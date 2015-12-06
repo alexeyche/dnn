@@ -29,7 +29,8 @@ class InputClassifier : public Reinforcement<InputClassifierC> {
 public:
     void modulateReward() {
         if(n->fired()) {
-            if(n->localId() == GlobalCtx::inst().getCurrentClassId()) {
+            Maybe<size_t> currentClassId = GlobalCtx::inst().getCurrentClassId();
+            if(currentClassId && (n->localId() == currentClassId.getRef())) {
                 GlobalCtx::inst().propagateReward(c.ltp);
             } else {
                 GlobalCtx::inst().propagateReward(c.ltd);

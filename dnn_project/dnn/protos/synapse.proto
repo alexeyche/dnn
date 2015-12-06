@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message SynapseInfo {
     required uint32 idPre = 1;
     required double dendriteDelay = 2;

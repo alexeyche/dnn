@@ -1,6 +1,0 @@
-package Protos;
-
-message LearningRuleInfo {
-    required bool weight_normalization_is_set = 1;
-}
-

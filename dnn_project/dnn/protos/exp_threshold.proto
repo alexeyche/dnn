@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message ExpThresholdC {
     required double amp = 1;
     required double beta = 2;

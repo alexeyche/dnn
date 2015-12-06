@@ -23,6 +23,7 @@ using namespace dnn;
 using namespace shapelets;
 using namespace mpl;
 
+
 class RProto {
 public:
     RProto(std::string _protofile) : protofile(_protofile) {
@@ -137,11 +138,7 @@ public:
             }
             out = Rcpp::List::create(
                   Rcpp::Named("values") = ts_vals
-                , Rcpp::Named("ts_info") = Rcpp::List::create(
-                      Rcpp::Named("labels_ids") = Rcpp::wrap(od->info.labels_ids)
-                    , Rcpp::Named("unique_labels") = Rcpp::wrap(od->info.unique_labels)
-                    , Rcpp::Named("labels_timeline") = Rcpp::wrap(od->info.labels_timeline)
-                )
+                , Rcpp::Named("info") = convertToRTimeSeriesInfo(od->info)
             );
         }
         if(o->name() == "TimeSeriesComplex") {
@@ -154,11 +151,7 @@ public:
             }
             out = Rcpp::List::create(
                   Rcpp::Named("values") = Rcpp::wrap(ts_vals)
-                , Rcpp::Named("ts_info") = Rcpp::List::create(
-                      Rcpp::Named("labels_ids") = Rcpp::wrap(od->info.labels_ids)
-                    , Rcpp::Named("unique_labels") = Rcpp::wrap(od->info.unique_labels)
-                    , Rcpp::Named("labels_timeline") = Rcpp::wrap(od->info.labels_timeline)
-                )
+                , Rcpp::Named("info") = convertToRTimeSeriesInfo(od->info)
             );
         }
         if(o->name() == "SpikesList") {
@@ -171,11 +164,7 @@ public:
             }
             out = Rcpp::List::create(
                   Rcpp::Named("values") = Rcpp::wrap(sp)
-                , Rcpp::Named("ts_info") = Rcpp::List::create(
-                      Rcpp::Named("labels_ids") = Rcpp::wrap(od->ts_info.labels_ids)
-                    , Rcpp::Named("unique_labels") = Rcpp::wrap(od->ts_info.unique_labels)
-                    , Rcpp::Named("labels_timeline") = Rcpp::wrap(od->ts_info.labels_timeline)
-                )
+                , Rcpp::Named("info") = convertToRTimeSeriesInfo(od->info)
             );
         }
         if(o->name() == "DoubleMatrix") {
@@ -263,13 +252,10 @@ public:
     template <typename T, typename CP = FactoryCreationPolicy>
     static Ptr<T> convertFromR(const Rcpp::List &list) {
         string name = list.attr("class");
-        TimeSeriesInfo ts_info;
+        TimeSeriesInfo info;
         if( (name == "TimeSeries") || (name == "SpikesList") ) {
-            if(list.containsElementNamed("ts_info")) {
-                Rcpp::List ts_info_l = list["ts_info"];
-                ts_info.labels_ids = Rcpp::as<vector<size_t>>(ts_info_l["labels_ids"]);
-                ts_info.unique_labels = Rcpp::as<vector<string>>(ts_info_l["unique_labels"]);
-                ts_info.labels_timeline = Rcpp::as<vector<size_t>>(ts_info_l["labels_timeline"]);
+            if(list.containsElementNamed("info")) {
+                info = convertFromRTimeSeriesInfo(list["info"]);
             }
         }
         if(name == "TimeSeries") {
@@ -284,14 +270,13 @@ public:
                         ts->data[i].values.push_back(m(i,j));
                     }
                 }
-
             } else {
                 ts->dim_info.size = 1;
                 ts->data.resize(ts->dim_info.size);
                 ts->data[0].values = Rcpp::as<vector<double>>(values);
             }
 
-            ts->info = ts_info;
+            ts->info = info;
             return ts.as<T>();
         }
         if(name == "SpikesList") {
@@ -303,7 +288,7 @@ public:
                 sp_seq.values = Rcpp::as<vector<double>>(sp_v);
                 sl->seq.push_back(sp_seq);
             }
-            sl->ts_info = ts_info;
+            sl->info = info;
             return sl.as<T>();
         }
         if(name == "DoubleMatrix") {
@@ -360,7 +345,29 @@ public:
         return matches;
 
     }
+    static Rcpp::List convertToRTimeSeriesInfo(const TimeSeriesInfo &info) {
+        Rcpp::List ret;
+        for(const auto& lab_start_info: info.labels_start) {
+            const auto& lab_spec = info.unique_labels[lab_start_info.first];
+            ret.push_back(
+                Rcpp::List::create(
+                    Rcpp::Named("label") = lab_spec.first
+                  , Rcpp::Named("start_time") = lab_start_info.second
+                  , Rcpp::Named("duration") = lab_spec.second
+                )
+            );
+        }
+        return ret;
+    }
 
+    static TimeSeriesInfo convertFromRTimeSeriesInfo(const Rcpp::List &info) {
+        TimeSeriesInfo ret;
+        for(size_t li=0; li<info.size(); ++li) {
+            Rcpp::List elem(info[li]);
+            ret.addLabelAtPos(elem["label"], elem["start_time"], elem["duration"]);
+        }
+        return ret;
+    }
     void print() {
         cout << "RProto instance. run instance$read() method to read protobuf\n";
     }

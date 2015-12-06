@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message DifferenceOfGaussiansC {
     required int32 dimension = 1;
     required double sigma_pos = 2;

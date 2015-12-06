@@ -19,7 +19,7 @@ void Stream::writeObject(SerializableBase *b) {
 		throw dnnException()<< "Stream isn't open in output mode. Need output stream\n";
 	}
 
-	vector<ProtoMessage> messages = b->getSerialized();
+	vector<ProtoMessagePtr> messages = b->getSerialized();
 
 	if (getRepr() == Text) {
 		vector<string> buff;
@@ -53,7 +53,7 @@ void Stream::writeObject(SerializableBase *b) {
 
 #define P(condition) {if(!condition) { printf( "\n FAILURE in %s, line %d\n", __FILE__, __LINE__ );exit( 1 );}}
 
-void Stream::protoReader(vector<ProtoMessage> &messages) {
+void Stream::protoReader(vector<ProtoMessagePtr> &messages) {
 	Protos::ClassName *cl = new Protos::ClassName;
 	bool ok = readBinaryMessage(cl, _input_str);
 	if (!ok) return;
@@ -61,7 +61,7 @@ void Stream::protoReader(vector<ProtoMessage> &messages) {
 	messages.push_back(cl);
 
 	if (cl->has_proto()) {
-		ProtoMessage pr = Factory::inst().createProto(cl->class_name());
+		ProtoMessagePtr pr = Factory::inst().createProto(cl->class_name());
 		P(readBinaryMessage(pr, _input_str));
 		messages.push_back(pr);
 	}
@@ -71,7 +71,7 @@ void Stream::protoReader(vector<ProtoMessage> &messages) {
 	}
 }
 
-void Stream::jsonReader(string name, const Value &v, vector<ProtoMessage> &messages) {
+void Stream::jsonReader(string name, const Value &v, vector<ProtoMessagePtr> &messages) {
 	// json to protobuf
 	vector<string> name_spl = split(name, '_');
 	if(name_spl.size()>0) {
@@ -99,14 +99,14 @@ void Stream::jsonReader(string name, const Value &v, vector<ProtoMessage> &messa
 			ccl->set_class_name(name);
 			messages.push_back(ccl);
 		}
-		ProtoMessage m = Factory::inst().createProto(name);
+		ProtoMessagePtr m = Factory::inst().createProto(name);
 		Json::JsonToProtobuf(v, m);
 		messages.push_back(m);
 	}
 }
 
-vector<ProtoMessage> Stream::readObjectProtos() {
-	vector<ProtoMessage> messages;
+vector<ProtoMessagePtr> Stream::readObjectProtos() {
+	vector<ProtoMessagePtr> messages;
 	if (r == Binary) {
 		protoReader(messages);
 	}
@@ -124,7 +124,7 @@ vector<ProtoMessage> Stream::readObjectProtos() {
 }
 
 
-Ptr<SerializableBase> Stream::deserialize(string name, vector<ProtoMessage> &messages, bool dynamically, SerializableBase *src) {
+Ptr<SerializableBase> Stream::deserialize(string name, vector<ProtoMessagePtr> &messages, bool dynamically, SerializableBase *src) {
     if(messages.size() == 0) {
         return Ptr<SerializableBase>();
     }

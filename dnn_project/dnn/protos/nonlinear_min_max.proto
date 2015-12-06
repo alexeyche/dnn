@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message NonLinearMinMaxC {
     required double depression_factor = 1;
     required double mu = 2;

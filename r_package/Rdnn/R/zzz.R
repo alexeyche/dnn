@@ -47,23 +47,52 @@ get.gammatones = function(freqs, samp_rate, len=100) {
     return(gfb_out$membrane)
 }
 
-time.series = function(values, ts_info=NULL) {
+ts.info = function(l) {
+    check.ts.info = function(ts_info) {
+        if(! ("duration" %in% names(ts_info))) {
+            stop("Need duration in time series sample specification")
+        }
+        if(! ("label" %in% names(ts_info))) {
+            stop("Need label in time series sample specification")
+        }
+        if(! ("start_time" %in% names(ts_info))) {
+            stop("Need start_time in time series sample specification")
+        }
+        if(!is.character(!ts_info["label"])) {
+            stop("Label must be a string in time series specification")
+        }            
+    }
+    if("duration" %in% names(l)) {
+        check.ts.info(l)
+    } else {
+        for(o in l) {
+            check.ts.info(l)
+        }
+    }
+    return(l)
+}
+
+
+time.series = function(values, info=NULL) {
     o = list(values = values)
-    if(is.null(ts_info)) {
+    if(is.null(info)) {
         if(is.matrix(values)) {
             l = ncol(values)    
         } else {
             l = length(values)
         }
-        ts_info = ts.info("unknown_label", l)
+        info = ts.info(label="unknown_label", duration=length(values), start_time=0)
     }
-    o$ts_info = ts_info
+    o$info = info
     class(o) <- "TimeSeries"
     return(o)
 }
 
-spikes.list = function(values, ts_info=list()) {
-    o = list(values = values, ts_info = ts_info)
+spikes.list = function(values, info=NULL) {
+    if(is.null(info)) {
+        info = ts.info(label="unknown_label", duration=length(values), start_time=0)    
+    }
+    o = list(values = values, info = ts.info(info))
     class(o) <- "SpikesList"
     return(o)
 }

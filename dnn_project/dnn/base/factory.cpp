@@ -97,11 +97,11 @@ Factory::~Factory() {
 // 	return o;
 // }
 
-ProtoMessage Factory::createProto(string name) {
+ProtoMessagePtr Factory::createProto(string name) {
 	if (prototypemap.find(name) == prototypemap.end()) {
 		throw dnnException()<< "Failed to find method to construct proto type " << name << "\n";
 	}
-	ProtoMessage o = prototypemap[name]();
+	ProtoMessagePtr o = prototypemap[name]();
 	return o;
 }
 

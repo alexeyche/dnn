@@ -25,8 +25,8 @@ public:
         if(!data.containsElementNamed("values")) {
         	ERR("Need values in list. It is supposed to be time series or spikes list")
         }
-        if(!data.containsElementNamed("ts_info")) {
-        	ERR("Need time series information in list named by ts_info. It is supposed to be time series or spikes list")
+        if(!data.containsElementNamed("info")) {
+        	ERR("Need time series information in list named by info. It is supposed to be time series or spikes list")
         }
 
 		KernelWorker w;
