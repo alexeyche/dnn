@@ -244,7 +244,7 @@ public:
 		applySubst(parsed, values);
 		return parsed;
 	}
-	static void JsonToProtobuf(const Value &v, ProtoMessage m) {
+	static void JsonToProtobuf(const Value &v, ProtoMessagePtr m) {
 		Document d;
 		Value cv;
 		cv.CopyFrom(v, d.GetAllocator());

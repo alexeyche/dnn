@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message Stat {
     required int32 low_lim = 1;
     required int32 high_lim = 2;

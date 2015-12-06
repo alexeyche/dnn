@@ -38,9 +38,6 @@ struct IdsConnectionC : public Serializable<Protos::IdsConnectionC> {
 
 class IdsConnection : public Connection<IdsConnectionC> {
 public:
-    const string name() const {
-        return "IdsConnection";
-    }
 
     ConnectionRecipe getConnectionRecipe(const SpikeNeuronBase &left, const SpikeNeuronBase &right) {
         ConnectionRecipe recipe;

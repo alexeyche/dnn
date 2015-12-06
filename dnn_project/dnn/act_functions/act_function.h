@@ -26,7 +26,7 @@ public:
         i.probDeriv = MakeDelegate(static_cast<T*>(this), &T::probDeriv);
     }
 	static double __default(const double &u) {
-		throw dnnException() << "Calling inapropriate default interface function. You may be made a mistake in constants and some layer need act_function be pointed\n";
+		return 0.0;
 	}
 
 	static void provideDefaultInterface(ActFunctionInterface &i) {

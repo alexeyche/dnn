@@ -10,8 +10,13 @@
 
 
 #include <google/protobuf/message.h>
+#include <utility>
 
-typedef google::protobuf::Message* ProtoMessage;
+using std::pair;
+
+typedef google::protobuf::Message* ProtoMessagePtr;
+typedef google::protobuf::Message& ProtoMessageRef;
+typedef const google::protobuf::Message& ProtoMessageConstRef;
 
 namespace dnn {
 
@@ -32,7 +37,7 @@ public:
 
     }
 
-    virtual ProtoMessage newProto() {
+    virtual ProtoMessagePtr newProto() {
         throw dnnException()<< "That shouldn't be called. This method for non protobuf Serializable classes\n";
     }
 
@@ -53,14 +58,17 @@ public:
     }
 
     virtual void serial_process() = 0;
-    virtual const string name() const = 0;
 
-    static ProtoMessage copyM(ProtoMessage m) {
-        ProtoMessage copy_m = m->New();
+    const string& name() const {
+        return _name;
+    }
+
+    static ProtoMessagePtr copyM(ProtoMessagePtr m) {
+        ProtoMessagePtr copy_m = m->New();
         copy_m->CopyFrom(*m);
         return copy_m;
     }
-    static Protos::ClassName* getHeader(vector<ProtoMessage> &messages) {
+    static Protos::ClassName* getHeader(vector<ProtoMessagePtr> &messages) {
         if(messages.size() == 0) {
             throw dnnException()<< "Trying to get header from empty messages stack\n";
         }
@@ -144,18 +152,20 @@ public:
         return *this;
     }
 
-    vector<ProtoMessage>& getSerialized() {
+    vector<ProtoMessagePtr>& getSerialized() {
         if ((mode == ProcessingOutput) && (messages)) clean();
         mode = ProcessingOutput;
 
-        messages = new vector<ProtoMessage>;
+        messages = new vector<ProtoMessagePtr>;
 
-
+        if(_name.empty()) {
+            throw dnnException() << "Trying to serialize object without a name. Seems that object was created in some place except Factory";
+        }
         serial_process();
         return *messages;
     }
 
-    void getDeserialized(vector<ProtoMessage> &inp_mess) {
+    void getDeserialized(vector<ProtoMessagePtr> &inp_mess) {
         mode = ProcessingInput;
 
         if(messages) clean();
@@ -167,12 +177,13 @@ public:
     SerializableBase& operator << (const char *vraw) {
         return *this;
     }
-    void addMessage(ProtoMessage m) {
+
+    void addMessage(ProtoMessagePtr m) {
         assert(messages);
         messages->push_back( copyM(m) );
     }
 
-    ProtoMessage currentMessage() {
+    ProtoMessagePtr currentMessage() {
         assert(messages);
         if(messages->size() == 0) {
             throw dnnException()<< "Trying to get from empty vector of messages\n";
@@ -203,10 +214,17 @@ public:
     // SerializableBase& operator =(const SerializableBase &obj) { return *this; }
 
 
+
 protected:
-    vector<ProtoMessage> *messages;
+    string& mutName() {
+        return _name;
+    }
+
+    vector<ProtoMessagePtr> *messages;
     Protos::ClassName *header;
     ProcessMode mode;
+
+    string _name;
 };
 
 void protobinSave(SerializableBase *b, const string fname);
@@ -214,16 +232,7 @@ void protobinSave(SerializableBase *b, const string fname);
 template <typename Proto>
 class Serializable : public SerializableBase {
 public:
-    #define ASSERT_FIELDS() \
-    if((messages->size() == 0)||(!field_descr)) {\
-        throw dnnException()<< "Wrong using of Serializable class.\n"; \
-    }\
-
-    typedef Serializable<Proto> Self;
-    typedef Proto ProtoType;
-    static const bool hasProto = true;
-
-    const string name() const {
+    Serializable() {
         Proto _fake_m;
         vector<string> spl = split(_fake_m.GetTypeName(), '.');
         if(spl[0] != "Protos") {
@@ -233,10 +242,19 @@ public:
         for(size_t i=1; i<spl.size(); ++i) {
             ret += spl[i];
         }
-        return ret;
+        mutName() = ret;
     }
 
-    ProtoMessage newProto() {
+    #define ASSERT_FIELDS() \
+    if((messages->size() == 0)||(!field_descr)) {\
+        throw dnnException()<< "Wrong using of Serializable class.\n"; \
+    }\
+
+    typedef Serializable<Proto> Self;
+    typedef Proto ProtoType;
+    static const bool hasProto = true;
+
+    ProtoMessagePtr newProto() {
         return new Proto;
     }
 
@@ -296,6 +314,46 @@ public:
             return *this; \
         }
 
+    #define SERIALIZE_REPEATED_PAIR_METHOD(vtype, type, first_set_method, second_set_method, first_get_method, second_get_method) \
+        Serializable& operator << (vtype<type> &v) { \
+            ASSERT_FIELDS() \
+            if(mode == ProcessingOutput) { \
+                for(size_t i=0; i<v.size(); ++i) { \
+                    ProtoMessagePtr m = currentMessage()->GetReflection()->AddMessage(currentMessage(), field_descr); \
+                    const google::protobuf::Descriptor* descriptor = m->GetDescriptor(); \
+                    const google::protobuf::FieldDescriptor* first_field_descr = descriptor->FindFieldByName("first"); \
+                    if(!first_field_descr) { \
+                        throw dnnException() << "Can't find first element in message type " << m->GetTypeName(); \
+                    } \
+                    m->GetReflection()->first_set_method(m, first_field_descr, v[i].first); \
+                    const google::protobuf::FieldDescriptor* second_field_descr = descriptor->FindFieldByName("second"); \
+                    if(!second_field_descr) { \
+                        throw dnnException() << "Can't find second element in message type " << m->GetTypeName(); \
+                    } \
+                    m->GetReflection()->second_set_method(m, second_field_descr, v[i].second); \
+                } \
+            } else { \
+                int cur = currentMessage()->GetReflection()->FieldSize(*currentMessage(), field_descr); \
+                for(int i=0; i<cur; ++i) { \
+                    ProtoMessageConstRef m = currentMessage()->GetReflection()->GetRepeatedMessage(*currentMessage(), field_descr, i); \
+                    type subv; \
+                    const google::protobuf::Descriptor* descriptor = m.GetDescriptor(); \
+                    const google::protobuf::FieldDescriptor* first_field_descr = descriptor->FindFieldByName("first"); \
+                    if(!first_field_descr) { \
+                        throw dnnException() << "Can't find first element in message type " << m.GetTypeName(); \
+                    } \
+                    subv.first = m.GetReflection()->first_get_method(m, first_field_descr); \
+                    const google::protobuf::FieldDescriptor* second_field_descr = descriptor->FindFieldByName("second"); \
+                    if(!second_field_descr) { \
+                        throw dnnException() << "Can't find second element in message type " << m.GetTypeName(); \
+                    } \
+                    subv.second = m.GetReflection()->second_get_method(m, second_field_descr); \
+                    v.push_back(subv); \
+                } \
+            } \
+            return *this; \
+        }
+
     SERIALIZE_METHOD(double, SetDouble, GetDouble);
     SERIALIZE_METHOD(bool, SetBool, GetBool);
     SERIALIZE_METHOD(size_t, SetUInt32, GetUInt32);
@@ -306,6 +364,10 @@ public:
     SERIALIZE_REPEATED_METHOD(vector, double, AddDouble, GetRepeatedDouble);
     SERIALIZE_REPEATED_METHOD(ActVector, size_t, AddUInt32, GetRepeatedUInt32);
     SERIALIZE_REPEATED_METHOD(ActVector, double, AddDouble, GetRepeatedDouble);
+    using TStringToUintPair = pair<string, size_t>;
+    SERIALIZE_REPEATED_PAIR_METHOD(vector, TStringToUintPair, SetString, SetUInt32, GetString, GetUInt32);
+    using TUintToUintPair = pair<size_t, size_t>;
+    SERIALIZE_REPEATED_PAIR_METHOD(vector, TUintToUintPair, SetUInt32, SetUInt32, GetUInt32, GetUInt32);
 
     Serializable& operator << (vector<std::complex<double>> &v) {
         ASSERT_FIELDS()
@@ -349,7 +411,7 @@ public:
 
             messages->push_back(header);
 
-            ProtoMessage mess = new Proto;
+            ProtoMessagePtr mess = new Proto;
 
             messages->push_back(mess);
         }

@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message PowMinMaxC {
     required double power = 1;
     required double mean_weight = 2;

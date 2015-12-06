@@ -144,15 +144,15 @@ public:
     //     return dynamic_cast<T*>(b);
     // }
 
-    vector<ProtoMessage> readObjectProtos();
-    void protoReader(vector<ProtoMessage> &messages);
-    void jsonReader(string name, const Value &v, vector<ProtoMessage> &messages);
+    vector<ProtoMessagePtr> readObjectProtos();
+    void protoReader(vector<ProtoMessagePtr> &messages);
+    void jsonReader(string name, const Value &v, vector<ProtoMessagePtr> &messages);
 
     Repr getRepr() {
         return r;
     }
 
-    bool readBinaryMessage(ProtoMessage mess, istream *str) {
+    bool readBinaryMessage(ProtoMessagePtr mess, istream *str) {
         google::protobuf::uint32 size;
         if(!codedIn->ReadVarint32(&size)) {
                 return false;
@@ -165,7 +165,7 @@ public:
         return true;
     }
 
-    void writeBinaryMessage(ProtoMessage mess, ostream *str) {
+    void writeBinaryMessage(ProtoMessagePtr mess, ostream *str) {
         if(!mess) {
             throw dnnException()<< "Trying to write null binary message\n";
         }
@@ -175,19 +175,19 @@ public:
     }
 
 private:
-    vector<ProtoMessage> getMessages() {
+    vector<ProtoMessagePtr> getMessages() {
         if (!isInput()) {
             throw dnnException()<< "Stream isn't open in input mode. Need input stream\n";
         }
 
-        vector<ProtoMessage> messages = readObjectProtos();
+        vector<ProtoMessagePtr> messages = readObjectProtos();
 
         std::reverse(messages.begin(), messages.end());
         return messages;
     }
 
 
-    Ptr<SerializableBase> deserialize(string name, vector<ProtoMessage> &messages, bool dynamically, SerializableBase *src = nullptr);
+    Ptr<SerializableBase> deserialize(string name, vector<ProtoMessagePtr> &messages, bool dynamically, SerializableBase *src = nullptr);
 
 
     istream *_input_str;

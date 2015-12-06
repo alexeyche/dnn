@@ -12,8 +12,7 @@ namespace dnn {
 /*@GENERATE_PROTO@*/
 struct SpikeSequenceNeuronC : public Serializable<Protos::SpikeSequenceNeuronC> {
     SpikeSequenceNeuronC()
-    :
-      dt(1.0)
+    : dt(1.0)
     {}
 
     void serial_process() {
@@ -30,22 +29,18 @@ struct SpikeSequenceNeuronC : public Serializable<Protos::SpikeSequenceNeuronC> 
 /*@GENERATE_PROTO@*/
 struct SpikeSequenceNeuronState : public Serializable<Protos::SpikeSequenceNeuronState>  {
     SpikeSequenceNeuronState()
-    : p(0.0), index(0)
+    : index(0)
     {}
 
     void serial_process() {
-        begin() << "p: " << p << ", " << "index: " << index << Self::end;
+        begin() << "index: " << index << Self::end;
     }
-    double p;
     size_t index;
 };
 
 
 class SpikeSequenceNeuron : public SpikeNeuron<SpikeSequenceNeuronC, SpikeSequenceNeuronState> {
 public:
-    const string name() const {
-        return "SpikeSequenceNeuron";
-    }
 
     void init() {
         if(!seq.isSet() || seq->size() == 0) return;
@@ -64,7 +59,6 @@ public:
     }
 
     void reset() {
-        s.p = 0.0;
         s.index = 0;
     }
 
@@ -78,9 +72,6 @@ public:
         }
     }
 
-    const double& getFiringProbability() {
-        return s.p;
-    }
     void setAsInput(Ptr<SerializableBase> b) {
         Ptr<SpikesList> sl = b.as<SpikesList>();
         if(fabs(sl->getTimeDelta() - c.dt) > 1e-03) {

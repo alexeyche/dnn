@@ -1,11 +1,12 @@
 package Protos;
 
+import "base.proto";
+
 message StdpC {
     required double tau_plus = 1;
     required double tau_minus = 2;
-    required double a_plus = 3;
-    required double a_minus = 4;
-    required double learning_rate = 5;
+    required double ltp_ratio = 3;
+    required double learning_rate = 4;
 }
 
 message StdpState {

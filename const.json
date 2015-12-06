@@ -1,6 +1,6 @@
 {
     "globals" : {
-        "learning_rate" : 0.001,
+        "learning_rate" : 0.002,
         "mean_weight" : 0.2,
         "max_weight" : 5.0,
         "min_weight" : 0.0,
@@ -84,6 +84,10 @@
             "psp_decay" : 10.0,
             "amp" : -1.0
         },
+        "StaticSynapse_rec" : {
+            "psp_decay" : 10.0,
+            "amp" : -1.0
+        },
         "STDSynapse" : {
             "psp_decay" : 2.0,
             "amp" : 1.0,
@@ -95,8 +99,7 @@
         "Stdp" : {
             "tau_plus" : 16.0,
             "tau_minus" : 33.0,
-            "a_plus" : 1.2,
-            "a_minus" : 1.0,
+            "ltp_ratio" : 0.8,
             "learning_rate" : "globals/learning_rate"
         },
         "TripleStdp" : {
@@ -127,8 +130,8 @@
             "learning_rate" : "globals/learning_rate"
         },
         "Oja" : {
-            "tau_x": 50.0,
-            "tau_y": 50.0,
+            "tau_x": 200.0,
+            "tau_y": 200.0,
             "learning_rate" : "globals/learning_rate"
         }
     },
@@ -159,7 +162,7 @@
             "power" : 3.0,
             "tau_mean" : 10000,
             "target_rate" : 5.0,
-            "modulation" : 0.1,
+            "modulation" : 0.5,
             "max_weight" : "globals/max_weight",
             "min_weight" : "globals/min_weight"
         },
@@ -170,13 +173,13 @@
     },
     "connections" : {
         "Stochastic" : {
-            "prob" : 0.4
+            "prob" : 1.0
        },
         "Stochastic_inh" : {
             "prob" : 0.25
        },
         "Stochastic_rec" : {
-            "prob" : 0.1
+            "prob" : 0.25
        },
        "DifferenceOfGaussians" : {
            "sigma_pos" : 3.0,
@@ -193,27 +196,31 @@
                 "neuron" : "SpikeSequenceNeuron"
             },
             {
-                "size" : 100,
+                "size" : 50,
                 "neuron" : "SRMNeuron",
                 "act_function" : "Sigmoid",
-                "learning_rule" : "OptimalStdp",
-                "weight_normalization" : "SlidingLtd"
+                "learning_rule" : "Stdp",
+                "weight_normalization" : "MinMax"
             }
         ],
         "conn_map" : {
             "0->1" : [
                 {
                     "type" : "Stochastic",
-                    "start_weight" : 0.5,
+                    "start_weight" : 0.2,
                     "synapse" : "StaticSynapse"
-                }
+                },
+                {
+                    "type" : "Stochastic_inh",
+                    "start_weight" : 0.2,
+                    "synapse" : "StaticSynapse_inh"
+                }            
             ],
             "1->1" : [
                 {
-                    "type" : "DifferenceOfGaussians",
+                    "type" : "Stochastic_rec",
                     "start_weight" : 3.0,
-                    "inh_synapse" : "StaticSynapse_inh",
-                    "synapse" : "StaticSynapse"
+                    "synapse" : "StaticSynapse_rec"
                 }
             ]
         },

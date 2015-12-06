@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message OjaC {
     required double tau_x = 1;
     required double tau_y = 2;
@@ -9,6 +11,5 @@ message OjaC {
 message OjaState {
     required double y = 1;
     repeated double x = 2;
-    repeated double syn_amp = 3;
 }
 

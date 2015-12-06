@@ -47,26 +47,20 @@ struct LeakyIntegrateAndFireState : public Serializable<Protos::LeakyIntegrateAn
 
 class LeakyIntegrateAndFire : public SpikeNeuron<LeakyIntegrateAndFireC, LeakyIntegrateAndFireState> {
 public:
-    const string name() const {
-        return "LeakyIntegrateAndFire";
-    }
-
-    void reset() {
+    void reset() override final {
         membrane() = c.rest_pot;
         firingProbability() = 0.0;
         s.ref_time = 0.0;
     }
+    
+    void postSpikeDynamics(const Time& t) override final {
+        membrane() = c.rest_pot;
+        s.ref_time = c.tau_ref;
+    }
 
-    void calculateDynamics(const Time& t, const double &Iinput, const double &Isyn) {
+    void calculateDynamics(const Time& t, const double &Iinput, const double &Isyn) override final {
         if(s.ref_time < 0.001) {
             membrane() += t.dt * ( - membrane()  + c.noise*getNorm() + Iinput + Isyn) / c.tau_m;
-            firingProbability() = act_f.ifc().prob(membrane());
-
-            if(firingProbability() > getUnif()) {
-                setFired(true);
-                membrane() = c.rest_pot;
-                s.ref_time = c.tau_ref;
-            }
         } else {
             s.ref_time -= t.dt;
         }

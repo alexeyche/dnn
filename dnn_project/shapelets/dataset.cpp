@@ -12,8 +12,9 @@ Dataset::Dataset(vector<Ptr<TimeSeries>> &_ts)
 {
     size_t class_id = 0;
     for(auto &v: ts_set) {
-        for(const auto &l_id: v->info.labels_ids) {
-            const string &lab = v->info.unique_labels[l_id];
+        for(const auto &l_pair: v->info.labels_start) {
+            const size_t& l_id = l_pair.first;
+            const string &lab = v->info.unique_labels[l_id].first;
             {
                 auto p = class_ids.find(lab);
                 if(p == class_ids.end()) {

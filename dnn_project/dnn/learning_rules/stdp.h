@@ -14,24 +14,28 @@ struct StdpC : public Serializable<Protos::StdpC> {
     StdpC()
     : tau_plus(30.0)
     , tau_minus(50.0)
-    , a_plus(1.0)
-    , a_minus(1.5)
+    , ltp_ratio(1.0)
     , learning_rate(1.0)
+    , __a_plus(1.0)
+    , __a_minus(1.0)
     {}
 
     void serial_process() {
         begin() << "tau_plus: " << tau_plus << ", "
                 << "tau_minus: " << tau_minus << ", "
-                << "a_plus: " << a_plus << ", "
-                << "a_minus: " << a_minus << ", "
+                << "ltp_ratio: " << ltp_ratio << ", "
                 << "learning_rate: " << learning_rate << Self::end;
+
+        __a_plus = ltp_ratio;
     }
 
     double tau_plus;
     double tau_minus;
-    double a_plus;
-    double a_minus;
+    double ltp_ratio;    
     double learning_rate;
+
+    double __a_plus;
+    double __a_minus;
 };
 
 
@@ -53,9 +57,6 @@ struct StdpState : public Serializable<Protos::StdpState>  {
 
 class Stdp : public LearningRule<StdpC, StdpState, SpikeNeuronBase> {
 public:
-    const string name() const {
-        return "Stdp";
-    }
 
     void reset() {
         s.y = 0;
@@ -77,6 +78,7 @@ public:
         const auto &norm = n->getWeightNormalization().ifc();
 
         auto x_id_it = s.x.ibegin();
+        
         while(x_id_it != s.x.iend()) {
             if(fabs(s.x[x_id_it]) < 0.0001) {
                 s.x.setInactive(x_id_it);
@@ -86,8 +88,8 @@ public:
                 const double &w = syn.weight();
 
                 double dw = c.learning_rate * norm.derivativeModulation(w) * (
-                    c.a_plus  * s.x[x_id_it] * n->fired() * norm.ltp(w) - \
-                    c.a_minus * s.y * syn.fired() * norm.ltd(w)
+                    c.__a_plus  * s.x[x_id_it] * n->fired() * norm.ltp(w) - \
+                    c.__a_minus * s.y * syn.fired() * norm.ltd(w)
                 );
                 if(syn.potential()<0) {
                     dw = -dw;

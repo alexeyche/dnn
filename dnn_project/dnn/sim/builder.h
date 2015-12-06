@@ -31,21 +31,18 @@ public:
 
 	vector<InterfacedPtr<SpikeNeuronBase>> buildNeurons();
 
-	static void turnOnStatistics(vector<InterfacedPtr<SpikeNeuronBase>> &neurons, const vector<size_t> &ids) {
-		for(auto it=ids.cbegin(); it != ids.cend(); ++it) {
-			if(*it >= neurons.size()) {
-				throw dnnException() << "Can't find neuron " << *it << " to listen\n";
-			}
-			neurons[*it].ref().stat.turnOn();
-			for(auto s: neurons[*it].ref().getSynapses()) {
+	static void turnOnStatistics(vector<InterfacedPtr<SpikeNeuronBase>> &neurons) {
+		for(auto &n: neurons) {
+			n.ref().stat.turnOn();
+			for(auto s: n.ref().getSynapses()) {
 				s.ref().stat.turnOn();
 			}
-			if(neurons[*it].ref().lrule.isSet()) {
-				neurons[*it].ref().lrule.ref().stat.turnOn();
+			if(n.ref().lrule.isSet()) {
+				n.ref().lrule.ref().stat.turnOn();
 
 			}
-			if(neurons[*it].ref().norm.isSet()) {
-				neurons[*it].ref().norm.ref().stat.turnOn();
+			if(n.ref().norm.isSet()) {
+				n.ref().norm.ref().stat.turnOn();
 			}
 		}
 	}

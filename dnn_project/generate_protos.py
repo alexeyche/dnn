@@ -3,6 +3,7 @@ import os
 import argparse
 import re
 from collections import defaultdict
+import sys
 
 KNOWN_TYPES = {
     "double"    : "double",
@@ -12,15 +13,20 @@ KNOWN_TYPES = {
     "string"    : "string",
     "bool"      : "bool",
     "complex<double>" : "double",
+    "pair<string, size_t>" : "TStringToUintPair",
+    "pair<size_t, size_t>" : "TUintToUintPair",
 }
-VECTOR_RE = re.compile("(?:vector|ActVector)+<([^ ]*)>")
+VECTOR_RE = re.compile("(?:vector|ActVector)+<(.*)>")
 
-def generateProtos(all_structures, package, dst):
+def generateProtos(all_structures, package, dst, imports):
     for fname, structures in all_structures.iteritems():
         dst_file = fname.split(".")[0] + ".proto"
         with open(os.path.join(dst, dst_file), 'w') as f_ptr:
             f_ptr.write("package %s;\n" % package)
             f_ptr.write("\n")
+            for imp in imports:
+                f_ptr.write("import \"{}\";\n".format(imp))
+                f_ptr.write("\n")
             for s in structures:
                 f_ptr.write("message %s {\n" % s['name'])
                 i = 1
@@ -28,7 +34,7 @@ def generateProtos(all_structures, package, dst):
                     if KNOWN_TYPES.get(f[0]) is None:
                         m = VECTOR_RE.match(f[0])
                         if m is None:
-                            sys.exit(1)
+                            raise Exception("Can't match {}".format(f[0]))
                         f_ptr.write("    repeated %s %s = %s;\n" % (KNOWN_TYPES[ m.group(1) ], f[1], str(i)))
                         if m.group(1).startswith("complex"):
                             f_ptr.write("    repeated %s %s = %s;\n" % (KNOWN_TYPES[ m.group(1) ], f[1] + "_imag", str(i+1)))
@@ -87,6 +93,11 @@ if __name__ == "__main__":
                     type=str, required=True)
     parser.add_argument("-p", "--package", help="Package name, default : %(default)s",
                     type=str, required=False, default="Protos")
+    parser.add_argument("-i", "--imports", help="Put imports to all messages (separated by ;)",
+                    type=str, required=False, default=None)
     args = parser.parse_args()
     structures = parseSources(args.source_path)
-    generateProtos(structures, args.package, args.dest_path)
+    imports = []
+    if args.imports:
+        imports = [ v.strip() for v in args.imports.split(";") if v.strip() ]
+    generateProtos(structures, args.package, args.dest_path, imports)

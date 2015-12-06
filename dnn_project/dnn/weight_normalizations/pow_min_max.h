@@ -37,9 +37,6 @@ struct PowMinMaxC : public Serializable<Protos::PowMinMaxC> {
 
 class PowMinMax : public WeightNormalization<PowMinMaxC> {
 public:
-    const string name() const {
-        return "PowMinMax";
-    }
     double derivativeModulation(const double &w) {
 	    if((w >= c.max_weight)||(w <= c.min_weight)) {
 	    	return 0.0;

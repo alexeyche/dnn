@@ -1,11 +1,6 @@
 package Protos;
 
-message TimeSeriesInfo {
-    repeated uint32 labels_ids = 1;
-    repeated string unique_labels = 2;
-    repeated uint32 labels_timeline = 3;
-    required double dt = 4;
-}
+import "base.proto";
 
 message TimeSeriesData {
     repeated double values = 1;

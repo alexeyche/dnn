@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message LeakyIntegrateAndFireC {
     required double tau_m = 1;
     required double rest_pot = 2;

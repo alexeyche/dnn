@@ -16,6 +16,7 @@ void SpikeNeuronBase::setCoordinates(size_t xi, size_t yi, size_t colSize) {
 	_yi = yi;
 	_colSize = colSize;
 }
+
 const size_t SpikeNeuronBase::localId() const {
 	return xi() + colSize()*yi();
 }
@@ -68,11 +69,9 @@ void SpikeNeuronBase::initInternal() {
     if(norm.isSet()) norm.ref().init();
 }
 
-// runtime
-void SpikeNeuronBase::propagateSynapseSpike(const SynSpike &sp) {
-    syns[ sp.syn_id ].ifc().propagateSpike();
-    lrule.ifc().propagateSynapseSpike(sp);
-}
+
+
+
 
 void SpikeNeuronBase::setLearningRule(Ptr<LearningRuleBase> _lrule) {
 	lrule = _lrule;
@@ -126,6 +125,7 @@ const ActVector<InterfacedPtr<SynapseBase>>& SpikeNeuronBase::getSynapses() cons
 ActVector<InterfacedPtr<SynapseBase>>& SpikeNeuronBase::getMutSynapses() {
 	return syns;
 }
+
 Statistics SpikeNeuronBase::getStat() {
 	Statistics statc = stat;
 	auto& rstat = statc.getStats();
@@ -171,18 +171,24 @@ void SpikeNeuronBase::enqueueSpike(const SynSpike && sp) {
 	input_queue_lock.clear(std::memory_order_release);
 }
 
+
+
 void SpikeNeuronBase::readInputSpikes(const Time &t) {
 	while (input_queue_lock.test_and_set(std::memory_order_acquire)) {}
     while(!input_spikes.empty()) {
         const SynSpike& sp = input_spikes.top();
         if(sp.t >= t.t) break;
         auto &s = syns[sp.syn_id];
+
         s.ref().setFired(true);
-        ifc.propagateSynapseSpike(sp);
+    	syns[ sp.syn_id ].ifc().propagateSpike();
+    	lrule.ifc().propagateSynapseSpike(sp);    
+        
         input_spikes.pop();
     }
     input_queue_lock.clear(std::memory_order_release);
 }
+
 void SpikeNeuronBase::calculateDynamicsInternal(const Time &t) {
     readInputSpikes(t);
 
@@ -201,6 +207,12 @@ void SpikeNeuronBase::calculateDynamicsInternal(const Time &t) {
         }
     }
     ifc.calculateDynamics(t, Iinput, Isyn);
+    
+    firingProbability() = act_f.ifc().prob(membrane()) * getProbabilityModulation();
+	if(firingProbability() > getUnif()) {
+        setFired(true);
+        postSpikeDynamics(t);
+    }
 
     lrule.ifc().calculateDynamicsInternal(t);
     reinforce.ifc().modulateReward();

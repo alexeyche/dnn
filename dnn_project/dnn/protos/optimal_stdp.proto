@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message OptimalStdpC {
     required double tau_c = 1;
     required double tau_mean = 2;

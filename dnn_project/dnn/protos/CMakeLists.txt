@@ -1,4 +1,4 @@
-execute_process(COMMAND ${PROJECT_SOURCE_DIR}/generate_protos.py -s ${PROJECT_SOURCE_DIR}/dnn -d ${CMAKE_CURRENT_SOURCE_DIR} )
+execute_process(COMMAND ${PROJECT_SOURCE_DIR}/generate_protos.py -s ${PROJECT_SOURCE_DIR}/dnn -d ${CMAKE_CURRENT_SOURCE_DIR} -i base.proto )
 
 file(GLOB ProtoFiles "${CMAKE_CURRENT_SOURCE_DIR}/*.proto")
 

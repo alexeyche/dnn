@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message SimInfo {
     required double pastTime = 1;
 }

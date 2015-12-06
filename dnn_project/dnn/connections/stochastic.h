@@ -19,9 +19,6 @@ struct StochasticC : public Serializable<Protos::StochasticC> {
 
 class Stochastic : public Connection<StochasticC> {
 public:
-    const string name() const {
-        return "Stochastic";
-    }
     ConnectionRecipe getConnectionRecipe(const SpikeNeuronBase &left, const SpikeNeuronBase &right) {
     	ConnectionRecipe recipe;
     	if(c.prob > getUnif()) {

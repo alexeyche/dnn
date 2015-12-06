@@ -28,7 +28,7 @@
 #include <complex>
 
 
-typedef google::protobuf::Message* ProtoMessage;
+typedef google::protobuf::Message* ProtoMessagePtr;
 
 using std::map;
 using std::set;

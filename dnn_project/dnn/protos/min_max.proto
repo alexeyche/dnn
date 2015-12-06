@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message MinMaxC {
     required double min_weight = 1;
     required double max_weight = 2;

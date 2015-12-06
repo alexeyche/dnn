@@ -30,11 +30,11 @@ void Sim::build(Stream* input_stream) {
 	}
 	net = uptr<Network>(new Network(neurons));
 	if(b.getInputFileNames().size()>0) {
-		net->spikesList().ts_info = b.getInputTimeSeriesInfo();
+		net->spikesList().info = b.getInputTimeSeriesInfo();
 	} else {
 		TimeSeriesInfo default_info;
-		default_info.addLabelAtPos("default", duration);
-		net->spikesList().ts_info = default_info;
+		default_info.addLabelAtPos("default", 0, duration);
+		net->spikesList().info = default_info;
 	}
 }
 
@@ -72,7 +72,14 @@ void Sim::saveSpikes(Stream &str) {
 }
 
 void Sim::turnOnStatistics() {
-	Builder::turnOnStatistics(neurons, c.sim_conf.neurons_to_listen);
+	vector<InterfacedPtr<SpikeNeuronBase>> neuronsToListen;
+	for(const size_t& n_id: c.sim_conf.neurons_to_listen) {
+		if(n_id >= neurons.size()) {
+			throw dnnException() << "Can't find neuron " << n_id << " to listen\n";
+		}
+		neuronsToListen.push_back(neurons[n_id]);
+	}
+	Builder::turnOnStatistics(neuronsToListen);
 	rc.getStat().turnOn();
 }
 
@@ -126,7 +133,7 @@ void Sim::runWorkerRoutine(Sim &s, size_t from, size_t to, SpinningBarrier &barr
 
 
 void Sim::runWorker(Sim &s, size_t from, size_t to, SpinningBarrier &barrier,
-	bool master_thread, vector<std::exception_ptr> &exc_v, std::mutex &exc_v_mut) 
+	bool master_thread, vector<std::exception_ptr> &exc_v, std::mutex &exc_v_mut)
 {
 	try {
 		runWorkerRoutine(s, from, to, barrier, master_thread);
@@ -149,7 +156,7 @@ void Sim::run(size_t jobs) {
 	vector<std::thread> threads;
 	vector<std::exception_ptr> exceptions;
 	std::mutex exceptions_mut;
-	
+
 	SpinningBarrier barrier(jobs);
 	for(auto &slice: slices) {
 		threads.emplace_back(

@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message DoubleMatrix {
     repeated uint32 col_labels_ids = 1;
     repeated uint32 row_labels_ids = 2;

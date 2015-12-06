@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
     Stream s(ff, Stream::Binary);
 
     while(true) {
-        vector<ProtoMessage> messages = s.readObjectProtos();
+        vector<ProtoMessagePtr> messages = s.readObjectProtos();
         if(messages.size() == 0) break;
         for(auto &m : messages) {
             string type = m->GetTypeName(); 

@@ -31,9 +31,6 @@ struct StaticSynapseState : public Serializable<Protos::StaticSynapseState>  {
 
 class StaticSynapse : public Synapse<StaticSynapseC, StaticSynapseState> {
 public:
-    const string name() const {
-        return "StaticSynapse";
-    }
     void reset() {
         mutAmplitude() = c.amp;
         mutPotential() = 0;

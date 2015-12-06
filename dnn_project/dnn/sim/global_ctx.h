@@ -2,6 +2,7 @@
 
 #include <dnn/core.h>
 #include <dnn/util/ptr.h>
+#include <dnn/util/maybe.h>
 #include <dnn/sim/sim_info.h>
 #include <dnn/base/constants.h>
 
@@ -30,9 +31,8 @@ public:
 	}
 	static GlobalCtx& inst();
 
-	const size_t& getCurrentClassId() const {
-		assert(_currentClassId.isSet());
-		return _currentClassId.ref();
+	const Maybe<size_t>& getCurrentClassId() const {
+		return _currentClassId;
 	}
 
 	void propagateReward(const double &R) {
@@ -49,10 +49,10 @@ public:
 		duration.ref() = std::max(duration.ref(), d);
 	}
 private:
-	void setCurrentClassId(const size_t &id) {
-		_currentClassId.set(&id);
+	void setCurrentClassId(Maybe<size_t> &&id) {
+		_currentClassId = id;
 	}
-	Ptr<const size_t> _currentClassId;
+	Maybe<size_t> _currentClassId;
 	Ptr<const SimInfo> si;
 	Ptr<const Constants> c;
 	Ptr<RewardControl> rc;

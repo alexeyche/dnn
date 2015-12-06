@@ -10,3 +10,13 @@ message ClassName {
 message EmptyProto {
 	
 }
+
+message TStringToUintPair {
+    required string first = 1;
+    required uint32 second = 2;
+}
+
+message TUintToUintPair {
+    required uint32 first = 1;
+    required uint32 second = 2;
+}

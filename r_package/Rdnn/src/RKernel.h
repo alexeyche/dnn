@@ -25,8 +25,8 @@ public:
         if(!data.containsElementNamed("values")) {
         	ERR("Need values in list. It is supposed to be time series or spikes list")
         }
-        if(!data.containsElementNamed("ts_info")) {
-        	ERR("Need time series information in list named by ts_info. It is supposed to be time series or spikes list")
+        if(!data.containsElementNamed("info")) {
+        	ERR("Need time series information in list named by info. It is supposed to be time series or spikes list")
         }
 
 		KernelWorker w;
@@ -41,8 +41,8 @@ public:
         	try {
         		Ptr<SpikesList> sp_l = RProto::convertFromR<SpikesList>(data);
             	stack.push(sp_l->convertToBinaryTimeSeries(1.0));
-        	} catch (...) {
-        		ERR("Can't deduce type of input data\n");
+        	} catch (const std::exception &e) {
+        		ERR("Can't deduce type of input data: " << e.what() << "\n");
         	}
         }
 

@@ -1,5 +1,7 @@
 package Protos;
 
+import "base.proto";
+
 message SlidingLtdC {
     required double power = 1;
     required double modulation = 2;
