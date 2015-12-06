@@ -191,15 +191,18 @@ cat.spikes = function(...) {
 }
 
 split.spikes = function(sp, number_to_split) {
-    time_to_split = sp$info[number_to_split]$start_time
+    time_to_split = sp$info[[number_to_split]]$start_time
     left_idx = which(sp$ts_info$labels_timeline <= time_to_split)
     left_sp = empty.spikes()    
     right_sp = empty.spikes()
         
     left_sp$values = sapply(sp$values, function(spike_times) spike_times[ which(spike_times<=time_to_split) ] )
     right_sp$values = sapply(sp$values, function(spike_times) spike_times[ which(spike_times>time_to_split) ] - time_to_split)
+    
     left_sp$info = sp$info[1:(number_to_split-1)]
     right_sp$info = sp$info[number_to_split:length(sp$info)]
+    
+    right_sp$info = lapply(right_sp$info, function(x) { x$start_time = x$start_time -time_to_split; return(x) })
     return(list(left_sp, right_sp))
 }
 
