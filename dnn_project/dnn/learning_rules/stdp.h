@@ -31,7 +31,7 @@ struct StdpC : public Serializable<Protos::StdpC> {
 
     double tau_plus;
     double tau_minus;
-    double ltp_ratio;    
+    double ltp_ratio;
     double learning_rate;
 
     double __a_plus;
@@ -78,7 +78,7 @@ public:
         const auto &norm = n->getWeightNormalization().ifc();
 
         auto x_id_it = s.x.ibegin();
-        
+
         while(x_id_it != s.x.iend()) {
             if(fabs(s.x[x_id_it]) < 0.0001) {
                 s.x.setInactive(x_id_it);
@@ -91,7 +91,7 @@ public:
                     c.__a_plus  * s.x[x_id_it] * n->fired() * norm.ltp(w) - \
                     c.__a_minus * s.y * syn.fired() * norm.ltd(w)
                 );
-                if(syn.potential()<0) {
+                if(syn.isInhibitory()<0) {
                     dw = -dw;
                 }
                 syn.mutWeight() += dw;

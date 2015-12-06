@@ -97,8 +97,10 @@ if(file.exists(CONST_FNAME)) {
 
 
 pic_files = NULL
+eval_run_mode = FALSE
 
 if(file.exists(EVAL_SPIKES_FNAME)) {
+    eval_run_mode = TRUE
     SPIKES_FNAME = EVAL_SPIKES_FNAME
 }
 if(INSP_SPIKES) {
@@ -200,7 +202,9 @@ if(EVAL) {
         cat("1.0\n")
     } else
     if(EVAL_TYPE == "fisher") {
-        c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$info)-floor(length(eval_spikes$info)/4))
+        if(!eval_run_mode) {
+            c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$info)-floor(length(eval_spikes$info)/4))
+        }
         eval_spikes = cut_first_layer(eval_spikes)
         c(metric, K, y, M, N, A) := fisher_eval(eval_spikes, EVAL_VERBOSE)
         
@@ -224,7 +228,9 @@ if(EVAL) {
         cat(metric, "\n") 
     } else
     if(EVAL_TYPE == "overlap") {
-        c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$ts_info$labels_timeline)-65)
+        if(!eval_run_mode) {
+            c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$info)-floor(length(eval_spikes$info)/4))
+        }
         eval_spikes = cut_first_layer(eval_spikes)
         c(metric, vm) := overlap_eval(eval_spikes, const)
         

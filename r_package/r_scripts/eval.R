@@ -3,7 +3,7 @@ require(Rdnn)
 
 overlap_eval = function(eval_spikes, const) {
     spike_patterns = chop.spikes.list(eval_spikes)
-    labs = sapply(spike_patterns, function(x) x$ts_info$unique_labels)
+    labs = sapply(spike_patterns, function(x) x$info[[1]]$label)
     ulabs = unique(labs)
     
     con_types = sapply(const$sim_configuration$conn_map, function(x) sapply(x, function(y) y$type))
@@ -23,7 +23,7 @@ overlap_eval = function(eval_spikes, const) {
         li = which(l == ulabs)
         vv[[li]] = rbind(
             vv[[li]],
-            sapply(spike_patterns[[el_i]]$values, length)/spike_patterns[[el_i]]$ts_info$labels_timeline[1]
+            sapply(spike_patterns[[el_i]]$values, length)/spike_patterns[[el_i]]$info[[1]]$duration
         )
     }
     vm = sapply(vv, colMeans)
