@@ -10,7 +10,14 @@ namespace dnn {
 
 /*@GENERATE_PROTO@*/
 struct HedonisticSynapseC : public Serializable<Protos::HedonisticSynapseC>  {
-    HedonisticSynapseC() : psp_decay(10.0), amp(1.0), tau_ref(350), delta_catalyst(0.25), tau_catalyst(500), tau_eligibility(750), learning_rate(0.25) {}
+    HedonisticSynapseC() 
+        : psp_decay(10.0)
+        , amp(1.0)
+        , tau_ref(350)
+        , delta_catalyst(0.25)
+        , tau_catalyst(500)
+        , tau_eligibility(750)
+        , learning_rate(0.25) {}
 
     void serial_process() {
         begin() << "psp_decay: "        << psp_decay       << ", " \
@@ -21,16 +28,16 @@ struct HedonisticSynapseC : public Serializable<Protos::HedonisticSynapseC>  {
                 << "tau_eligibility: "  << tau_eligibility << ", " \
                 << "learning_rate: "    << learning_rate   << Self::end;
 
-    double zero = numeric_limits<double>::epsilon();
-    if(fabs(tau_ref) <= zero) {
-        throw dnnException() << "Time constant tau_ref is too small, division by zero\n";
-            }
-    if(fabs(tau_catalyst) <= zero) {
-        throw dnnException() << "Time constant tau_catalyst is too small, division by zero\n";
-            }
-    if(fabs(tau_eligibility) <= zero) {
-        throw dnnException() << "Time constant tau_eligibility is too small, division by zero\n";
-            }
+        double zero = numeric_limits<double>::epsilon();
+        if(fabs(tau_ref) <= zero) {
+            throw dnnException() << "Time constant tau_ref is too small, division by zero\n";
+        }
+        if(fabs(tau_catalyst) <= zero) {
+            throw dnnException() << "Time constant tau_catalyst is too small, division by zero\n";
+        }
+        if(fabs(tau_eligibility) <= zero) {
+            throw dnnException() << "Time constant tau_eligibility is too small, division by zero\n";
+        }
     }
 
     double psp_decay;
@@ -44,7 +51,12 @@ struct HedonisticSynapseC : public Serializable<Protos::HedonisticSynapseC>  {
 
 /*@GENERATE_PROTO@*/
 struct HedonisticSynapseState : public Serializable<Protos::HedonisticSynapseState>  {
-    HedonisticSynapseState() : refractory (0), probability(0.5), catalyst(0.0), prob_weight(0), eligibility_trace(0) {}
+    HedonisticSynapseState() 
+        : refractory(0)
+        , probability(0.5)
+        , catalyst(0.0)
+        , prob_weight(0)
+        , eligibility_trace(0) {}
 
     void serial_process() {
         begin() << "refractory: "   << refractory   << ", " \
@@ -63,10 +75,6 @@ struct HedonisticSynapseState : public Serializable<Protos::HedonisticSynapseSta
 
 class HedonisticSynapse : public Synapse<HedonisticSynapseC, HedonisticSynapseState> {
 public:
-    const string name() const {
-        return "HedonisticSynapse";
-
-    }
     void reset() {
         mutAmplitude() = c.amp;
         mutPotential() = 0;
@@ -81,13 +89,13 @@ public:
                 mutPotential() += c.amp;
                 s.eligibility_trace += 1 - s.probability;
                 s.refractory = c.tau_ref;
+                s.catalyst += c.delta_catalyst;
             }
             else {
                 // failure
                 s.eligibility_trace += -s.probability;
             }
         }
-        s.catalyst += c.delta_catalyst;
     }
 
     void calculateDynamics(const Time &t) {
@@ -101,7 +109,6 @@ public:
         s.catalyst += - t.dt * s.catalyst/c.tau_catalyst;
         s.refractory += - t.dt * s.refractory/c.tau_ref;
         s.prob_weight += c.learning_rate * s.eligibility_trace * GlobalCtx::inst().getReward();
-
     }
 };
 
