@@ -28,7 +28,6 @@ if(length(grep("RStudio", args))>0) {
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
     #EP = 5
-    #EP=2
 }
 
 pfx_f = function(s) s
@@ -37,7 +36,7 @@ if(EP>=0) {
 }
 
 
-CONST_FNAME = convStr(Sys.getenv('CONST'), "const.json")
+CONST_FNAME = convStr(Sys.getenv('CONST'), "hedonistic_synapse_research.json")
 MODEL_FNAME = convStr(Sys.getenv('MODEL'), pfx_f("model.pb"))
 SPIKES_FNAME = convStr(Sys.getenv('SPIKES'), pfx_f("spikes.pb"))
 INSP_SPIKES = convBool(Sys.getenv('INSP_SPIKES'), TRUE)
@@ -57,7 +56,7 @@ EVAL_PROC = convStr(Sys.getenv('EVAL_PROC'), "Epsp(10)")
 EVAL_KERN = convStr(Sys.getenv('EVAL_KERN'), "RbfDot(0.05)")
 EVAL_JOBS = convNum(Sys.getenv('EVAL_JOBS'), 1)
 EVAL_VERBOSE = convBool(Sys.getenv('EVAL_VERBOSE'), TRUE)
-EVAL_TYPE = convStr(Sys.getenv('EVAL_TYPE'), "fisher")
+EVAL_TYPE = convStr(Sys.getenv('EVAL_TYPE'), "error_rate")
 
 
 if(length(grep("RStudio", args))>0) {
@@ -249,7 +248,84 @@ if(EVAL) {
         c(metric_overlap, vm) := overlap_eval(eval_spikes, const)
         c(metric_fisher, K, y, M, N, A) := fisher_eval(eval_spikes, FALSE)
         cat(- abs(metric_overlap) * abs(metric_fisher), "\n")
-    }
+    } else
+      if (EVAL_TYPE == "error_rate") {
+        # error rate & density of probability    
+        chop.spikes = chop.spikes.list(spikes)
+        errors = c()
+        errors.count = 0
+        probability.list = list()
+        
+        first.neuron = length(spikes$values) - const$sim_configuration$layers[[length(const$sim_configuration$layers)]]$size
+        last.neuron = length(spikes$values)
+        
+        labels.vec = c()
+        for (i in 1: length(spikes$info)) {
+          labels.vec = c(labels.vec, spikes$info[[i]]$label)
+        }
+        labels.vec = unique(labels.vec)
+        for (i in 1:(last.neuron - first.neuron)) {
+          probability.list[[i]] = matrix(NA, 0, length(labels.vec))
+        }
+
+        for(i in 1:length(chop.spikes)) {   
+          activity.vec = c()  # neurons activity vector
+          quantity.vec = c()  # quantity of spikes vector
+          
+          for (j in (first.neuron + 1):last.neuron) {
+            activity.vec = c(activity.vec, length(chop.spikes[[i]]$values[[j]])/chop.spikes[[j]]$info[[1]]$duration)
+            quantity.vec = c(quantity.vec, length(chop.spikes[[i]]$values[[j]]))
+          }
+          
+          # errors count
+          if (max(table(activity.vec)) > 1
+              | chop.spikes[[i]]$info[[1]]$label != labels.vec[which.max(activity.vec)] ) {
+            errors.count = errors.count + 1
+          }
+          errors = c(errors, errors.count)
+          
+          # probability
+          for (j in 1:length(quantity.vec)) {
+            row = c()
+            if (chop.spikes[[i]]$info[[1]]$label == labels.vec[j] ) {
+              for (k in 1:length(quantity.vec)) {
+                sum = sum(quantity.vec)
+                if (sum != 0) row = c(row, quantity.vec[[k]]/sum)
+                else row = c(row, sum)
+              }
+              probability.list[[j]] = rbind(probability.list[[j]], row)
+            }
+          }
+          
+        }
+        # plots
+        eval_debug_pic = sprintf("%s/4_%s", tmp_d, pfx_f("density.png"))
+        if(SAVE_PIC_IN_FILES) png(eval_debug_pic, width = 1024, height = 768)
+        par(mfrow = c((last.neuron - first.neuron - 1), (last.neuron - first.neuron - 1)))
+        
+        plot(errors, main = "Number of errors", type = "s", col = "darkred", lwd = 2)
+        
+        for (n in 1:(last.neuron - first.neuron)) {
+          if (n != (last.neuron - first.neuron)) {
+            for (m in (n + 1):(last.neuron - first.neuron)) {
+              plot(density(probability.list[[n]][ , n]), xlim = 0:1, main = "Density of probability", col = n, lwd = 2)
+              lines(density(probability.list[[m]][ , n]), xlim = 0:1, col = m, lwd = 1.5)
+              legend("topleft", bty = "n", c(labels.vec[n], labels.vec[m]),
+                     lty = c(1, 1), lwd = c(2, 1.5), col = c(n, m))
+            }
+          }
+        }
+        # errors rate in current epoch
+        errors.rate = errors[[length(errors)]]/length(errors)
+        
+        cat(sprintf("%1.10f", errors.rate), "\n")
+        
+        if(SAVE_PIC_IN_FILES) {
+          dev.off()
+          write(paste("Eval debug pic filename: ", eval_debug_pic), stderr())
+          pic_files = c(pic_files, eval_debug_pic)
+        }
+      }
 }
 
 # if ( (!is.null(input))&&(!is.null(model))&&(!is.null(net)) ) {

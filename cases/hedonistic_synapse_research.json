@@ -92,7 +92,7 @@
             "delta_catalyst" : 0.5,
             "tau_catalyst" : 30.0,
             "tau_eligibility" : 50.0,
-            "learning_rate" : 0.25
+            "learning_rate" : 0.5
         },
         "StaticSynapse_rec" : {
             "psp_decay" : 10.0,
@@ -186,10 +186,10 @@
     },
     "connections" : {
         "Stochastic" : {
-            "prob" : 0.5
+            "prob" : 0.60
        },
         "Stochastic_inh" : {
-            "prob" : 0.25
+            "prob" : 0.20
        },
         "Stochastic_rec" : {
             "prob" : 0.1
@@ -209,7 +209,7 @@
                 "neuron" : "SpikeSequenceNeuron"
             },
             {
-                "size" : 100,
+                "size" : 150,
                 "neuron" : "LeakyIntegrateAndFire",
     						"act_function" : "Determ",
                 "weight_normalization" : "MinMax"
@@ -240,7 +240,7 @@
             "1->2" : [
                 { 
                     "type" : "Stochastic", 
-                    "start_weight" : 0.5, 
+                    "start_weight" : 0.75, 
                     "synapse" : "HedonisticSynapse"
                 }
             ]
@@ -251,7 +251,7 @@
         },
         "dt" : 1.0,
         "seed" : -1,
-        "neurons_to_listen" : [200, 201],
+        "neurons_to_listen" : [250, 251],
         "files" : {
             "InputTimeSeries" : {
                 "filename" : "@ts-input"
