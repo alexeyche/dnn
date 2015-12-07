@@ -24,6 +24,10 @@ scripts.path = function(...) {
     file.path(dnn.env(), "r_scripts", ...)
 }
 
+user.json.file = function() {
+    file.path(dnn.env(), "scripts", "user.json")
+}
+
 simruns.path = function(...) {
     file.path(dnn.env(), "runs", "sim", ...)
 }

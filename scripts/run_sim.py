@@ -25,6 +25,7 @@ from util import str_to_opt
 from util import opt_to_str
 
 THIS_FILE = os.path.realpath(__file__)
+SCRIPTS_DIR = os.path.dirname(os.path.realpath(__file__))
 
 class DnnSim(object):
     JOBS = multiprocessing.cpu_count()
@@ -34,6 +35,9 @@ class DnnSim(object):
     CONST_JSON = pj(HOME, "const.json")
     DNN_SIM_BIN = pj(HOME, "bin", "dnn_sim")
     INSP_SCRIPT = pj(HOME, "r_scripts", "insp.R")
+    USER_JSON_FILE = pj(SCRIPTS_DIR, "user.json")
+    USER_JSON = json.load(open(USER_JSON_FILE))
+    USER = os.environ["USER"]
 
     LOG_FILE_BASE = "run_sim.log"
 
@@ -186,13 +190,17 @@ class DnnSim(object):
             "SP_PIX0" : "{}".format(1024*2),
             "EVAL" : "yes" if self.evaluation else "no",
             "EVAL_JOBS" : str(self.jobs),
-            "CONST" : self.const,
             "INSP_SPIKES" : "yes",
             "INSP_MODEL" : "yes",
         }
         cmd = [
               self.insp_script
         ]
+        if DnnSim.USER_JSON.get(DnnSim.USER):
+            env.update(DnnSim.USER_JSON[DnnSim.USER])
+        env.update({
+            "CONST" : self.const,
+        })
         return { "cmd" : cmd, "env" : env, "print_root_log_on_fail" : self.slave }
 
 

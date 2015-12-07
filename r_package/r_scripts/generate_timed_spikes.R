@@ -7,7 +7,7 @@ test_sim_length = 60000
 neurons = 100
 sample_gap = 250
 sample_duration = 500
-classes = 2 
+classes = 2
 high_rate = 20
 
 rates = sapply(1:classes, function(ci) high_rate*rbeta(neurons, 0.2,0.9))

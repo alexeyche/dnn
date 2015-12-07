@@ -1,0 +1,10 @@
+{
+    "alexey" : {
+        "CONST" : "hedonistic_synapse_research.json",
+        "EVAL_TYPE" : "error_rate"
+    },
+    "alexeyche" : {
+        "CONST" : "const.json",
+        "EVAL_TYPE" : "fisher"
+    }
+}

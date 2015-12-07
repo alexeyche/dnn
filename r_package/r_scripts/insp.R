@@ -22,12 +22,15 @@ args <- commandArgs(trailingOnly = FALSE)
 if(length(grep("RStudio", args))>0) {    
     WD = simruns.path(system(sprintf("ls -t %s | head -n 1", simruns.path()), intern=TRUE))
     WD = file.path(dnn.env(), "runs/test-run")
-    #WD="/home/alexeyche/dnn/runs/cma_es/134"
-    #Sys.setenv(CONST=file.path(WD, "dog_find.json"))
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
     #EP = 5
+    user.json = fromJSON(readConst(user.json.file()))
+    user.env = user.json[[ Sys.getenv("USER") ]]
+    if(!is.null(user.env)) {
+        do.call(Sys.setenv, user.env)
+    }
 }
 
 pfx_f = function(s) s
@@ -36,7 +39,7 @@ if(EP>=0) {
 }
 
 
-CONST_FNAME = convStr(Sys.getenv('CONST'), "hedonistic_synapse_research.json")
+CONST_FNAME = convStr(Sys.getenv('CONST'), "const.json")
 MODEL_FNAME = convStr(Sys.getenv('MODEL'), pfx_f("model.pb"))
 SPIKES_FNAME = convStr(Sys.getenv('SPIKES'), pfx_f("spikes.pb"))
 INSP_SPIKES = convBool(Sys.getenv('INSP_SPIKES'), TRUE)
@@ -56,7 +59,7 @@ EVAL_PROC = convStr(Sys.getenv('EVAL_PROC'), "Epsp(10)")
 EVAL_KERN = convStr(Sys.getenv('EVAL_KERN'), "RbfDot(0.05)")
 EVAL_JOBS = convNum(Sys.getenv('EVAL_JOBS'), 1)
 EVAL_VERBOSE = convBool(Sys.getenv('EVAL_VERBOSE'), TRUE)
-EVAL_TYPE = convStr(Sys.getenv('EVAL_TYPE'), "error_rate")
+EVAL_TYPE = convStr(Sys.getenv('EVAL_TYPE'), "fisher")
 
 
 if(length(grep("RStudio", args))>0) {
