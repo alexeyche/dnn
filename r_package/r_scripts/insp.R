@@ -46,6 +46,7 @@ INSP_SPIKES = convBool(Sys.getenv('INSP_SPIKES'), TRUE)
 INSP_MODEL = convBool(Sys.getenv('INSP_MODEL'), TRUE)
 EVAL_SPIKES_FNAME = convStr(Sys.getenv('EVAL_SPIKES'), pfx_f("eval_spikes.pb"))
 STAT_FNAME = convStr(Sys.getenv('STAT'), pfx_f("stat.pb"))
+EVAL_STAT_FNAME = convStr(Sys.getenv('EVAL_STAT'), pfx_f("eval_stat.pb"))
 SP_PIX0 = convNum(Sys.getenv('SP_PIX0'), 1024)
 SP_PIX1 = convNum(Sys.getenv('SP_PIX1'), 768)
 STAT_ID = convNum(Sys.getenv('STAT_ID'), 0) + 1 # C-like indices
@@ -161,6 +162,10 @@ if(INSP_MODEL) {
     }   
 }
 
+if(file.exists(EVAL_STAT_FNAME)) {
+    eval_run_mode = TRUE
+    STAT_FNAME = EVAL_STAT_FNAME
+}
 if (file.exists(STAT_FNAME)) {
     stat = RProto$new(STAT_FNAME)$rawRead()        
     stat_pic = sprintf("%s/3_%s", tmp_d, pfx_f("stat.png"))
@@ -205,7 +210,7 @@ if(EVAL) {
     } else
     if(EVAL_TYPE == "fisher") {
         if(!eval_run_mode) {
-            c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$info)-floor(length(eval_spikes$info)/4))
+            #c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$info)-floor(length(eval_spikes$info)/4))
         }
         eval_spikes = cut_first_layer(eval_spikes)
         c(metric, K, y, M, N, A) := fisher_eval(eval_spikes, EVAL_VERBOSE)

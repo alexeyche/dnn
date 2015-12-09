@@ -2,12 +2,12 @@
 require(Rdnn)
 source(scripts.path("gen_poisson.R"))
 
-sim_length = 60000*5
-test_sim_length = 60000
+sim_length = 10000 #60000*5
+test_sim_length = 10000
 neurons = 100
 sample_gap = 250
 sample_duration = 500
-classes = 2
+classes = 4
 high_rate = 20
 
 rates = sapply(1:classes, function(ci) high_rate*rbeta(neurons, 0.2,0.9))
