@@ -2,7 +2,11 @@
 require(Rdnn)
 source(scripts.path("gen_poisson.R"))
 
+<<<<<<< HEAD
 sim_length = 10000 #60000*5
+=======
+sim_length = 10000*5
+>>>>>>> 73eefeaf387e68b0d15101f1ac115b539d0498b2
 test_sim_length = 10000
 neurons = 100
 sample_gap = 250
