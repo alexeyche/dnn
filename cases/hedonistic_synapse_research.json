@@ -88,11 +88,20 @@
         "HedonisticSynapse" : {
             "psp_decay" : 10.0,
             "amp" : 1.0,
-            "tau_ref" : 35.0,
-            "delta_catalyst" : 0.5,
-            "tau_catalyst" : 30.0,
-            "tau_eligibility" : 50.0,
-            "learning_rate" : 0.5
+            "tau_ref" : 5.0,
+            "delta_catalyst" : 0.05,
+            "tau_catalyst" : 5.0,
+            "tau_eligibility" : 75.0,
+            "learning_rate" : 0.05
+        },
+        "HedonisticSynapse_inh" : {
+            "psp_decay" : 10.0,
+            "amp" : -1.0,
+            "tau_ref" : 1.0,
+            "delta_catalyst" : 0.01,
+            "tau_catalyst" : 5.0,
+            "tau_eligibility" : 75.0,
+            "learning_rate" : -0.01
         },
         "StaticSynapse_rec" : {
             "psp_decay" : 10.0,
@@ -186,10 +195,10 @@
     },
     "connections" : {
         "Stochastic" : {
-            "prob" : 0.60
+            "prob" : 0.5
        },
         "Stochastic_inh" : {
-            "prob" : 0.20
+            "prob" : 0.25
        },
         "Stochastic_rec" : {
             "prob" : 0.1
@@ -226,27 +235,27 @@
             "0->1" : [
                 { 
                     "type" : "Stochastic", 
-                    "start_weight" : 0.75, 
-                    "synapse" : "StaticSynapse"
+                    "start_weight" : 0.50, 
+                    "synapse" : "HedonisticSynapse"
                 }
             ],
             "1->1" : [
                 { 
                     "type" : "Stochastic_inh", 
-                    "start_weight" : 3.00,
-                    "synapse" : "StaticSynapse_inh"
+                    "start_weight" : 0.75,
+                    "synapse" : "HedonisticSynapse_inh"
                 }
             ],
             "1->2" : [
                 { 
                     "type" : "Stochastic", 
-                    "start_weight" : 0.75, 
+                    "start_weight" : 0.5, 
                     "synapse" : "HedonisticSynapse"
                 }
             ]
         },
         "reward_dynamics" : {
-            "tau_trace" : 100.0, 
+            "tau_trace" : 200.0, 
             "tau_mean_trace" : 5000.0
         },
         "dt" : 1.0,
