@@ -10,7 +10,7 @@ namespace dnn {
 
 /*@GENERATE_PROTO@*/
 struct HedonisticSynapseC : public Serializable<Protos::HedonisticSynapseC>  {
-    HedonisticSynapseC() 
+    HedonisticSynapseC()
         : psp_decay(10.0)
         , amp(1.0)
         , tau_ref(350)
@@ -51,7 +51,7 @@ struct HedonisticSynapseC : public Serializable<Protos::HedonisticSynapseC>  {
 
 /*@GENERATE_PROTO@*/
 struct HedonisticSynapseState : public Serializable<Protos::HedonisticSynapseState>  {
-    HedonisticSynapseState() 
+    HedonisticSynapseState()
         : refractory(0)
         , probability(0.5)
         , catalyst(0.0)
@@ -65,7 +65,7 @@ struct HedonisticSynapseState : public Serializable<Protos::HedonisticSynapseSta
                 << "prob_weight: "  << prob_weight  << ", " \
                 << "eligibility_trace: "  << eligibility_trace  << Self::end;
     }
-    
+
     double refractory;
     double probability;
     double catalyst;            // c

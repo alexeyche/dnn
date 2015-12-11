@@ -52,7 +52,7 @@ public:
         firingProbability() = 0.0;
         s.ref_time = 0.0;
     }
-    
+
     void postSpikeDynamics(const Time& t) override final {
         membrane() = c.rest_pot;
         s.ref_time = c.tau_ref;
