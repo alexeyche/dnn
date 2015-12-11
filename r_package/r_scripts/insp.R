@@ -46,6 +46,7 @@ INSP_SPIKES = convBool(Sys.getenv('INSP_SPIKES'), TRUE)
 INSP_MODEL = convBool(Sys.getenv('INSP_MODEL'), TRUE)
 EVAL_SPIKES_FNAME = convStr(Sys.getenv('EVAL_SPIKES'), pfx_f("eval_spikes.pb"))
 STAT_FNAME = convStr(Sys.getenv('STAT'), pfx_f("stat.pb"))
+EVAL_STAT_FNAME = convStr(Sys.getenv('EVAL_STAT'), pfx_f("eval_stat.pb"))
 SP_PIX0 = convNum(Sys.getenv('SP_PIX0'), 1024)
 SP_PIX1 = convNum(Sys.getenv('SP_PIX1'), 768)
 STAT_ID = convNum(Sys.getenv('STAT_ID'), 0) + 1 # C-like indices
@@ -161,6 +162,10 @@ if(INSP_MODEL) {
     }   
 }
 
+if(file.exists(EVAL_STAT_FNAME)) {
+    eval_run_mode = TRUE
+    STAT_FNAME = EVAL_STAT_FNAME
+}
 if (file.exists(STAT_FNAME)) {
     stat = RProto$new(STAT_FNAME)$rawRead()        
     stat_pic = sprintf("%s/3_%s", tmp_d, pfx_f("stat.png"))
@@ -205,7 +210,7 @@ if(EVAL) {
     } else
     if(EVAL_TYPE == "fisher") {
         if(!eval_run_mode) {
-            c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$info)-floor(length(eval_spikes$info)/4))
+            #c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$info)-floor(length(eval_spikes$info)/4))
         }
         eval_spikes = cut_first_layer(eval_spikes)
         c(metric, K, y, M, N, A) := fisher_eval(eval_spikes, EVAL_VERBOSE)
@@ -282,12 +287,13 @@ if(EVAL) {
           quantity.vec = c()  # quantity of spikes vector
           
           for (j in (first.neuron + 1):last.neuron) {
-            activity.vec = c(activity.vec, length(chop.spikes[[i]]$values[[j]])/chop.spikes[[j]]$info[[1]]$duration)
+            activity.vec = c(activity.vec, length(chop.spikes[[i]]$values[[j]])/chop.spikes[[i]]$info[[1]]$duration)
             quantity.vec = c(quantity.vec, length(chop.spikes[[i]]$values[[j]]))
           }
           
           # errors count
-          if (max(table(activity.vec)) > 1
+          if (max(activity.vec) == 0
+              | max(table(activity.vec)) > 1
               | chop.spikes[[i]]$info[[1]]$label != labels.vec[which.max(activity.vec)] ) {
             errors.count = errors.count + 1
           }
@@ -317,10 +323,13 @@ if(EVAL) {
         for (n in 1:(last.neuron - first.neuron)) {
           if (n != (last.neuron - first.neuron)) {
             for (m in (n + 1):(last.neuron - first.neuron)) {
-              plot(density(probability.list[[n]][ , n]), xlim = 0:1, main = "Density of probability", col = n, lwd = 2)
-              lines(density(probability.list[[m]][ , n]), xlim = 0:1, col = m, lwd = 1.5)
+              plot(density(probability.list[[n]][ , n]), xlim = 0:1, 
+                   ylim = c(0,max(c(max(density(probability.list[[m]][ , n])$y), max(density(probability.list[[n]][ , n])$y)))),
+                   main = "Density of probability", col = n, lwd = 2)
+              lines(density(probability.list[[m]][ , n]), xlim = 0:1, lty = 1, col = m, lwd = 1.5)
               legend("topleft", bty = "n", c(labels.vec[n], labels.vec[m]),
                      lty = c(1, 1), lwd = c(2, 1.5), col = c(n, m))
+              grid(nx = 2, ny = NA, lty = 1, lwd = 2)
             }
           }
         }

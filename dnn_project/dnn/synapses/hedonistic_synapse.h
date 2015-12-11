@@ -105,9 +105,10 @@ public:
 
         mutPotential() += - t.dt * potential()/c.psp_decay;
 
+        if (!(s.refractory < 0.1))
+            s.refractory += - dt.t;
         s.eligibility_trace += - t.dt * s.eligibility_trace/c.tau_eligibility;
         s.catalyst += - t.dt * s.catalyst/c.tau_catalyst;
-        s.refractory += - t.dt * s.refractory/c.tau_ref;
         s.prob_weight += c.learning_rate * s.eligibility_trace * GlobalCtx::inst().getReward();
     }
 };
