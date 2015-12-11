@@ -91,7 +91,7 @@ public:
                     c.__a_plus  * s.x[x_id_it] * n->fired() * norm.ltp(w) - \
                     c.__a_minus * s.y * syn.fired() * norm.ltd(w)
                 );
-                if(syn.isInhibitory()<0) {
+                if(syn.isInhibitory()) {
                     dw = -dw;
                 }
                 syn.mutWeight() += dw;

@@ -47,41 +47,37 @@ get.gammatones = function(freqs, samp_rate, len=100) {
     return(gfb_out$membrane)
 }
 
-ts.info = function(l) {
-    check.ts.info = function(ts_info) {
-        if(! ("duration" %in% names(ts_info))) {
+ts.info = function(...) {
+    ts_info = list(...)
+    check.ts.info = function(inf) {
+        if(! ("duration" %in% names(inf))) {
             stop("Need duration in time series sample specification")
         }
-        if(! ("label" %in% names(ts_info))) {
+        if(! ("label" %in% names(inf))) {
             stop("Need label in time series sample specification")
         }
-        if(! ("start_time" %in% names(ts_info))) {
+        if(! ("start_time" %in% names(inf))) {
             stop("Need start_time in time series sample specification")
         }
-        if(!is.character(!ts_info["label"])) {
+        if(!is.character(inf$label)) {
             stop("Label must be a string in time series specification")
         }            
     }
-    if("duration" %in% names(l)) {
-        check.ts.info(l)
+    if("duration" %in% names(ts_info)) {
+        check.ts.info(ts_info)
     } else {
-        for(o in l) {
-            check.ts.info(l)
+        for(o in ts_info) {
+            check.ts.info(o)
         }
     }
-    return(l)
+    return(ts_info)
 }
 
 
 time.series = function(values, info=NULL) {
     o = list(values = values)
     if(is.null(info)) {
-        if(is.matrix(values)) {
-            l = ncol(values)    
-        } else {
-            l = length(values)
-        }
-        info = ts.info(label="unknown_label", duration=length(values), start_time=0)
+        info = list(ts.info(label="unknown_label", duration=length(values), start_time=0))
     }
     o$info = info
     class(o) <- "TimeSeries"
