@@ -10,6 +10,11 @@ library(methods, quietly=TRUE)
 require(Rdnn, quietly=TRUE)
 require(rjson, quietly=TRUE)
 
+user.json = fromJSON(readConst(user.json.file()))
+user.env = user.json[[ Sys.getenv("USER") ]]
+if(!is.null(user.env)) {
+  do.call(Sys.setenv, user.env)
+}
 
 PIC_TOOL = convStr(Sys.getenv("PIC_TOOL"), "eog -f")
 
@@ -26,11 +31,6 @@ if(length(grep("RStudio", args))>0) {
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
     #EP = 5
-    user.json = fromJSON(readConst(user.json.file()))
-    user.env = user.json[[ Sys.getenv("USER") ]]
-    if(!is.null(user.env)) {
-        do.call(Sys.setenv, user.env)
-    }
 }
 
 pfx_f = function(s) s
@@ -259,9 +259,15 @@ if(EVAL) {
         cat(- abs(metric_overlap) * abs(metric_fisher), "\n")
     } else
       if (EVAL_TYPE == "error_rate") {
-        # error rate & density of probability    
+        # error rate, density of probability and ROC-curve (required package "ROCK")
+        print.roc = FALSE
+        if ("ROCR" %in% installed.packages()[,"Package"]) {
+          require("ROCR")
+          print.roc = TRUE
+        }
         chop.spikes = chop.spikes.list(spikes)
         errors = c()
+        classes = c()
         errors.count = 0
         probability.list = list()
         
@@ -277,7 +283,7 @@ if(EVAL) {
           probability.list[[i]] = matrix(NA, 0, length(labels.vec))
         }
 
-        for(i in 1:length(chop.spikes)) {   
+        for(i in 1:length(chop.spikes)) {
           activity.vec = c()  # neurons activity vector
           quantity.vec = c()  # quantity of spikes vector
           
@@ -285,7 +291,7 @@ if(EVAL) {
             activity.vec = c(activity.vec, length(chop.spikes[[i]]$values[[j]])/chop.spikes[[i]]$info[[1]]$duration)
             quantity.vec = c(quantity.vec, length(chop.spikes[[i]]$values[[j]]))
           }
-          
+
           # errors count
           if (max(activity.vec) == 0
               | max(table(activity.vec)) > 1
@@ -293,46 +299,66 @@ if(EVAL) {
             errors.count = errors.count + 1
           }
           errors = c(errors, errors.count)
-          
+
           # probability
           for (j in 1:length(quantity.vec)) {
             row = c()
             if (chop.spikes[[i]]$info[[1]]$label == labels.vec[j] ) {
               for (k in 1:length(quantity.vec)) {
                 sum = sum(quantity.vec)
-                if (sum != 0) row = c(row, quantity.vec[[k]]/sum)
-                else row = c(row, sum)
+                if (sum != 0) {
+                  row = c(row, quantity.vec[[k]]/sum)
+                } else {
+                  row = c(row, sum)
+                }
               }
               probability.list[[j]] = rbind(probability.list[[j]], row)
             }
           }
-          
         }
         # plots
         eval_debug_pic = sprintf("%s/4_%s", tmp_d, pfx_f("density.png"))
         if(SAVE_PIC_IN_FILES) png(eval_debug_pic, width = 1024, height = 768)
-        par(mfrow = c((last.neuron - first.neuron - 1), (last.neuron - first.neuron - 1)))
-        
-        plot(errors, main = "Number of errors", type = "s", col = "darkred", lwd = 2)
-        
+        if (print.roc) {
+          par(mfrow = c((last.neuron - first.neuron), (last.neuron - first.neuron)))
+        } else {
+          par(mfrow = c((last.neuron - first.neuron - 1), (last.neuron - first.neuron - 1)))
+        }
+
+        # errors rate in current epoch
+        error.rate = errors[[length(errors)]]/length(errors)
+        plot(errors, main = sprintf("Epoch #%d, error rate %.3f", EP, error.rate),
+             ylab = "Number of errors", type = "s", col = "darkred", lwd = 2)
+
         for (n in 1:(last.neuron - first.neuron)) {
           if (n != (last.neuron - first.neuron)) {
             for (m in (n + 1):(last.neuron - first.neuron)) {
-              plot(density(probability.list[[n]][ , n]), xlim = 0:1, 
-                   ylim = c(0,max(c(max(density(probability.list[[m]][ , n])$y), max(density(probability.list[[n]][ , n])$y)))),
-                   main = "Density of probability", col = n, lwd = 2)
-              lines(density(probability.list[[m]][ , n]), xlim = 0:1, lty = 1, col = m, lwd = 1.5)
+              plot(1, type = "n", ylab = "Density", xlab = "Probability", xlim = 0:1, 
+                   ylim = c(0,max(c(max(density(probability.list[[m]][, m])$y), max(density(probability.list[[n]][, n])$y)))),
+                   main = sprintf("Density, classes %s and %s", labels.vec[n], labels.vec[m]))
+              lines(density(probability.list[[n]][, n]), xlim = 0:1, lty = 1, col = n, lwd = 2)
+              lines(density(1 - probability.list[[m]][, m]), xlim = 0:1, lty = 1, col = m, lwd = 1.5)
               legend("topleft", bty = "n", c(labels.vec[n], labels.vec[m]),
                      lty = c(1, 1), lwd = c(2, 1.5), col = c(n, m))
               grid(nx = 2, ny = NA, lty = 1, lwd = 2)
+              # ROC-curve
+              if (print.roc) {
+                tmp.n = length(probability.list[[n]][, n])
+                tmp.m = length(probability.list[[m]][, m])
+                performances = performance(prediction(c(1 - probability.list[[n]][, n], probability.list[[m]][, m]),
+                                           c(rep(labels.vec[n], tmp.n), rep(labels.vec[m], tmp.m))), "tpr", "fpr")
+                plot(performances, avg = "threshold", colorize = T, lwd = 4,
+                     main = sprintf("ROC-curve, classes %s and %s", labels.vec[n], labels.vec[m]))
+                auc = performance(prediction(c(1 - probability.list[[n]][, n], probability.list[[m]][, m]),
+                                             c(rep(labels.vec[n], tmp.n), rep(labels.vec[m], tmp.m))), "auc")
+                legend("bottomright", bty = "n", sprintf("AUC = %.3f  ", auc@y.values), lty = 0)
+              }
             }
           }
         }
-        # errors rate in current epoch
-        errors.rate = errors[[length(errors)]]/length(errors)
-        
-        cat(sprintf("%1.10f", errors.rate), "\n")
-        
+
+        cat(sprintf("%1.10f", error.rate), "\n")
+
         if(SAVE_PIC_IN_FILES) {
           dev.off()
           write(paste("Eval debug pic filename: ", eval_debug_pic), stderr())
