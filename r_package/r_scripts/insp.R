@@ -258,13 +258,13 @@ if(EVAL) {
             pic_files = c(pic_files, eval_ov_debug_pic)
         }
     } else 
-    if(EVAL_TYPE == "fisher_overlap") {
-        c(metric_overlap, vm) := overlap_eval(eval_spikes, const)
-        c(metric_fisher, K, y, M, N, A) := fisher_eval(eval_spikes, FALSE)
-        cat(- abs(metric_overlap) * abs(metric_fisher), "\n")
+      if(EVAL_TYPE == "fisher_overlap") {
+          c(metric_overlap, vm) := overlap_eval(eval_spikes, const)
+          c(metric_fisher, K, y, M, N, A) := fisher_eval(eval_spikes, FALSE)
+          cat(- abs(metric_overlap) * abs(metric_fisher), "\n")
     } else
       if (EVAL_TYPE == "error_rate") {
-        # error rate, density of probability and ROC-curve (required package "ROCK")
+        # error rate, density of probability and ROC-curve (required package "ROCR")
         print.roc = FALSE
         if ("ROCR" %in% installed.packages()[,"Package"]) {
           require("ROCR")
@@ -329,7 +329,6 @@ if(EVAL) {
         } else {
           par(mfrow = c((last.neuron - first.neuron - 1), (last.neuron - first.neuron - 1)))
         }
-
         # errors rate in current epoch
         error.rate = errors[[length(errors)]]/length(errors)
         plot(errors, main = sprintf("Epoch #%d, error rate %.3f", EP, error.rate),
@@ -340,13 +339,13 @@ if(EVAL) {
             for (m in (n + 1):(last.neuron - first.neuron)) {
               plot(1, type = "n", ylab = "Density", xlab = "Probability", xlim = 0:1, 
                    ylim = c(0,max(c(max(density(probability.list[[m]][, m])$y), max(density(probability.list[[n]][, n])$y)))),
-                   main = sprintf("Density, classes %s and %s", labels.vec[n], labels.vec[m]))
+                   main = sprintf("Densities, classes %s and %s", labels.vec[n], labels.vec[m]))
               lines(density(probability.list[[n]][, n]), xlim = 0:1, lty = 1, col = n, lwd = 2)
               lines(density(1 - probability.list[[m]][, m]), xlim = 0:1, lty = 1, col = m, lwd = 1.5)
               legend("topleft", bty = "n", c(labels.vec[n], labels.vec[m]),
                      lty = c(1, 1), lwd = c(2, 1.5), col = c(n, m))
               grid(nx = 2, ny = NA, lty = 1, lwd = 2)
-              # ROC-curve
+              # ROC-curve and AUC evaluation
               if (print.roc) {
                 tmp.n = length(probability.list[[n]][, n])
                 tmp.m = length(probability.list[[m]][, m])
@@ -363,7 +362,6 @@ if(EVAL) {
         }
 
         cat(sprintf("%1.10f", error.rate), "\n")
-
         if(SAVE_PIC_IN_FILES) {
           dev.off()
           write(paste("Eval debug pic filename: ", eval_debug_pic), stderr())
