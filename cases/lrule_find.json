@@ -4,7 +4,8 @@
         "mean_weight" : 0.2,
         "max_weight" : 10.0,
         "min_weight" : 0.0,
-        "dt" : 1.0
+        "dt" : 1.0,
+        "psp_decay" : 10.0
     },
     "inputs" : {
         "InputTimeSeries" : {
@@ -77,15 +78,15 @@
     },
     "synapses" : {
         "StaticSynapse" : {
-            "psp_decay" : 10.0,
+            "psp_decay" : "globals/psp_decay",
             "amp" : 1.0
         },
         "StaticSynapse_inh" : {
-            "psp_decay" : 10.0,
+            "psp_decay" : "globals/psp_decay",
             "amp" : -1.0
         },
         "StaticSynapse_rec" : {
-            "psp_decay" : 10.0,
+            "psp_decay" : "globals/psp_decay",
             "amp" : -1.0
         },
         "STDSynapse" : {

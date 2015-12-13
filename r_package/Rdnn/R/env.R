@@ -28,6 +28,14 @@ user.json.file = function() {
     file.path(dnn.env(), "scripts", "user.json")
 }
 
+runs.path = function(...) {
+    file.path(dnn.env(), "runs", ...)
+}
+
 simruns.path = function(...) {
-    file.path(dnn.env(), "runs", "sim", ...)
+    runs.path("sim", ...)
+}
+
+read.state.script = function() {
+    file.path(dnn.env(), "scripts", "read_state.py")
 }

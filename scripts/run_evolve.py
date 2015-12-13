@@ -28,6 +28,7 @@ from util import add_coloring_to_emit_ansi
 
 from run_sim import DnnSim
 
+from evolve_state import State
 
 logFormatter = logging.Formatter("%(asctime)s [%(levelname)s]  %(message)-100s")
 rootLogger = logging.getLogger()
@@ -46,7 +47,8 @@ class GlobalConfig(object):
     SimJobs = 1
     ConstFilename = DnnSim.CONST_JSON
     VarSpecsFile = pj(os.path.realpath(os.path.dirname(__file__)), "var_specs.json")
-
+    Mock = False
+    
 RUN_SIM_PY = pj(os.path.realpath(os.path.dirname(__file__)), "run_sim.py")
 
 
@@ -187,67 +189,33 @@ def runner(x, vars, working_dir, wait=False, id=None, min=0.0, max=1.0):
             cmd += ["--prepare-data"]
             break
     logging.info(" ".join(cmd))
+    if GlobalConfig.Mock:
+        return sub.Popen("sleep 1.0 && echo 1.0", shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
+
     p = sub.Popen(cmd, stdout=sub.PIPE, stderr=sub.PIPE)
     if wait:
         return communicate(p)
     return p
 
-class State(object):
-    FNAME = "state.p"
-
-    def __init__(self, seed):
-        self.vals = []
-        self.seed = seed
-
-    def add_val(self, X, tells):
-        self.vals.append( (X, tells) )
-
-    def dump(self, wd):
-        pickle.dump(self, open(pj(wd, State.FNAME), "wb"))
-   
-    @staticmethod
-    def read_from_dir(wd):
-        return pickle.load(open(pj(wd, State.FNAME), "rb"))
-
 class Algo(object):
-    pass
-
-class DiffEv(Algo):
-    def __init__(self, attrs):
-        self.strategy = attrs.get("strategy", "best1bin")
-        self.popsize = attrs.get("popsize", 15)
-        self.tol = attrs.get("tol", 0.01)
-
-    def callback(self, xk, convergence):
-        logging.info("Got callback with convergence {} and values:".format(convergence))
-        logging.info("\t{}".format(", ".join(xk)))
-
-    def __call__(self, vars, tag=None):
-        tag = "diff_ev" if tag is None else tag
-        logging.info("Running Differential evolution algo")
-
-        wd = make_dir( pj(env.runs_dir, tag) )
-
-        bounds = [ (0.0, 1.0) for v in vars ]
-
-        differential_evolution(
-            runner
-          , bounds = bounds
-          , args = (vars, wd)
-          , strategy = self.strategy
-          , popsize = self.popsize
-          , tol = self.tol
-          , callback = self.callback
-        )
-
-
-class CmaEs(Algo):
-    def __init__(self, attrs):
-        self.max_bound = attrs.get("max_bound", 10)
-        self.min_bound = attrs.get("min_bound", 0)
-        self.popsize = attrs.get("popsize", 15)
-        self.sigma = attrs.get("sigma", 2)
-        self.seed = attrs.get("seed", random.randint(0, 65535))
+    def create_workdir(self, wd):
+        state = None
+        if os.path.exists(wd):
+            while True:
+                ans = raw_input("%s already exists. Continue learning? (y/n): " % (wd))
+                if ans in ["Y","y"]:
+                    state = State.read_from_dir(wd) 
+                    break
+                elif ans in ["N", "n"]:
+                    logging.warning("Deleting {}".format(wd))
+                    shutil.rmtree(wd)
+                    make_dir(wd)
+                    break                        
+                else:
+                    logging.warning("incomprehensible answer")
+        else:
+            make_dir(wd)
+        return wd, state
 
     @staticmethod
     def wait_pool(pool, ans_list):
@@ -259,24 +227,80 @@ class CmaEs(Algo):
                     return
                 time.sleep(0.5)
 
-    def __call__(self, vars, tag=None):
-        tag = "cma_es" if tag is None else tag
-        wd = pj(env.runs_dir, tag)
-        state = State(self.seed)
-        if os.path.exists(wd):
-            while True:
-                ans = raw_input("%s already exists. Continue learning? (y/n): " % (wd))
-                if ans in ["Y","y"]:
-                    state = State.read_from_dir(wd) 
-                    break
-                elif ans in ["N", "n"]:
-                    shutil.rmtree(wd)
-                    make_dir(wd)
-                    break                        
-                else:
-                    logging.warning("incomprehensible answer")
+class MonteCarlo(Algo):
+    def __init__(self, attrs):
+        self.number = int(attrs.get("number", 1000))
+        self.seed = attrs.get("seed", random.randint(0, 65535))
+        self.max_bound = attrs.get("max_bound", 1)
+        self.min_bound = attrs.get("min_bound", 0)
 
-        make_dir(wd)
+
+    def __call__(self, vars, tag=None):
+        wd, state = self.create_workdir(
+            pj(
+                env.runs_dir
+              , "mc" if tag is None else tag
+            )
+        )
+        if state is None:
+            state = State(self.seed)
+        state.dump(wd)
+
+        rng = np.random.RandomState(state.seed)
+
+        bounds = [ (0.0, 1.0) for v in vars ]
+        asks, tells, pool = [], [], []
+
+        for id in xrange(sum([ len(v[1]) for v in state.vals ]), self.number):
+            x = self.min_bound + self.max_bound*rng.random_sample(len(vars))
+            p = runner(x, vars, wd, wait=False, id=id, min=self.min_bound, max=self.max_bound)
+            pool.append( (id, p) )
+            asks.append( (id, x) )
+
+            if len(pool)>=GlobalConfig.Jobs:
+                self.wait_pool(pool, tells)
+                state, asks, tells, pool = self.dump_state(wd, state, asks, tells, pool)
+
+        while len(pool)>0:
+            self.wait_pool(pool, tells)
+            state, asks, tells, pool = self.dump_state(wd, state, asks, tells, pool)
+
+
+    def dump_state(self, wd, state, asks, tells, pool):
+        asks_d = dict(asks)
+        X = list()
+        tells_current = list()
+        finished_ids = dict()
+        for finished_id, tell in [ (finished_id, tell) for finished_id, tell in sorted(tells, key=lambda x: x[0]) ]:
+            X.append(asks_d[finished_id])
+            del asks_d[finished_id]
+            tells_current.append(tell)
+            finished_ids[finished_id] = True
+        state.add_val(X, tells_current)
+        state.dump(wd)
+
+        pool = [ (idp, p) for idp, p in pool if idp not in finished_ids ]
+        tells = [ (idp, t) for idp, t in tells if idp not in finished_ids ]
+        return state, asks_d.items(), tells, pool
+
+class CmaEs(Algo):
+    def __init__(self, attrs):
+        self.max_bound = attrs.get("max_bound", 10)
+        self.min_bound = attrs.get("min_bound", 0)
+        self.popsize = attrs.get("popsize", 15)
+        self.sigma = attrs.get("sigma", 2)
+        self.seed = attrs.get("seed", random.randint(0, 65535))
+
+
+    def __call__(self, vars, tag=None):
+        wd, state = self.create_workdir(
+            pj(
+                env.runs_dir
+              , "cma_es" if tag is None else tag
+            )
+        )
+        if state is None:
+            state = State(self.seed)
         state.dump(wd)
 
         #start_vals = get_vars(
