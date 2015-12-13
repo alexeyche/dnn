@@ -101,7 +101,7 @@
             "delta_catalyst" : 0.01,
             "tau_catalyst" : 5.0,
             "tau_eligibility" : 75.0,
-            "learning_rate" : -0.01
+            "learning_rate" : 0.01
         },
         "StaticSynapse_rec" : {
             "psp_decay" : 10.0,
@@ -235,21 +235,21 @@
             "0->1" : [
                 { 
                     "type" : "Stochastic", 
-                    "start_weight" : 0.50, 
-                    "synapse" : "HedonisticSynapse"
+                    "start_weight" : 0.35, 
+                    "synapse" : "StaticSynapse"
                 }
             ],
             "1->1" : [
                 { 
                     "type" : "Stochastic_inh", 
-                    "start_weight" : 0.75,
+                    "start_weight" : 3.0,
                     "synapse" : "HedonisticSynapse_inh"
                 }
             ],
             "1->2" : [
                 { 
                     "type" : "Stochastic", 
-                    "start_weight" : 0.5, 
+                    "start_weight" : 0.5,
                     "synapse" : "HedonisticSynapse"
                 }
             ]

@@ -1,7 +1,9 @@
 {
     "alexey" : {
         "CONST" : "hedonistic_synapse_research.json",
-        "EVAL_TYPE" : "error_rate"
+        "EVAL_TYPE" : "error_rate",
+        "T1" : "10000",
+        "INSP_MODEL" : "0"
     },
     "alexeyche" : {
         "CONST" : "const.json",
