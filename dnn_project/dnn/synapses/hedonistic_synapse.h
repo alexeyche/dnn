@@ -10,7 +10,7 @@ namespace dnn {
 
 /*@GENERATE_PROTO@*/
 struct HedonisticSynapseC : public Serializable<Protos::HedonisticSynapseC>  {
-    HedonisticSynapseC() 
+    HedonisticSynapseC()
         : psp_decay(10.0)
         , amp(1.0)
         , tau_ref(350)
@@ -51,7 +51,7 @@ struct HedonisticSynapseC : public Serializable<Protos::HedonisticSynapseC>  {
 
 /*@GENERATE_PROTO@*/
 struct HedonisticSynapseState : public Serializable<Protos::HedonisticSynapseState>  {
-    HedonisticSynapseState() 
+    HedonisticSynapseState()
         : refractory(0)
         , probability(0.5)
         , catalyst(0.0)
@@ -65,7 +65,7 @@ struct HedonisticSynapseState : public Serializable<Protos::HedonisticSynapseSta
                 << "prob_weight: "  << prob_weight  << ", " \
                 << "eligibility_trace: "  << eligibility_trace  << Self::end;
     }
-    
+
     double refractory;
     double probability;
     double catalyst;            // c
@@ -106,7 +106,7 @@ public:
         mutPotential() += - t.dt * potential()/c.psp_decay;
 
         if (!(s.refractory < 0.1))
-            s.refractory += - dt.t;
+            s.refractory += - t.dt;
         s.eligibility_trace += - t.dt * s.eligibility_trace/c.tau_eligibility;
         s.catalyst += - t.dt * s.catalyst/c.tau_catalyst;
         s.prob_weight += c.learning_rate * s.eligibility_trace * GlobalCtx::inst().getReward();

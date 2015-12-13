@@ -33,7 +33,7 @@
     ]
   , "srm_neuron_tau_refr" : [
         ["neurons", "SRMNeuron", "tau_refr"]
-      , [1.0, 50.0]
+      , [1.0, 500.0]
   ]
   , "psp_decay" : [
         ["synapses", "StaticSynapse", "psp_decay"]
