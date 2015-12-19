@@ -182,8 +182,8 @@ void SpikeNeuronBase::readInputSpikes(const Time &t) {
 
         s.ref().setFired(true);
     	syns[ sp.syn_id ].ifc().propagateSpike();
-    	lrule.ifc().propagateSynapseSpike(sp);    
-        
+    	lrule.ifc().propagateSynapseSpike(sp);
+
         input_spikes.pop();
     }
     input_queue_lock.clear(std::memory_order_release);
@@ -207,7 +207,7 @@ void SpikeNeuronBase::calculateDynamicsInternal(const Time &t) {
         }
     }
     ifc.calculateDynamics(t, Iinput, Isyn);
-    
+
     firingProbability() = act_f.ifc().prob(membrane()) * getProbabilityModulation();
 	if(firingProbability() > getUnif()) {
         setFired(true);

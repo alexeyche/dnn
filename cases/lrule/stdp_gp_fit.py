@@ -7,16 +7,16 @@ Created on Wed Dec 16 23:04:19 2015
 
 
 import numpy as np
-from bayesopt import ContinuousModel
+from bayesopt import ContinuousGaussModel 
 
-class ConcreteContinuousModel(ContinuousModel):
+class ConcreteContinuousModel(ContinuousGaussModel):
 	def __init__(self, ndim, params):
-		ContinuousModel.__init__(self, ndim, params)
+		ContinuousGaussModel.__init__(self, ndim, params)
 
 	def evaluateSample(self, Xin):
          pass # mock for now
 
-data_file = "/home/alexeyche/dnn/runs/mc/state.ssv"
+data_file = "stdp_stat.ssv"
 data = np.loadtxt(data_file)
 X = data[:,:-1]
 Y = data[:,-1]
