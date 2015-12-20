@@ -9,12 +9,7 @@ library(methods, quietly=TRUE)
 
 require(Rdnn, quietly=TRUE)
 require(rjson, quietly=TRUE)
-
-user.json = fromJSON(readConst(user.json.file()))
-user.env = user.json[[ Sys.getenv("USER") ]]
-if(!is.null(user.env)) {
-  do.call(Sys.setenv, user.env)
-}
+source(scripts.path("apply_user_env.R"))
 
 PIC_TOOL = convStr(Sys.getenv("PIC_TOOL"), "eog -f")
 
@@ -37,7 +32,6 @@ pfx_f = function(s) s
 if(EP>=0) {
     pfx_f = function(s) sprintf("%d_%s", EP, s)
 }
-
 
 CONST_FNAME = convStr(Sys.getenv('CONST'), "const.json")
 MODEL_FNAME = convStr(Sys.getenv('MODEL'), pfx_f("model.pb"))
@@ -210,7 +204,7 @@ if(EVAL) {
     } else
     if(EVAL_TYPE == "fisher") {
         if(!eval_run_mode) {
-            #c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$info)-floor(length(eval_spikes$info)/4))
+            c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$info)-floor(length(eval_spikes$info)/4))
         }
         eval_spikes = cut_first_layer(eval_spikes)
         c(metric, K, y, M, N, A) := fisher_eval(eval_spikes, EVAL_VERBOSE)

@@ -6,32 +6,25 @@ Created on Wed Dec 16 23:04:19 2015
 """
 
 
-import numpy as np
-from bayesopt import ContinuousGaussModel 
+from validation_lib import run_search
+from validation_lib import run_validation
+import numpy as np    
 
-class ConcreteContinuousModel(ContinuousGaussModel):
-	def __init__(self, ndim, params):
-		ContinuousGaussModel.__init__(self, ndim, params)
-
-	def evaluateSample(self, Xin):
-         pass # mock for now
-
-data_file = "stdp_stat.ssv"
+data_file = "stdp_stat2.ssv"
 data = np.loadtxt(data_file)
 X = data[:,:-1]
 Y = data[:,-1]
 
-X = X[:500]
-Y = Y[:500]
+kernels_to_search = ["kRQISO", "kSEARD", "kMaternISO1", "kMaternISO3", "kMaternISO5", "kMaternARD1", "kMaternARD3", "kMaternARD5"]
 
-params = {}
-params["l_all"] = True
-params["l_type"] = "empirical" # discrete fixed mcmc
-params["sc_type"] = "map" #  # map mtl ml loocv
-params['verbose_level'] = 2
-params['kernel_name'] = "kMaternARD5"
-params['kernel_hp_mean'] = [1] 
-params['kernel_hp_std'] = [5]
+#kernels = [
+#    "kMaternARD1", "kMaternISO1",
+#]
+#comp_kernels = ["kSum", "kProd"]
+#
 
-model = ConcreteContinuousModel(X.shape[1], params)
-model.initWithPoints(X, Y)
+
+res = run_search(X, Y, kernels_to_search, 2)
+print res
+
+#[('kMaternISO1', 0.004636857977467183), ('kMaternARD1', 0.0047115095486403085), ('kRQISO', 0.0047483236262090764), ('kMaternISO3', 0.0047903690584017358), ('kMaternARD3', 0.0051533178891543241), ('kMaternISO5', 0.0051928755612535597), ('kMaternARD5', 0.0055567855747718446), ('kSEARD', 0.0076824485862581945)]

@@ -12,6 +12,9 @@
 		},
 		{
 			"path": "r_package/r_scripts"
+		},
+		{
+			"path": "scripts"
 		}
 	]
 }

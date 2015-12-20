@@ -47,52 +47,6 @@ get.gammatones = function(freqs, samp_rate, len=100) {
     return(gfb_out$membrane)
 }
 
-ts.info = function(...) {
-    ts_info = list(...)
-    check.ts.info = function(inf) {
-        if(! ("duration" %in% names(inf))) {
-            stop("Need duration in time series sample specification")
-        }
-        if(! ("label" %in% names(inf))) {
-            stop("Need label in time series sample specification")
-        }
-        if(! ("start_time" %in% names(inf))) {
-            stop("Need start_time in time series sample specification")
-        }
-        if(!is.character(inf$label)) {
-            stop("Label must be a string in time series specification")
-        }            
-    }
-    if("duration" %in% names(ts_info)) {
-        check.ts.info(ts_info)
-    } else {
-        for(o in ts_info) {
-            check.ts.info(o)
-        }
-    }
-    return(ts_info)
-}
-
-
-time.series = function(values, info=NULL) {
-    o = list(values = values)
-    if(is.null(info)) {
-        info = list(ts.info(label="unknown_label", duration=length(values), start_time=0))
-    }
-    o$info = info
-    class(o) <- "TimeSeries"
-    return(o)
-}
-
-spikes.list = function(values, info=NULL) {
-    if(is.null(info)) {
-        info = ts.info(label="unknown_label", duration=length(values), start_time=0)    
-    }
-    o = list(values = values, info = ts.info(info))
-    class(o) <- "SpikesList"
-    return(o)
-}
-
 conv.gammatones = function(x, freqs, samp_rate) {
     data = x
     info = NULL

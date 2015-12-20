@@ -16,7 +16,7 @@ time.series = function(values, info=NULL) {
 
 spikes.list = function(values, info=NULL) {
     if(is.null(info)) {
-        info = ts.info(label="unknown_label", duration=length(values), start_time=0)    
+        info = list()
     }
     o = list(values = values, info = ts.info(info))
     class(o) <- "SpikesList"
@@ -39,6 +39,12 @@ ts.info = function(...) {
             stop("Label must be a string in time series specification")
         }            
     }
+    if(length(ts_info) == 0) {
+        return(list())
+    }
+    if((length(ts_info) == 1)&&(length(ts_info[[1]]) == 0)) {
+        return(list())
+    }
     if("duration" %in% names(ts_info)) {
         check.ts.info(ts_info)
     } else {
@@ -58,7 +64,7 @@ empty.spikes = function(N=NULL) {
     if(!is.null(N)) {
         l = lapply(1:N, function(i) numeric(0))
     }
-    spikes.list(values=l, info=list())
+    spikes.list(values=l, info=NULL)
 }
 
 add.to.ts = function(ts, new_ts) {
