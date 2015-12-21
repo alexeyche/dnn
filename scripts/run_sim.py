@@ -11,18 +11,17 @@ from os.path import join as pj
 import json
 import random
 
-import env
+import lib.env as env
+from lib.env import runs_dir
 
-from util import add_coloring_to_emit_ansi
-from util import pushd
-from util import run_proc
-from util import read_json
+from lib.util import add_coloring_to_emit_ansi
+from lib.util import pushd
+from lib.util import run_proc
+from lib.util import read_json
+from lib.util import str_to_opt
+from lib.util import opt_to_str
 
-from env import runs_dir
-
-from prepare_data import prepare_data
-from util import str_to_opt
-from util import opt_to_str
+from lib.prepare_data import prepare_data
 
 THIS_FILE = os.path.realpath(__file__)
 SCRIPTS_DIR = os.path.dirname(os.path.realpath(__file__))

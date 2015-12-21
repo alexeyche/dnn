@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 
-import cma
 import numpy as np
-
 import sys
 import argparse
 import logging
-import env
 import os
 import json
 from os.path import join as pj
@@ -21,14 +18,16 @@ import random
 import shutil
 import re
 
-from util import read_json
-from util import make_dir
-from util import parse_attrs
-from util import add_coloring_to_emit_ansi
+import lib.cma as cma
+import lib.env as env
+from lib.util import read_json
+from lib.util import make_dir
+from lib.util import parse_attrs
+from lib.util import add_coloring_to_emit_ansi
+from lib.evolve_state import State
 
 from run_sim import DnnSim
 
-from evolve_state import State
 
 logFormatter = logging.Formatter("%(asctime)s [%(levelname)s]  %(message)-100s")
 rootLogger = logging.getLogger()
@@ -49,6 +48,7 @@ class GlobalConfig(object):
     VarSpecsFile = pj(os.path.realpath(os.path.dirname(__file__)), "var_specs.json")
     Mock = False
     NumberOfCalcutationsUpperBound = 50000
+
 
 RUN_SIM_PY = pj(os.path.realpath(os.path.dirname(__file__)), "run_sim.py")
 

@@ -7,6 +7,7 @@ Created on Sat Dec 19 15:51:02 2015
 
 
 from bayesopt import ContinuousGaussModel 
+from bayesopt import ContinuousStudentTModel
 from matplotlib import pyplot as plt
 import random
 from multiprocessing import Process, Queue
@@ -20,13 +21,30 @@ def make_dir(*a):
         os.mkdir(pj(*a))
     return pj(*a)
 
-class ConcreteContinuousModel(ContinuousGaussModel):
-	def __init__(self, ndim, params):
-		ContinuousGaussModel.__init__(self, ndim, params)
+class ConcreteContinuousGaussModel(ContinuousGaussModel):
+    def __init__(self, ndim, params):
+        assert "Gaussian" in params["surr_name"]
+        ContinuousGaussModel.__init__(self, ndim, params)
 
 	def evaluateSample(self, Xin):
          pass # mock for now
 
+class ConcreteContinuousStudentTModel(ContinuousStudentTModel):
+    def __init__(self, ndim, params):
+        assert "StudentT" in params["surr_name"]
+        ContinuousStudentTModel.__init__(self, ndim, params)
+
+	def evaluateSample(self, Xin):
+         pass # mock for now
+
+
+def create_model(ndim, params):
+    if "Gaussian" in params["surr_name"]:
+        return ConcreteContinuousGaussModel(ndim, params)
+    elif "StudentT" in params["surr_name"]:
+        return ConcreteContinuousStudentTModel(ndim, params)
+    else:
+        raise Exception("Unknown model: {}".format(params["surr_name"]))
 
 
 def generate_validation_ids(n, nfold):
@@ -37,7 +55,7 @@ def generate_validation_ids(n, nfold):
     for i in sorted(test_idx):
         train_idx += range(j, i)
         j = i+1
-    train_idx += range(j, )    
+    train_idx += range(j, n)
     return train_idx, test_idx
 
 
@@ -55,12 +73,11 @@ def run_validation(X, Y, nfold, params):
     
     Xtest= X[test_idx]
     Ytest= Y[test_idx]    
-    model = ConcreteContinuousModel(Xtrain.shape[1], params)
+    model = create_model(Xtrain.shape[1], params)
     model.initWithPoints(Xtrain, Ytrain)
     
     preds = [ model.getPrediction(x) for x in Xtest ]
     means = [ p.getMean() for p in preds ] 
-    
     se = (means-Ytest)**2
     mse = sum(se)/len(se)
     
@@ -88,7 +105,8 @@ def run_search(X, Y, kernels, nfold, params = {}, generate_plots=True, number_of
         plt.ioff()
     
     for k in kernels:
-        params = get_validation_params({"kernel_name": k})
+        params = get_validation_params(params)
+        params["kernel_name"] = k
         
         procs = []
         for fi in xrange(number_of_runs):
@@ -112,7 +130,6 @@ def run_search(X, Y, kernels, nfold, params = {}, generate_plots=True, number_of
                 plt.close(f)        
                 fi += 1
         
-            
     kres_ag = [ (k, sum([ vr[3] for vr in v ])/len(v)) for k, v in kres.items() ]
     
     if generate_plots:

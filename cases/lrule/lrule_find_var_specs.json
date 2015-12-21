@@ -5,7 +5,7 @@
     ]
   , "stdp_tau_minus": [
         ["learning_rules", "Stdp", "tau_minus"]
-      , [10.0, 400.0]
+      , [10.0, 1000.0]
     ]
   , "stdp_ltp_ratio": [
         ["learning_rules", "Stdp", "ltp_ratio"]

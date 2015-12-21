@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created on Wed Dec 16 23:04:19 2015
@@ -5,16 +6,22 @@ Created on Wed Dec 16 23:04:19 2015
 @author: alexeyche
 """
 
-
-from validation_lib import run_search
-from validation_lib import run_validation
 import numpy as np    
 
-data_file = "stdp_stat2.ssv"
+from lib.bo_validation import run_search
+from lib.bo_validation import run_validation
+from lib.bo_validation import get_validation_params
+from lib.bo_validation import plot_validation
+from lib.env import runs_dir, cases_dir
+from os.path import join as pj
+
+data_file = pj(cases_dir, "stdp_mc.ssv")
 data = np.loadtxt(data_file)
 X = data[:,:-1]
 Y = data[:,-1]
 
+
+nfold = 2
 kernels_to_search = ["kRQISO", "kSEARD", "kMaternISO1", "kMaternISO3", "kMaternISO5", "kMaternARD1", "kMaternARD3", "kMaternARD5"]
 
 #kernels = [
@@ -24,7 +31,14 @@ kernels_to_search = ["kRQISO", "kSEARD", "kMaternISO1", "kMaternISO3", "kMaternI
 #
 
 
-res = run_search(X, Y, kernels_to_search, 2)
-print res
+results = {}
 
-#[('kMaternISO1', 0.004636857977467183), ('kMaternARD1', 0.0047115095486403085), ('kRQISO', 0.0047483236262090764), ('kMaternISO3', 0.0047903690584017358), ('kMaternARD3', 0.0051533178891543241), ('kMaternISO5', 0.0051928755612535597), ('kMaternARD5', 0.0055567855747718446), ('kSEARD', 0.0076824485862581945)]
+for m in ["sGaussianProcessML", "sStudentTProcessJef", "sStudentTProcessNIG", "sGaussianProcess"]:
+    print "Searching for {}".format(m)    
+    res = run_search(X, Y, kernels_to_search, nfold, params = {"surr_name": m}, generate_plots=False)
+    results[m] = res
+
+for m, kres in results.iteritems():
+    print m
+    for k, score in kres:
+        print "\t{} {}".format(k, score)
