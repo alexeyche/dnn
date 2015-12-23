@@ -101,7 +101,8 @@ namespace pbjson
                 }
                 else
                 {
-                    json = new rapidjson::Value(ref->GetInt64(*msg, field));
+                    int64_t value = ref->GetInt64(*msg, field);
+                    json = new rapidjson::Value(value);
                 }
                 break;
             case FieldDescriptor::CPPTYPE_UINT64:
@@ -116,7 +117,8 @@ namespace pbjson
                 }
                 else
                 {
-                    json = new rapidjson::Value(ref->GetUInt64(*msg, field));
+                    uint64_t value = ref->GetUInt64(*msg, field);
+                    json = new rapidjson::Value(value);
                 }
                 break;
             case FieldDescriptor::CPPTYPE_INT32:
