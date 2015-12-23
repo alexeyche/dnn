@@ -15,7 +15,7 @@ from lib.bo_validation import plot_validation
 from lib.env import runs_dir, cases_dir
 from os.path import join as pj
 
-data_file = pj(cases_dir, "stdp_mc.ssv")
+data_file = pj(cases_dir, "lrule", "stdp_mc.ssv")
 data = np.loadtxt(data_file)
 X = data[:,:-1]
 Y = data[:,-1]
