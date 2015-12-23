@@ -11,18 +11,17 @@ from os.path import join as pj
 import json
 import random
 
-import env
+import lib.env as env
+from lib.env import runs_dir
 
-from util import add_coloring_to_emit_ansi
-from util import pushd
-from util import run_proc
-from util import read_json
+from lib.util import add_coloring_to_emit_ansi
+from lib.util import pushd
+from lib.util import run_proc
+from lib.util import read_json
+from lib.util import str_to_opt
+from lib.util import opt_to_str
 
-from env import runs_dir
-
-from prepare_data import prepare_data
-from util import str_to_opt
-from util import opt_to_str
+from lib.prepare_data import prepare_data
 
 THIS_FILE = os.path.realpath(__file__)
 SCRIPTS_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -225,10 +224,14 @@ class DnnSim(object):
                         evals.append(float(o.strip()))
                         logging.info("Evaluation score: {}".format(evals[-1]))
 
+        if len(evals)>0:
+            final_score = sum(evals)/len(evals)
+            logging.info("Final evaluation score: {}".format(final_score))
+            if self.slave:
+                print final_score
         logging.info("Done")
-        if self.slave:
-            print sum(evals)/len(evals)
 
+        
     def continue_in_wd(self):
         max_ep = 0
         for f in os.listdir(self.working_dir):
@@ -301,10 +304,10 @@ def main(argv):
                         '--no-learning',
                         action='store_true',
                         help='Turn off learning')
-    parser.add_argument('-ev', 
-                        '--evaluation',
+    parser.add_argument('-nev', 
+                        '--no-evaluation',
                         action='store_true',
-                        help='Turning on evaluation mode, where program will write only final score')
+                        help='Turning on evaluation mode, where program writing score on each epoch')
     parser.add_argument('--slave',
                         action='store_true',
                         help='Run script as slave and print only evaluation score')
@@ -348,7 +351,7 @@ def main(argv):
         "jobs" : args.jobs,
         "old_dir" : args.old_dir,
         "inspection" : not args.no_insp,
-        "evaluation" : args.evaluation,
+        "evaluation" : not args.no_evaluation,
         "slave" : args.slave,
         "prepare_data" : args.prepare_data,
         "evaluation_data" : args.evaluation_data,

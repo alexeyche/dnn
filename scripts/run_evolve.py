@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 
-import cma
 import numpy as np
-
 import sys
 import argparse
 import logging
-import env
 import os
 import json
 from os.path import join as pj
@@ -21,20 +18,22 @@ import random
 import shutil
 import re
 
-from util import read_json
-from util import make_dir
-from util import parse_attrs
-from util import add_coloring_to_emit_ansi
+import lib.cma as cma
+import lib.env as env
+from lib.util import read_json
+from lib.util import make_dir
+from lib.util import parse_attrs
+from lib.util import add_coloring_to_emit_ansi
+from lib.evolve_state import State
 
 from run_sim import DnnSim
 
-from evolve_state import State
 
 logFormatter = logging.Formatter("%(asctime)s [%(levelname)s]  %(message)-100s")
 rootLogger = logging.getLogger()
 rootLogger.setLevel(logging.DEBUG)
 
-consoleHandler = logging.StreamHandler(sys.stdout)
+consoleHandler = logging.StreamHandler(sys.stderr)
 consoleHandler.emit = add_coloring_to_emit_ansi(consoleHandler.emit)
 consoleHandler.setFormatter(logFormatter)
 rootLogger.addHandler(consoleHandler)
@@ -48,7 +47,9 @@ class GlobalConfig(object):
     ConstFilename = DnnSim.CONST_JSON
     VarSpecsFile = pj(os.path.realpath(os.path.dirname(__file__)), "var_specs.json")
     Mock = False
-    
+    NumberOfCalcutationsUpperBound = 50000
+
+
 RUN_SIM_PY = pj(os.path.realpath(os.path.dirname(__file__)), "run_sim.py")
 
 
@@ -179,7 +180,6 @@ def runner(x, vars, working_dir, wait=False, id=None, min=0.0, max=1.0):
       , "--working-dir", working_dir
       , "--epochs", str(GlobalConfig.Epochs)
       , "--const", const_json
-      , "--evaluation"
       , "--slave"
       , "--jobs", str(GlobalConfig.SimJobs)
     ] + GlobalConfig.AddOptions
@@ -190,12 +190,19 @@ def runner(x, vars, working_dir, wait=False, id=None, min=0.0, max=1.0):
             break
     logging.info(" ".join(cmd))
     if GlobalConfig.Mock:
-        return sub.Popen("sleep 1.0 && echo 1.0", shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
+        p = sub.Popen("sleep 1.0 && echo 1.0", shell=True, stdout=sub.PIPE, stderr=sub.PIPE)
+        if wait:
+            return communicate(p)
+        return p
 
     p = sub.Popen(cmd, stdout=sub.PIPE, stderr=sub.PIPE)
     if wait:
         return communicate(p)
     return p
+
+def lhs_sample(n, rng):
+    return (np.asarray(random.sample(range(1,n+1), n)) - rng.random_sample(n))/float(n)
+    
 
 class Algo(object):
     def create_workdir(self, wd):
@@ -227,6 +234,25 @@ class Algo(object):
                     return
                 time.sleep(0.5)
 
+    @staticmethod
+    def dump_state(wd, state, asks, tells, pool):
+        asks_d = dict(asks)
+        X = list()
+        tells_current = list()
+        finished_ids = dict()
+        for finished_id, tell in [ (finished_id, tell) for finished_id, tell in sorted(tells, key=lambda x: x[0]) ]:
+            X.append(asks_d[finished_id])
+            del asks_d[finished_id]
+            tells_current.append(tell)
+            finished_ids[finished_id] = True
+        state.add_val(X, tells_current)
+        state.dump(wd)
+
+        pool = [ (idp, p) for idp, p in pool if idp not in finished_ids ]
+        tells = [ (idp, t) for idp, t in tells if idp not in finished_ids ]
+        return state, asks_d.items(), tells, pool
+
+
 class MonteCarlo(Algo):
     def __init__(self, attrs):
         self.number = int(attrs.get("number", 1000))
@@ -248,40 +274,26 @@ class MonteCarlo(Algo):
 
         rng = np.random.RandomState(state.seed)
 
-        bounds = [ (0.0, 1.0) for v in vars ]
         asks, tells, pool = [], [], []
+        run_ids = range(sum([ len(v[1]) for v in state.vals ]), self.number)
+        dim_size = len(vars)
+        X = np.zeros((len(run_ids), dim_size))
+        for dim_idx in xrange(dim_size):
+            X[:,dim_idx] = self.min_bound + self.max_bound*lhs_sample(len(run_ids), rng)
 
-        for id in xrange(sum([ len(v[1]) for v in state.vals ]), self.number):
-            x = self.min_bound + self.max_bound*rng.random_sample(len(vars))
-            p = runner(x, vars, wd, wait=False, id=id, min=self.min_bound, max=self.max_bound)
-            pool.append( (id, p) )
-            asks.append( (id, x) )
+        for x_id, run_id in enumerate(run_ids):
+            x = X[x_id, :]
+            pool.append( (run_id, runner(x, vars, wd, wait=False, id=run_id, min=self.min_bound, max=self.max_bound)) )
+            asks.append( (run_id, x) )
 
             if len(pool)>=GlobalConfig.Jobs:
-                self.wait_pool(pool, tells)
-                state, asks, tells, pool = self.dump_state(wd, state, asks, tells, pool)
+                Algo.wait_pool(pool, tells)
+                state, asks, tells, pool = Algo.dump_state(wd, state, asks, tells, pool)
 
         while len(pool)>0:
-            self.wait_pool(pool, tells)
-            state, asks, tells, pool = self.dump_state(wd, state, asks, tells, pool)
+            Algo.wait_pool(pool, tells)
+            state, asks, tells, pool = Algo.dump_state(wd, state, asks, tells, pool)
 
-
-    def dump_state(self, wd, state, asks, tells, pool):
-        asks_d = dict(asks)
-        X = list()
-        tells_current = list()
-        finished_ids = dict()
-        for finished_id, tell in [ (finished_id, tell) for finished_id, tell in sorted(tells, key=lambda x: x[0]) ]:
-            X.append(asks_d[finished_id])
-            del asks_d[finished_id]
-            tells_current.append(tell)
-            finished_ids[finished_id] = True
-        state.add_val(X, tells_current)
-        state.dump(wd)
-
-        pool = [ (idp, p) for idp, p in pool if idp not in finished_ids ]
-        tells = [ (idp, t) for idp, t in tells if idp not in finished_ids ]
-        return state, asks_d.items(), tells, pool
 
 class CmaEs(Algo):
     def __init__(self, attrs):
@@ -331,20 +343,107 @@ class CmaEs(Algo):
         id = sum([ len(v[1]) for v in state.vals ])
         while not es.stop():
             X = es.ask()
+            asks, tells, pool = [], [], []
+
             tells, pool = [], []
             for Xi in X:
                 p = runner(Xi, vars, wd, wait=False, id=id, min=self.min_bound, max=self.max_bound)
                 pool.append( (id, p) )
                 id+=1
                 if len(pool)>=GlobalConfig.Jobs:
-                    self.wait_pool(pool, tells)
+                    Algo.wait_pool(pool, tells)
+                    state, asks, tells, pool = Algo.dump_state(wd, state, asks, tells, pool)
+
             while len(pool)>0:
                 self.wait_pool(pool, tells)
+
+            state, asks, tells, pool = Algo.dump_state(wd, state, asks, tells, pool)
+
             tells = [ out for _, out in sorted(tells, key=lambda x: x[0]) ]
             es.tell(X, tells)
             es.disp()
-            state.add_val(X, tells)
-            state.dump(wd)
+
+class GridSearch(Algo):
+    def __init__(self, attrs):
+        self.max_bound = attrs.get("max_bound", 1)
+        self.min_bound = attrs.get("min_bound", 0)
+        self.step = float(attrs.get("step", 0.1))
+        self.freeze_point = attrs.get("freeze_point", None)
+        self.non_freeze_vars = attrs.get("non_freeze_vars", None)
+
+    def __call__(self, vars, tag=None):
+        wd, state = self.create_workdir(
+            pj(
+                env.runs_dir
+              , "grid_search" if tag is None else tag
+            )
+        )
+        if state is None:
+            state = State(0) # doesn't matter
+        state.dump(wd)
+        if self.freeze_point:
+            self.freeze_point = [ float(p) for p in self.freeze_point.split(" ") if p.strip() ]
+            if self.non_freeze_vars is None:
+                raise Exception("Got freeze point but freeze variables are not defined")
+
+        if self.non_freeze_vars:
+            self.non_freeze_vars = [ v.strip() for v in self.non_freeze_vars.split(" ") if v.strip() ]
+        else:
+            self.non_freeze_vars = vars
+
+        dim_of_problem = len(self.non_freeze_vars)
+        number_of_dim_slice = (self.max_bound - self.min_bound)/self.step
+        axis_slices = [ np.linspace(self.min_bound, self.max_bound, num=number_of_dim_slice) for _ in xrange(dim_of_problem) ]
+        if len(axis_slices) == 1:
+            points = axis_slices[0].reshape(1, -1).T
+        else:
+            points = np.vstack(np.meshgrid(*axis_slices)).reshape(dim_of_problem, -1).T
+        number_of_steps = len(points)
+        if number_of_steps > GlobalConfig.NumberOfCalcutationsUpperBound:
+            raise Exception("There are a lot of calculations ({}). Reconsider your setup".format(number_of_steps))
+
+        nsteps_done = sum([ len(v[1]) for v in state.vals ])
+        points = points[nsteps_done:]
+        asks, tells, pool = [], [], []
+        for id, point in enumerate(points):
+            if self.freeze_point:
+                x = list(self.freeze_point)
+                for vi, v in enumerate(self.non_freeze_vars):
+                    try:
+                        var_idx = vars.index(v)
+                    except ValueError:
+                        raise Exception("Can't find non freeze var {} in specification".format(v))
+                    x[var_idx] = point[vi]
+            else:
+                x = point
+            pool.append( (id, runner(x, vars, wd, wait=False, id=id, min=self.min_bound, max=self.max_bound)) )
+            asks.append( (id, x) )
+            if len(pool)>=GlobalConfig.Jobs:
+                Algo.wait_pool(pool, tells)
+                state, asks, tells, pool = Algo.dump_state(wd, state, asks, tells, pool)
+                
+        while len(pool)>0:
+            Algo.wait_pool(pool, tells)
+            state, asks, tells, pool = Algo.dump_state(wd, state, asks, tells, pool)
+
+
+class SimpleRunner(Algo):
+    def __init__(self, attrs):
+        self.max_bound = attrs.get("max_bound", 1)
+        self.min_bound = attrs.get("min_bound", 0)
+        self.id = attrs.get("id", None)
+
+    def __call__(self, vars, tag=None):
+        if tag is None:
+            raise Exception("SimpleRunner need a tag")
+        if self.id is None:
+            raise Exception("id must be set for runner")
+
+        wd = make_dir(pj(env.runs_dir, tag))
+        
+        d = np.loadtxt(sys.stdin)
+        p = runner(d, vars, wd, wait=True, id=self.id, min=self.min_bound, max=self.max_bound)
+        print p
 
 ALGS = dict([(c.__name__, c) for c in Algo.__subclasses__()])
 

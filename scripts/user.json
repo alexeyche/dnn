@@ -3,10 +3,14 @@
         "CONST" : "hedonistic_synapse_research.json",
         "EVAL_TYPE" : "error_rate",
         "T1" : "10000",
-        "INSP_MODEL" : "0"
+        "INSP_MODEL" : "0",
+        "TIMED_PATTERN_LENGTH" : "50000",
+        "TIMED_PATTERN_LENGTH_TEST" : "10000"
     },
     "alexeyche" : {
         "CONST" : "const.json",
-        "EVAL_TYPE" : "fisher"
+        "EVAL_TYPE" : "fisher",
+        "TIMED_PATTERN_LENGTH" : "60000",
+        "TIMED_PATTERN_LENGTH_TEST" : "60000"
     }
 }

@@ -39,3 +39,7 @@ simruns.path = function(...) {
 read.state.script = function() {
     file.path(dnn.env(), "scripts", "read_state.py")
 }
+
+run.evolve.script = function() {
+    file.path(dnn.env(), "scripts", "run_evolve.py")
+}

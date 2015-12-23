@@ -191,11 +191,15 @@ parse.options = function(args, opts) {
         cat("Available options: \n")
         for(opt in names(opts)) {
             o = opts[[opt]]
-            cats("\t%15.15s    %s, default: %s\n", opt, o$description, o$default)
+            if("default" %in% names(o)) {
+                cats("\t%15.15s    %s, default: %s\n", opt, o$description, o$default)    
+            } else {
+                cats("\t%15.15s    %s\n", opt, o$description)
+            }
         }
         cats("\t%15.15s    for this message\n", "--help")
-        q()
-    }    
+        stop()
+    }
     if((length(args) == 5)||(length(grep("--help", args))>0)) {
         usage()
     }

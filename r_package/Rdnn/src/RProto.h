@@ -328,6 +328,7 @@ public:
             return m.as<T>();
         }
         ERR("Can't convert " << name );
+        return Ptr<T>(); // because of damn warnings
     }
 
 

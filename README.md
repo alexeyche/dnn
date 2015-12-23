@@ -43,6 +43,7 @@ To install dnn on UNIX like machine you need to satisfy dependencies:
 * clang >=3.5 or gcc >=4.9.2
 * cmake >=2.8
 * libprotobuf-dev
+* protobuf-compiler
 * r-base (for plots and analytics)
 
 To use R API and R scripts you need to install these R packages:

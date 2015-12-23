@@ -19,8 +19,6 @@ X = M[, 1:(ncol(M)-1)]
 Y = M[, ncol(M)]
 Y = -log(-Y)
 
-X = X[,1:2]
-
 
 #sel = sample(1:nrow(X), 50)
 #X = X[sel, ]
@@ -65,31 +63,27 @@ if(!cross_validate) {
 # opt <- m@covariance@range.val
 # points(opt[1], opt[2], pch = 19, col = "red")
 
-
-n.grid <- 10
-
-par(mfrow = c(1, 3))
-
-n.grid.sm <- 10
-
-x.grid <- seq(0, 1, length = n.grid)
-x.grid <- seq(0, 1, length = n.grid)
-x.grid.sm <- seq(0, 1, length = n.grid.sm)
-
-important_axes = c(1,3)
-
-grid_list = lapply(1:ncol(X), function(i) if(i %in% important_axes) { x.grid } else { x.grid.sm })
-names(grid_list) <- colnames(X)
-
-X.grid <- expand.grid(grid_list)
-pred.m <- predict(m, X.grid, "UK")
-pred.m.mean = matrix(pred.m$mean, n.grid, n.grid)
-pred.m.sd = matrix(pred.m$sd^2, n.grid, n.grid)
-
-image.plot(x.grid, x.grid, pred.m.mean, main = "Kriging mean")
-points(X[ , important_axes[1]], X[ , important_axes[2]], pch = 19, cex = 1.0, col = "white")
-image.plot(x.grid, x.grid, pred.m.sd, main = "Kriging variance")
-points(X[ , important_axes[1]], X[ , important_axes[2]], pch = 19, cex = 1.0, col = "white")
+if(ncol(X) == 2) {
+    n.grid <- 50
+    
+    par(mfrow = c(1, 3))
+    
+    x.grid <- seq(0, 1, length = n.grid)
+    x.grid <- seq(0, 1, length = n.grid)
+    
+    grid_list = lapply(1:ncol(X), function(i) x.grid)
+    names(grid_list) <- colnames(X)
+    
+    X.grid <- expand.grid(grid_list)
+    pred.m <- predict(m, X.grid, "UK")
+    pred.m.mean = matrix(pred.m$mean, n.grid, n.grid)
+    pred.m.sd = matrix(pred.m$sd^2, n.grid, n.grid)
+    
+    image.plot(x.grid, x.grid, pred.m.mean, main = "Kriging mean")
+    points(X[ , important_axes[1]], X[ , important_axes[2]], pch = 19, cex = 1.0, col = "white")
+    image.plot(x.grid, x.grid, pred.m.sd, main = "Kriging variance")
+    points(X[ , important_axes[1]], X[ , important_axes[2]], pch = 19, cex = 1.0, col = "white")
+}
 
 kriging.mean <- function(Xnew)  {
     predict.km(m, Xnew, "UK", se.compute = FALSE, checkNames = FALSE)$mean
@@ -104,3 +98,15 @@ SA.metamodel <- fast99(
 )
 
 plot(SA.metamodel)
+
+batchSize = 8
+p = max_EI(
+    m
+  , lower=rep(0, ncol(X)), upper=rep(1, ncol(X))
+  #, control=list(pop.size=100, BFGSburnin=2)
+  #, crit = "exact", optimcontrol=list(nStarts=3,method = "genoud",pop.size=100,max.generations = 15)
+)
+
+
+
+

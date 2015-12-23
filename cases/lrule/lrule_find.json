@@ -1,6 +1,6 @@
 {
     "globals" : {
-        "learning_rate" : 0.05,
+        "learning_rate" : 0.01,
         "mean_weight" : 0.2,
         "max_weight" : 10.0,
         "min_weight" : 0.0,
