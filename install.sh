@@ -4,7 +4,7 @@ DST=${DST:-~/dnn}
 BUILD_DIR="build"
 BIN_DIR="bin"
 DEBUG=${DEBUG:-0}
-CURDIR=$(readlink -f $(dirname $0))
+CURDIR=$(python -c 'import os,sys;print os.path.realpath(sys.argv[1])' $(dirname $0))
 CPUNUM=${CPUNUM:-$(cat /proc/cpuinfo | grep processor | wc -l)}
 PYTHON_LIBS="lib/python2.7/site-packages/libdnn" # in DST
 RUNS_DIR="runs"
@@ -81,7 +81,7 @@ qpushd $DST
         qpopd #BUILD_DIR
         qmkdir $BIN_DIR
         for f in $(find $BUILD_DIR/bin/ -type f); do
-            [ -f $BIN_DIR/$(basename $f) ] || ln -s $(readlink -f $f) $BIN_DIR
+            [ -f $BIN_DIR/$(basename $f) ] || ln -s $(python -c 'import os,sys;print os.path.realpath(sys.argv[1])' $f) $BIN_DIR
         done
         qmkdir -p $PYTHON_LIBS
         protoc --python_out=$PYTHON_LIBS --proto_path $CURDIR/dnn_project/dnn/protos $CURDIR/dnn_project/dnn/protos/*.proto

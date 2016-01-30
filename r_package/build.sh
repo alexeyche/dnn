@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 packagename=Rdnn
 ver=1.0
-pushd $(dirname $(readlink -f $0))
+pushd $(dirname $(python -c 'import os,sys;print os.path.realpath(sys.argv[1])' $0))
 set -x
 pushd $packagename
 Rscript -e 'Rcpp::compileAttributes()'
