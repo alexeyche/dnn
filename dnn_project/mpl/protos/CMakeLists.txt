@@ -9,6 +9,7 @@ set(ProtobufIncludePath ${CMAKE_CURRENT_BINARY_DIR}
         CACHE INTERNAL "Path to generated protobuf files.")
 
 add_library(mpl_protos ${ProtoFiles} ${PROTO_SRCS} ${PROTO_HDRS})
+include_directories(${PROTOBUF_INCLUDE_DIR})
 
 SET_TARGET_PROPERTIES(mpl_protos PROPERTIES COMPILE_FLAGS "-fPIC")
 
