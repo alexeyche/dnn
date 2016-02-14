@@ -5,7 +5,7 @@ BUILD_DIR="build"
 BIN_DIR="bin"
 DEBUG=${DEBUG:-0}
 CURDIR=$(python -c 'import os,sys;print os.path.realpath(sys.argv[1])' $(dirname $0))
-CPUNUM=${CPUNUM:-$(cat /proc/cpuinfo | grep processor | wc -l)}
+CPUNUM=${CPUNUM:-$(python -c "import multiprocessing; print multiprocessing.cpu_count()")}
 PYTHON_LIBS="lib/python2.7/site-packages/libdnn" # in DST
 RUNS_DIR="runs"
 DATASETS_DIR="datasets"
@@ -31,10 +31,9 @@ if [ -n "$1" ]; then
     DST=$1
 fi
 
-declare -A DATASETS_URLS
 #DATASETS_URLS["bci2000"] = ""  # it's around 2gb, uncomment if need
-DATASETS_URLS["riken"]="https://yadi.sk/d/pXLH31CIhNzre"
-DATASETS_URLS["ucr"]="https://yadi.sk/d/lNyOoeU2hNvhV"
+#DATASETS_URLS["riken"]="https://yadi.sk/d/pXLH31CIhNzre"
+#DATASETS_URLS["ucr"]="https://yadi.sk/d/lNyOoeU2hNvhV"
 
 if [ $ASKDST -eq 1 ]; then
     while true; do
