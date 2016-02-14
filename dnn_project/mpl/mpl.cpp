@@ -7,6 +7,8 @@
 
 #include <dnn/base/type_deducer.h>
 
+#include <random>
+
 namespace dnn {
 namespace mpl {
 
