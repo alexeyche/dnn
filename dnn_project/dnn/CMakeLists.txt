@@ -43,7 +43,6 @@ target_link_libraries(dnn
     ${PROTOBUF_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
     m
-
 )
 install(TARGETS dnn  DESTINATION lib/ COMPONENT)
 
