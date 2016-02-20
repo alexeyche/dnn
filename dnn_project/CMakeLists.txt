@@ -62,9 +62,9 @@ include_directories(${CMAKE_BINARY_DIR})
 
 # Recurse into the rest of the project.
 add_subdirectory(dnn)
-add_subdirectory(shapelets)
+#add_subdirectory(shapelets)
 add_subdirectory(spikework)
 add_subdirectory(tools)
-add_subdirectory(mpl)
+#add_subdirectory(mpl)
 
 

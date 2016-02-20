@@ -3,8 +3,8 @@
 
 #include <dnn/io/stream.h>
 #include <dnn/util/matrix.h>
-#include <mpl/mpl.h>
-#include <shapelets/subsequence.h>
+// #include <mpl/mpl.h>
+// #include <shapelets/subsequence.h>
 #include <dnn/util/statistics.h>
 #include <dnn/neurons/spike_neuron.h>
 
@@ -20,8 +20,8 @@
 #include "common.h"
 
 using namespace dnn;
-using namespace shapelets;
-using namespace mpl;
+// using namespace shapelets;
+// using namespace mpl;
 
 
 class RProto {
@@ -64,9 +64,9 @@ public:
                 values = convertToR(obj[0]);
                 obj[0].destroy();
             } else {
-                if(obj[0]->name() == "FilterMatch") {
-                    values = convertFilterMatches(obj);
-                } else {
+                // if(obj[0]->name() == "FilterMatch") {
+                //     values = convertFilterMatches(obj);
+                // } else {
                     vector<Rcpp::List> ret;
                     for(auto &o: obj) {
                         Rcpp::List l = convertToR(o);
@@ -76,7 +76,7 @@ public:
                         o.destroy();
                     }
                     values = Rcpp::wrap(ret);
-                }
+                // }
             }
         }
         return values;
@@ -90,24 +90,24 @@ public:
         b.destroy();
     }
 
-    static Rcpp::List convertFilterMatches(vector<Ptr<SerializableBase>> &obj) {
-        vector<double> t;
-        vector<size_t> fi;
-        vector<double> s;
-        for(auto &o: obj) {
-            Ptr<FilterMatch> m = o.as<FilterMatch>();
-            if(!m) { ERR("Can't cast"); }
-            t.push_back(m->t);
-            fi.push_back(m->fi);
-            s.push_back(m->s);
-        }
+    // static Rcpp::List convertFilterMatches(vector<Ptr<SerializableBase>> &obj) {
+    //     vector<double> t;
+    //     vector<size_t> fi;
+    //     vector<double> s;
+    //     for(auto &o: obj) {
+    //         Ptr<FilterMatch> m = o.as<FilterMatch>();
+    //         if(!m) { ERR("Can't cast"); }
+    //         t.push_back(m->t);
+    //         fi.push_back(m->fi);
+    //         s.push_back(m->s);
+    //     }
 
-        return Rcpp::List::create(
-            Rcpp::Named("t") = Rcpp::wrap(t),
-            Rcpp::Named("fi") = Rcpp::wrap(fi),
-            Rcpp::Named("s") = Rcpp::wrap(s)
-        );
-    }
+    //     return Rcpp::List::create(
+    //         Rcpp::Named("t") = Rcpp::wrap(t),
+    //         Rcpp::Named("fi") = Rcpp::wrap(fi),
+    //         Rcpp::Named("s") = Rcpp::wrap(s)
+    //     );
+    // }
 
     static SEXP convertToR(Ptr<SerializableBase> o) {
         Rcpp::List out;
@@ -120,12 +120,12 @@ public:
                 out[name] = Rcpp::wrap(od->getStats()[name].values);
             }
         }
-        if(o->name() == "Subsequence") {
-            Ptr<Subsequence> sub = o.as<Subsequence>();
-            if(!sub) { ERR("Can't cast"); }
+        // if(o->name() == "Subsequence") {
+        //     Ptr<Subsequence> sub = o.as<Subsequence>();
+        //     if(!sub) { ERR("Can't cast"); }
 
-            o = sub->referent().ptr();
-        }
+        //     o = sub->referent().ptr();
+        // }
         if(o->name() == "TimeSeries") {
             Ptr<TimeSeries> od = o.as<TimeSeries>();
             if(!od) { ERR("Can't cast"); }
@@ -216,34 +216,34 @@ public:
                 )
             );
         }
-        if(o->name() == "MatchingPursuitConfig") {
-            Ptr<MatchingPursuitConfig> m = o.as<MatchingPursuitConfig>();
-            if(!m) { ERR("Can't cast"); }
+        // if(o->name() == "MatchingPursuitConfig") {
+        //     Ptr<MatchingPursuitConfig> m = o.as<MatchingPursuitConfig>();
+        //     if(!m) { ERR("Can't cast"); }
 
-            out = Rcpp::List::create(
-                Rcpp::Named("threshold") = m->threshold,
-                Rcpp::Named("learn_iterations") = m->learn_iterations,
-                Rcpp::Named("jobs") = m->jobs,
-                Rcpp::Named("learning_rate") = m->learning_rate,
-                Rcpp::Named("filters_num") = m->filters_num,
-                Rcpp::Named("filter_size") = m->filter_size,
-                Rcpp::Named("learn") = m->learn,
-                Rcpp::Named("continue_learning") = m->continue_learning,
-                Rcpp::Named("batch_size") = m->batch_size,
-                Rcpp::Named("seed") = m->seed,
-                Rcpp::Named("noise_sd") = m->noise_sd
-            );
+        //     out = Rcpp::List::create(
+        //         Rcpp::Named("threshold") = m->threshold,
+        //         Rcpp::Named("learn_iterations") = m->learn_iterations,
+        //         Rcpp::Named("jobs") = m->jobs,
+        //         Rcpp::Named("learning_rate") = m->learning_rate,
+        //         Rcpp::Named("filters_num") = m->filters_num,
+        //         Rcpp::Named("filter_size") = m->filter_size,
+        //         Rcpp::Named("learn") = m->learn,
+        //         Rcpp::Named("continue_learning") = m->continue_learning,
+        //         Rcpp::Named("batch_size") = m->batch_size,
+        //         Rcpp::Named("seed") = m->seed,
+        //         Rcpp::Named("noise_sd") = m->noise_sd
+        //     );
 
-        }
-        if(o->name() == "FilterMatch") {
-            Ptr<FilterMatch> m = o.as<FilterMatch>();
-            if(!m) { ERR("Can't cast"); }
-            out = Rcpp::List::create(
-                Rcpp::Named("t") = m->t,
-                Rcpp::Named("fi") = m->fi,
-                Rcpp::Named("s") = m->s
-            );
-        }
+        // }
+        // if(o->name() == "FilterMatch") {
+        //     Ptr<FilterMatch> m = o.as<FilterMatch>();
+        //     if(!m) { ERR("Can't cast"); }
+        //     out = Rcpp::List::create(
+        //         Rcpp::Named("t") = m->t,
+        //         Rcpp::Named("fi") = m->fi,
+        //         Rcpp::Named("s") = m->s
+        //     );
+        // }
         out.attr("class") = o->name();
 
         return out;
@@ -302,50 +302,50 @@ public:
             }
             return r.as<T>();
         }
-        if(name == "MatchingPursuitConfig") {
-            Ptr<MatchingPursuitConfig> c = Factory::inst().createObject<MatchingPursuitConfig>();
+        // if(name == "MatchingPursuitConfig") {
+        //     Ptr<MatchingPursuitConfig> c = Factory::inst().createObject<MatchingPursuitConfig>();
 
-            if(list.containsElementNamed("threshold")) c->threshold = list["threshold"];
-            if(list.containsElementNamed("learn_iterations")) c->learn_iterations = list["learn_iterations"];
-            if(list.containsElementNamed("jobs")) c->jobs = list["jobs"];
-            if(list.containsElementNamed("learning_rate")) c->learning_rate = list["learning_rate"];
-            if(list.containsElementNamed("filters_num")) c->filters_num = list["filters_num"];
-            if(list.containsElementNamed("filter_size")) c->filter_size = list["filter_size"];
-            if(list.containsElementNamed("learn")) c->learn = list["learn"];
-            if(list.containsElementNamed("continue_learning")) c->continue_learning = list["continue_learning"];
-            if(list.containsElementNamed("batch_size")) c->batch_size = list["batch_size"];
-            if(list.containsElementNamed("seed")) c->seed = list["seed"];
-            if(list.containsElementNamed("noise_sd")) c->noise_sd = list["noise_sd"];
+        //     if(list.containsElementNamed("threshold")) c->threshold = list["threshold"];
+        //     if(list.containsElementNamed("learn_iterations")) c->learn_iterations = list["learn_iterations"];
+        //     if(list.containsElementNamed("jobs")) c->jobs = list["jobs"];
+        //     if(list.containsElementNamed("learning_rate")) c->learning_rate = list["learning_rate"];
+        //     if(list.containsElementNamed("filters_num")) c->filters_num = list["filters_num"];
+        //     if(list.containsElementNamed("filter_size")) c->filter_size = list["filter_size"];
+        //     if(list.containsElementNamed("learn")) c->learn = list["learn"];
+        //     if(list.containsElementNamed("continue_learning")) c->continue_learning = list["continue_learning"];
+        //     if(list.containsElementNamed("batch_size")) c->batch_size = list["batch_size"];
+        //     if(list.containsElementNamed("seed")) c->seed = list["seed"];
+        //     if(list.containsElementNamed("noise_sd")) c->noise_sd = list["noise_sd"];
 
-            return c.as<T>();
-        }
-        if(name == "FilterMatch") {
-            Ptr<FilterMatch> m = Factory::inst().createObject<FilterMatch>();
-            m->fi = list["fi"];
-            m->t = list["t"];
-            m->s = list["s"];
+        //     return c.as<T>();
+        // }
+        // if(name == "FilterMatch") {
+        //     Ptr<FilterMatch> m = Factory::inst().createObject<FilterMatch>();
+        //     m->fi = list["fi"];
+        //     m->t = list["t"];
+        //     m->s = list["s"];
 
-            return m.as<T>();
-        }
+        //     return m.as<T>();
+        // }
         ERR("Can't convert " << name );
         return Ptr<T>(); // because of damn warnings
     }
 
 
 
-    static vector<FilterMatch> convertFromRFilterMatches(const Rcpp::List &matches_l) {
-        vector<FilterMatch> matches;
-        Rcpp::NumericVector t = matches_l["t"];
-        Rcpp::NumericVector s = matches_l["s"];
-        Rcpp::IntegerVector fi = matches_l["fi"];
-        for(size_t i=0; i<t.size(); ++i) {
-            matches.push_back(
-                FilterMatch(fi[i], s[i], t[i])
-            );
-        }
-        return matches;
+    // static vector<FilterMatch> convertFromRFilterMatches(const Rcpp::List &matches_l) {
+    //     vector<FilterMatch> matches;
+    //     Rcpp::NumericVector t = matches_l["t"];
+    //     Rcpp::NumericVector s = matches_l["s"];
+    //     Rcpp::IntegerVector fi = matches_l["fi"];
+    //     for(size_t i=0; i<t.size(); ++i) {
+    //         matches.push_back(
+    //             FilterMatch(fi[i], s[i], t[i])
+    //         );
+    //     }
+    //     return matches;
 
-    }
+    // }
     static Rcpp::List convertToRTimeSeriesInfo(const TimeSeriesInfo &info) {
         Rcpp::List ret;
         for(const auto& lab_start_info: info.labels_start) {

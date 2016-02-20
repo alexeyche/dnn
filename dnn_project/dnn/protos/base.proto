@@ -8,7 +8,7 @@ message ClassName {
 }
 
 message EmptyProto {
-	
+
 }
 
 message TStringToUintPair {
