@@ -88,20 +88,20 @@
         "HedonisticSynapse" : {
             "psp_decay" : 10.0,
             "amp" : 1.0,
-            "tau_ref" : 5.0,
-            "delta_catalyst" : 0.05,
+            "tau_ref" : 1.0,
+            "delta_catalyst" : 0.00,
             "tau_catalyst" : 5.0,
             "tau_eligibility" : 75.0,
-            "learning_rate" : 0.05
+            "learning_rate" : 0.1
         },
         "HedonisticSynapse_inh" : {
             "psp_decay" : 10.0,
             "amp" : -1.0,
             "tau_ref" : 1.0,
-            "delta_catalyst" : 0.01,
+            "delta_catalyst" : 0.00,
             "tau_catalyst" : 5.0,
-            "tau_eligibility" : 75.0,
-            "learning_rate" : 0.01
+            "tau_eligibility" : 750.0,
+            "learning_rate" : 0.05
         },
         "StaticSynapse_rec" : {
             "psp_decay" : 10.0,
@@ -214,11 +214,11 @@
     "sim_configuration" : {
         "layers" : [
             {
-                "size" : 100,
+                "size" : 50,
                 "neuron" : "SpikeSequenceNeuron"
             },
             {
-                "size" : 150,
+                "size" : 250,
                 "neuron" : "LeakyIntegrateAndFire",
     						"act_function" : "Determ",
                 "weight_normalization" : "MinMax"
@@ -235,32 +235,32 @@
             "0->1" : [
                 { 
                     "type" : "Stochastic", 
-                    "start_weight" : 0.35, 
-                    "synapse" : "StaticSynapse"
+                    "start_weight" : 0.55, 
+                    "synapse" : "HedonisticSynapse"
                 }
             ],
             "1->1" : [
                 { 
                     "type" : "Stochastic_inh", 
-                    "start_weight" : 3.0,
+                    "start_weight" : 0.75,
                     "synapse" : "HedonisticSynapse_inh"
                 }
             ],
             "1->2" : [
                 { 
                     "type" : "Stochastic", 
-                    "start_weight" : 0.5,
+                    "start_weight" : 0.75,
                     "synapse" : "HedonisticSynapse"
                 }
             ]
         },
         "reward_dynamics" : {
-            "tau_trace" : 200.0, 
-            "tau_mean_trace" : 5000.0
+            "tau_trace" : 100.0, 
+            "tau_mean_trace" : 500.0
         },
         "dt" : 1.0,
         "seed" : -1,
-        "neurons_to_listen" : [250, 251],
+        "neurons_to_listen" : [300, 301],
         "files" : {
             "InputTimeSeries" : {
                 "filename" : "@ts-input"
