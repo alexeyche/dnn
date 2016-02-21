@@ -109,7 +109,7 @@ public:
             s.refractory += - t.dt;
         s.eligibility_trace += - t.dt * s.eligibility_trace/c.tau_eligibility;
         s.catalyst += - t.dt * s.catalyst/c.tau_catalyst;
-        s.prob_weight += c.learning_rate * s.eligibility_trace * GlobalCtx::inst().getReward();
+        s.prob_weight += c.learning_rate * s.eligibility_trace * GlobalCtx::inst().getRewardDelta();
     }
 };
 
