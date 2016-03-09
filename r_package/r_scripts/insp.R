@@ -9,7 +9,7 @@ library(methods, quietly=TRUE)
 
 require(Rdnn, quietly=TRUE)
 require(rjson, quietly=TRUE)
-source(scripts.path("apply_user_env.R"))
+#source(scripts.path("apply_user_env.R"))
 
 PIC_TOOL = convStr(Sys.getenv("PIC_TOOL"), "eog -f")
 
@@ -21,7 +21,7 @@ T1 = convNum(Sys.getenv('T1'), 1000)
 args <- commandArgs(trailingOnly = FALSE)
 if(length(grep("RStudio", args))>0) {    
     WD = simruns.path(system(sprintf("ls -t %s | head -n 1", simruns.path()), intern=TRUE))
-    WD = file.path(dnn.env(), "runs/test-run")
+    #WD = file.path(dnn.env(), "runs/test-run")
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])

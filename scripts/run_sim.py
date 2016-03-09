@@ -200,6 +200,8 @@ class DnnSim(object):
         env.update({
             "CONST" : self.const,
         })
+        if env["EVAL"] in frozenset(["no", "0", "false", "False"]):
+            self.evaluation = False
         return { "cmd" : cmd, "env" : env, "print_root_log_on_fail" : self.slave }
 
 
