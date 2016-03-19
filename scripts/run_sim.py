@@ -126,7 +126,8 @@ class TDnnSim(object):
 
     def construct_default_run_cmd(self):
         cmd = [
-            self.model
+            self.model,
+            "--verbose"
         ]
         cmd += list(self.get_opt("config"))
         cmd += list(self.get_opt("jobs")) 
@@ -156,7 +157,7 @@ class TDnnSim(object):
         if self.evaluation_data:
             if self.input_ts:
                 cmd += [
-                    "--input-ts", self.evaluation_data
+                    "--input-time-series", self.evaluation_data
                 ]
             if self.input_spikes:
                 cmd += [
@@ -190,7 +191,7 @@ class TDnnSim(object):
             ]
         if self.input_ts:
             cmd += [
-                "--input-ts", self.input_ts
+                "--input-time-series", self.input_ts
             ]
 
         return { "cmd" : cmd, "print_root_log_on_fail" : self.slave }

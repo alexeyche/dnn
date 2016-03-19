@@ -126,11 +126,10 @@ TSpikesList TProto::TranslateBack<TSpikesList>(const Rcpp::List& l) {
 
 Rcpp::List TProto::TranslateModel(const NDnnProto::TConfig& config) {
     Rcpp::List res;
-    
+    ui32 neuronId = 0;
     for (const auto& layer: config.layer()) {
         ui32 layerSynapseCounter = 0;
         for (const auto& neuronInner: layer.spikeneuronimplinnerstate()) {
-            Rcpp::List neuronInfo;
             Rcpp::NumericVector weights;
             Rcpp::IntegerVector ids_pre;
             
@@ -139,12 +138,13 @@ Rcpp::List TProto::TranslateModel(const NDnnProto::TConfig& config) {
                 weights.push_back(synInner.weight());
                 ids_pre.push_back(synInner.idpre());
             }
-            res.push_back(
-                Rcpp::List::create(
+            res.push_back(Rcpp::List::create(
+                Rcpp::Named("synapses") = Rcpp::List::create(
                     Rcpp::Named("weights") = weights,
                     Rcpp::Named("ids_pre") = ids_pre
-                )
-            );
+                ),
+                Rcpp::Named("id") = neuronId++
+            ));
         }    
     }
     

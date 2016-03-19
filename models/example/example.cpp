@@ -14,11 +14,11 @@ int main(int argc, const char** argv) {
     auto opts = InitOptions(argc, argv, "TestModel");
 
     auto sim = BuildModel<
-        TLayer<TSpikeSequenceNeuron, 100>,
-        TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm>>
+        TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TIdentReceptiveField, true>>,
+        TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TIdentReceptiveField>>
     >(opts);
 
-    // sim.ListenBasicStats<1, 55>(0, 1000);
+    sim.ListenBasicStats<0, 55>(0, 1000);
 
     sim.Run();
 

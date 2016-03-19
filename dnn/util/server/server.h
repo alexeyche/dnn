@@ -73,6 +73,7 @@ namespace NDnn {
 			: DebugMode(debugMode)
 			, Port(port)
 			, MaxConnections(max_connections)
+			, ShutDownVar(false)
 		{
 		}
 		
@@ -171,12 +172,23 @@ namespace NDnn {
 		void MainLoop() {
 			Listen();
 			while (true) {
+				{
+					TGuard guard(ShutDownMutex);
+					if (ShutDownVar) {
+						L_DEBUG << "Got shut down signal, goind out of the main loop";
+						return;
+					}
+				}
 				struct sockaddr_storage their_addr;
 				socklen_t addr_size = sizeof(their_addr);
-
+				
 				int new_fd = accept(SocketNum, (struct sockaddr *)&their_addr, &addr_size);
+				if (ShutDownVar) {
+					L_DEBUG << "Got shut down signal, goind out of the main loop";
+					return;
+				}
 				ENSURE(new_fd >= 0, "Failed to accept to socket");
-
+				
 				char s[INET6_ADDRSTRLEN];
 				inet_ntop(their_addr.ss_family,
             		GetInAddr((struct sockaddr *)&their_addr),
@@ -194,6 +206,14 @@ namespace NDnn {
 		            ).detach();
 				}
 			}
+		}
+
+		void ShutDown() {
+			L_DEBUG << "Sending shut down signal ...";
+			TGuard guard(ShutDownMutex);
+			ShutDownVar = true;
+			shutdown(SocketNum, 2);
+			close(SocketNum);
 		}
 
 		void Receive(int socket) {
@@ -329,6 +349,10 @@ namespace NDnn {
 		int SocketNum;
 		std::map<TString, TRequestCallback> DefaultCallbacks;
 		std::map<TString, std::vector<TCallbackPath>> Callbacks;
+
+		bool ShutDownVar;
+		std::mutex ShutDownMutex;
+
 	};
 
 } // namespace NDnn

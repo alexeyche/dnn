@@ -23,6 +23,7 @@ namespace NDnn {
 		ui32 ColumnSize;
 		ui32 RowId;
 		ui32 ColId;
+		ui32 LayerSize;
 
 		bool operator == (const TNeuronSpaceInfo& other) const {
 			return GlobalId == other.GlobalId;
@@ -126,10 +127,9 @@ namespace NDnn {
 		    Queue.InputSpikesLock.clear(std::memory_order_release);
 		}
 
-		void CalculateDynamicsInternal(const TTime& t) {
+		void CalculateDynamicsInternal(const TTime& t, double Iinput) {
 			ReadInputSpikes(t);
 
-			double Iinput = 0.0;
 
 			double Isyn = 0.0;
 			auto synIdIt = Synapses.abegin();
@@ -143,8 +143,8 @@ namespace NDnn {
 		        	++synIdIt;
 		        }
 		    }
-			
-			Neuron.CalculateDynamics(t, Iinput, Isyn);
+			double Irf = ReceptiveField.CalculateResponse(Iinput); 
+			Neuron.CalculateDynamics(t, Irf, Isyn);
 
 		    Neuron.MutSpikeProbability() = Activation.SpikeProbability(Neuron.Membrane());
 			if(Neuron.SpikeProbability() > Rand->GetUnif()) {
@@ -171,6 +171,7 @@ namespace NDnn {
 		void Prepare() {
 			ENSURE(Rand, "Random engine is not set");
 
+			ReceptiveField.Init(SpaceInfo);
 			Neuron.Reset();
 		}
 
@@ -200,8 +201,8 @@ namespace NDnn {
 			return SpaceInfo.LocalId;
 		}
 
-		void AddSynapse(typename TConf::TSynapse&& syn) {
-			Synapses.emplace_back(std::forward<typename TConf::TSynapse>(syn));
+		void AddSynapse(typename TConf::TNeuronSynapse&& syn) {
+			Synapses.emplace_back(std::forward<typename TConf::TNeuronSynapse>(syn));
 			Inner.MutSynapsesSize()++;
 		}
 
@@ -213,11 +214,11 @@ namespace NDnn {
 				Synapses.resize(Inner.SynapsesSize());
 				if (Inner.SynapsesSize() == 0) {
 					const NDnnProto::TLayer& layerSpec = serial.GetMessage<NDnnProto::TLayer>();
-					if (GetRepeatedFieldSizeFromMessage(layerSpec, TConf::TSynapse::TConst::ProtoFieldNumber) > GetLocalId()) {
+					if (GetRepeatedFieldSizeFromMessage(layerSpec, TConf::TNeuronSynapse::TConst::ProtoFieldNumber) > GetLocalId()) {
 						PredefineSynapseConst.emplace(
-							GetRepeatedFieldFromMessage<typename TConf::TSynapse::TConst::TProto>(
+							GetRepeatedFieldFromMessage<typename TConf::TNeuronSynapse::TConst::TProto>(
 								layerSpec,
-								TConf::TSynapse::TConst::ProtoFieldNumber,
+								TConf::TNeuronSynapse::TConst::ProtoFieldNumber,
 								GetLocalId()
 							)
 						);
@@ -228,12 +229,11 @@ namespace NDnn {
 				serial(Synapses[synId]);
 			}
 		}
-		const TOptional<typename TConf::TSynapse::TConst::TProto>& GetPredefinedSynapseConst() const {
+		const TOptional<typename TConf::TNeuronSynapse::TConst::TProto>& GetPredefinedSynapseConst() const {
 			return PredefineSynapseConst;
 		}
 
-		const TActVector<typename TConf::TSynapse>& GetSynapses() const {
-		// const TVector<typename TConf::TSynapse>& GetSynapses() const {
+		const TActVector<typename TConf::TNeuronSynapse>& GetSynapses() const {
 			return Synapses;
 		}
 
@@ -248,14 +248,14 @@ namespace NDnn {
 
 		TNeuron Neuron;
 
-		typename TConf::TActivationFunction Activation;
-		TActVector<typename TConf::TSynapse> Synapses;
-		// TVector<typename TConf::TSynapse> Synapses;
+		typename TConf::TNeuronActivationFunction Activation;
+		typename TConf::TNeuronReceptiveField ReceptiveField;
+		TActVector<typename TConf::TNeuronSynapse> Synapses;
 
 		TSpikeNeuronImplInner Inner;
 		TNeuronSpaceInfo SpaceInfo;
 
-		TOptional<typename TConf::TSynapse::TConst::TProto> PredefineSynapseConst;
+		TOptional<typename TConf::TNeuronSynapse::TConst::TProto> PredefineSynapseConst;
 	};
 
 } // namespace NDnn

@@ -32,9 +32,10 @@ namespace NDnn {
 
 	TDispatcher& TDispatcher::operator =(const TDispatcher& other) {
 		if (this != &other) {
-			Server = other.Server;
+			Server.SetPort(other.Server.GetPort());
 			InputData = other.InputData;
 			InputDataIsReadyVar = other.InputDataIsReadyVar;
+			InputDataIdx = other.InputDataIdx;
 		}
 		return *this;
 	}
@@ -49,15 +50,15 @@ namespace NDnn {
 	}
 
 	double TDispatcher::GetNeuronInput(ui32 layerId, ui32 neuronId) {
-		while (!InputDataIsReadyVar) {
-			L_DEBUG << "Waiting for data";
-			TUniqueLock lock(InputDataMutex);
-			InputDataIsReady.wait(lock);
-		}
-		if (layerId != 0) {
-			return 0.0;
-		}
-		ENSURE((neuronId < InputData.Data.size()) && (InputDataIdx[neuronId] < InputData.Data[neuronId].Values.size()), "Id out of range");
+		// while (!InputDataIsReadyVar) {
+		// 	L_DEBUG << "Waiting for data";
+		// 	TUniqueLock lock(InputDataMutex);
+		// 	InputDataIsReady.wait(lock);
+		// }
+		// if (layerId != 0) {
+		// 	return 0.0;
+		// }
+		// ENSURE((neuronId < InputData.Data.size()) && (InputDataIdx[neuronId] < InputData.Data[neuronId].Values.size()), "Id out of range");
 		return InputData.Data[neuronId].Values[InputDataIdx[neuronId]++];
 	}
 
@@ -66,4 +67,14 @@ namespace NDnn {
 		Server.MainLoop();
 	}
 
+	void TDispatcher::SetInputTimeSeries(const TTimeSeries&& ts) {
+		InputData = ts;
+		InputDataIdx.clear();
+		InputDataIdx.resize(InputData.Dim());
+		InputDataIsReadyVar = true;
+	}
+
+	void TDispatcher::ShutDown() {
+		Server.ShutDown();
+	}
 } // namspace NDnn

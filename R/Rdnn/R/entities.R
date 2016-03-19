@@ -7,7 +7,13 @@ add.to.list = function(l, v) {
 time.series = function(values, info=NULL) {
     o = list(values = values)
     if(is.null(info)) {
-        info = list(ts.info(label="unknown_label", duration=length(values), start_time=0))
+        dur = 0
+        if (is.matrix(values)) {
+            dur = ncol(values)
+        } else {
+            dur = length(values)
+        }
+        info = list(ts.info(label="unknown_label", duration=dur, start_time=0))
     }
     o$info = info
     class(o) <- "TimeSeries"

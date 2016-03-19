@@ -21,7 +21,7 @@ T1 = convNum(Sys.getenv('T1'), 1000)
 args <- commandArgs(trailingOnly = FALSE)
 if(length(grep("RStudio", args))>0) {    
     WD = simruns.path(system(sprintf("ls -t %s | head -n 1", simruns.path()), intern=TRUE))
-    #WD = file.path(dnn.env(), "runs/test-run")
+    WD = file.path(dnn.env(), "runs/test-run")
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
@@ -49,7 +49,7 @@ COPY_PICS = convBool(Sys.getenv('COPY_PICS'), FALSE)
 OPEN_PIC = convBool(Sys.getenv('OPEN_PIC'), TRUE)
 LAYER_MAP = convStr(Sys.getenv('LAYER_MAP'), NULL)
 SAVE_PIC_IN_FILES = convBool(Sys.getenv('SAVE_PIC_IN_FILES'), TRUE)
-EVAL = convBool(Sys.getenv('EVAL'), TRUE)
+EVAL = convBool(Sys.getenv('EVAL'), FALSE)
 EVAL_PROC = convStr(Sys.getenv('EVAL_PROC'), "Epsp(10)")
 EVAL_KERN = convStr(Sys.getenv('EVAL_KERN'), "RbfDot(0.05)")
 EVAL_JOBS = convNum(Sys.getenv('EVAL_JOBS'), 1)
@@ -141,14 +141,19 @@ if(file.exists(EVAL_STAT_FNAME)) {
     STAT_FNAME = EVAL_STAT_FNAME
 }
 if (file.exists(STAT_FNAME)) {
-    stat = RProto$new(STAT_FNAME)$rawRead()        
+    stat = proto.read(STAT_FNAME)
     stat_pic = sprintf("%s/3_%s", tmp_d, pfx_f("stat.png"))
     if(SAVE_PIC_IN_FILES) png(stat_pic, width=1024, height=768*6)
     
-    if(length(stat)>=STAT_ID) {
-        plot_stat(stat[[STAT_ID]], STAT_SYN_ID, T0, T1)
-    } else {
-        warning("STAT_ID is out of bounds")
+    par(mfrow=c(length(stat),1))
+    for (s in stat) {
+        plot(
+            seq(s$from, s$to, length.out=length(s$values)), 
+            s$values, 
+            type="l", 
+            main=sprintf("%s, %d:%d", s$name, s$from, s$to),
+            xlab="Time", ylab=s$name
+        )
     }
     if(SAVE_PIC_IN_FILES) {
         dev.off()
@@ -172,7 +177,7 @@ if(EVAL) {
         stop("Can't eval without spikes")        
     }
     
-    setVerboseLevel(0)
+    set.verbose.level(1)
     if(!is.null(spikes)) {
         eval_spikes = spikes     
     } else {

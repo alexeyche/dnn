@@ -1,0 +1,10 @@
+package NDnnProto;
+
+
+message TGaussReceptiveFieldConst {
+    optional double Sigma = 1;
+    optional double Gain = 2;
+    optional double LowLevel = 3;
+    optional double HighLevel = 4;
+}
+

@@ -2,8 +2,8 @@
 require(Rdnn)
 source(scripts.path("gen_poisson.R"))
 
-sim_length = convNum(Sys.getenv('TIMED_PATTERN_LENGTH'), 60000)
-test_sim_length = convNum(Sys.getenv('TIMED_PATTERN_LENGTH_TEST'), 60000)
+sim_length = convNum(Sys.getenv('TIMED_PATTERN_LENGTH'), 300000)
+test_sim_length = convNum(Sys.getenv('TIMED_PATTERN_LENGTH_TEST'), 300000)
 
 neurons = 100
 sample_gap = 250

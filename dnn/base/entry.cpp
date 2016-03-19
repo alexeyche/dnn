@@ -34,6 +34,10 @@ namespace NDnn {
 	    	opts.InputSpikesFile = options.inputspikes();
 	    }
 
+	    if (options.has_inputtimeseries()) {
+	    	opts.InputTimeSeries = options.inputtimeseries();
+	    }
+
 	    if (options.has_port()) {
 	        opts.Port = options.port();
 	    }

@@ -29,6 +29,10 @@ namespace NDnn {
 		TNeuronImplType& operator[](ui32 id) {
 			return Neurons[id];
 		}
+		
+		bool HasInput() {
+			return TConf::HasInput;
+		}
 
 		void SetupSpaceInfo(ui32 id, ui32 prevLayerNeuronsSize) {
 			Id = id;
@@ -43,6 +47,7 @@ namespace NDnn {
 				info.ColumnSize = colSize;
 				info.RowId = rowId;
 				info.ColId = colId;
+				info.LayerSize = Size();
 
 				Neurons[nId].SetSpaceInfo(info);
 
@@ -84,7 +89,7 @@ namespace NDnn {
 						continue;
 					}
 
-					typename TConf::TSynapse syn;
+					typename TConf::TNeuronSynapse syn;
 					auto synConst = npost.GetPredefinedSynapseConst();
 					if (synConst) {
 						TProtoSerial serial(*synConst, TSerialBase::ESerialMode::IN);

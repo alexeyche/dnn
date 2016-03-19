@@ -12,6 +12,7 @@ message TNeuronSpaceInfo {
     optional uint32 ColumnSize = 4;
     optional uint32 RowId = 5;
     optional uint32 ColId = 6;
+    optional uint32 LayerSize = 7;
 }
 
 message TAsyncSpikeQueue {

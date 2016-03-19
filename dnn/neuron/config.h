@@ -4,10 +4,13 @@
 namespace NDnn {
 
 
-	template <typename TSynapseType, typename TActivationFunctionType>
+	template <typename TSynapseType, typename TActivationFunctionType, typename TReceptiveFieldType, bool HasInputTpl = false>
 	struct TNeuronConfig {
-		using TSynapse = TSynapseType;
-		using TActivationFunction = TActivationFunctionType;
+		using TNeuronSynapse = TSynapseType;
+		using TNeuronActivationFunction = TActivationFunctionType;
+		using TNeuronReceptiveField = TReceptiveFieldType;
+
+		static const bool HasInput = HasInputTpl;
 	};
 
 

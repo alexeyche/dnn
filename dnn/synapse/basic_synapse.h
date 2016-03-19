@@ -9,7 +9,6 @@
 
 namespace NDnn {
 
-
     struct TBasicSynapseConst: public IProtoSerial<NDnnProto::TBasicSynapseConst> {
         static const auto ProtoFieldNumber = NDnnProto::TLayer::kBasicSynapseConstFieldNumber;
 

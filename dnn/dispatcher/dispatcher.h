@@ -25,6 +25,10 @@ namespace NDnn {
 
 		void MainLoop();
 
+		void SetInputTimeSeries(const TTimeSeries&& ts);
+
+		void ShutDown();
+
 	private:
 		std::condition_variable InputDataIsReady;
 		bool InputDataIsReadyVar;
