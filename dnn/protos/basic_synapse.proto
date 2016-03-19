@@ -1,0 +1,11 @@
+package NDnnProto;
+
+
+message TBasicSynapseConst {
+    optional double PspDecay = 1;
+    optional double Amp = 2;
+}
+
+message TBasicSynapseState {
+}
+
