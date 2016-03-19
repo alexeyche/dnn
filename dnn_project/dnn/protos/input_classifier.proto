@@ -1,9 +1,0 @@
-package Protos;
-
-import "base.proto";
-
-message InputClassifierC {
-    required double ltp = 1;
-    required double ltd = 2;
-}
-

@@ -1,4 +1,0 @@
-useDynLib(Rdnn)
-exportPattern("^[[:alpha:]]+")
-export(':=')
-importFrom(Rcpp, sourceCpp)

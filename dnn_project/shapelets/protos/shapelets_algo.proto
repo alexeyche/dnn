@@ -1,7 +1,0 @@
-package Protos;
-
-message ShapeletsConfig {
-    required uint32 shapeletsStartSize = 1;
-    required uint32 shapeletsEndSize = 2;
-}
-

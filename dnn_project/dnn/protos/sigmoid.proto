@@ -1,9 +1,0 @@
-package Protos;
-
-import "base.proto";
-
-message SigmoidC {
-    required double threshold = 1;
-    required double slope = 2;
-}
-

@@ -10,6 +10,7 @@ import shutil
 from os.path import join as pj
 import json
 import random
+import glob
 
 import lib.env as env
 from lib.env import runs_dir
@@ -17,22 +18,16 @@ from lib.env import runs_dir
 from lib.util import add_coloring_to_emit_ansi
 from lib.util import pushd
 from lib.util import run_proc
-from lib.util import read_json
 from lib.util import str_to_opt
-from lib.util import opt_to_str
-
-from lib.prepare_data import prepare_data
 
 THIS_FILE = os.path.realpath(__file__)
 SCRIPTS_DIR = os.path.dirname(os.path.realpath(__file__))
 
-class DnnSim(object):
+class TDnnSim(object):
     JOBS = multiprocessing.cpu_count()
     EPOCHS = 1
     HOME = os.getenv("DNN_HOME", os.path.expanduser("~/dnn"))
     RUNS_DIR = pj(env.runs_dir, "sim")
-    CONST_JSON = pj(HOME, "const.json")
-    DNN_SIM_BIN = pj(HOME, "bin", "dnn_sim")
     INSP_SCRIPT = pj(HOME, "r_scripts", "insp.R")
     USER_JSON_FILE = pj(SCRIPTS_DIR, "user.json")
     USER_JSON = json.load(open(USER_JSON_FILE))
@@ -43,17 +38,29 @@ class DnnSim(object):
     def __init__(self, **kwargs):
         self.current_epoch = 1
 
-        self.old_dir = self.dget(kwargs, "old_dir", False)
-        self.const_as_string = self.dget(kwargs, "const_as_string", False)
-        self.const = self.dget(kwargs, "const", self.CONST_JSON)
-        self.runs_dir = self.dget(kwargs, "runs_dir", self.RUNS_DIR)
-        self.inspection = self.dget(kwargs, "inspection", True)
-        self.working_dir = self.dget(kwargs, "working_dir", None)
-        self.evaluation = self.dget(kwargs, "evaluation", False)
-        self.slave = self.dget(kwargs, "slave", False)
-        self.prepare_data = self.dget(kwargs, "prepare_data", False)
-        self.evaluation_data = self.dget(kwargs, "evaluation_data", None)
-        self.no_learning = self.dget(kwargs, "no_learning", False)
+        self.old_dir = kwargs.get("old_dir", False)
+        self.model = kwargs.get("model")
+        if self.model is None:
+            raise Exception("Model is required input to run_sim.py")
+
+        self.config = kwargs.get("config")
+        if self.config is None:
+            model_dir = os.path.dirname(self.model)
+            configs = glob.glob("{}/*.pb.txt".format(model_dir))
+            if len(configs) == 0:
+                raise Exception("Can't find any configs in model directory {}".format(model_dir))
+            if len(configs) > 1:
+                raise Exception("Found too much configs in model directory {}, can't choose".format(model_dir))
+            self.config = configs[0]
+
+        self.runs_dir = kwargs.get("runs_dir", self.RUNS_DIR)
+        self.inspection = kwargs.get("inspection", True)
+        self.working_dir = kwargs.get("working_dir", None)
+        self.evaluation = kwargs.get("evaluation", False)
+        self.slave = kwargs.get("slave", False)
+        self.prepare_data = kwargs.get("prepare_data", False)
+        self.evaluation_data = kwargs.get("evaluation_data", None)
+        self.no_learning = kwargs.get("no_learning", False)
 
         logFormatter = logging.Formatter("%(asctime)s [%(levelname)s]  %(message)-100s")
         rootLogger = logging.getLogger()
@@ -80,7 +87,7 @@ class DnnSim(object):
             if os.path.exists(last) or os.path.islink(last):
                 os.remove(last)
             os.symlink(self.working_dir, last)
-        self.log_file = pj(self.working_dir, DnnSim.LOG_FILE_BASE)
+        self.log_file = pj(self.working_dir, TDnnSim.LOG_FILE_BASE)
         fileHandler = logging.FileHandler(self.log_file, mode='w')
         fileHandler.setFormatter(logFormatter)
         rootLogger.addHandler(fileHandler)
@@ -88,44 +95,40 @@ class DnnSim(object):
         if ask:
             self.continue_in_wd()
 
-        self.dnn_sim_bin = self.dget(kwargs, "dnn_sim_bin", self.DNN_SIM_BIN)
-        self.add_options = self.dget(kwargs, "add_options", {})
-        self.stat = self.dget(kwargs, "stat", False)
-        self.epochs = self.dget(kwargs, "epochs", 1)
-        self.jobs = self.dget(kwargs, "jobs", multiprocessing.cpu_count())
-        self.insp_script = self.dget(kwargs, "insp_script", self.INSP_SCRIPT)
-        self.T_max = self.dget(kwargs, "T_max", None)
- 
-        for k, v in self.add_options.items():
-            if os.path.exists(v):
-                shutil.copy(v, os.path.join(self.working_dir, k) + ".pb")
+        self.stat = kwargs.get("stat", False)
+        self.epochs = kwargs.get("epochs", 1)
+        self.jobs = kwargs.get("jobs", multiprocessing.cpu_count())
+        self.insp_script = kwargs.get("insp_script", self.INSP_SCRIPT)
+        self.T_max = kwargs.get("T_max", None)
+        self.input_ts = kwargs.get("input_ts", None)
+        self.input_spikes = kwargs.get("input_spikes", None)
+        if self.input_ts is None and self.input_spikes is None:
+            raise Exception("Need input time series or input spikes in model")
+        if self.input_ts and self.input_spikes:
+            raise Exception("Choose one of the inputs: time series or spikes, can't work with both")
 
-        wd_const = pj(self.working_dir, os.path.basename(self.const))
-        if wd_const != self.const or not os.path.exists(wd_const):
-            shutil.copy(self.const, self.working_dir)
-            self.const = wd_const
+        if self.input_ts:
+            shutil.copy(self.input_ts, self.working_dir) 
+        if self.input_spikes:
+            shutil.copy(self.input_spikes, self.working_dir) 
+                    
+        wd_config = pj(self.working_dir, os.path.basename(self.config))
+        if wd_config != self.config or not os.path.exists(wd_config):
+            shutil.copy(self.config, self.working_dir)
+            self.config = wd_config
 
-
-
-    @staticmethod
-    def dget(d, n, default):
-        if d.get(n) is None:
-            return default
-        else:
-            return d[n]
+    def get_fname(self, f, ep=None):
+        return os.path.join(self.working_dir, "{}_{}".format(ep if not ep is None else self.current_epoch, f)) 
 
     def get_opt(self, n):
         return str_to_opt(n), str(self.__dict__[n])
 
-    def get_fname(self, f, ep=None):
-        return os.path.join(self.working_dir, "{}_{}".format(ep if not ep is None else self.current_epoch, f)) 
-    
 
     def construct_default_run_cmd(self):
         cmd = [
-            self.dnn_sim_bin
+            self.model
         ]
-        cmd += list(self.get_opt("const"))
+        cmd += list(self.get_opt("config"))
         cmd += list(self.get_opt("jobs")) 
 
         if not self.T_max is None:
@@ -150,9 +153,15 @@ class DnnSim(object):
             "--load", model,
             "--no-learning"
         ]
-        if len(self.add_options) != 1:
-            raise Exception("Need one additional option with sim data to run evaluation")
-        cmd += [str_to_opt(self.add_options.keys()[0]), self.evaluation_data]
+        if self.evaluation_data:
+            if self.input_ts:
+                cmd += [
+                    "--input-ts", self.evaluation_data
+                ]
+            if self.input_spikes:
+                cmd += [
+                    "--input-spikes", self.evaluation_data
+                ]
         return { "cmd" : cmd, "print_root_log_on_fail" : self.slave }
 
     def construct_cmd(self):
@@ -174,8 +183,15 @@ class DnnSim(object):
             cmd += [
                 "--no-learning"
             ]
-        for k, v in self.add_options.items():
-            cmd += [str_to_opt(k), v]
+
+        if self.input_spikes:
+            cmd += [
+                "--input-spikes", self.input_spikes
+            ]
+        if self.input_ts:
+            cmd += [
+                "--input-ts", self.input_ts
+            ]
 
         return { "cmd" : cmd, "print_root_log_on_fail" : self.slave }
     
@@ -195,10 +211,10 @@ class DnnSim(object):
         cmd = [
               self.insp_script
         ]
-        if DnnSim.USER_JSON.get(DnnSim.USER):
-            env.update(DnnSim.USER_JSON[DnnSim.USER])
+        if TDnnSim.USER_JSON.get(TDnnSim.USER):
+            env.update(TDnnSim.USER_JSON[TDnnSim.USER])
         env.update({
-            "CONST" : self.const,
+            "CONFIG" : self.config,
         })
         if env["EVAL"] in frozenset(["no", "0", "false", "False"]):
             self.evaluation = False
@@ -206,11 +222,6 @@ class DnnSim(object):
 
 
     def run(self):
-        if self.prepare_data:
-            prepare_data_conf = read_json(self.const).get("prepare_data")
-            with pushd(self.working_dir):
-                opt, value = prepare_data(prepare_data_conf)
-            self.add_options[opt_to_str(opt)] = value
         evals = []
         for self.current_epoch in xrange(self.current_epoch, self.current_epoch+self.epochs):
             logging.info("Running epoch {}:".format(self.current_epoch))
@@ -233,7 +244,6 @@ class DnnSim(object):
                 print final_score
         logging.info("Done")
 
-        
     def continue_in_wd(self):
         max_ep = 0
         for f in os.listdir(self.working_dir):
@@ -244,7 +254,7 @@ class DnnSim(object):
             def clean():
                 logging.info("Cleaning %s ... " % self.working_dir)
                 for f in os.listdir(self.working_dir):
-                    if f != DnnSim.LOG_FILE_BASE:
+                    if f != TDnnSim.LOG_FILE_BASE:
                         os.remove(os.path.join(self.working_dir, f))
             if self.slave:
                 clean()
@@ -260,13 +270,12 @@ class DnnSim(object):
                 else:
                     logging.warning("incomprehensible answer")
 
-
     def get_wd(self):
-        const_hex = md5.new(open(self.const).read()).hexdigest()
+        config_hex = md5.new(open(self.config).read()).hexdigest()
         i = 0
 
         while i<1000:
-            self.working_dir = os.path.join(self.runs_dir, const_hex + "_%04d" % i)
+            self.working_dir = os.path.join(self.runs_dir, config_hex + "_%04d" % i)
             if not os.path.exists(self.working_dir):
                 break
             if self.old_dir:
@@ -275,17 +284,16 @@ class DnnSim(object):
     
         return self.working_dir
     
-
 def main(argv):
     parser = argparse.ArgumentParser(description='Tool for simulating dnn')
     parser.add_argument('-e', 
                         '--epochs', 
                         required=False,
-                        help='Number of epochs to run', default=DnnSim.EPOCHS,type=int)
+                        help='Number of epochs to run', default=TDnnSim.EPOCHS,type=int)
     parser.add_argument('-j', 
                         '--jobs', 
                         required=False,
-                        help='Number of parallell jobs (default: %(default)s)', default=DnnSim.JOBS, type=int)
+                        help='Number of parallell jobs (default: %(default)s)', default=TDnnSim.JOBS, type=int)
     parser.add_argument('-T', 
                         '--T-max', 
                         required=False,
@@ -302,71 +310,63 @@ def main(argv):
                         '--no-insp',
                         action='store_true',
                         help='No inspection after every epoch')
-    parser.add_argument('-nl', 
-                        '--no-learning',
-                        action='store_true',
-                        help='Turn off learning')
-    parser.add_argument('-nev', 
-                        '--no-evaluation',
-                        action='store_true',
-                        help='Turning on evaluation mode, where program writing score on each epoch')
     parser.add_argument('--slave',
                         action='store_true',
                         help='Run script as slave and print only evaluation score')
     parser.add_argument('-r', 
                         '--runs-dir', 
                         required=False,
-                        help='Runs dir (default: %(default)s)', default=DnnSim.RUNS_DIR)
+                        help='Runs dir (default: %(default)s)', default=TDnnSim.RUNS_DIR)
     parser.add_argument('-w', 
                         '--working-dir',
                         required=False,
-                        help='Working dir (default: %%runs_dir%%/%%md5_of_const%%_%%number_of_experiment%%)')
+                        help='Working dir (default: %%runs_dir%%/%%md5_of_config%%_%%number_of_experiment%%)')
     parser.add_argument('-c', 
-                        '--const', 
+                        '--config', 
                         required=False,
-                        help='Path to const.json file (default: $SCRIPT_DIR/../dnn_project/%s)' % DnnSim.CONST_JSON)
-    parser.add_argument('--dnn-sim-bin', 
+                        help='Path to config.pb.txt (default: run_sim.py will try to find pb.txt file in model directory)')
+    parser.add_argument('-is', 
+                        '--input-spikes', 
                         required=False,
-                        help='Path to snn sim bin (default: $SCRIPT_DIR/../build/bin/%s)' % DnnSim.DNN_SIM_BIN)
-    parser.add_argument('-pd', 
-                        '--prepare-data',
+                        help='Input spikes that required for model')
+    parser.add_argument('-it', 
+                        '--input-ts', 
+                        required=False,
+                        help='Input time series that required for model')
+    parser.add_argument('-nev', 
+                        '--no-evaluation',
                         action='store_true',
-                        help='Run prepare data procedure')
+                        help='Turning on evaluation mode, where program writing score on each epoch')
     parser.add_argument('-evd', 
                         '--evaluation-data',
                         required=False,
                         help='Run evaluation on special testing data. If not pointed evaluation will be runned on train data')
-    args, other = parser.parse_known_args(argv)
-
+    parser.add_argument('model', nargs=1, help="Path to model binary")
+    
+    args = parser.parse_args(argv)
     if len(argv) == 0:
         parser.print_help()
         sys.exit(1)
+
     args = {
+        "config": args.config,
+        "input_ts" : args.input_ts,
+        "input_spikes" : args.input_spikes,
+        "model" : args.model[0],
         "working_dir" : args.working_dir,
         "T_max" : args.T_max,
         "stat" : args.stat,
         "runs_dir" : args.runs_dir,
-        "const" : args.const,
-        "dnn_sim_bin" : args.dnn_sim_bin,
-        "add_options" : {},
+        "config" : args.config,
         "epochs" : args.epochs,
         "jobs" : args.jobs,
         "old_dir" : args.old_dir,
         "inspection" : not args.no_insp,
-        "evaluation" : not args.no_evaluation,
         "slave" : args.slave,
-        "prepare_data" : args.prepare_data,
         "evaluation_data" : args.evaluation_data,
-        "no_learning" : args.no_learning,
+        #"no_learning" : args.no_learning,
     }
-    if len(other) % 2 != 0:
-        raise Exception("Got not paired add options: {}".format(" ".join(other)))
-    for i in range(0, len(other), 2):
-        args['add_options'].update( { opt_to_str(other[i]) : other[i+1] })
-
-
-    s = DnnSim(**args)
-    s.run()
+    TDnnSim(**args).run()
     
 if __name__ == '__main__':
     main(sys.argv[1:])
