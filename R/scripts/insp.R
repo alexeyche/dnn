@@ -25,7 +25,7 @@ if(length(grep("RStudio", args))>0) {
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
-    #EP = 5
+    #EP = 2
 }
 
 pfx_f = function(s) s
@@ -145,7 +145,7 @@ if (file.exists(STAT_FNAME)) {
     stat_pic = sprintf("%s/3_%s", tmp_d, pfx_f("stat.png"))
     if(SAVE_PIC_IN_FILES) png(stat_pic, width=1024, height=768*6)
     
-    par(mfrow=c(length(stat),1))
+    par(mfrow=c(length(stat),1), mar=rep(2,4))
     for (s in stat) {
         plot(
             seq(s$from, s$to, length.out=length(s$values)), 

@@ -89,6 +89,13 @@ namespace NDnn {
 			return std::get<layerId>(Layers)[neuronId].GetNeuron();
 		}
 
+		template <size_t layerId, size_t neuronId, size_t synapseId>
+		auto GetSynapse() {
+			const auto& synVec = std::get<layerId>(Layers)[neuronId].GetSynapses();
+			return synVec.at(synapseId);
+		}
+
+
 		void ListenStat(const TString& name, std::function<double()> cb, ui32 from, ui32 to) {
 			StatGatherer.ListenStat(name, cb, from, to);
 		}

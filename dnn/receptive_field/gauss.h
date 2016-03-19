@@ -3,7 +3,7 @@
 #include "receptive_field.h"
 
 #include <dnn/util/serial/proto_serial.h>
-#include <dnn/protos/gauss_receptive_field.pb.h>
+#include <dnn/protos/gauss.pb.h>
 
 namespace NDnn {
 
@@ -24,14 +24,14 @@ namespace NDnn {
     };
 
 
-    class TGaussReceptiveField : public TActivation<TGaussReceptiveFieldConst> {
+    class TGaussReceptiveField : public TReceptiveField<TGaussReceptiveFieldConst> {
     public:
         void Init(const TNeuronSpaceInfo& info) {
             Center = (c.HighLevel - c.LowLevel) * static_cast<double>(info.LocalId)/info.LayerSize;
         }
 
         double CalculateResponse(double I) {
-            return c.Gain * exp( - (I - center)*(I - Center) / (2.0 *c.Sigma*c.Sigma));
+            return c.Gain * exp( - (I - Center)*(I - Center) / (2.0 *c.Sigma*c.Sigma));
         }
 
     private:

@@ -14,7 +14,7 @@ namespace NDnn {
     };
 
 
-    class TIdentReceptiveField : public TActivation<TIdentReceptiveFieldConst> {
+    class TIdentReceptiveField : public TReceptiveField<TIdentReceptiveFieldConst> {
     public:
         void Init(const TNeuronSpaceInfo& info) {
         }

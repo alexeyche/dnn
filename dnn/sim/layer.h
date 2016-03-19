@@ -6,6 +6,7 @@
 #include <dnn/connection/builder.h>
 
 #include <array>
+#include <type_traits>
 
 namespace NDnn {
 
@@ -30,8 +31,8 @@ namespace NDnn {
 			return Neurons[id];
 		}
 		
-		bool HasInput() {
-			return TConf::HasInput;
+		bool HasInput() const {
+			return !std::is_same<typename TConf::TNeuronReceptiveField, TNoInput>::value;
 		}
 
 		void SetupSpaceInfo(ui32 id, ui32 prevLayerNeuronsSize) {

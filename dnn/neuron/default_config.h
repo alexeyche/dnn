@@ -10,6 +10,6 @@
 
 namespace NDnn {
 
-	using TDefaultConfig = TNeuronConfig<TBasicSynapse, TDeterm, TIdentReceptiveField>;
+	using TDefaultConfig = TNeuronConfig<TBasicSynapse, TDeterm, TNoInput>;
 
 } // namespace NDnn

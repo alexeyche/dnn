@@ -86,6 +86,8 @@ namespace NDnn {
 
 	using TUniqueLock = std::unique_lock<TMutex>;
 
+	struct TEmpty {};
+
 	struct TTime {
 	    TTime(double dt)
 	    	: T(0)

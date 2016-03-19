@@ -20,6 +20,8 @@ namespace NDnn {
     public:
         TMetaProtoSerial(NPb::Message& message, int dstFieldNumber, ESerialMode mode);
 
+        bool operator()(TEmpty&) { return true; }
+
         template <typename T>
         bool operator() (IProtoSerial<T>& v);
 

@@ -170,7 +170,7 @@ Rcpp::List TProto::ReadFromFile(TString protofile) {
                 while (serial.ReadObject<TStatistics>(stat)) {
                     Rcpp::List subList;
                     subList = Translate(stat);
-                    l[stat.Name] = subList;
+                    l.push_back(subList);
                 }
             }
             break;

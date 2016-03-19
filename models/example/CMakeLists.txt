@@ -13,6 +13,6 @@ file(GLOB ConfigFiles "${CMAKE_CURRENT_SOURCE_DIR}/*.pb.txt")
 
 foreach(ConfigFile ${ConfigFiles})
 	install(CODE
-	    "EXECUTE_PROCESS(COMMAND cp -f ${ConfigFile} ${CMAKE_INSTALL_PREFIX}/models/${model_bn})"
+	    "EXECUTE_PROCESS(COMMAND ln -sf ${ConfigFile} ${CMAKE_INSTALL_PREFIX}/models/${model_bn})"
 	)
 endforeach(ConfigFile)

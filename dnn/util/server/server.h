@@ -175,7 +175,7 @@ namespace NDnn {
 				{
 					TGuard guard(ShutDownMutex);
 					if (ShutDownVar) {
-						L_DEBUG << "Got shut down signal, goind out of the main loop";
+						L_DEBUG << "Got shut down signal, going out of the main loop";
 						return;
 					}
 				}
@@ -184,7 +184,7 @@ namespace NDnn {
 				
 				int new_fd = accept(SocketNum, (struct sockaddr *)&their_addr, &addr_size);
 				if (ShutDownVar) {
-					L_DEBUG << "Got shut down signal, goind out of the main loop";
+					L_DEBUG << "Got shut down signal, going out of the main loop";
 					return;
 				}
 				ENSURE(new_fd >= 0, "Failed to accept to socket");

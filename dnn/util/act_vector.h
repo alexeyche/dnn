@@ -55,6 +55,10 @@ namespace NDnn {
 			return ActIndices.end();
 		}
 
+		const T& at(ui32 idx) const {
+			return TVector<T>::at(idx);
+		}
+
 		void SetInactive(std::unordered_set<ui32>::iterator &i) {
 			i = ActIndices.erase(i);
 		}

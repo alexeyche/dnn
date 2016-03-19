@@ -22,6 +22,7 @@ set(DIRS
     connection
     contrib
     dispatcher
+    neuron
     protos
     sim
     synapse

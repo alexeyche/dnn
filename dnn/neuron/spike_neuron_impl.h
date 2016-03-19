@@ -13,8 +13,10 @@
 #include <dnn/protos/spike_neuron_impl.pb.h>
 
 
-
 namespace NDnn {
+
+
+
 
 	struct TNeuronSpaceInfo {
 		ui32 LayerId;
@@ -107,6 +109,23 @@ namespace NDnn {
 		std::atomic_flag InputSpikesLock;
 	};
 
+	template <typename RF>
+	void CallInit(RF& rf, const TNeuronSpaceInfo& info) {
+		rf.Init(info);
+	}
+	
+	template <>
+	void CallInit<TEmpty>(TEmpty&, const TNeuronSpaceInfo&);
+
+	template <typename RF>
+	double CallCalculateResponse(RF& rf, double I) {
+		return rf.CalculateResponse(I);
+	}
+
+	template <>
+	double CallCalculateResponse<TEmpty>(TEmpty&, double);
+
+
 	template <typename TNeuron, typename TConf>
 	class TSpikeNeuronImpl: public IMetaProtoSerial {
 	public:
@@ -130,7 +149,6 @@ namespace NDnn {
 		void CalculateDynamicsInternal(const TTime& t, double Iinput) {
 			ReadInputSpikes(t);
 
-
 			double Isyn = 0.0;
 			auto synIdIt = Synapses.abegin();
 		    while (synIdIt != Synapses.aend()) {
@@ -143,7 +161,7 @@ namespace NDnn {
 		        	++synIdIt;
 		        }
 		    }
-			double Irf = ReceptiveField.CalculateResponse(Iinput); 
+			double Irf = CallCalculateResponse(ReceptiveField, Iinput);
 			Neuron.CalculateDynamics(t, Irf, Isyn);
 
 		    Neuron.MutSpikeProbability() = Activation.SpikeProbability(Neuron.Membrane());
@@ -170,8 +188,7 @@ namespace NDnn {
 
 		void Prepare() {
 			ENSURE(Rand, "Random engine is not set");
-
-			ReceptiveField.Init(SpaceInfo);
+			CallInit<typename TConf::TNeuronReceptiveField>(ReceptiveField, SpaceInfo);
 			Neuron.Reset();
 		}
 
@@ -210,6 +227,7 @@ namespace NDnn {
 			serial(Neuron);
 			serial(Activation);
 			serial(Inner);
+			serial(ReceptiveField);
 			if (serial.IsInput()) {
 				Synapses.resize(Inner.SynapsesSize());
 				if (Inner.SynapsesSize() == 0) {
