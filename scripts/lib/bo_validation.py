@@ -6,8 +6,8 @@ Created on Sat Dec 19 15:51:02 2015
 """
 
 
-from bayesopt import ContinuousGaussModel 
-from bayesopt import ContinuousStudentTModel
+#from bayesopt import ContinuousGaussModel 
+#from bayesopt import ContinuousStudentTModel
 from matplotlib import pyplot as plt
 import random
 from multiprocessing import Process, Queue
@@ -21,30 +21,30 @@ def make_dir(*a):
         os.mkdir(pj(*a))
     return pj(*a)
 
-class ConcreteContinuousGaussModel(ContinuousGaussModel):
-    def __init__(self, ndim, params):
-        assert "Gaussian" in params["surr_name"]
-        ContinuousGaussModel.__init__(self, ndim, params)
-
-	def evaluateSample(self, Xin):
-         pass # mock for now
-
-class ConcreteContinuousStudentTModel(ContinuousStudentTModel):
-    def __init__(self, ndim, params):
-        assert "StudentT" in params["surr_name"]
-        ContinuousStudentTModel.__init__(self, ndim, params)
-
-	def evaluateSample(self, Xin):
-         pass # mock for now
-
-
-def create_model(ndim, params):
-    if "Gaussian" in params["surr_name"]:
-        return ConcreteContinuousGaussModel(ndim, params)
-    elif "StudentT" in params["surr_name"]:
-        return ConcreteContinuousStudentTModel(ndim, params)
-    else:
-        raise Exception("Unknown model: {}".format(params["surr_name"]))
+#class ConcreteContinuousGaussModel(ContinuousGaussModel):
+#    def __init__(self, ndim, params):
+#        assert "Gaussian" in params["surr_name"]
+#        ContinuousGaussModel.__init__(self, ndim, params)
+#
+#	def evaluateSample(self, Xin):
+#         pass # mock for now
+#
+#class ConcreteContinuousStudentTModel(ContinuousStudentTModel):
+#    def __init__(self, ndim, params):
+#        assert "StudentT" in params["surr_name"]
+#        ContinuousStudentTModel.__init__(self, ndim, params)
+#
+#	def evaluateSample(self, Xin):
+#         pass # mock for now
+#
+#
+#def create_model(ndim, params):
+#    if "Gaussian" in params["surr_name"]:
+#        return ConcreteContinuousGaussModel(ndim, params)
+#    elif "StudentT" in params["surr_name"]:
+#        return ConcreteContinuousStudentTModel(ndim, params)
+#    else:
+#        raise Exception("Unknown model: {}".format(params["surr_name"]))
 
 
 def generate_validation_ids(n, nfold):
