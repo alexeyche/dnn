@@ -5,6 +5,7 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/repeated_field.h>
 
+#include <dnn/util/act_vector.h>
 #include <dnn/util/log/log.h>
 
 namespace NPb = google::protobuf;;
@@ -42,6 +43,9 @@ namespace NDnn {
 
         template <typename T>
         bool operator() (TVector<T>& v, int protoField);
+
+        template <typename T>
+        bool operator() (TActVector<T>& v, int protoField);
 
         template <typename T>
         bool operator() (IProtoSerial<T>& v, int protoField);

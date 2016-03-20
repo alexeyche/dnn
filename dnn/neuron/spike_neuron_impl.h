@@ -57,7 +57,7 @@ namespace NDnn {
 	public:
 		void SerialProcess(TProtoSerial& serial) {
 			serial(s, NDnnProto::TLayer::kSpikeNeuronImplInnerStateFieldNumber);
-			serial(c, NDnnProto::TLayer::kSpikeNeuronConstFieldNumber);
+			serial(c, NDnnProto::TLayer::kSpikeNeuronFieldNumber);
 		}
 
 		const ui32& SynapsesSize() const {
@@ -110,20 +110,48 @@ namespace NDnn {
 	};
 
 	template <typename RF>
-	void CallInit(RF& rf, const TNeuronSpaceInfo& info) {
+	void CallInitReceptiveField(RF& rf, const TNeuronSpaceInfo& info) {
 		rf.Init(info);
 	}
 	
 	template <>
-	void CallInit<TEmpty>(TEmpty&, const TNeuronSpaceInfo&);
+	void CallInitReceptiveField<TEmpty>(TEmpty&, const TNeuronSpaceInfo&);
 
 	template <typename RF>
-	double CallCalculateResponse(RF& rf, double I) {
+	double CallCalculateResponseReceptiveField(RF& rf, double I) {
 		return rf.CalculateResponse(I);
 	}
 
 	template <>
-	double CallCalculateResponse<TEmpty>(TEmpty&, double);
+	double CallCalculateResponseReceptiveField<TEmpty>(TEmpty&, double);
+
+	template <typename LR, typename N>
+	struct TCallPrepareLearningRule {
+		void operator ()(LR& lr, N& neuron) {
+			lr.SetNeuronImpl(neuron);
+			lr.Reset();	
+		}
+	};
+	template <typename N>
+	struct TCallPrepareLearningRule<TEmpty, N> {
+		void operator ()(TEmpty&, N&) {}
+	};
+
+	template <typename LR>
+	void CallPropagateSynapseSpikeLearningRule(LR& lr, const TSynSpike& sp) {
+		lr.PropagateSynapseSpike(sp);
+	}
+
+	template <>
+	void CallPropagateSynapseSpikeLearningRule<TEmpty>(TEmpty&, const TSynSpike&);
+
+	template <typename LR>
+	void CallCalculateDynamicsLearningRule(LR& lr, const TTime& t) {
+		lr.CalculateDynamics(t);
+	}
+
+	template <>
+	void CallCalculateDynamicsLearningRule<TEmpty>(TEmpty&, const TTime&);
 
 
 	template <typename TNeuron, typename TConf>
@@ -131,7 +159,7 @@ namespace NDnn {
 	public:
 		using TNeuronType = TNeuron; 
 		using TSelf = TSpikeNeuronImpl<TNeuron, TConf>;
-		
+
 		void ReadInputSpikes(const TTime &t) {
 			while (Queue.InputSpikesLock.test_and_set(std::memory_order_acquire)) {}
 			while (!Queue.InputSpikes.empty()) {
@@ -140,6 +168,7 @@ namespace NDnn {
 		        auto& s = Synapses[sp.SynapseId];
 		        s.MutFired() = true;
 		    	s.PropagateSpike();
+		    	CallPropagateSynapseSpikeLearningRule(LearningRule, sp);
 
 		        Queue.InputSpikes.pop();
 		    }
@@ -154,14 +183,15 @@ namespace NDnn {
 		    while (synIdIt != Synapses.aend()) {
 		    	auto& synapse = Synapses[synIdIt];
 		    	double x = synapse.WeightedPotential();
-		    	if(fabs(x) < 0.0001) {
+			    	
+		    	if (fabs(x) < 0.0001) {
 		        	Synapses.SetInactive(synIdIt);
 		        } else {
-		        	Isyn += x;
+			    	Isyn += x;
 		        	++synIdIt;
 		        }
 		    }
-			double Irf = CallCalculateResponse(ReceptiveField, Iinput);
+			double Irf = CallCalculateResponseReceptiveField(ReceptiveField, Iinput);
 			Neuron.CalculateDynamics(t, Irf, Isyn);
 
 		    Neuron.MutSpikeProbability() = Activation.SpikeProbability(Neuron.Membrane());
@@ -169,6 +199,8 @@ namespace NDnn {
 		        Neuron.MutFired() = true;
 		        Neuron.PostSpikeDynamics(t);
 		    }
+
+		    CallCalculateDynamicsLearningRule(LearningRule, t);
 
 	   		for(auto syn_id_it = Synapses.abegin(); syn_id_it != Synapses.aend(); ++syn_id_it) {
 	        	auto& s = Synapses[syn_id_it];
@@ -188,7 +220,8 @@ namespace NDnn {
 
 		void Prepare() {
 			ENSURE(Rand, "Random engine is not set");
-			CallInit<typename TConf::TNeuronReceptiveField>(ReceptiveField, SpaceInfo);
+			CallInitReceptiveField<typename TConf::TNeuronReceptiveField>(ReceptiveField, SpaceInfo);
+			TCallPrepareLearningRule<typename TConf::template TNeuronLearningRule<TSelf>, TSelf>()(LearningRule, *this);
 			Neuron.Reset();
 		}
 
@@ -246,17 +279,26 @@ namespace NDnn {
 			for (ui32 synId = 0; synId < Inner.SynapsesSize(); ++synId) {
 				serial(Synapses[synId]);
 			}
+			serial(LearningRule);
 		}
-		const TOptional<typename TConf::TNeuronSynapse::TConst::TProto>& GetPredefinedSynapseConst() const {
+		const auto& GetPredefinedSynapseConst() const {
 			return PredefineSynapseConst;
 		}
 
-		const TActVector<typename TConf::TNeuronSynapse>& GetSynapses() const {
+		const auto& GetSynapses() const {
+			return Synapses;
+		}
+
+		auto& GetMutSynapses() {
 			return Synapses;
 		}
 
 		const double& GetAxonDelay() const {
 			return Inner.GetAxonDelay();
+		}
+
+		const auto& GetLearningRule() const {
+			return LearningRule;
 		}
 
 	private:
@@ -268,6 +310,8 @@ namespace NDnn {
 
 		typename TConf::TNeuronActivationFunction Activation;
 		typename TConf::TNeuronReceptiveField ReceptiveField;
+		typename TConf::template TNeuronLearningRule<TSelf> LearningRule;
+
 		TActVector<typename TConf::TNeuronSynapse> Synapses;
 
 		TSpikeNeuronImplInner Inner;

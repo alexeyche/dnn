@@ -19,6 +19,9 @@ message TAsyncSpikeQueue {
     optional TNeuronSpaceInfo Info = 1;
 }
 
+message TCallPrepareLearningRule {
+}
+
 message TSpikeNeuronConst {
     optional double AxonDelay = 1;
 }

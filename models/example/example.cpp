@@ -8,33 +8,54 @@
 #include <dnn/synapse/synapse.h>
 #include <dnn/protos/options.pb.h>
 #include <dnn/receptive_field/gauss.h>
+#include <dnn/learning_rule/stdp.h>
+#include <dnn/activation/sigmoid.h>
 
 using namespace NDnn;
 
 int main(int argc, const char** argv) {
     auto opts = InitOptions(argc, argv, "TestModel");
+    if (opts.NoLearning) {
+        auto sim = BuildModel<
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoLearning, TGaussReceptiveField>>,
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoLearning>>
+        >(opts);
 
-    auto sim = BuildModel<
-        TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TGaussReceptiveField>>,
-        TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm>>
-    >(opts);
+        sim.Run();  
 
-    sim.ListenBasicStats<0, 55>(0, 1000);
-    sim.ListenBasicStats<1, 55>(0, 1000);
-    sim.ListenStat("Synapse", [&]() { return sim.GetSynapse<1, 10, 10>().Potential(); }, 0, 1000);
+        if (opts.OutputSpikesFile) {
+            sim.SaveSpikes(*opts.OutputSpikesFile);
+        }    
+        if (opts.ModelSave) {
+            sim.SaveModel(*opts.ModelSave);
+        }
 
-    sim.Run();
+    } else {
+        auto sim = BuildModel<
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoLearning, TGaussReceptiveField>>,
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TStdp>>
+        >(opts);
 
-    if (opts.OutputSpikesFile) {
-        sim.SaveSpikes(*opts.OutputSpikesFile);
-    }
+        if (opts.StatFile) {
+            sim.ListenBasicStats<0, 55>(0, 1000);
+            sim.ListenBasicStats<1, 55>(0, 1000);
+            sim.ListenStat("Synapse", [&]() { return sim.GetSynapse<1, 10, 10>().Potential(); }, 0, 1000);
+            sim.ListenStat("StdpY", [&]() { return sim.GetLearningRule<1, 10>().State().Y; }, 0, 1000);
+            sim.ListenStat("StdpX", [&]() { return sim.GetLearningRule<1, 10>().State().X.Get(10); }, 0, 1000);
+            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 10, 10>().Weight(); }, 0, 1000);    
+        }
 
-    if (opts.StatFile) {
-        sim.SaveStat(*opts.StatFile);
-    }
+        sim.Run();
+        if (opts.OutputSpikesFile) {
+            sim.SaveSpikes(*opts.OutputSpikesFile);
+        }    
+        if (opts.StatFile) {
+           sim.SaveStat(*opts.StatFile);
+        }
+        if (opts.ModelSave) {
+            sim.SaveModel(*opts.ModelSave);
+        }
 
-    if (opts.ModelSave) {
-        sim.SaveModel(*opts.ModelSave);
     }
     return 0;
 }

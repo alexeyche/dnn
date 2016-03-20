@@ -35,6 +35,10 @@ namespace NDnn {
 			return InnerState.Fired;
 		}
 
+		const bool& Fired() const {
+			return InnerState.Fired;
+		}
+
 		double& MutAmplitude() {
 			return InnerState.Amplitude;
 		}
@@ -61,6 +65,10 @@ namespace NDnn {
 		}
 
 		double& MutWeight() {
+			return InnerState.Weight;
+		}
+		
+		const double& Weight() const {
 			return InnerState.Weight;
 		}
 

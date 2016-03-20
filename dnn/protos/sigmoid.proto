@@ -1,0 +1,8 @@
+package NDnnProto;
+
+
+message TSigmoidConst {
+    optional double Threshold = 1;
+    optional double Slope = 2;
+}
+

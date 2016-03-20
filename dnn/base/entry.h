@@ -18,7 +18,9 @@ namespace NDnn {
 		TOptional<TString> InputTimeSeries;
 		TOptional<TString> OutputSpikesFile;
 		TOptional<TString> StatFile;
+		TOptional<double> Tmax;
 		TString Name;
+		bool NoLearning;
 	};
 
 	TModelOptions InitOptions(const int argc, const char** argv, TString name, std::set<int> fields = {});
@@ -59,6 +61,9 @@ namespace NDnn {
 
 	    if (options.Jobs) {
 	    	sim.SetJobs(*options.Jobs);
+	    }
+	    if (options.Tmax) {
+	    	sim.SetDuration(*options.Tmax);
 	    }
 	    return sim;
 	}

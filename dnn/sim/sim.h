@@ -89,6 +89,12 @@ namespace NDnn {
 			return std::get<layerId>(Layers)[neuronId].GetNeuron();
 		}
 
+		template <size_t layerId, size_t neuronId>
+		auto GetLearningRule() {
+			return std::get<layerId>(Layers)[neuronId].GetLearningRule();
+		}
+
+
 		template <size_t layerId, size_t neuronId, size_t synapseId>
 		auto GetSynapse() {
 			const auto& synVec = std::get<layerId>(Layers)[neuronId].GetSynapses();
@@ -124,6 +130,10 @@ namespace NDnn {
 
 		void SetJobs(ui32 jobs) {
 			Conf.Jobs = jobs;
+		}
+
+		void SetDuration(double duration) {
+			Conf.Duration = duration;
 		}
 
 		ui32 LayersSize() const {
@@ -167,10 +177,18 @@ namespace NDnn {
 					requiredDimSize += layer.Size();	
 				}
 			});
-			ENSURE(ts.Dim() == requiredDimSize, "Input time series is not statisfy to input layer size: " << ts.Dim() << " != " << requiredDimSize);
-			Network.GetMutSpikesList().Info = ts.Info;
 			Conf.Duration = ts.Length();
-			Dispatcher.SetInputTimeSeries(std::forward<const TTimeSeries>(ts));
+			Network.GetMutSpikesList().Info = ts.Info;
+			if (ts.Dim() == 1) {
+				L_DEBUG << "Got one dimensional time series, dnn will duplicate data on " << requiredDimSize << " dimensions";
+				TTimeSeries dupTs(ts);
+				dupTs.MultiplyOnDimensions(requiredDimSize);
+				Dispatcher.SetInputTimeSeries(std::forward<const TTimeSeries>(dupTs));
+			} else {
+				ENSURE(ts.Dim() == requiredDimSize, "Input time series is not statisfy to input layer size: " << ts.Dim() << " != " << requiredDimSize);
+				Dispatcher.SetInputTimeSeries(std::forward<const TTimeSeries>(ts));	
+			}
+			
 		}
 
 		const TSpikesList& GetSpikes() const {

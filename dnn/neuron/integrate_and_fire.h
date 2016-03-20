@@ -9,7 +9,7 @@
 namespace NDnn {
 
 	struct TIntegrateAndFireConst: public IProtoSerial<NDnnProto::TIntegrateAndFireConst> {
-		static const auto ProtoFieldNumber = NDnnProto::TLayer::kIntegrateAndFireConstFieldNumber;
+		static const auto ProtoFieldNumber = NDnnProto::TLayer::kIntegrateAndFireFieldNumber;
 
         void SerialProcess(TProtoSerial& serial) override final {
             serial(TauMem);

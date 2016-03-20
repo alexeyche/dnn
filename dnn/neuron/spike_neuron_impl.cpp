@@ -3,10 +3,16 @@
 namespace NDnn {
 
 	template <>
-	void CallInit<TEmpty>(TEmpty&, const TNeuronSpaceInfo&) {}
+	void CallInitReceptiveField<TEmpty>(TEmpty&, const TNeuronSpaceInfo&) {}
 
 	template <>
-	double CallCalculateResponse<TEmpty>(TEmpty&, double) { return 0.0; }
+	double CallCalculateResponseReceptiveField<TEmpty>(TEmpty&, double) { return 0.0; }
+
+	template <>
+	void CallPropagateSynapseSpikeLearningRule<TEmpty>(TEmpty&, const TSynSpike&) {}
+
+	template <>
+	void CallCalculateDynamicsLearningRule<TEmpty>(TEmpty&, const TTime&) {}
 
 
 } // namespace NDnn

@@ -8,7 +8,7 @@
 namespace NDnn {
 
     struct TIdentReceptiveFieldConst: public IProtoSerial<NDnnProto::TIdentReceptiveFieldConst> {
-        static const auto ProtoFieldNumber = NDnnProto::TLayer::kIdentReceptiveFieldConstFieldNumber;
+        static const auto ProtoFieldNumber = NDnnProto::TLayer::kIdentReceptiveFieldFieldNumber;
 
         void SerialProcess(TProtoSerial& serial) override final {}
     };

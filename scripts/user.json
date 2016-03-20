@@ -8,7 +8,7 @@
         "TIMED_PATTERN_LENGTH_TEST" : "10000"
     },
     "alexeyche" : {
-        "EVAL_TYPE" : "fisher",
+        "EVAL_TYPE" : "linear_classifier",
         "TIMED_PATTERN_LENGTH" : "60000",
         "TIMED_PATTERN_LENGTH_TEST" : "60000"
     }

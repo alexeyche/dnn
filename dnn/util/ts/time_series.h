@@ -199,6 +199,12 @@ namespace NDnn {
             return ts_chopped;
         }
 
+        void MultiplyOnDimensions(ui32 dims) {
+            ENSURE(Dim() == 1, "Can't multiply non one dimensional time series");
+            Data.resize(dims, Data[0]);
+            Info.DimSize = Data.size();
+        }
+
         void SerialProcess(TProtoSerial& serial) {
             serial(Info);
             serial(Data);

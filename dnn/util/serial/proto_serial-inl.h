@@ -64,6 +64,18 @@ namespace NDnn {
         return true;
     }
 
+    template <typename T>
+    bool TProtoSerial::operator() (TActVector<T>& v, int protoField) {
+        CHECK_FIELD();
+        if (IsInput()) {
+            v.resize(Refl->FieldSize(Message, GetFieldDescr(protoField)));
+        }
+        for (int idx=0; idx < v.size(); ++idx) {
+            SerialRepeated(v.Get(idx), idx, protoField);
+        }
+        return true;
+    }
+
 
     #undef CHECK_FIELD
 

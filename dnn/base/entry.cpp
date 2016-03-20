@@ -53,12 +53,21 @@ namespace NDnn {
 	    if (options.has_jobs()) {
 	    	opts.Jobs = options.jobs();
 	    }
+	    
 	    if (options.has_load()) {
 	    	opts.ModelLoad = options.load();
 	    }
 	    
 	    if (options.has_save()) {
 	    	opts.ModelSave = options.save();
+	    }
+	    
+	    if (options.has_tmax()) {
+	    	opts.Tmax = options.tmax();
+	    }
+
+	    if (options.has_nolearning()) {
+	    	opts.NoLearning = true;
 	    }
 	    return opts;
 	}

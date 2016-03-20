@@ -8,7 +8,7 @@
 namespace NDnn {
 
     struct TGaussReceptiveFieldConst: public IProtoSerial<NDnnProto::TGaussReceptiveFieldConst> {
-        static const auto ProtoFieldNumber = NDnnProto::TLayer::kGaussReceptiveFieldConstFieldNumber;
+        static const auto ProtoFieldNumber = NDnnProto::TLayer::kGaussReceptiveFieldFieldNumber;
 
         void SerialProcess(TProtoSerial& serial) override final {
             serial(Sigma);
@@ -27,7 +27,7 @@ namespace NDnn {
     class TGaussReceptiveField : public TReceptiveField<TGaussReceptiveFieldConst> {
     public:
         void Init(const TNeuronSpaceInfo& info) {
-            Center = (c.HighLevel - c.LowLevel) * static_cast<double>(info.LocalId)/info.LayerSize;
+            Center = c.LowLevel + (c.HighLevel - c.LowLevel) * static_cast<double>(info.LocalId)/info.LayerSize;
         }
 
         double CalculateResponse(double I) {

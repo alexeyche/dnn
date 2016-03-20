@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
     activation.cpp
     determ.cpp
+    sigmoid.cpp
 )
 
 set(DIR_SRCS)

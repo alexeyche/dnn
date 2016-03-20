@@ -49,7 +49,7 @@ COPY_PICS = convBool(Sys.getenv('COPY_PICS'), FALSE)
 OPEN_PIC = convBool(Sys.getenv('OPEN_PIC'), TRUE)
 LAYER_MAP = convStr(Sys.getenv('LAYER_MAP'), NULL)
 SAVE_PIC_IN_FILES = convBool(Sys.getenv('SAVE_PIC_IN_FILES'), TRUE)
-EVAL = convBool(Sys.getenv('EVAL'), FALSE)
+EVAL = convBool(Sys.getenv('EVAL'), TRUE)
 EVAL_PROC = convStr(Sys.getenv('EVAL_PROC'), "Epsp(10)")
 EVAL_KERN = convStr(Sys.getenv('EVAL_KERN'), "RbfDot(0.05)")
 EVAL_JOBS = convNum(Sys.getenv('EVAL_JOBS'), 1)
@@ -347,6 +347,38 @@ if(EVAL) {
           pic_files = c(pic_files, eval_debug_pic)
         }
       }
+    if(EVAL_TYPE == "linear_classifier") {
+        input_neurons = 100
+        rates = NULL
+        labs = NULL
+        for (sp in chop.spikes.list(spikes)) {
+            rates = rbind(rates, sapply(sp$values[-(1:input_neurons)], length)/sp$info[[1]]$duration)
+            labs = c(labs, sp$info[[1]]$label)
+        }
+        K = rates %*% t(rates)
+        colnames(K) <- labs
+        c(y, M, N, A) := KFD(K)
+        metric = -tr(M)/tr(N)
+        
+        ans = K %*% y[, 1:2]
+        eval_debug_pic = sprintf("%s/4_%s", tmp_d, pfx_f("eval.png"))
+        if(SAVE_PIC_IN_FILES) png(eval_debug_pic, width=1024, height=768)
+        
+        par(mfrow=c(1,2))
+        
+        metrics_str = sprintf("%f", metric)
+        plot(Re(ans[,1]), col=as.integer(colnames(K)), main=metrics_str) 
+        plot(Re(ans), col=as.integer(colnames(K)))        
+        
+        if(SAVE_PIC_IN_FILES) {
+            dev.off()
+            write(paste("Eval debug pic filename: ", eval_debug_pic), stderr())
+            pic_files = c(pic_files, eval_debug_pic)
+        }
+        par(mfrow=c(1,1))
+        
+        cat(metric, "\n") 
+    }
 }
 
 # if ( (!is.null(input))&&(!is.null(model))&&(!is.null(net)) ) {

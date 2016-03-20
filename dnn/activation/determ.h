@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "activation.h"
 
 #include <dnn/util/serial/proto_serial.h>
@@ -9,7 +8,7 @@
 namespace NDnn {
 
     struct TDetermConst: public IProtoSerial<NDnnProto::TDetermConst> {
-        static const auto ProtoFieldNumber = NDnnProto::TLayer::kDetermConstFieldNumber;
+        static const auto ProtoFieldNumber = NDnnProto::TLayer::kDetermFieldNumber;
 
         void SerialProcess(TProtoSerial& serial) override final {
             serial(Threshold);
@@ -34,5 +33,4 @@ namespace NDnn {
     };
 
 
-
-}
+} // namespace NDnn

@@ -10,7 +10,7 @@
 namespace NDnn {
 
     struct TBasicSynapseConst: public IProtoSerial<NDnnProto::TBasicSynapseConst> {
-        static const auto ProtoFieldNumber = NDnnProto::TLayer::kBasicSynapseConstFieldNumber;
+        static const auto ProtoFieldNumber = NDnnProto::TLayer::kBasicSynapseFieldNumber;
 
         void SerialProcess(TProtoSerial& serial) override {
             serial(PspDecay);

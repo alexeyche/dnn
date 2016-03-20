@@ -7,7 +7,7 @@ namespace NDnn {
 
 	TConnectionPtr BuildConnection(const NDnnProto::TConnection& conn, TRandEngine& rand) {
 		TConnectionPtr out;
-		if (conn.has_stochasticconst()) {
+		if (conn.has_stochastic()) {
 			ENSURE(!out, "Got duplicates of connection type in connection specification: " << conn.DebugString());
 			out = MakeShared(new TStochastic());
 			out->Deserialize(conn);

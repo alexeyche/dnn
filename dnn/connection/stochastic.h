@@ -6,7 +6,7 @@
 namespace NDnn {
 
     struct TStochasticConst : public IProtoSerial<NDnnProto::TStochasticConst> {
-        static const auto ProtoFieldNumber = NDnnProto::TConnection::kStochasticConstFieldNumber;
+        static const auto ProtoFieldNumber = NDnnProto::TConnection::kStochasticFieldNumber;
 
         void SerialProcess(TProtoSerial& serial) {
             serial(Prob);

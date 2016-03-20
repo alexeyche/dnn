@@ -61,7 +61,9 @@ class TDnnSim(object):
         self.prepare_data = kwargs.get("prepare_data", False)
         self.evaluation_data = kwargs.get("evaluation_data", None)
         self.no_learning = kwargs.get("no_learning", False)
-
+        if self.evaluation_data:
+            self.evaluation = True
+            
         logFormatter = logging.Formatter("%(asctime)s [%(levelname)s]  %(message)-100s")
         rootLogger = logging.getLogger()
         rootLogger.setLevel(logging.DEBUG)
@@ -80,7 +82,7 @@ class TDnnSim(object):
         if not os.path.exists(self.working_dir):
             os.makedirs(self.working_dir)
         else:
-            ask = True
+            ask = not kwargs.get("force")
         
         if not self.slave:
             last = os.path.join(self.runs_dir, "..", "last")
@@ -133,7 +135,7 @@ class TDnnSim(object):
         cmd += list(self.get_opt("jobs")) 
 
         if not self.T_max is None:
-            cmd += list(self.get_opt("T_max"))
+            cmd += ["--tmax", self.T_max]
 
         return cmd
 
@@ -314,6 +316,9 @@ def main(argv):
     parser.add_argument('--slave',
                         action='store_true',
                         help='Run script as slave and print only evaluation score')
+    parser.add_argument('-f', '--force',
+                        action='store_true',
+                        help="Don't ask questions, just use directory")
     parser.add_argument('-r', 
                         '--runs-dir', 
                         required=False,
@@ -365,7 +370,7 @@ def main(argv):
         "inspection" : not args.no_insp,
         "slave" : args.slave,
         "evaluation_data" : args.evaluation_data,
-        #"no_learning" : args.no_learning,
+        "force" : args.force,
     }
     TDnnSim(**args).run()
     

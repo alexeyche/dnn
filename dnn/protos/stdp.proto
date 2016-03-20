@@ -1,0 +1,16 @@
+package NDnnProto;
+
+
+message TStdpState {
+    optional double Y = 1;
+    repeated double X = 2;
+}
+
+message TStdpConst {
+    optional double TauPlus = 1;
+    optional double TauMinus = 2;
+    optional double Aplus = 3;
+    optional double Aminus = 4;
+    optional double LearningRate = 5;
+}
+

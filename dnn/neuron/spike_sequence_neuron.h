@@ -9,7 +9,7 @@
 namespace NDnn {
 
     struct TSpikeSequenceNeuronConst: public IProtoSerial<NDnnProto::TSpikeSequenceNeuronConst> {
-        static const auto ProtoFieldNumber = NDnnProto::TLayer::kSpikeSequenceNeuronConstFieldNumber;
+        static const auto ProtoFieldNumber = NDnnProto::TLayer::kSpikeSequenceNeuronFieldNumber;
 
         void SerialProcess(TProtoSerial& serial) override final {
             serial(Dt);
