@@ -213,10 +213,10 @@ namespace NDnn {
 		void RunWorkerRoutine(L& layer, ui32 idxFrom, ui32 idxTo, TSpinningBarrier& barrier, bool masterThread);
 
 		template <typename L>
-		void SimLayer(L& layer, ui32 jobs, TVector<std::thread>& threads, TSpinningBarrier& barrier, bool masterThread);
+		void SimLayer(L& layer, ui32 jobs, TVector<std::thread>& threads, TVector<std::exception_ptr>& errors, std::mutex& errorsMut, TSpinningBarrier& barrier, bool masterThread);
 
 		template <typename L>
-		static void RunWorker(TSelf& self, L& layer, ui32 idxFrom, ui32 idxTo, TSpinningBarrier& barrier, bool masterThread);
+		static void RunWorker(TSelf& self, L& layer, ui32 idxFrom, ui32 idxTo, TSpinningBarrier& barrier, bool masterThread, TVector<std::exception_ptr>& errors, std::mutex& errorsMut);
 
 		void CreateConnections(const NDnnProto::TConfig& config);
 

@@ -9,8 +9,7 @@ namespace NDnn {
     public:
         TSpinningBarrier (unsigned int _n) : n (_n), bar(0), passed(0) {}
 
-        void Wait()
-        {
+        void Wait() {
             char passed_old = passed.load(std::memory_order_relaxed);
             
             if(passed_old < 0) {
@@ -26,7 +25,8 @@ namespace NDnn {
                 // Not the last thread. Wait others.
                 while(true) {
                     char passed_new = passed.load(std::memory_order_relaxed);
-                    if((passed_new != passed_old)||(passed_new<0)) {
+                    
+                    if ((passed_new != passed_old)||(passed_new<0)) {
                         break;
                     }
                 }

@@ -18,8 +18,8 @@ namespace NDnn {
         }
 
 
-        double Threshold = 0.0;
-        double Slope = 1.0;
+        double Threshold = 0.15;
+        double Slope = 50.0;
     };
 
 

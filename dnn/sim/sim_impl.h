@@ -4,14 +4,16 @@ namespace NDnn {
 
 	template <typename ... T>
 	void TSim<T...>::Run() {
-		L_DEBUG << "Going to run simulation for " << Conf.Duration << " ms in " << Conf.Jobs << " jobs";
+		L_DEBUG << "Going to run simulation of " << LayersSize() << " layers, for " << Conf.Duration << " ms in " << Conf.Jobs << " jobs";
 		TVector<TIndexSlice> perLayerJobs = DispatchOnThreads(Conf.Jobs, LayersSize());
-
+		
 	 	TSpinningBarrier barrier(Conf.Jobs);
 		TVector<std::thread> threads;
+		std::mutex errorsMut;
+		TVector<std::exception_ptr> errors;
 
 		ForEachEnumerate(Layers, [&](ui32 layerId, auto& layer) {
-			SimLayer(layer, perLayerJobs[layerId].Size, threads, barrier, layerId == 0 ? true : false);
+			SimLayer(layer, perLayerJobs[layerId].Size, threads, errors, errorsMut, barrier, layerId == 0 ? true : false);
 		});
 
 		std::thread dispatcherThread = std::thread([&]() {
@@ -22,6 +24,10 @@ namespace NDnn {
 		}
 		Dispatcher.ShutDown();
 		dispatcherThread.join();
+		
+		for (const auto& err: errors) {
+			std::rethrow_exception(err);
+		}
 
 		if (Options.OutputSpikesFile) {
 			L_DEBUG << "Saving spikes in " << *Options.OutputSpikesFile;
@@ -40,7 +46,7 @@ namespace NDnn {
 
 	template <typename ...T>
 	template <typename L>
-	void TSim<T...>::SimLayer(L& layer, ui32 jobs, TVector<std::thread>& threads, TSpinningBarrier& barrier, bool masterThread) {
+	void TSim<T...>::SimLayer(L& layer, ui32 jobs, TVector<std::thread>& threads, TVector<std::exception_ptr>& errors, std::mutex& errorsMut, TSpinningBarrier& barrier, bool masterThread) {
 		TVector<TIndexSlice> layerJobSlices = DispatchOnThreads(layer.Size(), jobs);
 		for (ui32 sliceId = 0; sliceId < layerJobSlices.size(); ++sliceId) {
 			const TIndexSlice& slice = layerJobSlices[sliceId];
@@ -51,8 +57,11 @@ namespace NDnn {
 				slice.From,
 				slice.To,
 				std::ref(barrier),
-				(masterThread && (sliceId == 0)) ? true : false
+				(masterThread && (sliceId == 0)) ? true : false,
+				std::ref(errors),
+				std::ref(errorsMut)
 			);
+
 		}
 	}
 
@@ -63,12 +72,14 @@ namespace NDnn {
 
 	template <typename ...T>
 	template <typename L>
-	void TSim<T...>::RunWorker(TSelf& self, L& layer, ui32 idxFrom, ui32 idxTo, TSpinningBarrier& barrier, bool masterThread) {
+	void TSim<T...>::RunWorker(TSelf& self, L& layer, ui32 idxFrom, ui32 idxTo, TSpinningBarrier& barrier, bool masterThread, TVector<std::exception_ptr>& errors, std::mutex& errorsMut) {
 		try {
 			self.RunWorkerRoutine<L>(layer, idxFrom, idxTo, barrier, masterThread);
 		} catch (const TDnnException& e) {
-			L_DEBUG << "Got error in layer " << layer.GetId() << ", neurons " << idxFrom << ":" << idxTo << ", thread: " << e.what();
+			L_ERROR << "Got error in layer " << layer.GetId() << ", neurons " << idxFrom << ":" << idxTo << ", thread: " << e.what();
 			barrier.Fail();
+			TGuard guard(errorsMut);
+			errors.emplace_back(std::current_exception());
 		} catch (const TDnnInterrupt& e) {
 			// pass
 		}
@@ -98,6 +109,7 @@ namespace NDnn {
 
 #endif
 //======= END =====================================================================================
+		barrier.Wait();
 
 		for (; t < Conf.Duration; ++t) {
 			for(ui32 neuronId=idxFrom; neuronId<idxTo; ++neuronId) {
@@ -121,7 +133,7 @@ namespace NDnn {
 
 			size_t cur_time = std::time(nullptr);
 			if(cur_time - start_time>5) {
-							L_DEBUG << "Sim, perf start: " << ((double)(t.T-sim_time)/1000.0)/((double)(cur_time - start_time)) << " " << (double)(t.T-sim_time)/1000.0 << " / " << (double)(cur_time - start_time);
+				L_DEBUG << "Sim, perf start: " << ((double)(t.T-sim_time)/1000.0)/((double)(cur_time - start_time)) << " " << (double)(t.T-sim_time)/1000.0 << " / " << (double)(cur_time - start_time);
 				start_time = cur_time;
 				sim_time = t.T;
 			}

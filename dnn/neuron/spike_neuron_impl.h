@@ -194,7 +194,7 @@ namespace NDnn {
 			Neuron.CalculateDynamics(t, Irf, Isyn);
 
 		    Neuron.MutSpikeProbability() = Activation.SpikeProbability(Neuron.Membrane());
-			if(Neuron.SpikeProbability() > Rand->GetUnif()) {
+			if(t.Dt * Neuron.SpikeProbability() > Rand->GetUnif()) {
 		        Neuron.MutFired() = true;
 		        Neuron.PostSpikeDynamics(t);
 		    }

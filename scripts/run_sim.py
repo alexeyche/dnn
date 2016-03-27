@@ -56,7 +56,7 @@ class TDnnSim(object):
         self.runs_dir = kwargs.get("runs_dir", self.RUNS_DIR)
         self.inspection = kwargs.get("inspection", True)
         self.working_dir = kwargs.get("working_dir", None)
-        self.evaluation = kwargs.get("evaluation", False)
+        self.evaluation = kwargs.get("evaluation", True)
         self.slave = kwargs.get("slave", False)
         self.prepare_data = kwargs.get("prepare_data", False)
         self.evaluation_data = kwargs.get("evaluation_data", None)
@@ -79,10 +79,11 @@ class TDnnSim(object):
         else:
             self.working_dir = os.path.realpath(os.path.expanduser(self.working_dir))
         ask = False
+        force = kwargs.get("force")
         if not os.path.exists(self.working_dir):
             os.makedirs(self.working_dir)
         else:
-            ask = not kwargs.get("force")
+            ask = not force
         
         if not self.slave:
             last = os.path.join(self.runs_dir, "..", "last")
@@ -96,6 +97,9 @@ class TDnnSim(object):
 
         if ask:
             self.continue_in_wd()
+        
+        if force:
+            self.clean()
 
         self.stat = kwargs.get("stat", False)
         self.epochs = kwargs.get("epochs", 1)
@@ -196,7 +200,7 @@ class TDnnSim(object):
                 "--input-time-series", self.input_ts
             ]
 
-        return { "cmd" : cmd, "print_root_log_on_fail" : self.slave }
+        return { "cmd" : cmd, "print_root_log_on_fail" : self.slave, "stdout": pj(self.working_dir, "{}.log".format(self.current_epoch)) }
     
     def construct_inspect_cmd(self):
         env = {
@@ -247,6 +251,12 @@ class TDnnSim(object):
                 print final_score
         logging.info("Done")
 
+    def clean(self):
+        logging.info("Cleaning {} ... ".format(self.working_dir))
+        for f in os.listdir(self.working_dir):
+            if f != TDnnSim.LOG_FILE_BASE:
+                os.remove(os.path.join(self.working_dir, f))
+
     def continue_in_wd(self):
         max_ep = 0
         for f in os.listdir(self.working_dir):
@@ -254,13 +264,8 @@ class TDnnSim(object):
             if len(f_spl) > 1 and "model" in f:
                 max_ep = max(max_ep, int(f_spl[0]))
         if max_ep>0:
-            def clean():
-                logging.info("Cleaning %s ... " % self.working_dir)
-                for f in os.listdir(self.working_dir):
-                    if f != TDnnSim.LOG_FILE_BASE:
-                        os.remove(os.path.join(self.working_dir, f))
             if self.slave:
-                clean()
+                self.clean()
                 return
             while True:
                 ans = raw_input("%s already exists and %s epochs was done here. Continue simulation? (y/n): " % (os.path.basename(self.working_dir), max_ep))
@@ -268,7 +273,7 @@ class TDnnSim(object):
                     self.current_epoch = max_ep + 1
                     break
                 elif ans in ["N", "n"]:
-                    clean()
+                    self.clean()
                     break                        
                 else:
                     logging.warning("incomprehensible answer")

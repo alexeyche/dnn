@@ -64,21 +64,25 @@ def pushd(newDir):
     os.chdir(previousDir)
 
 
-def run_proc(cmd, env = {}, print_root_log_on_fail=False):
+def run_proc(cmd, env = {}, print_root_log_on_fail=False, stdout=None, stderr=None):
     osenv = os.environ
     osenv.update(env)
 
     if len(env) > 0:
         logging.info("env: {}".format(env))
     logging.info(" ".join(cmd))
-    p = sub.Popen(cmd, stdout=sub.PIPE, stderr=sub.PIPE, env=osenv)
-    stdout, stderr = p.communicate()
+    p = sub.Popen(cmd, stdout=open(stdout, "w") if stdout else sub.PIPE, stderr = open(stderr, "w") if stderr else sub.PIPE, env=osenv)
+    stdout_str, stderr_str = p.communicate()
     if p.returncode != 0:
         logging.error("process failed:")
         if stdout:
-            logging.error("\n\t"+stdout)
+            stdout_str = open(stdout).read()
         if stderr:
-            logging.error("\n\t"+stderr)
+            stderr_str = open(stderr).read()
+        if stdout_str:
+            logging.error("\n\t"+stdout_str)
+        if stderr_str:
+            logging.error("\n\t"+stderr_str)
         if print_root_log_on_fail:
             root_log = logging.getLogger()
             logs = [ h.stream.name for h in root_log.handlers if isinstance(h, logging.FileHandler) ]

@@ -54,7 +54,7 @@ EVAL_PROC = convStr(Sys.getenv('EVAL_PROC'), "Epsp(10)")
 EVAL_KERN = convStr(Sys.getenv('EVAL_KERN'), "RbfDot(0.05)")
 EVAL_JOBS = convNum(Sys.getenv('EVAL_JOBS'), 1)
 EVAL_VERBOSE = convBool(Sys.getenv('EVAL_VERBOSE'), TRUE)
-EVAL_TYPE = convStr(Sys.getenv('EVAL_TYPE'), "fisher")
+EVAL_TYPE = convStr(Sys.getenv('EVAL_TYPE'), "linear_classifier")
 
 
 if(length(grep("RStudio", args))>0) {

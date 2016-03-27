@@ -32,9 +32,9 @@ int main(int argc, const char** argv) {
         if (opts.StatFile) {
             sim.ListenBasicStats<0, 55>(0, 1000);
             sim.ListenBasicStats<1, 55>(0, 1000);
-            sim.ListenStat("Synapse", [&]() { return sim.GetSynapse<1, 10, 10>().Potential(); }, 0, 1000);
             sim.ListenStat("StdpY", [&]() { return sim.GetLearningRule<1, 10>().State().Y; }, 0, 1000);
             sim.ListenStat("StdpX", [&]() { return sim.GetLearningRule<1, 10>().State().X.Get(10); }, 0, 1000);
+            sim.ListenStat("Synapse", [&]() { return sim.GetSynapse<1, 10, 10>().Potential(); }, 0, 1000);
             sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 10, 10>().Weight(); }, 0, 1000);    
         }
 

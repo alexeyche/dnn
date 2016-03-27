@@ -32,7 +32,50 @@ Layer {
 		Slope: 50.0
 	}
 	Stdp {
-		LearningRate: 0.001
+		TauMinus: 50.0
+		LearningRate: 1e-04
+	}
+}
+Layer {
+	IntegrateAndFire {
+		TauMem: 10
+		TauRef: 2
+	}
+	Sigmoid {
+		Threshold: 0.15
+		Slope: 50.0
+	}
+	Stdp {
+		TauMinus: 75.0
+		LearningRate: 1e-03
+	}
+}
+Layer {
+	IntegrateAndFire {
+		TauMem: 10
+		TauRef: 2
+	}
+	Sigmoid {
+		Threshold: 0.15
+		Slope: 50.0
+	}
+	Stdp {
+		TauMinus: 75.0
+		LearningRate: 1e-03
+	}
+}
+Layer {
+	IntegrateAndFire {
+		TauMem: 10
+		TauRef: 2
+	}
+	Sigmoid {
+		Threshold: 0.15
+		Slope: 50.0
+	}
+	Stdp {
+		TauMinus: 75.0
+		LearningRate: 1e-03
 	}
 }
 Connection {
@@ -44,6 +87,48 @@ Connection {
 }
 Connection {
 	From: 0 To: 1
+	Stochastic {
+		Prob: 0.25
+	}
+	Weight: -0.04
+}
+Connection {
+	From: 1 To: 2
+	Stochastic {
+		Prob: 0.25
+	}
+	Weight: 0.04
+}
+Connection {
+	From: 1 To: 2
+	Stochastic {
+		Prob: 0.25
+	}
+	Weight: -0.04
+}
+Connection {
+	From: 2 To: 3
+	Stochastic {
+		Prob: 0.25
+	}
+	Weight: 0.04
+}
+Connection {
+	From: 2 To: 3
+	Stochastic {
+		Prob: 0.25
+	}
+	Weight: -0.04
+}
+Connection {
+	From: 3 To: 4
+	Stochastic {
+		Prob: 0.25
+	}
+	Weight: 0.04
+}
+Connection {
+	From: 3 To: 4
 	Stochastic {
 		Prob: 0.25
 	}
