@@ -32,6 +32,7 @@ namespace NDnn {
 	}
 
 	void TStatGatherer::ListenStat(const TString& name, std::function<double()> cb, ui32 from, ui32 to) {
+		L_DEBUG << "Listening statistics " << name << " from " << from  << " to " << to; 
 		Stats.emplace_back(name, cb, from, to);
 	}
 

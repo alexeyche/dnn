@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 set(DIRS
     example
+    stdp_model
 )
 
 foreach(dir ${DIRS})

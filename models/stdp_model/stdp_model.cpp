@@ -22,7 +22,6 @@ int main(int argc, const char** argv) {
         >(opts);
 
         sim.Run();
-
     } else {
         auto sim = BuildModel<
             TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoLearning, TGaussReceptiveField>>,
@@ -39,7 +38,6 @@ int main(int argc, const char** argv) {
         }
 
         sim.Run();
-
     }
     return 0;
 }

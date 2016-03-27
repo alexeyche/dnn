@@ -1,33 +1,19 @@
 #pragma once
 
+#include "model_options.h"
+
 #include <dnn/protos/config.pb.h>
-#include <dnn/util/optional.h>
 #include <dnn/sim/sim.h>
 #include <dnn/util/protobuf.h>
 #include <dnn/util/serial/bin_serial.h>
 
 namespace NDnn {
 
-	struct TModelOptions {
-		ui32 Port;
-		TOptional<ui32> Jobs;
-		TOptional<TString> ConfigFile;
-		TOptional<TString> ModelLoad;
-		TOptional<TString> ModelSave;
-		TOptional<TString> InputSpikesFile;
-		TOptional<TString> InputTimeSeries;
-		TOptional<TString> OutputSpikesFile;
-		TOptional<TString> StatFile;
-		TOptional<double> Tmax;
-		TString Name;
-		bool NoLearning;
-	};
-
 	TModelOptions InitOptions(const int argc, const char** argv, TString name, std::set<int> fields = {});
 
 	template <typename ... T>
 	auto BuildModel(TModelOptions options) {
-		auto sim = BuildSim<T...>(options.Port);
+		auto sim = BuildSim<T...>(options);
 
 		if (options.ConfigFile) {
 			L_DEBUG << "Reading config " << *options.ConfigFile;

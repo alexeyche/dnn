@@ -22,6 +22,19 @@ namespace NDnn {
 		}
 		Dispatcher.ShutDown();
 		dispatcherThread.join();
+
+		if (Options.OutputSpikesFile) {
+			L_DEBUG << "Saving spikes in " << *Options.OutputSpikesFile;
+        	SaveSpikes(*Options.OutputSpikesFile);
+        }    
+        if (Options.StatFile) {
+        	L_DEBUG << "Saving statistics in " << *Options.StatFile;
+           	SaveStat(*Options.StatFile);
+        }
+        if (Options.ModelSave) {
+        	L_DEBUG << "Saving model in " << *Options.ModelSave;
+            SaveModel(*Options.ModelSave);
+        }
 	}
 
 

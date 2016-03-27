@@ -16,6 +16,7 @@
 #include <dnn/util/thread.h>
 #include <dnn/util/tuple.h>
 #include <dnn/util/stat_gatherer.h>
+#include <dnn/base/model_options.h>
 
 #include <dnn/neuron/integrate_and_fire.h>
 
@@ -48,9 +49,10 @@ namespace NDnn {
 		using TSelf = TSim<T...>;
 		using TParent = IProtoSerial<NDnnProto::TConfig>;
 
-		TSim(ui32 port)
-			: Dispatcher(port)
+		TSim(const TModelOptions& options)
+			: Dispatcher(options.Port)
 			, PopulationSize(0)
+			, Options(options)
 		{
 			ForEachEnumerate(Layers, [&](ui32 layerId, auto& l) {
 				l.SetupSpaceInfo(layerId, PopulationSize);
@@ -72,6 +74,7 @@ namespace NDnn {
 				Layers = other.Layers;
 				PopulationSize = other.PopulationSize;
 				Conf = other.Conf;
+				Options = other.Options;
 				Dispatcher = other.Dispatcher;
 				RewardControl = other.RewardControl;
 				TGlobalCtx::Inst().Init(RewardControl);
@@ -228,12 +231,13 @@ namespace NDnn {
 		TStatGatherer StatGatherer;
 
 		TRewardControl RewardControl;
+		TModelOptions Options;
 	};
 
 
 	template <typename ... T>
-	auto BuildSim(ui32 port) {
-		return TSim<T...>(port);
+	auto BuildSim(const TModelOptions& options) {
+		return TSim<T...>(options);
 	}
 
 } // namespace NDnn

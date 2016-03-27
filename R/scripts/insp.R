@@ -20,8 +20,8 @@ T1 = convNum(Sys.getenv('T1'), 1000)
 
 args <- commandArgs(trailingOnly = FALSE)
 if(length(grep("RStudio", args))>0) {    
-    WD = simruns.path(system(sprintf("ls -t %s | head -n 1", simruns.path()), intern=TRUE))
-    WD = file.path(dnn.env(), "runs/test-run")
+    #WD = simruns.path(system(sprintf("ls -t %s | head -n 1", simruns.path()), intern=TRUE))
+    WD = file.path(dnn.env(), "runs/last")
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])

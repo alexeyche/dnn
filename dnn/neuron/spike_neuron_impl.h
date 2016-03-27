@@ -79,13 +79,12 @@ namespace NDnn {
 
 
 	struct TAsyncSpikeQueue {
-		TAsyncSpikeQueue()
-			: InputSpikesLock(ATOMIC_FLAG_INIT)
-		{}
+		TAsyncSpikeQueue() {
+			InputSpikesLock.clear();
+		}
 		
-		TAsyncSpikeQueue(const TAsyncSpikeQueue& other)
-			: InputSpikesLock(ATOMIC_FLAG_INIT) 
-		{
+		TAsyncSpikeQueue(const TAsyncSpikeQueue& other) {
+			InputSpikesLock.clear();
 			(*this) = other;
 		}
 		
