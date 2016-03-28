@@ -89,7 +89,7 @@ def run_proc(cmd, env = {}, print_root_log_on_fail=False, stdout=None, stderr=No
             assert(len(logs)>0)
             print open(logs[0]).read()
         sys.exit(-1)
-    return stdout
+    return stdout_str
 
 
 def opt_to_str(o):

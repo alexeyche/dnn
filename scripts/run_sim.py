@@ -241,7 +241,7 @@ class TDnnSim(object):
                 with pushd(self.working_dir):
                     o = run_proc(**self.construct_inspect_cmd())
                     if self.evaluation:
-                        evals.append(float(o.strip()))
+                        evals.append(float([ line.strip("\n") for line in o.split("\n") if line.strip() ][-1]))
                         logging.info("Evaluation score: {}".format(evals[-1]))
 
         if len(evals)>0:
