@@ -38,10 +38,10 @@ namespace NDnn {
     	TActVector<double> X;
 	};
 
-	template <typename TNeuron>
-	class TStdp: public TLearningRule<TStdpConst, TStdpState, TNeuron> {
+	template <typename TNeuron, typename TWeightNormalizationType>
+	class TStdp: public TLearningRule<TStdpConst, TStdpState, TNeuron, TWeightNormalizationType> {
 	public:
-		using TPar = TLearningRule<TStdpConst, TStdpState, TNeuron>;
+		using TPar = TLearningRule<TStdpConst, TStdpState, TNeuron, TWeightNormalizationType>;
 
 		void Reset() {
 			TPar::s.Y = 0.0;
@@ -54,7 +54,8 @@ namespace NDnn {
 
     	void CalculateDynamics(const TTime& t) {
     		auto& syns = TPar::GetMutSynapses();
-    		const auto& neuron = TPar::GetNeuron();
+    		const auto& norm = TPar::Norm();
+    		const auto& neuron = TPar::Neuron();
     		
     		if (neuron.Fired()) {
     			TPar::s.Y += 1.0;
@@ -68,9 +69,9 @@ namespace NDnn {
 	                const ui32& synapseId = *synIdIt;
 	                auto& syn = syns.Get(synapseId);
 	                double& w = syn.MutWeight();
-	                double dw = TPar::c.LearningRate * (
-	                    TPar::c.Aplus  * TPar::s.X[synIdIt] * neuron.Fired() -
-	                    TPar::c.Aminus * TPar::s.Y * syn.Fired()
+	                double dw = TPar::c.LearningRate * norm.DerivativeModulation(w) * (
+	                    TPar::c.Aplus  * TPar::s.X[synIdIt] * neuron.Fired() * norm.Ltp(w) -
+	                    TPar::c.Aminus * TPar::s.Y * syn.Fired() * norm.Ltd(w)
 	                );
 
 	                w += dw;

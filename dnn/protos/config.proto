@@ -14,6 +14,7 @@ import "ident.proto";
 import "gauss.proto";
 import "stdp.proto";
 import "sigmoid.proto";
+import "min_max_norm.proto";
 
 message TRewardControl {
     optional TRewardControlConst RewardControl = 1;
@@ -45,6 +46,8 @@ message TLayer {
     repeated TStdpConst Stdp = 14;
     repeated TStdpState StdpState = 15;
     repeated TSigmoidConst Sigmoid = 16;
+    repeated TMinMaxNormConst MinMaxNorm = 17;
+    repeated TMinMaxNormState MinMaxNormState = 18;
 }
 
 

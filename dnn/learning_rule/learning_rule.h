@@ -2,11 +2,12 @@
 
 #include <dnn/util/serial/proto_serial.h>
 #include <dnn/protos/config.pb.h>
+#include <dnn/util/ptr.h>
 
 namespace NDnn {
 
 
-	template <typename TConstants, typename TState, typename TNeuronImpl>
+	template <typename TConstants, typename TState, typename TNeuronImpl, typename TWeightNormalizationType>
 	class TLearningRule: public IProtoSerial<NDnnProto::TLayer> {
 	public:
 		using TNeuronType = TNeuronImpl;
@@ -17,31 +18,39 @@ namespace NDnn {
 		}
 
 		void SetNeuronImpl(TNeuronImpl& neuron) {
-			Neuron.Set(neuron);
+			NeuronImpl.Set(neuron);
 		}
 
-		typename TNeuronImpl::TNeuronType& GetNeuron() {
-			return Neuron->GetNeuron();
+		const typename TNeuronImpl::TNeuronType& Neuron() const {
+			return NeuronImpl->GetNeuron();
 		}
 
 		const auto& GetSynapses() const {
-			return Neuron->GetSynapses();
+			return NeuronImpl->GetSynapses();
 		}
 
 		auto& GetMutSynapses() {
-			return Neuron->GetMutSynapses();
+			return NeuronImpl->GetMutSynapses();
 		}
 
 		const TState& State() const {
 			return s;
 		}
 
+		const TWeightNormalizationType& Norm() const {
+			return WeightNormalization;
+		}
+
+		TWeightNormalizationType& MutNorm() {
+			return WeightNormalization;
+		}
 	protected:
 		TConstants c;
 		TState s;
 
+		TWeightNormalizationType WeightNormalization;
 	private:
-		TPtr<TNeuronImpl> Neuron;
+		TPtr<TNeuronImpl> NeuronImpl;
 	};
 
 

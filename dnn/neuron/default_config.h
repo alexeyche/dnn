@@ -11,6 +11,6 @@
 
 namespace NDnn {
 
-	using TDefaultConfig = TNeuronConfig<TBasicSynapse, TDeterm, TNoLearning, TNoInput>;
+	using TDefaultConfig = TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TNoLearning, TNoWeightNormalization>;
 
 } // namespace NDnn

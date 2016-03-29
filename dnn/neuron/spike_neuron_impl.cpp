@@ -14,5 +14,8 @@ namespace NDnn {
 	template <>
 	void CallCalculateDynamicsLearningRule<TEmpty>(TEmpty&, const TTime&) {}
 
+	template <>
+	void SerializeProcessNorm<TEmpty>(TMetaProtoSerial& serial, TEmpty& lr) {}
+
 
 } // namespace NDnn

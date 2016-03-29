@@ -27,6 +27,7 @@ set(DIRS
     sim
     synapse
     util
+    learning_rule
 )
 
 foreach(dir ${DIRS})

@@ -1,0 +1,11 @@
+package NDnnProto;
+
+
+message TMinMaxNormConst {
+    optional double MinWeight = 1;
+    optional double MaxWeight = 2;
+}
+
+message TMinMaxNormState {
+}
+

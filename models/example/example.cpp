@@ -17,16 +17,16 @@ int main(int argc, const char** argv) {
     auto opts = InitOptions(argc, argv, "TestModel");
     if (opts.NoLearning) {
         auto sim = BuildModel<
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoLearning, TGaussReceptiveField>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoLearning>>
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TGaussReceptiveField, TNoLearning>>,
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TNoLearning>>
         >(opts);
 
         sim.Run();
 
     } else {
         auto sim = BuildModel<
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoLearning, TGaussReceptiveField>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TStdp>>
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TGaussReceptiveField>>,
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TStdp>>
         >(opts);
 
         if (opts.StatFile) {

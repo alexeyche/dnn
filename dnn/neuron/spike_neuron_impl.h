@@ -153,6 +153,14 @@ namespace NDnn {
 	void CallCalculateDynamicsLearningRule<TEmpty>(TEmpty&, const TTime&);
 
 
+	template <typename T>
+	void SerializeProcessNorm(TMetaProtoSerial& serial, T& lr) {
+		serial(lr.MutNorm());
+	}
+
+	template <>
+	void SerializeProcessNorm<TEmpty>(TMetaProtoSerial& serial, TEmpty& lr);
+
 	template <typename TNeuron, typename TConf>
 	class TSpikeNeuronImpl: public IMetaProtoSerial {
 	public:
@@ -208,10 +216,15 @@ namespace NDnn {
 	        }
 		}
 
+		const TNeuron& GetNeuron() const {
+			return Neuron;
+		}
+
 		TNeuron& GetNeuron() {
 			return Neuron;
 		}
 
+		
 		void SetRandEngine(TRandEngine& rand) {
 			Rand.Set(rand);
 			Neuron.SetRandEngine(rand);
@@ -279,6 +292,7 @@ namespace NDnn {
 				serial(Synapses[synId]);
 			}
 			serial(LearningRule);
+			SerializeProcessNorm(serial, LearningRule);
 		}
 		const auto& GetPredefinedSynapseConst() const {
 			return PredefineSynapseConst;
