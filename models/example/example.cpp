@@ -10,7 +10,6 @@
 #include <dnn/receptive_field/gauss.h>
 #include <dnn/learning_rule/stdp.h>
 #include <dnn/activation/sigmoid.h>
-#include <dnn/reinforcement/input_classifier.h>
 
 using namespace NDnn;
 
