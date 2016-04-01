@@ -10,6 +10,7 @@
 #include <dnn/receptive_field/gauss.h>
 #include <dnn/learning_rule/stdp.h>
 #include <dnn/activation/sigmoid.h>
+#include <dnn/reinforcement/input_classifier.h>
 
 using namespace NDnn;
 
@@ -35,7 +36,7 @@ int main(int argc, const char** argv) {
             sim.ListenStat("StdpY", [&]() { return sim.GetLearningRule<1, 10>().State().Y; }, 0, 1000);
             sim.ListenStat("StdpX", [&]() { return sim.GetLearningRule<1, 10>().State().X.Get(10); }, 0, 1000);
             sim.ListenStat("Synapse", [&]() { return sim.GetSynapse<1, 10, 10>().Potential(); }, 0, 1000);
-            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 10, 10>().Weight(); }, 0, 1000);    
+            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 10, 10>().Weight(); }, 0, 1000);
         }
 
         sim.Run();

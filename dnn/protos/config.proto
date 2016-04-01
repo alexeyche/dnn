@@ -15,6 +15,7 @@ import "gauss.proto";
 import "stdp.proto";
 import "sigmoid.proto";
 import "min_max_norm.proto";
+import "input_classifier.proto";
 
 message TRewardControl {
     optional TRewardControlConst RewardControl = 1;
@@ -48,6 +49,7 @@ message TLayer {
     repeated TSigmoidConst Sigmoid = 16;
     repeated TMinMaxNormConst MinMaxNorm = 17;
     repeated TMinMaxNormState MinMaxNormState = 18;
+    repeated TInputClassifierConst InputClassifier = 19;
 }
 
 

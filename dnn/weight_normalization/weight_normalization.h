@@ -38,13 +38,13 @@ namespace NDnn {
 		TConstants c;
 		TState s;
 	};
-	
+
 	template <>
 	class TWeightNormalization<TEmpty, TEmpty>: public IProtoSerial<NDnnProto::TLayer> {
 	public:
 		void SerialProcess(TProtoSerial& serial) {
 		}
-		
+
 		double Ltp(const double& w) const {
 			return 1.0;
 		}
@@ -62,5 +62,5 @@ namespace NDnn {
 	};
 
 	using TNoWeightNormalization = TWeightNormalization<TEmpty, TEmpty>;
-	
+
 } // namespace NDnn

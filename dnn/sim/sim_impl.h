@@ -6,7 +6,7 @@ namespace NDnn {
 	void TSim<T...>::Run() {
 		L_DEBUG << "Going to run simulation of " << LayersSize() << " layers, for " << Conf.Duration << " ms in " << Conf.Jobs << " jobs";
 		TVector<TIndexSlice> perLayerJobs = DispatchOnThreads(Conf.Jobs, LayersSize());
-		
+
 	 	TSpinningBarrier barrier(Conf.Jobs);
 		TVector<std::thread> threads;
 		std::mutex errorsMut;
@@ -24,7 +24,7 @@ namespace NDnn {
 		}
 		Dispatcher.ShutDown();
 		dispatcherThread.join();
-		
+
 		for (const auto& err: errors) {
 			std::rethrow_exception(err);
 		}
@@ -32,7 +32,7 @@ namespace NDnn {
 		if (Options.OutputSpikesFile) {
 			L_DEBUG << "Saving spikes in " << *Options.OutputSpikesFile;
         	SaveSpikes(*Options.OutputSpikesFile);
-        }    
+        }
         if (Options.StatFile) {
         	L_DEBUG << "Saving statistics in " << *Options.StatFile;
            	SaveStat(*Options.StatFile);
@@ -112,6 +112,9 @@ namespace NDnn {
 		barrier.Wait();
 
 		for (; t < Conf.Duration; ++t) {
+			if(masterThread) TGlobalCtx().Inst().SetCurrentClassId(Network.GetClassId(t));
+			barrier.Wait();
+
 			for(ui32 neuronId=idxFrom; neuronId<idxTo; ++neuronId) {
 				double input = 0.0;
 				if (layer.HasInput()) {
@@ -146,7 +149,7 @@ namespace NDnn {
 		barrier.Wait();
 	}
 
-	
+
 	template <typename ...T>
 	void TSim<T...>::CreateConnections(const NDnnProto::TConfig& config) {
 		TRandEngine rand(Conf.Seed);

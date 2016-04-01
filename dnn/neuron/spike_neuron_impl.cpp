@@ -17,5 +17,8 @@ namespace NDnn {
 	template <>
 	void SerializeProcessNorm<TEmpty>(TMetaProtoSerial& serial, TEmpty& lr) {}
 
+	template <>
+	void CallModulateRewardReinforcement<TEmpty>(TEmpty&) {}
+
 
 } // namespace NDnn

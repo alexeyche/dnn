@@ -1,0 +1,8 @@
+package NDnnProto;
+
+
+message TInputClassifierConst {
+    optional double Ltp = 1;
+    optional double Ltd = 2;
+}
+
