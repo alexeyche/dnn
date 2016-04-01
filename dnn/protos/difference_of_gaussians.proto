@@ -1,0 +1,11 @@
+package NDnnProto;
+
+
+message TDifferenceOfGaussiansConst {
+    optional int32 Dimension = 1;
+    optional double SigmaPos = 2;
+    optional double SigmaNeg = 3;
+    optional double NegAmp = 4;
+    optional bool ApplyAmplitude = 5;
+}
+

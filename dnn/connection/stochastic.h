@@ -22,8 +22,6 @@ namespace NDnn {
         	TConnectionRecipe recipe;
         	if(c.Prob > Rand->GetUnif()) {
         		recipe.Exists = true;
-        	} else {
-        		recipe.Exists = false;
         	}
         	return recipe;
         }

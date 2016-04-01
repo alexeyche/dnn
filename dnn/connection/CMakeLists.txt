@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
 	builder.cpp
     connection.cpp
+    difference_of_gaussians.cpp
     stochastic.cpp
 )
 

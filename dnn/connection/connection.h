@@ -9,7 +9,6 @@
 namespace NDnn {
 
 	struct TConnectionRecipe {
-		bool Inhibitory = false;
 		double Amplitude = 1.0;
 		bool Exists = false;
 	};
@@ -34,12 +33,12 @@ namespace NDnn {
 	class TConnection: public IConnection {
 	public:
 		TConnection() {}
-		
+
 		void SerialProcess(TProtoSerial& serial) override final {
-			serial(c, TConstants::ProtoFieldNumber); 
+			serial(c, TConstants::ProtoFieldNumber);
 		}
 
-	
+
 	protected:
 		TConstants c;
 	};

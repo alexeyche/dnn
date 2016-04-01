@@ -16,6 +16,7 @@ import "stdp.proto";
 import "sigmoid.proto";
 import "min_max_norm.proto";
 import "input_classifier.proto";
+import "difference_of_gaussians.proto";
 
 message TRewardControl {
     optional TRewardControlConst RewardControl = 1;
@@ -59,4 +60,5 @@ message TConnection {
 	optional double Weight = 3;
 	optional double DendriteDelay = 4;
 	optional TStochasticConst Stochastic = 5;
+    optional TDifferenceOfGaussiansConst DifferenceOfGaussians = 6;
 }
