@@ -315,6 +315,7 @@ namespace NDnn {
 			}
 			serial(LearningRule);
 			SerializeProcessNorm(serial, LearningRule);
+			serial(Reinforcement);
 		}
 		const auto& GetPredefinedSynapseConst() const {
 			return PredefineSynapseConst;
