@@ -1,0 +1,13 @@
+package NDnnProto;
+
+
+message TNonLinearNormState {
+}
+
+message TNonLinearNormConst {
+    optional double DepressionFactor = 1;
+    optional double Mu = 2;
+    optional double MinWeight = 3;
+    optional double MaxWeight = 4;
+}
+

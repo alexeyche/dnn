@@ -1,0 +1,14 @@
+package NDnnProto;
+
+
+message TSTPSynapseState {
+    optional double r = 1;
+    optional double p = 2;
+}
+
+message TSTPSynapseConst {
+    optional double D = 1;
+    optional double F = 2;
+    optional double MaxWeight = 3;
+}
+

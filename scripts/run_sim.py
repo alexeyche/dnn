@@ -63,7 +63,8 @@ class TDnnSim(object):
         self.no_learning = kwargs.get("no_learning", False)
         if self.evaluation_data:
             self.evaluation = True
-            
+        self.seed = kwargs.get("seed")
+
         logFormatter = logging.Formatter("%(asctime)s [%(levelname)s]  %(message)-100s")
         rootLogger = logging.getLogger()
         rootLogger.setLevel(logging.DEBUG)
@@ -140,7 +141,8 @@ class TDnnSim(object):
 
         if not self.T_max is None:
             cmd += ["--tmax", self.T_max]
-
+        if self.seed:
+            cmd += ["--seed", self.seed]
         return cmd
 
     def construct_eval_run_cmd(self):
@@ -314,6 +316,9 @@ def main(argv):
                         '--stat',
                         action='store_true',
                         help='Save statistics')
+    parser.add_argument('--seed',
+                        required=False,
+                        help='Set seed for random engine')
     parser.add_argument('-ni', 
                         '--no-insp',
                         action='store_true',
@@ -348,6 +353,10 @@ def main(argv):
                         '--no-evaluation',
                         action='store_true',
                         help='Turning on evaluation mode, where program writing score on each epoch')
+    parser.add_argument('-nl', 
+                        '--no-learning',
+                        action='store_true',
+                        help='Pass no learning flag to each sim run')
     parser.add_argument('-evd', 
                         '--evaluation-data',
                         required=False,
@@ -376,6 +385,8 @@ def main(argv):
         "slave" : args.slave,
         "evaluation_data" : args.evaluation_data,
         "force" : args.force,
+        "no_learning" : args.no_learning,
+        "seed" : args.seed,
     }
     TDnnSim(**args).run()
     

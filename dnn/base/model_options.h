@@ -7,6 +7,7 @@ namespace NDnn {
 
 	struct TModelOptions {
 		ui32 Port;
+		TOptional<ui32> Seed;
 		TOptional<ui32> Jobs;
 		TOptional<TString> ConfigFile;
 		TOptional<TString> ModelLoad;

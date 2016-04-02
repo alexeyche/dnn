@@ -14,6 +14,10 @@ namespace NDnn {
 	template <typename ... T>
 	auto BuildModel(TModelOptions options) {
 		auto sim = BuildSim<T...>(options);
+		
+		if (options.Seed) {
+	    	sim.SetSeed(*options.Seed);
+	    }
 
 		if (options.ConfigFile) {
 			L_DEBUG << "Reading config " << *options.ConfigFile;

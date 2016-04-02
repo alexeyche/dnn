@@ -18,6 +18,7 @@ namespace NDnn {
 	public:
 		using TNeuronType = N;
 		using TNeuronArr = std::array<TNeuronImplType, size>;
+		using TSynapseType = typename TConf::TNeuronSynapse;
 
 		TLayer()
 			: Id(0)
@@ -90,7 +91,7 @@ namespace NDnn {
 						continue;
 					}
 
-					typename TConf::TNeuronSynapse syn;
+					typename TDstLayer::TSynapseType syn;
 					auto synConst = npost.GetPredefinedSynapseConst();
 					if (synConst) {
 						TProtoSerial serial(*synConst, TSerialBase::ESerialMode::IN);

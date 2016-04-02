@@ -91,6 +91,10 @@ namespace NDnn {
 		TConstants& MutConstants() {
 			return c;
 		}
+
+		const TState& State() const {
+			return s;
+		}
 	private:
 		TSynapseInnerState InnerState;
 

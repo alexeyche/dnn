@@ -28,8 +28,8 @@ namespace NDnn {
 
 	class TMinMaxNorm: public TWeightNormalization<TMinMaxNormConst, TMinMaxNormState> {
 	public:
-		double DerivativeModulation(const double& w) {
-			if ((w >= c.MaxWeight) || (w <= c.MinWeight)) {
+		double DerivativeModulation(const double& w) const {
+			if ((std::abs(w) >= c.MaxWeight) || (std::abs(w) <= c.MinWeight)) {
 	    		return 0.0;
 	    	}
         	return 1.0;

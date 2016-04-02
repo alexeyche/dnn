@@ -1,0 +1,11 @@
+package NDnnProto;
+
+
+message TSoftBoundsState {
+}
+
+message TSoftBoundsConst {
+    optional double MinWeight = 1;
+    optional double MaxWeight = 2;
+}
+

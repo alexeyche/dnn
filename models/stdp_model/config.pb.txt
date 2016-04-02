@@ -1,16 +1,14 @@
 SimConfiguration {
 	Port: 9090
-	Seed: -1
 	Jobs: 8
 }
 Layer {
 	IntegrateAndFire {
 		TauMem: 15
-		TauRef: 2
+		TauRef: 5
 	}
-	Sigmoid {
+	Determ {
 		Threshold: 0.15
-		Slope: 120.0
 	}
     BasicSynapse {
         PspDecay: 10.0
@@ -46,36 +44,8 @@ Layer {
 		Slope: 50.0
 	}
 	Stdp {
-		TauMinus: 75.0
-		LearningRate: 1e-03
-	}
-}
-Layer {
-	IntegrateAndFire {
-		TauMem: 10
-		TauRef: 2
-	}
-	Sigmoid {
-		Threshold: 0.15
-		Slope: 50.0
-	}
-	Stdp {
-		TauMinus: 75.0
-		LearningRate: 1e-03
-	}
-}
-Layer {
-	IntegrateAndFire {
-		TauMem: 10
-		TauRef: 2
-	}
-	Sigmoid {
-		Threshold: 0.15
-		Slope: 50.0
-	}
-	Stdp {
-		TauMinus: 75.0
-		LearningRate: 1e-03
+		TauMinus: 50.0
+		LearningRate: 1e-02
 	}
 }
 Connection {
@@ -83,54 +53,34 @@ Connection {
 	Stochastic {
 		Prob: 0.25
 	}
-	Weight: 0.04
+	Weight: 0.05
 }
-Connection {
-	From: 0 To: 1
-	Stochastic {
-		Prob: 0.25
-	}
-	Weight: -0.04
-}
-Connection {
-	From: 1 To: 2
-	Stochastic {
-		Prob: 0.25
-	}
-	Weight: 0.04
-}
-Connection {
-	From: 1 To: 2
-	Stochastic {
-		Prob: 0.25
-	}
-	Weight: -0.04
-}
-Connection {
-	From: 2 To: 3
-	Stochastic {
-		Prob: 0.25
-	}
-	Weight: 0.04
-}
-Connection {
-	From: 2 To: 3
-	Stochastic {
-		Prob: 0.25
-	}
-	Weight: -0.04
-}
-Connection {
-	From: 3 To: 4
-	Stochastic {
-		Prob: 0.25
-	}
-	Weight: 0.04
-}
-Connection {
-	From: 3 To: 4
-	Stochastic {
-		Prob: 0.25
-	}
-	Weight: -0.04
-}
+# Connection {
+# 	From: 1 To: 1
+# 	DifferenceOfGaussians {
+# 		Dimension: 1
+# 	    SigmaPos: 3.0
+# 	    SigmaNeg: 15.0
+# 	    AmpNeg: 3.0
+# 	    AmpPos: 1.0
+# 	}
+# 	Weight: 0.04
+# }
+# Connection {
+# 	From: 1 To: 2
+# 	Stochastic {
+# 		Prob: 0.25
+# 	}
+# 	Weight: 0.02
+# }
+# Connection {
+# 	From: 2 To: 2
+# 	DifferenceOfGaussians {
+# 		Dimension: 1
+# 	    SigmaPos: 3.0
+# 	    SigmaNeg: 15.0
+# 	    AmpNeg: 3.0
+# 	    AmpPos: 1.0
+# 	}
+# 	Weight: 0.04
+# }

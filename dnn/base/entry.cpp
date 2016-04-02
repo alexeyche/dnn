@@ -69,6 +69,11 @@ namespace NDnn {
 	    if (options.has_nolearning()) {
 	    	opts.NoLearning = true;
 	    }
+
+	    if (options.has_seed()) {
+			opts.Seed = options.seed();
+		}
+	    
 	    return opts;
 	}
 

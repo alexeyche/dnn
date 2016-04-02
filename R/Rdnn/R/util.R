@@ -98,6 +98,10 @@ gr_pl = function(m, ...) {
     levelplot(m, col.regions=colorRampPalette(c("black", "white")), ...)
 }
 
+plot.Statistics = function(obj, ...) {
+    plot(obj$values, type="l", main=obj$name, ...)
+}
+
 
 plot.TimeSeries = function(obj, i=NULL, ...) {
     if(is.null(nrow(obj$values))) {

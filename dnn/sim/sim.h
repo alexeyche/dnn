@@ -135,6 +135,10 @@ namespace NDnn {
 			Conf.Jobs = jobs;
 		}
 
+		void SetSeed(ui32 seed) {
+			Conf.Seed = seed;
+		}
+
 		void SetDuration(double duration) {
 			Conf.Duration = duration;
 		}

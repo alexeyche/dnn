@@ -144,9 +144,12 @@ if (file.exists(STAT_FNAME)) {
     stat = proto.read(STAT_FNAME)
     stat_pic = sprintf("%s/3_%s", tmp_d, pfx_f("stat.png"))
     if(SAVE_PIC_IN_FILES) png(stat_pic, width=1024, height=768*6)
-    
-    par(mfrow=c(length(stat),1), mar=rep(2,4))
-    for (s in stat) {
+    stat_to_plot = stat
+    if (length(stat_to_plot) > 8) {
+        stat_to_plot = stat[1:8]
+    }    
+    par(mfrow=c(length(stat_to_plot),1), mar=rep(2,4))
+    for (s in stat_to_plot) {
         plot(
             seq(s$from, s$to, length.out=length(s$values)), 
             s$values, 

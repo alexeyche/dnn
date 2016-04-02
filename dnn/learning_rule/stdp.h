@@ -69,13 +69,17 @@ namespace NDnn {
 	                const ui32& synapseId = *synIdIt;
 	                auto& syn = syns.Get(synapseId);
 	                double& w = syn.MutWeight();
+
+	                // std::cout << w << " " << norm.Ltp(w) << " " << norm.Ltd(w) << " " << std::abs(w) << "\n";
 	                double dw = TPar::c.LearningRate * norm.DerivativeModulation(w) * (
 	                    TPar::c.Aplus  * TPar::s.X[synIdIt] * neuron.Fired() * norm.Ltp(w) -
 	                    TPar::c.Aminus * TPar::s.Y * syn.Fired() * norm.Ltd(w)
 	                );
 
 	                w += dw;
-
+	                // if ((w < -1.0) || (w > 1.0)) {
+	                // 	std::cout << TPar::SpaceInfo().GlobalId << " " << synapseId << " " << w << " " <<  norm.Ltp(w) << " " << norm.Ltd(w) << "\n";
+ 	               //  }
 	                TPar::s.X[synIdIt] += - t.Dt * TPar::s.X[synIdIt]/TPar::c.TauPlus;
                 	++synIdIt;
                 }

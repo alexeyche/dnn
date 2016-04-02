@@ -17,6 +17,9 @@ import "sigmoid.proto";
 import "min_max_norm.proto";
 import "input_classifier.proto";
 import "difference_of_gaussians.proto";
+import "nonlinear_norm.proto";
+import "soft_bounds.proto";
+import "stp_synapse.proto";
 
 message TRewardControl {
     optional TRewardControlConst RewardControl = 1;
@@ -51,6 +54,12 @@ message TLayer {
     repeated TMinMaxNormConst MinMaxNorm = 17;
     repeated TMinMaxNormState MinMaxNormState = 18;
     repeated TInputClassifierConst InputClassifier = 19;
+    repeated TNonLinearNormConst NonLinearNorm = 20;
+    repeated TNonLinearNormState NonLinearNormState = 21;
+    repeated TSoftBoundsConst SoftBounds = 22;
+    repeated TSoftBoundsState SoftBoundsState = 23;
+    repeated TSTPSynapseConst STPSynapse = 24;
+    repeated TSTPSynapseState STPSynapseState = 25;
 }
 
 

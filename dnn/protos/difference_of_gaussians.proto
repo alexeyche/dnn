@@ -5,7 +5,8 @@ message TDifferenceOfGaussiansConst {
     optional int32 Dimension = 1;
     optional double SigmaPos = 2;
     optional double SigmaNeg = 3;
-    optional double NegAmp = 4;
-    optional bool ApplyAmplitude = 5;
+    optional double AmpNeg = 4;
+    optional double AmpPos = 5;
+    optional bool ApplyAmplitude = 6;
 }
 

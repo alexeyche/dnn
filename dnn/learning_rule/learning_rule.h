@@ -3,6 +3,7 @@
 #include <dnn/util/serial/proto_serial.h>
 #include <dnn/protos/config.pb.h>
 #include <dnn/util/ptr.h>
+#include <dnn/neuron/spike_neuron_impl.h>
 
 namespace NDnn {
 
@@ -35,6 +36,10 @@ namespace NDnn {
 
 		const TState& State() const {
 			return s;
+		}
+		
+		const TNeuronSpaceInfo& SpaceInfo() const {
+			return NeuronImpl->GetSpaceInfo();
 		}
 
 		const TWeightNormalizationType& Norm() const {

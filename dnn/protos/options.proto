@@ -53,6 +53,10 @@ message TDnnOptions {
         (description) = "Run simulation specific amount of time",
         (short_option) = "-tm"
     ];
+    optional uint32 Seed = 13 [
+        (description) = "Seed for random engine",
+        (short_option) = "-sd"
+    ];
 }
 
 message TDumptoolOptions {
