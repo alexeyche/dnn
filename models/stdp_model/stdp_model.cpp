@@ -14,13 +14,10 @@
 using namespace NDnn;
 
 int main(int argc, const char** argv) {
-    auto opts = InitOptions(argc, argv, "TestModel");
+    auto opts = InitOptions(argc, argv, "StdpModel");
     if (opts.NoLearning) {
         auto sim = BuildModel<
             TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TGaussReceptiveField>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid>>,
             TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid>>
         >(opts);
 
@@ -28,9 +25,6 @@ int main(int argc, const char** argv) {
     } else {
         auto sim = BuildModel<
             TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TGaussReceptiveField>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TStdp>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TStdp>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TStdp>>,
             TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TStdp>>
         >(opts);
 
