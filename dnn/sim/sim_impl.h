@@ -11,6 +11,8 @@ namespace NDnn {
 		TVector<std::thread> threads;
 		std::mutex errorsMut;
 		TVector<std::exception_ptr> errors;
+		
+		ENSURE(Conf.Jobs >= LayersSize(), "Need jobs number same or bigger than number of layers");
 
 		ForEachEnumerate(Layers, [&](ui32 layerId, auto& layer) {
 			SimLayer(layer, perLayerJobs[layerId].Size, threads, errors, errorsMut, barrier, layerId == 0 ? true : false);

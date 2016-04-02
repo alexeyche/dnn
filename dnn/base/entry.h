@@ -43,6 +43,8 @@ namespace NDnn {
     		std::ifstream input(*options.InputTimeSeries, std::ios::binary);
 		    TBinSerial serial(input);
 	    	sim.SetInputTimeSeries(serial.ReadObject<TTimeSeries>());
+	    } else {
+	    	ENSURE(!sim.RequireInput(), "Need input time series for the simulation with inputs");
 	    }
 
 	    if (options.Jobs) {

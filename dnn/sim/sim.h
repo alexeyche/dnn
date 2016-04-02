@@ -173,6 +173,16 @@ namespace NDnn {
 			Conf.Duration = ts.Info.GetDuration();
 		}
 
+		bool RequireInput() {
+			bool requireInput = false;
+			ForEach(Layers, [&](const auto& layer) {
+				if (layer.HasInput()) {
+					requireInput = true;;
+				}
+			});
+			return requireInput;
+		}
+
 		void SetInputTimeSeries(const TTimeSeries&& ts) {
 			ui32 requiredDimSize = 0;
 			ForEach(Layers, [&](auto& layer) {
