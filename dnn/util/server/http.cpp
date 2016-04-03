@@ -36,7 +36,7 @@ namespace NDnn {
                 }
              }
              if (s.empty()) {
-                throw TDnnException() << "Stream of bytes ended prematurely";   
+                throw TErrException() << "Stream of bytes ended prematurely";   
              }
              return s;
         }

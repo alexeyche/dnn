@@ -33,6 +33,7 @@ namespace NDnn {
 			serial(Dt);
 			serial(Port);
 			serial(Seed);
+			serial(PastTime);
 		}
 
 		ui32 Jobs = 4;
@@ -40,6 +41,7 @@ namespace NDnn {
 		double Dt = 1.0;
 		ui32 Port = 9090;
 		int Seed = -1;
+		double PastTime = 0.0;
 	};
 
 
@@ -60,6 +62,7 @@ namespace NDnn {
 			});
 
 			TGlobalCtx::Inst().Init(RewardControl);
+			TGlobalCtx::Inst().SetPastTime(Conf.PastTime);
 		}
 
 		TSim(const TSim& other)
@@ -78,6 +81,7 @@ namespace NDnn {
 				Dispatcher = other.Dispatcher;
 				RewardControl = other.RewardControl;
 				TGlobalCtx::Inst().Init(RewardControl);
+				TGlobalCtx::Inst().SetPastTime(Conf.PastTime);
 				Network = other.Network;
 				Network.Init(PopulationSize);
 				ForEach(Layers, [&](auto& l) {

@@ -30,7 +30,6 @@ namespace NDnn {
     class TBasicSynapse : public TSynapse<TBasicSynapseConst, TBasicSynapseState> {
     public:
         void Reset() {
-            MutAmplitude() = c.Amp;
             MutPotential() = 0;
         }
 
@@ -39,7 +38,7 @@ namespace NDnn {
         }
 
     	void PropagateSpike() {
-    	    MutPotential() += Amplitude(); 
+    	    MutPotential() += c.Amp; 
     	}
 
     };

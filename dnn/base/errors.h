@@ -26,18 +26,18 @@ namespace NDnn {
             stringstream ss; \
         };
 
-    DEFINE_ERROR(TDnnException);
-    DEFINE_ERROR(TDnnInterrupt);
-    DEFINE_ERROR(TDnnNotImplemented);
-    DEFINE_ERROR(TDnnFileNotFound);
-    DEFINE_ERROR(TDnnElementNotFound);
-    DEFINE_ERROR(TDnnLogicError);
-    DEFINE_ERROR(TDnnAlgebraError);
-    DEFINE_ERROR(TDnnNotAvailable);
+    DEFINE_ERROR(TErrException);
+    DEFINE_ERROR(TErrInterrupt);
+    DEFINE_ERROR(TErrNotImplemented);
+    DEFINE_ERROR(TErrFileNotFound);
+    DEFINE_ERROR(TErrElementNotFound);
+    DEFINE_ERROR(TErrLogicError);
+    DEFINE_ERROR(TErrAlgebraError);
+    DEFINE_ERROR(TErrNotAvailable);
 
     #define ENSURE(cond, str) \
         if(!(cond)) { \
-            throw TDnnException() << str; \
+            throw TErrException() << str; \
         }\
 
     #define ENSURE_ERR(cond, exc) \

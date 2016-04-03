@@ -1,0 +1,10 @@
+package NDnnProto;
+
+
+message TMultiplicativeNormConst {
+    optional double Unit = 1;
+}
+
+message TMultiplicativeNormState {
+}
+

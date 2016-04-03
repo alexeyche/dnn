@@ -52,7 +52,7 @@ namespace NDnn {
                 Data.emplace_back();
             }
             if((Data[ni].Values.size()>0)&&(Data[ni].Values.back()>t)) {
-                throw TDnnException() << "Adding spike in past to spikes list. Add sorted array of spikes\n";
+                throw TErrException() << "Adding spike in past to spikes list. Add sorted array of spikes\n";
             }
             Data[ni].Values.push_back(t);
         }

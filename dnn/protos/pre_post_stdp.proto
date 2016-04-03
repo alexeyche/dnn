@@ -1,0 +1,19 @@
+package NDnnProto;
+
+
+message TPrePostStdpState {
+    optional double Yplus = 1;
+    optional double Yminus = 2;
+    repeated double X = 3;
+}
+
+message TPrePostStdpConst {
+    optional double TauYplus = 1;
+    optional double TauYminus = 2;
+    optional double TauXplus = 3;
+    optional double Cplus = 4;
+    optional double Cminus = 5;
+    optional double Dplus = 6;
+    optional double Dminus = 7;
+}
+

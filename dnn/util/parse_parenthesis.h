@@ -16,10 +16,10 @@ namespace NDnn {
         	return childCb(str);
         }
         if((fp != TString::npos)&&(lp == TString::npos)) {
-            throw TDnnException() << "Got only open parenthesis, need close one\n";
+            throw TErrException() << "Got only open parenthesis, need close one\n";
         }
         if((lp != TString::npos)&&(fp == TString::npos)) {
-            throw TDnnException() << "Got only close parenthesis, need open one\n";
+            throw TErrException() << "Got only close parenthesis, need open one\n";
         }
 
 		TString newParent = NStr::Trim(str.substr(0, fp));

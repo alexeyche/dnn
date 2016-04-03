@@ -13,7 +13,7 @@ namespace NDnn {
             char passed_old = passed.load(std::memory_order_relaxed);
             
             if(passed_old < 0) {
-                throw TDnnInterrupt() << "Spinning Barrier interrupted";
+                throw TErrInterrupt() << "Spinning Barrier interrupted";
             }
 
             if(bar.fetch_add(1) == (n - 1)) {

@@ -159,6 +159,7 @@ namespace NDnn {
 	template <typename LR>
 	void CallCalculateDynamicsLearningRule(LR& lr, const TTime& t) {
 		lr.CalculateDynamics(t);
+		lr.MutNorm().CalculateDynamics(t);
 	}
 
 	template <>

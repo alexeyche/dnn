@@ -41,7 +41,15 @@ namespace NDnn {
 			return CurrentClassId;
 		}
 
+		const double& GetPastTime() const {
+			return PastTime;
+		}
+
 	private:
+		void SetPastTime(double pastTime) {
+			PastTime = pastTime;
+		}
+		
 		void SetCurrentClassId(TMaybe<ui32>&& id) {
 			CurrentClassId = id;
 		}
@@ -49,6 +57,7 @@ namespace NDnn {
 		TPtr<TRewardControl> RewardControl;
 
 		TMaybe<ui32> CurrentClassId;
+		double PastTime = 0;
 	};
 
 

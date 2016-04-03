@@ -26,13 +26,19 @@ namespace NDnn {
 		}
 	};
 
-	class TMinMaxNorm: public TWeightNormalization<TMinMaxNormConst, TMinMaxNormState> {
+	template <typename TNeuron>
+	class TMinMaxNorm: public TWeightNormalization<TMinMaxNormConst, TMinMaxNormState, TNeuron> {
 	public:
-		double DerivativeModulation(const double& w) const {
-			if ((std::abs(w) >= c.MaxWeight) || (std::abs(w) <= c.MinWeight)) {
+		using TPar = TWeightNormalization<TMinMaxNormConst, TMinMaxNormState, TNeuron>;
+
+		double Derivative(double w, double dw) const {
+			if ((w < 0.0) != ((w+dw)<0.0)) {
+				return 0.0;
+			}
+			if ((std::abs(w+dw) >= TPar::c.MaxWeight) || (std::abs(w+dw) <= TPar::c.MinWeight)) {
 	    		return 0.0;
 	    	}
-        	return 1.0;
+        	return dw;
     	}
 	};
 

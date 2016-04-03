@@ -11,7 +11,7 @@
 #include <mutex>
 #include <complex>
 
-namespace NDnn {
+namespace NEgo {
 
 	template <typename T>
 	using UPtr = std::unique_ptr<T>;
@@ -124,4 +124,4 @@ namespace NDnn {
 
 	template <typename T>
 	using TDeque = std::deque<T>;
-} // namespace NDnn
+} // namespace NEgo

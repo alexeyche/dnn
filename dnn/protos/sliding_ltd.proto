@@ -1,0 +1,17 @@
+package NDnnProto;
+
+
+message TSlidingLtdConst {
+    optional double Power = 1;
+    optional double Modulation = 2;
+    optional double TargetRate = 3;
+    optional double TauMean = 4;
+    optional double MinWeight = 5;
+    optional double MaxWeight = 6;
+}
+
+message TSlidingLtdState {
+    optional double Pmean = 1;
+    optional bool Saturation = 2;
+}
+

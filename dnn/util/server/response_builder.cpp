@@ -5,7 +5,7 @@ namespace NDnn {
     TResponseBuilder& TResponseBuilder::StaticFile(TString file) {
         std::ifstream f(file);
         if(!f) {
-            throw TDnnFileNotFound() << "Failed to read file " << file;
+            throw TErrFileNotFound() << "Failed to read file " << file;
         }
         if (NStr::EndsWith(file, ".html")) {
             TString line;

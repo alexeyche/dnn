@@ -80,7 +80,7 @@ namespace NDnn {
                 for(const auto& o: extraOpts) {
                     extraOptsStr += o + ", ";
                 }
-                throw TDnnException() << "Got unknown options: " << extraOptsStr;
+                throw TErrException() << "Got unknown options: " << extraOptsStr;
             }
             for(const auto &defs: Defaults) {
                 const google::protobuf::Reflection* reflection = message.GetReflection();
@@ -106,7 +106,7 @@ namespace NDnn {
                     {
                         ++value_iterator;
                         if(value_iterator == end_iter) {
-                            throw TDnnException() << "Can't find value for option " << desc->name();
+                            throw TErrException() << "Can't find value for option " << desc->name();
                         }
                         reflection->SetUInt32(&message, desc, NStr::As<ui32>(*value_iterator));
                     }
@@ -115,7 +115,7 @@ namespace NDnn {
                     {
                         ++value_iterator;
                         if(value_iterator == end_iter) {
-                            throw TDnnException() << "Can't find value for option " << desc->name();
+                            throw TErrException() << "Can't find value for option " << desc->name();
                         }
                         reflection->SetString(&message, desc, *value_iterator);
                     }
@@ -124,13 +124,13 @@ namespace NDnn {
                     {
                         ++value_iterator;
                         if(value_iterator == end_iter) {
-                            throw TDnnException() << "Can't find value for option " << desc->name();
+                            throw TErrException() << "Can't find value for option " << desc->name();
                         }
                         reflection->SetDouble(&message, desc, NStr::As<double>(*value_iterator));
                     }
                     break;
                 default:
-                    throw TDnnException() << "Unknown protobuf type: " << desc->type();
+                    throw TErrException() << "Unknown protobuf type: " << desc->type();
             }
 
         }

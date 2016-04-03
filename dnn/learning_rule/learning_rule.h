@@ -20,6 +20,7 @@ namespace NDnn {
 
 		void SetNeuronImpl(TNeuronImpl& neuron) {
 			NeuronImpl.Set(neuron);
+			WeightNormalization.SetNeuronImpl(neuron);
 		}
 
 		const typename TNeuronImpl::TNeuronType& Neuron() const {

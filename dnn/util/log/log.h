@@ -32,7 +32,7 @@ namespace NDnn {
                     spdlog::set_level(spdlog::level::debug);
                     break;
                 default:
-                    throw TDnnException() << "Invalig log level\n";
+                    throw TErrException() << "Invalig log level\n";
             }
         }
         ELogLevel GetLogLevel() {

@@ -7,6 +7,6 @@ message TSynapseInnerState {
     optional double Weight = 3;
     optional double Potential = 4;
     optional bool Fired = 5;
-    optional double Amplitude = 6;
+    optional double PostSynapticWeight = 6;
 }
 

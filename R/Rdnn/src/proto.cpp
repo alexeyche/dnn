@@ -131,16 +131,19 @@ Rcpp::List TProto::TranslateModel(const NDnnProto::TConfig& config) {
         ui32 layerSynapseCounter = 0;
         for (const auto& neuronInner: layer.spikeneuronimplinnerstate()) {
             Rcpp::NumericVector weights;
+            Rcpp::NumericVector postSynWeights;
             Rcpp::IntegerVector ids_pre;
             
             for (ui32 synId=0; synId < neuronInner.synapsessize(); ++synId, ++layerSynapseCounter) {
                 auto synInner = layer.synapseinnerstate(layerSynapseCounter);
                 weights.push_back(synInner.weight());
+                postSynWeights.push_back(synInner.postsynapticweight());
                 ids_pre.push_back(synInner.idpre());
             }
             res.push_back(Rcpp::List::create(
                 Rcpp::Named("synapses") = Rcpp::List::create(
                     Rcpp::Named("weights") = weights,
+                    Rcpp::Named("post_synaptic_weights") = postSynWeights,
                     Rcpp::Named("ids_pre") = ids_pre
                 ),
                 Rcpp::Named("id") = neuronId++

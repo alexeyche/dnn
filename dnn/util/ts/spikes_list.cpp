@@ -43,7 +43,7 @@ namespace NDnn {
             }
             // cout << "\n";
             if(out.Data[di].Values.size() != max_size) {
-                throw TDnnException() << "Failed to convert spike times to " << \
+                throw TErrException() << "Failed to convert spike times to " << \
                                         "equal time series for " << di << " dimension, " << \
                                         out.Data[di].Values.size() << " != max_size " << max_size << " \n";
             }

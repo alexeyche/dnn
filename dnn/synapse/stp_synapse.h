@@ -42,22 +42,23 @@ namespace NDnn {
             s.p = 0.0;
         }
 
+        void PropagateSpike() {
+            s.r += - std::abs(s.p) * s.r;
+            s.p += Weight() * (c.MaxWeight - std::abs(s.p));
+        }
+
         void CalculateDynamics(const TTime &t) {
-            s.r += t.Dt * (1 - s.r)/c.D;
+            s.r += t.Dt * (1.0 - s.r)/c.D;
             s.p += t.Dt * (Weight() - s.p)/c.F;
         }
 
-    	void PropagateSpike() {
-    	    s.r += - std::abs(s.p) * s.r;
-            s.p += Weight() * (c.MaxWeight - std::abs(s.p));
-    	}
-
+    	
         double Potential() const {
             return s.p * s.r;
         }
 
         double WeightedPotential() const {
-            return Weight() * Potential();
+            return Potential() * PostSynapticWeight();
         }
 
     };

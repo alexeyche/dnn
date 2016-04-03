@@ -7,5 +7,6 @@ message TSimConfiguration {
     optional double Dt = 3;
     optional uint32 Port = 4;
     optional int32 Seed = 5;
+    optional double PastTime = 6;
 }
 

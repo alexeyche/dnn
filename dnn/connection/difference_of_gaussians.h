@@ -65,7 +65,7 @@ namespace NDnn {
                 v += c.AmpPos * GaussFunction2d(right_xi_circled, right_yi_circled, left.RowId, left.ColId, c.SigmaPos) -
                           c.AmpNeg * GaussFunction2d(right_xi_circled, right_yi_circled, left.RowId, left.ColId, c.SigmaNeg);
             } else {
-                throw TDnnException() << "Can't build DifferenceOfGaussians with dimension like this: " << c.Dimension << "\n"
+                throw TErrException() << "Can't build DifferenceOfGaussians with dimension like this: " << c.Dimension << "\n"
                                       << "Only 1 or 2 dimension supported\n";
             }
             if (fabs(v) > 1e-05) {

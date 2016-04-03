@@ -13,7 +13,7 @@ namespace NDnn {
 			serial(Weight);
 			serial(Potential);
 			serial(Fired);
-			serial(Amplitude);
+			serial(PostSynapticWeight);
 		}
 
 		size_t IdPre = 0;
@@ -21,7 +21,7 @@ namespace NDnn {
 		double Weight = 1.0;
 		double Potential = 0.0;
 		bool Fired = false;
-		double Amplitude = 1.0;
+		double PostSynapticWeight = 1.0;
 	};
 
 	template <typename TConstants, typename TState>
@@ -39,11 +39,11 @@ namespace NDnn {
 			return InnerState.Fired;
 		}
 
-		double& MutAmplitude() {
-			return InnerState.Amplitude;
+		double& MutPostSynapticWeight() {
+			return InnerState.PostSynapticWeight;
 		}
-		const double& Amplitude() const {
-			return InnerState.Amplitude;
+		const double& PostSynapticWeight() const {
+			return InnerState.PostSynapticWeight;
 		}
 
 
@@ -55,7 +55,7 @@ namespace NDnn {
 		}
 
 		double WeightedPotential() const {
-			return InnerState.Weight * InnerState.Potential;
+			return InnerState.Weight * InnerState.Potential * InnerState.PostSynapticWeight;
 		}
 
 		void SerialProcess(TProtoSerial& serial) override final {

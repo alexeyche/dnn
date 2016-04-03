@@ -48,7 +48,7 @@ namespace NDnn {
             if (def) {
                 return *def;
             }
-            throw TDnnElementNotFound() << "`variable_name' is not found in url arguments";
+            throw TErrElementNotFound() << "`variable_name' is not found in url arguments";
         }
         return NStr::As<T>(varPtr->second);
     }

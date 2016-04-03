@@ -20,6 +20,9 @@ import "difference_of_gaussians.proto";
 import "nonlinear_norm.proto";
 import "soft_bounds.proto";
 import "stp_synapse.proto";
+import "pre_post_stdp.proto";
+import "multiplicative_norm.proto";
+import "sliding_ltd.proto";
 
 message TRewardControl {
     optional TRewardControlConst RewardControl = 1;
@@ -60,6 +63,12 @@ message TLayer {
     repeated TSoftBoundsState SoftBoundsState = 23;
     repeated TSTPSynapseConst STPSynapse = 24;
     repeated TSTPSynapseState STPSynapseState = 25;
+    repeated TPrePostStdpConst PrePostStdp = 26;
+    repeated TPrePostStdpState PrePostStdpState = 27;
+    repeated TMultiplicativeNormConst MultiplicativeNorm = 28;
+    repeated TMultiplicativeNormState MultiplicativeNormState = 29;
+    repeated TSlidingLtdConst SlidingLtd = 30;
+    repeated TSlidingLtdState SlidingLtdState = 31;
 }
 
 

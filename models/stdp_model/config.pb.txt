@@ -29,23 +29,22 @@ Layer {
 		Threshold: 0.15
 		Slope: 50.0
 	}
+	STPSynapse {
+		D: 200.0
+		F: 50.0
+		MaxWeight: 1.0
+	}
 	Stdp {
+		TauPlus: 30.0
 		TauMinus: 50.0
+		Aplus: 1.0
+		Aminus: 1.0
 		LearningRate: 1e-04
 	}
-}
-Layer {
-	IntegrateAndFire {
-		TauMem: 10
-		TauRef: 2
-	}
-	Sigmoid {
-		Threshold: 0.15
-		Slope: 50.0
-	}
-	Stdp {
-		TauMinus: 50.0
-		LearningRate: 1e-02
+	SlidingLtd {
+		MaxWeight: 0.1
+		TargetRate: 10.0
+		Modulation: 1.0
 	}
 }
 Connection {
@@ -53,8 +52,9 @@ Connection {
 	Stochastic {
 		Prob: 0.25
 	}
-	Weight: 0.05
+	Weight: 1e-03
 }
+
 # Connection {
 # 	From: 1 To: 1
 # 	DifferenceOfGaussians {

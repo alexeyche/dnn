@@ -46,7 +46,7 @@ int main(int argc, const char** argv) {
             }
             break;
         default:
-            throw TDnnException() << "Failed to recognize protobuf type";
+            throw TErrException() << "Failed to recognize protobuf type";
     }
     return 0;
 }

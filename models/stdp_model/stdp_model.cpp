@@ -10,11 +10,12 @@
 #include <dnn/protos/options.pb.h>
 #include <dnn/receptive_field/gauss.h>
 #include <dnn/learning_rule/stdp.h>
+#include <dnn/learning_rule/pre_post_stdp.h>
 #include <dnn/activation/sigmoid.h>
 #include <dnn/activation/determ.h>
-#include <dnn/weight_normalization/nonlinear_norm.h>
+#include <dnn/weight_normalization/multiplicative_norm.h>
 #include <dnn/weight_normalization/min_max_norm.h>
-#include <dnn/weight_normalization/soft_bounds.h>
+#include <dnn/weight_normalization/sliding_ltd.h>
 
 using namespace NDnn;
 
@@ -30,14 +31,19 @@ int main(int argc, const char** argv) {
     } else {
         auto sim = BuildModel<
             TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TGaussReceptiveField>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TStdp, TMinMaxNorm>>
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TSTPSynapse, TSigmoid, TNoInput, TStdp, TSlidingLtd>>
         >(opts);
 
         if (opts.StatFile) {
-            sim.ListenBasicStats<0, 55>(0, 1000);
-            sim.ListenBasicStats<1, 55>(0, 1000);
-            // sim.ListenStat("r", [&]() { return sim.GetSynapse<1, 55, 0>().State().r; }, 0, 1000);
-            // sim.ListenStat("p", [&]() { return sim.GetSynapse<1, 55, 0>().State().p; }, 0, 1000);
+            // sim.ListenBasicStats<0, 55>(10000, 11000);
+            sim.ListenBasicStats<1, 5>(10000, 11000);
+            
+            
+            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 5, 1>().Weight(); }, 10000, 11000);
+            sim.ListenStat("StdpX", [&]() { return sim.GetLearningRule<1, 5>().State().X.Get(0); }, 10000, 11000);
+            
+            sim.ListenStat("StdpY", [&]() { return sim.GetLearningRule<1, 5>().State().Y; }, 10000, 11000);
+            
         }
         
         sim.Run();

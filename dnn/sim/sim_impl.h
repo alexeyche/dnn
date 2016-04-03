@@ -31,6 +31,8 @@ namespace NDnn {
 			std::rethrow_exception(err);
 		}
 
+		Conf.PastTime += Conf.Duration;
+
 		if (Options.OutputSpikesFile) {
 			L_DEBUG << "Saving spikes in " << *Options.OutputSpikesFile;
         	SaveSpikes(*Options.OutputSpikesFile);
@@ -77,12 +79,12 @@ namespace NDnn {
 	void TSim<T...>::RunWorker(TSelf& self, L& layer, ui32 idxFrom, ui32 idxTo, TSpinningBarrier& barrier, bool masterThread, TVector<std::exception_ptr>& errors, std::mutex& errorsMut) {
 		try {
 			self.RunWorkerRoutine<L>(layer, idxFrom, idxTo, barrier, masterThread);
-		} catch (const TDnnException& e) {
+		} catch (const TErrException& e) {
 			L_ERROR << "Got error in layer " << layer.GetId() << ", neurons " << idxFrom << ":" << idxTo << ", thread: " << e.what();
 			barrier.Fail();
 			TGuard guard(errorsMut);
 			errors.emplace_back(std::current_exception());
-		} catch (const TDnnInterrupt& e) {
+		} catch (const TErrInterrupt& e) {
 			// pass
 		}
 	}

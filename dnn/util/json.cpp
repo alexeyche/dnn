@@ -117,7 +117,7 @@ namespace NDnn {
 		if (any.IsTypeOf<int>()) {
 			doc.CurrentValue() = doc.SetValue<int>(any.GetValue<int>());
 		} else {
-			throw TDnnException() << "Can't find realization for type setter from any";
+			throw TErrException() << "Can't find realization for type setter from any";
 		}
 		return doc;
 	}
@@ -136,7 +136,7 @@ namespace NDnn {
 		if (CurrentValue().IsInt()) {
 			any.SetValue<int>(GetValue<int>(CurrentValue()));
 		} else {
-			throw TDnnException() << "Can't find realization for type getter from json to any for type " << CurrentValue().GetType() << " for value " << PrettyString(CurrentValue());
+			throw TErrException() << "Can't find realization for type getter from json to any for type " << CurrentValue().GetType() << " for value " << PrettyString(CurrentValue());
 		}
 		return any;
 	}

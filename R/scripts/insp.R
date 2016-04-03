@@ -106,8 +106,15 @@ if(INSP_MODEL) {
     if (file.exists(MODEL_FNAME)) {
         model = proto.read(MODEL_FNAME)
         w = matrix(0, nrow=length(model), ncol=length(model))
+        postW = matrix(0.0, nrow=length(model), ncol=length(model))
+        
+        post_w_makes_sense = FALSE
         for(n in model) {
             w[n$id+1, n$synapses$ids_pre+1] = n$synapses$weights
+            postW[n$id+1, n$synapses$ids_pre+1] = n$synapses$post_synaptic_weights
+            if ( (length(n$synapses$post_synaptic_weights)>0) && (!all(n$synapses$post_synaptic_weights == 1.0))) {
+                post_w_makes_sense = TRUE                
+            }
         }
         
         weights_pic = sprintf("%s/2_%s", tmp_d, pfx_f("weights.png"))
@@ -118,6 +125,18 @@ if(INSP_MODEL) {
             write(paste("Weights pic filename: ", weights_pic), stderr())
             pic_files = c(pic_files, weights_pic)
         }
+        
+        if (post_w_makes_sense) {
+            post_weights_pic = sprintf("%s/2_%s", tmp_d, pfx_f("post_weights.png"))
+            if(SAVE_PIC_IN_FILES) png(weights_pic, width=1024, height=768)
+            print(gr_pl(postW))
+            if(SAVE_PIC_IN_FILES) { 
+                dev.off()
+                write(paste("Post weights pic filename: ", post_weights_pic), stderr())
+                pic_files = c(pic_files, post_weights_pic)
+            }
+        }
+        
         
         if(!is.null(LAYER_MAP)) {
             spl = as.numeric(strsplit(LAYER_MAP, ":")[[1]])        
@@ -163,6 +182,7 @@ if (file.exists(STAT_FNAME)) {
         write(paste("Stat pic filename: ", stat_pic), stderr())
         pic_files = c(pic_files, stat_pic)
     }
+    par(mfrow=c(1,1))
 } else {
     warning(sprintf("Not found %s", STAT_FNAME))
 }

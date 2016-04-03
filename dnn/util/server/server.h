@@ -294,25 +294,25 @@ namespace NDnn {
 				(*cb)(req, respBuilder);
 				resp = respBuilder
 				    .FormResponse();
-			} catch (const TDnnFileNotFound& e) {
+			} catch (const TErrFileNotFound& e) {
 				resp = respBuilder
 					.StaticFile("not_found.html")
 					.NotFound()
 				    .FormResponse();
 			    if (DebugMode) throw;
-			} catch (const TDnnElementNotFound& e) {
+			} catch (const TErrElementNotFound& e) {
 				resp = respBuilder
 					.StaticFile("not_found.html")
 					.NotFound()
 				    .FormResponse();
 			    if (DebugMode) throw;
-			} catch (const TDnnLogicError& e) {
+			} catch (const TErrLogicError& e) {
 				resp = respBuilder
 					.Body(e.what())
 					.BadRequest()
 					.FormResponse();
 				if (DebugMode) throw;
-			} catch (const TDnnNotAvailable& e) {
+			} catch (const TErrNotAvailable& e) {
 				resp = respBuilder
 					.Body(e.what())
 					.ServiceUnavailable()

@@ -7,7 +7,7 @@
 namespace NDnn {
 
 
-	template <typename TConstants, typename TState>
+	template <typename TConstants, typename TState, typename TNeuronImpl>
 	class TWeightNormalization: public IProtoSerial<NDnnProto::TLayer> {
 	public:
 		void SerialProcess(TProtoSerial& serial) override final {
@@ -19,6 +19,10 @@ namespace NDnn {
 			return s;
 		}
 
+		const TConstants& Const() const {
+			return c;
+		}
+
 		double Ltp(const double& w) const {
 			return 1.0;
 		}
@@ -27,20 +31,34 @@ namespace NDnn {
 			return 1.0;
 		}
 
-		double DerivativeModulation(const double& w) const {
-			return 1.0;
+		double Derivative(double w, double dw) const {
+			return dw;
 		}
 
 		void CalculateDynamics(const TTime& t) {
 		}
+		
+		void SetNeuronImpl(TNeuronImpl& neuron) {
+			NeuronImpl.Set(neuron);
+		}
 
+		auto& GetMutSynapses() {
+			return NeuronImpl->GetMutSynapses();
+		}
+
+		const typename TNeuronImpl::TNeuronType& Neuron() const {
+			return NeuronImpl->GetNeuron();
+		}
+		
 	protected:
 		TConstants c;
 		TState s;
+	private:
+		TPtr<TNeuronImpl> NeuronImpl;
 	};
 
-	template <>
-	class TWeightNormalization<TEmpty, TEmpty>: public IProtoSerial<NDnnProto::TLayer> {
+	template <typename T>
+	class TWeightNormalization<TEmpty, TEmpty, T>: public IProtoSerial<NDnnProto::TLayer> {
 	public:
 		void SerialProcess(TProtoSerial& serial) {
 		}
@@ -53,14 +71,19 @@ namespace NDnn {
 			return 1.0;
 		}
 
-		double DerivativeModulation(const double& w) const {
-			return 1.0;
+		double Derivative(double w, double dw) const {
+			return dw;
 		}
 
 		void CalculateDynamics(const TTime& t) {
 		}
+		
+		void SetNeuronImpl(T& neuron) {
+		}
+
 	};
 
-	using TNoWeightNormalization = TWeightNormalization<TEmpty, TEmpty>;
+	template <typename T>
+	using TNoWeightNormalization = TWeightNormalization<TEmpty, TEmpty, T>;
 
 } // namespace NDnn
