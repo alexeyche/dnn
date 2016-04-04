@@ -64,17 +64,14 @@ message TLayer {
     repeated TSoftBoundsState SoftBoundsState = 23;
     repeated TSTPSynapseConst STPSynapse = 24;
     repeated TSTPSynapseState STPSynapseState = 25;
-<<<<<<< HEAD
     repeated TPrePostStdpConst PrePostStdp = 26;
     repeated TPrePostStdpState PrePostStdpState = 27;
     repeated TMultiplicativeNormConst MultiplicativeNorm = 28;
     repeated TMultiplicativeNormState MultiplicativeNormState = 29;
     repeated TSlidingLtdConst SlidingLtd = 30;
     repeated TSlidingLtdState SlidingLtdState = 31;
-=======
-    repeated THindmarshRoseConst HindmarshRose = 26;
-    repeated THindmarshRoseState HindmarshRoseState = 27;
->>>>>>> a925e85109661bb26dec17069694a405405d4422
+    repeated THindmarshRoseConst HindmarshRose = 32;
+    repeated THindmarshRoseState HindmarshRoseState = 33;
 }
 
 

@@ -4,10 +4,10 @@ add_executable(hindmarsh-rose
 )
 
 include_directories(${CMAKE_SOURCE_DIR}/ego)
-target_link_libraries(example ${PROTOBUF_LIBRARY} dnn m)
+target_link_libraries(hindmarsh-rose ${PROTOBUF_LIBRARY} dnn m)
 
 get_filename_component(model_bn ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE)
-install(TARGETS example RUNTIME DESTINATION models/${model_bn})
+install(TARGETS hindmarsh-rose RUNTIME DESTINATION models/${model_bn})
 
 file(GLOB ConfigFiles "${CMAKE_CURRENT_SOURCE_DIR}/*.pb.txt")
 
