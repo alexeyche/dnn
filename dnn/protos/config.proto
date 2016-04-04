@@ -20,6 +20,7 @@ import "difference_of_gaussians.proto";
 import "nonlinear_norm.proto";
 import "soft_bounds.proto";
 import "stp_synapse.proto";
+import "hindmarsh_rose.proto";
 
 message TRewardControl {
     optional TRewardControlConst RewardControl = 1;
@@ -60,6 +61,8 @@ message TLayer {
     repeated TSoftBoundsState SoftBoundsState = 23;
     repeated TSTPSynapseConst STPSynapse = 24;
     repeated TSTPSynapseState STPSynapseState = 25;
+    repeated THindmarshRoseConst HindmarshRose = 26;
+    repeated THindmarshRoseState HindmarshRoseState = 27;
 }
 
 
