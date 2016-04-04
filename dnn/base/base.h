@@ -11,7 +11,7 @@
 #include <mutex>
 #include <complex>
 
-namespace NEgo {
+namespace NDnn {
 
 	template <typename T>
 	using UPtr = std::unique_ptr<T>;
