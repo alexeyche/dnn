@@ -15,4 +15,3 @@ message THindmarshRoseState {
     optional double SpikingVariable = 1;
     optional double BurstingVariable = 2;
 }
-
