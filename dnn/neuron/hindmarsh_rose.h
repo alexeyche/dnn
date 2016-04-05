@@ -10,7 +10,7 @@
 
 namespace NDnn {
 
-	struct THindmarshRoseConst: public IProtoSerial<NDnnProto::THidmarshRoseConst> {
+	struct THindmarshRoseConst: public IProtoSerial<NDnnProto::THindmarshRoseConst> {
 		static const auto ProtoFieldNumber = NDnnProto::TLayer::kHindmarshRoseFieldNumber;
 
         void SerialProcess(TProtoSerial& serial) override final {
@@ -21,8 +21,6 @@ namespace NDnn {
             serial(R);
             serial(S);
             serial(XR);
-            serial(SpikingVariable);
-            serial(BurstingVariable);
         }
 
         double A = 1.0;
@@ -31,17 +29,22 @@ namespace NDnn {
         double D = 5.0;
         double R = 0.001;
         double S = 4;
-        double XR = - 1.6;
+        double XR = -1.6;
+	};
+
+
+	struct THindmarshRoseState: public IProtoSerial<NDnnProto::THindmarshRoseState> {
+		static const auto ProtoFieldNumber = NDnnProto::TLayer::kHindmarshRoseFieldNumber;
+		void SerialProcess(TProtoSerial& serial) override final {
+            serial(SpikingVariable);
+            serial(BurstingVariable);
+        }
+
         double SpikingVariable = 0.0;
         double BurstingVariable = 0.0;
 	};
 
-
-	struct TIntegrateAndFireState: public IProtoSerial<NDnnProto::TIntegrateAndFireState> {
-		static const auto ProtoFieldNumber = NDnnProto::TLayer::kIntegrateAndFireStateFieldNumber;
-	};
-
-	class TIntegrateAndFire : public TSpikeNeuron<TIntegrateAndFireConst, TIntegrateAndFireState> {
+	class THindmarshRose : public TSpikeNeuron<THindmarshRoseConst, THindmarshRoseState> {
 	public:
 		void Reset() {
 	    }
@@ -49,26 +52,10 @@ namespace NDnn {
 	    void PostSpikeDynamics(const TTime& t) {
 	    }
 
-		const double& SpikingVariable() const {
-			return c.SpikingVariable;
-		}
-
-		const double& BurstingVariable() const {
-			return c.BurstingVariable;
-		}
-
-		double& MutSpikingVariable() {
-			return c.SpikingVariable;
-		}
-
-		double& MutBurstingVariable() {
-			return c.BurstingVariable;
-		}
-
 	    void CalculateDynamics(const TTime& t, double Iinput, double Isyn) {
-	        MutMembrane() += t.Dt * ( SpikingVariable()  - c.A * pow(Membrane(), 3) + c.B * pow(Membrane(), 2) - BurstingVariable() + Iinput + Isyn);
-	        MutSpikingVaribale() += t.Dt * ( c.C - c.D * pow(Membrane(), 2)  - SpikingVariable());
-	        MutBurstingVariable() += t.Dt * c.R *( c.S * ( Membrane() - c.XR) - BurstingVariable());
+	        MutMembrane() += t.Dt * ( s.SpikingVariable  - c.A * pow(Membrane(), 3) + c.B * pow(Membrane(), 2) - s.BurstingVariable + Iinput + Isyn);
+	        s.SpikingVariable += t.Dt * ( c.C - c.D * pow(Membrane(), 2)  - s.SpikingVariable);
+	        s.BurstingVariable += t.Dt * c.R *( c.S * ( Membrane() - c.XR) - s.BurstingVariable);
 	    }
 	};
 

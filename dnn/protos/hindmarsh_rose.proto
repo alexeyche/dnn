@@ -9,10 +9,10 @@ message THindmarshRoseConst {
     optional double R = 5;
     optional double S = 6;
     optional double XR = 7;
-    optional double SpikingVariable = 8;
-    optional double BurstingVariable = 9;
 }
 
 message THindmarshRoseState {
+    optional double SpikingVariable = 1;
+    optional double BurstingVariable = 2;
 }
 
