@@ -34,7 +34,7 @@ namespace NDnn {
 
 
 	struct THindmarshRoseState: public IProtoSerial<NDnnProto::THindmarshRoseState> {
-		static const auto ProtoFieldNumber = NDnnProto::TLayer::kHindmarshRoseFieldNumber;
+		static const auto ProtoFieldNumber = NDnnProto::TLayer::kHindmarshRoseStateFieldNumber;
 		void SerialProcess(TProtoSerial& serial) override final {
             serial(SpikingVariable);
             serial(BurstingVariable);
