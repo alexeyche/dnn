@@ -54,6 +54,8 @@ namespace NDnn {
 
         bool SerialRepeated(double& v, int idx, int protoField);
 
+        bool SerialRepeated(TComplex& v, int idx, int protoField);
+
         bool SerialRepeated(NPb::Message& m, int idx, int protoField);
 
         template <typename T>

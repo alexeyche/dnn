@@ -1,6 +1,8 @@
 #include "proto_serial.h"
 #include "meta_proto_serial.h"
 
+#include <dnn/protos/base.pb.h>
+
 namespace NDnn {
 
     TProtoSerial::TProtoSerial(NPb::Message& message, ESerialMode mode)
@@ -174,6 +176,29 @@ namespace NDnn {
         return true;
     }
 #endif
+
+    bool TProtoSerial::SerialRepeated(TComplex& v, int idx, int protoField) {
+        CHECK_FIELD();
+
+        switch (Mode) {
+            case ESerialMode::IN:
+            {
+                const auto& messageField = Refl->GetRepeatedMessage(Message, GetFieldDescr(protoField), idx);
+                const NDnnProto::TComplex& cpx = dynamic_cast<const NDnnProto::TComplex&>(messageField);
+                v = TComplex(cpx.real(), cpx.imag());
+            }
+            break;
+            case ESerialMode::OUT:
+            {
+                NPb::Message* messageField = Refl->AddMessage(&Message, GetFieldDescr(protoField));
+                NDnnProto::TComplex* cpx = dynamic_cast<NDnnProto::TComplex*>(messageField);
+                cpx->set_real(v.real());
+                cpx->set_imag(v.imag());
+            }
+            break;
+        }
+        return true;
+    }
 
     bool TProtoSerial::SerialRepeated(double& v, int idx, int protoField) {
         CHECK_FIELD();

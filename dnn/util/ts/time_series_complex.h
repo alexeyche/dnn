@@ -7,18 +7,18 @@
 
 namespace NDnn {
 
-    struct TTimeSeriesData : public IProtoSerial<NDnnProto::TTimeSeriesData> {
-        using TElement = double;
+    struct TTimeSeriesComplexData : public IProtoSerial<NDnnProto::TTimeSeriesData> {
+        using TElement = TComplex;
 
         void SerialProcess(TProtoSerial& serial) {
             serial(Values);
         }
 
-        TVector<double> Values;
+        TVector<TComplex> Values;
     };
 
 
-    struct TTimeSeries: public IProtoSerial<NDnnProto::TTimeSeries>, public TTimeSeriesGeneric<TTimeSeriesData> {
+    struct TTimeSeriesComplex: public IProtoSerial<NDnnProto::TTimeSeriesComplex>, public TTimeSeriesGeneric<TTimeSeriesComplexData> {
         
         void SerialProcess(TProtoSerial& serial) {
             serial(Info);

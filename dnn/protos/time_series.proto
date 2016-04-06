@@ -1,6 +1,7 @@
 package NDnnProto;
 
 import "time_series_info.proto";
+import "base.proto";
 
 message TTimeSeries {
     optional TTimeSeriesInfo Info = 1;
@@ -11,3 +12,11 @@ message TTimeSeriesData {
     repeated double Values = 1;
 }
 
+message TTimeSeriesComplexData {
+    repeated TComplex Values = 1;
+}
+
+message TTimeSeriesComplex {
+    optional TTimeSeriesInfo Info = 1;
+    repeated TTimeSeriesComplexData Data = 2;
+}

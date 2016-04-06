@@ -28,6 +28,7 @@ set(DIRS
     synapse
     util
     learning_rule
+    spikework
 )
 
 foreach(dir ${DIRS})
