@@ -1,17 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 
-set(DIRS
-    kernel
-    protos
-)
-
-foreach(dir ${DIRS})
-  add_subdirectory(${dir})
-endforeach()
-
 set(SOURCES
-    convolve.cpp
-    fft.cpp
+	kernel.cpp
+    epsp.cpp
 )
 
 set(DIR_SRCS)

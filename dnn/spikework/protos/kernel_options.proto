@@ -1,0 +1,7 @@
+package NDnnProto;
+
+import "epsp.proto";
+
+message TKernelOptions {
+    optional TEpspOptions EpspOptions = 1;
+};

@@ -7,7 +7,7 @@ namespace NDnn {
 
 	TTimeSeriesComplex TFFT::Transform(const TTimeSeries& src) {
 		TTimeSeriesComplex dst;
-		
+
 		ui32 ts_size = src.Length();
 	    if(ts_size % 2 != 0) {
 	        ts_size--;
