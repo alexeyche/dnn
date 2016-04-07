@@ -7,7 +7,7 @@ namespace NDnn {
 
 	class TFFT {
 	public:
-		
+
 		static TTimeSeriesComplex Transform(const TTimeSeries& src);
 
 		static TTimeSeries TransformBack(const TTimeSeriesComplex& src);
