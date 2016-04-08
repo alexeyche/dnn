@@ -18,7 +18,7 @@ namespace NDnn {
     };
 
 
-    struct TTimeSeries: public IProtoSerial<NDnnProto::TTimeSeries>, public TTimeSeriesGeneric<TTimeSeriesData> {
+    struct TTimeSeries: public IProtoSerial<NDnnProto::TTimeSeries>, public TTimeSeriesGeneric<TTimeSeries, TTimeSeriesData> {
 
         void SerialProcess(TProtoSerial& serial) {
             serial(Info);

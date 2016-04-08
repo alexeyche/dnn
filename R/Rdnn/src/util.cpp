@@ -24,7 +24,7 @@ void setVerboseLevel(int level) {
 // [[Rcpp::export(name = "chop.time.series")]]
 Rcpp::List chopTimeSeries(Rcpp::List l) {
 	TTimeSeries ts = TProto::TranslateBack<TTimeSeries>(l);
-	
+
 	Rcpp::List out;
 	for(auto &ts_ch: ts.Chop()) {
 		out.push_back(TProto::Translate<TTimeSeries>(ts_ch));
@@ -35,7 +35,7 @@ Rcpp::List chopTimeSeries(Rcpp::List l) {
 // [[Rcpp::export(name = "chop.spikes.list")]]
 Rcpp::List chopSpikesList(Rcpp::List l) {
     TSpikesList ts = TProto::TranslateBack<TSpikesList>(l);
-	
+
 	Rcpp::List out;
 	for(auto &ts_ch: ts.Chop()) {
 		out.push_back(TProto::Translate<TSpikesList>(ts_ch));
