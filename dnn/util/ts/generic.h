@@ -11,9 +11,9 @@
 
 namespace NDnn {
 
-    template <typename TData>
+    template <typename TDerived, typename TData>
     struct TTimeSeriesGeneric {
-        using TSelf = TTimeSeriesGeneric<TData>;
+        using TSelf = TTimeSeriesGeneric<TDerived, TData>;
 
         TTimeSeriesGeneric() {}
 
@@ -39,7 +39,7 @@ namespace NDnn {
             }
         }
 
-        void AssertAnotherTs(const TSelf& anotherTs) {
+        void AssertAnotherTs(const TDerived& anotherTs) {
             ENSURE((Dim() == anotherTs.Dim()) && Length() == anotherTs.Length(), "Can't work with time series with different dimenstions");
         }
 
@@ -56,7 +56,7 @@ namespace NDnn {
             }
         }
 
-        double InnerProductMul(const TSelf& anotherTs) {
+        double InnerProductMul(const TDerived& anotherTs) {
             AssertAnotherTs(anotherTs);
             double acc = 1.0;
             for(ui32 di=0; di < Data.size(); ++di) {
@@ -65,7 +65,7 @@ namespace NDnn {
             return acc;
         }
 
-        double InnerProductAcc(const TSelf& anotherTs) {
+        double InnerProductAcc(const TDerived& anotherTs) {
             AssertAnotherTs(anotherTs);
             double acc = 0.0;
             for(ui32 di=0; di < Data.size(); ++di) {
@@ -74,7 +74,7 @@ namespace NDnn {
             return acc;
         }
 
-        void InnerProduct(const TSelf& anotherTs) {
+        void InnerProduct(const TDerived& anotherTs) {
             ENSURE( (Dim() == anotherTs.Dim()) && (anotherTs.Dim() != 1) && (Length() == anotherTs.Length()), "Can't multiply time series with different dimensions or length");
             for(ui32 di=0; di < Data.size(); ++di) {
                 for(ui32 vi=0; vi < Data[di].Values.size(); ++vi) {
@@ -167,9 +167,9 @@ namespace NDnn {
             Info.ChangeTimeDelta(dt);
         }
 
-        TVector<TSelf> Chop()  {
+        TVector<TDerived> Chop()  {
             ui32 elem_id = 0;
-            TVector<TSelf> ts_chopped;
+            TVector<TDerived> ts_chopped;
 
             for(ui32 li=0; li<Info.LabelsStart.size(); ++li) {
                 const ui32 &start_of_label = Info.LabelsStart[li].Start;
@@ -178,7 +178,7 @@ namespace NDnn {
                 const ui32 &end_of_label = start_of_label + Info.UniqueLabels[label_id].Duration;
                 const string &label = Info.UniqueLabels[label_id].Name;
 
-                TSelf labeled_ts;
+                TDerived labeled_ts;
                 for(; elem_id < end_of_label; ++elem_id) {
                     for(ui32 di=0; di<Data.size(); ++di) {
                         labeled_ts.AddValue(di, Data[di].Values[elem_id]);
