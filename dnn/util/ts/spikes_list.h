@@ -45,7 +45,7 @@ namespace NDnn {
             return Data.size();
         }
 
-        TTimeSeries ConvertToBinaryTimeSeries(const double &dt) const;
+        TTimeSeries ConvertToBinaryTimeSeries(double dt) const;
 
         void AddSpike(ui32 ni, double t) {
             while(ni >= Data.size()) {
