@@ -5,6 +5,8 @@
 #include <dnn/util/stat_gatherer.h>
 #include <dnn/util/serial/bin_serial.h>
 
+#include <dnn/protos/config.pb.h>
+
 using namespace NDnn;
 
 template <>
