@@ -11,6 +11,8 @@
 
 #include <dnn/protos/config.pb.h>
 
+#include <dnn/protos/config.pb.h>
+
 using namespace NDnn;
 
 template <>
