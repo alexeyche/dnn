@@ -1,9 +1,8 @@
 {
     "alexey" : {
         "EVAL_TYPE" : "error_rate",
-        "T1" : "2000",
+        "T1" : "8000",
         "INSP_MODEL" : "0",
-        "WD" : "/Volumes/MEDIA/DNN/runs",
         "TIMED_PATTERN_LENGTH" : "50000",
         "TIMED_PATTERN_LENGTH_TEST" : "10000"
     },

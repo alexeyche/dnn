@@ -78,6 +78,10 @@ install(CODE
 )
 
 install(CODE
+    "EXECUTE_PROCESS(COMMAND ln -sf ${CMAKE_CURRENT_SOURCE_DIR}/../scripts ${CMAKE_INSTALL_PREFIX}/scripts)"
+)
+
+install(CODE
     "EXECUTE_PROCESS(COMMAND mkdir -p ${CMAKE_INSTALL_PREFIX}/spikes)"
 )
 

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 set(DIRS
     example
+    hs_model
     stdp_model
 )
 

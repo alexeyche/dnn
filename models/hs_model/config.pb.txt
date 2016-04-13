@@ -1,0 +1,46 @@
+SimConfiguration {
+	Port: 9090
+	Seed: -1
+	Jobs: 8
+}
+Layer {
+	IntegrateAndFire {
+		TauMem: 15
+		TauRef: 2
+	}
+	Sigmoid {
+		Threshold: 0.15
+		Slope: 120.0
+	}
+    BasicSynapse {
+        PspDecay: 10.0
+    }
+}
+Layer {
+	IntegrateAndFire {
+		TauMem: 10
+		TauRef: 2
+	}
+	Sigmoid {
+		Threshold: 0.15
+		Slope: 50.0
+	}
+    BasicSynapse {
+        PspDecay: 10.0
+    }
+}
+Connection {
+	From: 0 To: 1
+	Stochastic {
+		Prob: 0.25
+	}
+	Weight: 0.75
+}
+
+Connection {
+	From: 0 To: 1
+	Stochastic {
+		Prob: 0.25
+	}
+	Weight: -0.75
+}
