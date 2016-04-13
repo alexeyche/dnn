@@ -1,6 +1,0 @@
-package NDnnProto;
-
-
-message TDotOptions {
-}
-
