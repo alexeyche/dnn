@@ -2,13 +2,11 @@
 
 #include "kernel.h"
 
-#include <dnn/spikework/protos/kernel_options.pb.h>
+#include <dnn/spikework/protos/spikework_config.pb.h>
 
 namespace NDnn {
 
     struct TEpspOptions: IProtoSerial<NDnnProto::TEpspOptions> {
-        static const auto ProtoFieldNumber = NDnnProto::TKernelOptions::kEpspOptionsFieldNumber;
-
         void SerialProcess(TProtoSerial& serial) {
             serial(TauRise);
             serial(TauDecay);
@@ -23,7 +21,7 @@ namespace NDnn {
     };
 
 
-    class TEpspFilter: public IFilter<TEpspOptions> {
+    class TEpspFilter: public IFilter {
     public:
         TTimeSeries GetFilter() const override final {
             TEpspOptions opts = Options;
@@ -50,6 +48,13 @@ namespace NDnn {
             }
             return filter;
         }
+
+        void SerialProcess(TProtoSerial& serial) override {
+            serial(Options, NDnnProto::TPreprocessorConfig::kEpspFieldNumber);
+        }
+
+    private:
+        TEpspOptions Options;
     };
 
 
