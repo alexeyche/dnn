@@ -12,6 +12,7 @@ endforeach()
 set(SOURCES
     convolve.cpp
     fft.cpp
+    spikework.cpp
 )
 
 set(DIR_SRCS)

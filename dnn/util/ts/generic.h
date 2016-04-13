@@ -100,7 +100,7 @@ namespace NDnn {
             return const_cast<TSelf*>(this)->GetMutVector(ndim);
         }
 
-        TVector<typename TData::TElement> GetColumnVector(ui32 xi) {
+        TVector<typename TData::TElement> GetColumnVector(ui32 xi) const {
             TVector<typename TData::TElement> col(Dim());
             for(ui32 di=0; di < Dim(); ++di) {
                 assert(xi<Data[di].Values.size());
