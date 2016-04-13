@@ -18,7 +18,7 @@ int main(int argc, const char** argv) {
     auto opts = InitOptions(argc, argv, "TestModel");
     if (opts.NoLearning) {
         auto sim = BuildModel<
-            TLayer<TIntegrateAndFire, 9, TNeuronConfig<TBasicSynapse, TSigmoid, TIdentReceptiveField, TNoLearning>>,
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TIdentReceptiveField, TNoLearning>>,
             TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TNoLearning>>
         >(opts);
 
@@ -26,7 +26,7 @@ int main(int argc, const char** argv) {
 
     } else {
         auto sim = BuildModel<
-            TLayer<TIntegrateAndFire, 9, TNeuronConfig<TBasicSynapse, TSigmoid, TIdentReceptiveField>>,
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TIdentReceptiveField>>,
             TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TStdp>>
         >(opts);
 
