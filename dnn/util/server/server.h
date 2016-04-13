@@ -7,6 +7,7 @@
 #include <dnn/util/string.h>
 #include <dnn/util/optional.h>
 
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>

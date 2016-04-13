@@ -1,6 +1,6 @@
 build
-snn_sim.sublime-workspace
 dnn.sublime-workspace
 .DS_Store
 .DS_Store?
 .Rhistory
+*.pyc
