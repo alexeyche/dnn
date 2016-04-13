@@ -36,8 +36,9 @@ namespace NDnn {
 		static TDoubleMatrix GramMatrix(
 			const NDnnProto::TPreprocessorConfig& prepProcConfig, 
 			const NDnnProto::TKernelConfig& kernelConfig, 
-			TTimeSeries ts, ui32 jobs = 8) 
-		{
+			TTimeSeries ts, 
+			ui32 jobs = 8
+		) {
 			SPtr<IPreprocessor> preprocessor = CreatePreprocessor(prepProcConfig);
 			SPtr<IKernel> kernel = CreateKernel(kernelConfig);
 
