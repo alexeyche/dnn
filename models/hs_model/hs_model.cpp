@@ -16,7 +16,8 @@ int main(int argc, const char** argv) {
     if (opts.NoLearning) {
         auto sim = BuildModel<
             TLayer<TIntegrateAndFire, 9, TNeuronConfig<TBasicSynapse, TDeterm, TIdentReceptiveField, TNoLearning>>,
-            TLayer<TIntegrateAndFire, 45, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TNoLearning>>
+            TLayer<TIntegrateAndFire, 51, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TNoLearning>>,
+            TLayer<TIntegrateAndFire, 2, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TNoLearning, TInputClassifier>>
         >(opts);
 
         sim.Run();
@@ -24,14 +25,15 @@ int main(int argc, const char** argv) {
     } else {
         auto sim = BuildModel<
             TLayer<TIntegrateAndFire, 9, TNeuronConfig<TBasicSynapse, TDeterm, TIdentReceptiveField>>,
-            TLayer<TIntegrateAndFire, 45, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput>>
+            TLayer<TIntegrateAndFire, 51, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput>>,
+            TLayer<TIntegrateAndFire, 2, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TNoLearning, TInputClassifier>>
         >(opts);
 
         if (opts.StatFile) {
-            sim.ListenBasicStats<0, 8>(0, 1000);
-            sim.ListenBasicStats<1, 55>(0, 1000);
-            sim.ListenStat("Synapse", [&]() { return sim.GetSynapse<1, 10, 10>().Potential(); }, 0, 1000);
-            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 10, 10>().Weight(); }, 0, 1000);
+            sim.ListenBasicStats<2, 0>(0, 1000);
+            sim.ListenBasicStats<2, 1>(0, 1000);
+            sim.ListenStat("Synapse", [&]() { return sim.GetSynapse<2, 0, 1>().Potential(); }, 0, 1000);
+            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<2, 1, 1>().Weight(); }, 0, 1000);
         }
 
         sim.Run();

@@ -1,40 +1,44 @@
 SimConfiguration {
 	Port: 9090
 	Seed: -1
-	Jobs: 8
+	Jobs: 4
 }
+
 Layer {
 	IntegrateAndFire {
 		TauMem: 15
 		TauRef: 2
 	}
-	Sigmoid {
+	Determ {
 		Threshold: 0.15
-		Slope: 120.0
 	}
-    BasicSynapse {
-        PspDecay: 10.0
-    }
+	BasicSynapse {
+		PspDecay: 10.0
+	}
 }
 Layer {
 	IntegrateAndFire {
 		TauMem: 10
 		TauRef: 2
 	}
-	Sigmoid {
+	Determ {
 		Threshold: 0.15
-		Slope: 50.0
 	}
-    BasicSynapse {
-        PspDecay: 10.0
-    }
+	BasicSynapse {
+		PspDecay: 10.0
+	}
 }
-Connection {
-	From: 0 To: 1
-	Stochastic {
-		Prob: 0.25
+Layer {
+	IntegrateAndFire {
+		TauMem: 10
+		TauRef: 2
 	}
-	Weight: 0.75
+	Determ {
+		Threshold: 0.15
+	}
+	BasicSynapse {
+		PspDecay: 10.0
+	}
 }
 
 Connection {
@@ -42,5 +46,26 @@ Connection {
 	Stochastic {
 		Prob: 0.25
 	}
+	Weight: 0.75
+}
+Connection {
+	From: 1 To: 1
+	Stochastic {
+		Prob: 0.25
+	}
 	Weight: -0.75
+}
+Connection {
+	From: 1 To: 2
+	Stochastic {
+		Prob: 0.50
+	}
+	Weight: 0.50
+}
+
+RewardControl {
+	RewardControl {
+		TauTrace: 112
+		TauMeanTrace: 500
+	}
 }
