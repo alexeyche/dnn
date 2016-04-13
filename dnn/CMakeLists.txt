@@ -81,8 +81,14 @@ install(CODE
     "EXECUTE_PROCESS(COMMAND mkdir -p ${CMAKE_INSTALL_PREFIX}/spikes)"
 )
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+if (APPLE)
+    foreach(LIB libdnn_protos libspikework_protos)
+        install(CODE
+            "EXECUTE_PROCESS(COMMAND install_name_tool -change ${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/lib/${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/lib/libdnn.dylib )"
+        )
+    endforeach(LIB)
+
     install(CODE
         "EXECUTE_PROCESS(COMMAND launchctl setenv DNN_HOME ${CMAKE_INSTALL_PREFIX})"
     )
-endif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+endif()
