@@ -5,7 +5,7 @@ require(Rdnn, quietly=TRUE)
 
 input_neurons = 100
 
-last_epoch = as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", getwd()), intern=TRUE), "_")[[1]][1])
+last_epoch = as.numeric(strsplit(system("ls -t *.pb | head -n 1", intern=TRUE), "_")[[1]][1])
 
 eval_spikes_fname = sprintf("%d_eval_spikes.pb", last_epoch)
 spikes_fname = sprintf("%d_spikes.pb", last_epoch)
