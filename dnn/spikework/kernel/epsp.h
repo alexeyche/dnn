@@ -15,7 +15,7 @@ namespace NDnn {
         }
 
         double TauRise = 0.0;
-        double TauDecay = 50.0;
+        double TauDecay = 20.0;
         double Length = 100.0;
         double Dt = 1.0;
     };

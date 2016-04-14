@@ -9,7 +9,7 @@ namespace NDnn {
 		TTimeSeriesComplex dst;
 
 		ui32 ts_size = src.Length();
-	    if(ts_size % 2 != 0) {
+	    if (ts_size % 2 != 0) {
 	        ts_size--;
 	    }
 	    L_DEBUG << "TFFT, fft start, nfft == " << ts_size;
@@ -81,7 +81,7 @@ namespace NDnn {
 	}
 
 	ui32 TFFT::Nextpow2(ui32 s) {
-		return kiss_fft_next_fast_size(s);
+		return kiss_fftr_next_fast_size_real(s);
 	}
 
 } // namespace NDnn

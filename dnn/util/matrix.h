@@ -88,13 +88,13 @@ namespace NDnn {
         const ui32& ColSize() const { return NCol; }
     	const ui32& RowSize() const { return NRow; }
 
-        const TVector<ui32>& GetColLabelsIds() {
+        const TVector<ui32>& GetColLabelsIds() const {
             return ColLabelsIds;
         }
-        const TVector<ui32>& GetRowLabelsIds() {
+        const TVector<ui32>& GetRowLabelsIds() const {
             return RowLabelsIds;
         }
-        const TVector<string>& GetUniqueLabels() {
+        const TVector<string>& GetUniqueLabels() const {
             return UniqueLabels;
         }
 
