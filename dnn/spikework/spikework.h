@@ -19,6 +19,7 @@ namespace NDnn {
 				ENSURE(!kernel, "Need to choose one kernel");
 				kernel = MakeShared(new TDotKernel());
 			}
+			ENSURE(kernel, "Kernel is not set in config");
 			kernel->Deserialize(kernelConfig);
 			return kernel;
 		}
@@ -29,20 +30,22 @@ namespace NDnn {
 				ENSURE(!preprocessor, "Need to choose one preprocessor");
 				preprocessor = MakeShared(new TEpspFilter());
 			}
+			ENSURE(preprocessor, "Preprocessor is not set in config");
 			preprocessor->Deserialize(prepProcConfig);
 			return preprocessor;
 		}
+
+		static TTimeSeries PreprocessRun(const NDnnProto::TPreprocessorConfig& preProcConfig, TTimeSeries ts, ui32 jobs = 8) {
+			SPtr<IPreprocessor> preprocessor = CreatePreprocessor(preProcConfig);
+			return preprocessor->Preprocess(std::move(ts));
+		}
 		
-		static TDoubleMatrix GramMatrix(
-			const NDnnProto::TPreprocessorConfig& prepProcConfig, 
+		static TDoubleMatrix KernelRun(
 			const NDnnProto::TKernelConfig& kernelConfig, 
-			TTimeSeries ts, 
+			const TTimeSeries& ts, 
 			ui32 jobs = 8
 		) {
-			SPtr<IPreprocessor> preprocessor = CreatePreprocessor(prepProcConfig);
 			SPtr<IKernel> kernel = CreateKernel(kernelConfig);
-
-			ts = preprocessor->Preprocess(std::move(ts));
 
 			TVector<TTimeSeries> choppedTs = ts.Chop();
 			ENSURE(choppedTs.size()>0, "Got zero sized time series list, check presence of time series information");
@@ -91,6 +94,16 @@ namespace NDnn {
 	            }
 	        }
 	        return gram;
+		}
+		
+		static TDoubleMatrix KernelRun(
+			const NDnnProto::TPreprocessorConfig& preProcConfig, 
+			const NDnnProto::TKernelConfig& kernelConfig, 
+			TTimeSeries ts, 
+			ui32 jobs = 8
+		) {
+			ts = PreprocessRun(preProcConfig, ts, jobs);
+			return KernelRun(kernelConfig, ts, jobs);
 		}
 
 	};

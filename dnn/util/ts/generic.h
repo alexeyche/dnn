@@ -75,7 +75,10 @@ namespace NDnn {
         }
 
         void InnerProduct(const TDerived& anotherTs) {
-            ENSURE( (Dim() == anotherTs.Dim()) && (anotherTs.Dim() != 1) && (Length() == anotherTs.Length()), "Can't multiply time series with different dimensions or length");
+            ENSURE( ((Dim() == anotherTs.Dim()) || (anotherTs.Dim() == 1)) && (Length() == anotherTs.Length()), 
+                "Can't multiply time series with different dimensions or length," 
+                << " left dim " << Dim() << ", right dim " << anotherTs.Dim()
+                << " left length " << Length() << ", right length " << anotherTs.Length());
             for(ui32 di=0; di < Data.size(); ++di) {
                 for(ui32 vi=0; vi < Data[di].Values.size(); ++vi) {
                     ui32 another_ts_di = di;
@@ -167,7 +170,7 @@ namespace NDnn {
             Info.ChangeTimeDelta(dt);
         }
 
-        TVector<TDerived> Chop()  {
+        TVector<TDerived> Chop() const {
             ui32 elem_id = 0;
             TVector<TDerived> ts_chopped;
 
