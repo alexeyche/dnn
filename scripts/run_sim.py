@@ -64,6 +64,10 @@ class TDnnSim(object):
         if self.evaluation_data:
             self.evaluation = True
         self.seed = kwargs.get("seed")
+        
+        self.evaluation_script = kwargs.get("evaluation_script")
+        if self.evaluation_script:
+            self.inspection = False
 
         logFormatter = logging.Formatter("%(asctime)s [%(levelname)s]  %(message)-100s")
         rootLogger = logging.getLogger()
@@ -203,6 +207,12 @@ class TDnnSim(object):
             ]
 
         return { "cmd" : cmd, "print_root_log_on_fail" : self.slave, "stdout": pj(self.working_dir, "{}.log".format(self.current_epoch)) }
+
+    def construct_eval_script_cmd(self):
+        cmd = [
+            self.evaluation_script,
+        ]
+        return {"cmd": cmd}
     
     def construct_inspect_cmd(self):
         env = {
@@ -245,6 +255,11 @@ class TDnnSim(object):
                     if self.evaluation:
                         evals.append(float([ line.strip("\n") for line in o.split("\n") if line.strip() ][-1]))
                         logging.info("Evaluation score: {}".format(evals[-1]))
+            elif self.evaluation_script:
+                with pushd(self.working_dir):
+                    o = run_proc(**self.construct_eval_script_cmd())
+                evals.append(float([ line.strip("\n") for line in o.split("\n") if line.strip() ][-1]))
+                logging.info("Evaluation score: {}".format(evals[-1]))
 
         if len(evals)>0:
             final_score = sum(evals)/len(evals)
@@ -361,6 +376,10 @@ def main(argv):
                         '--evaluation-data',
                         required=False,
                         help='Run evaluation on special testing data. If not pointed evaluation will be runned on train data')
+    parser.add_argument('-evs', 
+                        '--evaluation-script',
+                        required=False,
+                        help='Run evaluation script in current working directory, inspection will be turned off')
     parser.add_argument('model', nargs=1, help="Path to model binary")
     
     args = parser.parse_args(argv)
@@ -387,6 +406,7 @@ def main(argv):
         "force" : args.force,
         "no_learning" : args.no_learning,
         "seed" : args.seed,
+        "evaluation_script" : args.evaluation_script,
     }
     TDnnSim(**args).run()
     

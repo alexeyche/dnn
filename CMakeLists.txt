@@ -80,6 +80,14 @@ macro(DEFINE_MODEL BIN CPP)
     )
   endforeach(ConfigFile)
 
+  file(GLOB RScripts "${CMAKE_CURRENT_SOURCE_DIR}/*.R")
+
+  foreach(RScript ${RScripts})
+    install(CODE
+        "EXECUTE_PROCESS(COMMAND ln -sf ${RScript} ${CMAKE_INSTALL_PREFIX}/models/${model_bn})"
+    )
+  endforeach(RScript)
+
   if (APPLE)
       foreach(LIB libdnn_protos libdnn libspikework_protos)
           install(CODE

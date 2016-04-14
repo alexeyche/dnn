@@ -215,7 +215,7 @@ if(EVAL) {
             c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$info)-floor(length(eval_spikes$info)/4))
         }
         eval_spikes = cut_first_layer(eval_spikes)
-        c(metric, K, y, M, N, A) := fisher_eval(eval_spikes, EVAL_VERBOSE)
+        c(metric, K, y, M, N, A) := fisher_eval(eval_spikes, EVAL_VERBOSE, EVAL_JOBS)
         
         ans = K %*% y[, 1:2]
         eval_debug_pic = sprintf("%s/4_%s", tmp_d, pfx_f("eval.png"))
