@@ -11,6 +11,7 @@ from os.path import join as pj
 import json
 import random
 import glob
+import re
 
 import lib.env as env
 from lib.env import runs_dir
@@ -32,6 +33,7 @@ class TDnnSim(object):
     USER_JSON_FILE = pj(SCRIPTS_DIR, "user.json")
     USER_JSON = json.load(open(USER_JSON_FILE))
     USER = os.environ["USER"]
+    EGO_PATCH = re.compile("[\s]*([a-zA-Z]+)[\s]*:[\s]*([^#]+)[\s]*#[\s]*([0-9]+)")
 
     LOG_FILE_BASE = "run_sim.log"
 
@@ -61,6 +63,10 @@ class TDnnSim(object):
         self.prepare_data = kwargs.get("prepare_data", False)
         self.evaluation_data = kwargs.get("evaluation_data", None)
         self.no_learning = kwargs.get("no_learning", False)
+        self.ego = kwargs.get("ego", False)
+        if self.ego:
+            self.slave = True
+            
         if self.evaluation_data:
             self.evaluation = True
         self.seed = kwargs.get("seed")
@@ -113,6 +119,7 @@ class TDnnSim(object):
         self.T_max = kwargs.get("T_max", None)
         self.input_ts = kwargs.get("input_ts", None)
         self.input_spikes = kwargs.get("input_spikes", None)
+
         if self.input_ts is None and self.input_spikes is None:
             raise Exception("Need input time series or input spikes in model")
         if self.input_ts and self.input_spikes:
@@ -127,6 +134,31 @@ class TDnnSim(object):
         if wd_config != self.config or not os.path.exists(wd_config):
             shutil.copy(self.config, self.working_dir)
             self.config = wd_config
+
+        if self.ego:
+            pars = sys.stdin.readline()
+            pars = [ p.strip() for p in pars.split(" ") if p.strip() ]
+            config = open(self.config).readlines()
+            with open(self.config, "w") as fptr:
+                for l in config:
+                    m = TDnnSim.EGO_PATCH.match(l)
+                    if m:
+                        field = m.group(1)
+                        val = m.group(2)
+                        new_val = pars.pop(0)
+                        num = m.group(3)
+                        
+                        logging.info("Found patch for field {} (#{}) with value {}".format(field, num, new_val))
+                        
+                        new_line = ""
+                        spm = re.match("^([\s]*)", l)
+                        if spm:
+                            new_line += spm.group(1)
+                        new_line += "{}: {}      # PATCHED {}\n".format(field, new_val, num)
+                        fptr.write(new_line)
+                    else:
+                        fptr.write(l)
+
 
     def get_fname(self, f, ep=None):
         return os.path.join(self.working_dir, "{}_{}".format(ep if not ep is None else self.current_epoch, f)) 
@@ -245,10 +277,10 @@ class TDnnSim(object):
         for self.current_epoch in xrange(self.current_epoch, self.current_epoch+self.epochs):
             logging.info("Running epoch {}:".format(self.current_epoch))
             run_proc(**self.construct_cmd())
+            if self.evaluation_data:
+                logging.info("running on evaluation data ...")
+                run_proc(**self.construct_eval_run_cmd())
             if self.inspection:
-                if self.evaluation_data:
-                    logging.info("running on evaluation data ...")
-                    run_proc(**self.construct_eval_run_cmd())
                 logging.info("inspecting ... ")
                 with pushd(self.working_dir):
                     o = run_proc(**self.construct_inspect_cmd())
@@ -341,6 +373,9 @@ def main(argv):
     parser.add_argument('--slave',
                         action='store_true',
                         help='Run script as slave and print only evaluation score')
+    parser.add_argument('--ego',
+                        action='store_true',
+                        help='Take from stdin parameters given by ego-cli')
     parser.add_argument('-f', '--force',
                         action='store_true',
                         help="Don't ask questions, just use directory")
@@ -407,6 +442,7 @@ def main(argv):
         "no_learning" : args.no_learning,
         "seed" : args.seed,
         "evaluation_script" : args.evaluation_script,
+        "ego" : args.ego,
     }
     TDnnSim(**args).run()
     

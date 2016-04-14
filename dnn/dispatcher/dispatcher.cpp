@@ -64,7 +64,7 @@ namespace NDnn {
 
 	void TDispatcher::MainLoop() {
 		L_DEBUG << "Entering dispatcher main loop on port " << Server.GetPort();
-		Server.MainLoop();
+		// Server.MainLoop();
 	}
 
 	void TDispatcher::SetInputTimeSeries(const TTimeSeries&& ts) {
