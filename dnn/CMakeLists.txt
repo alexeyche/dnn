@@ -29,6 +29,7 @@ set(DIRS
     util
     learning_rule
     spikework
+    metrics
 )
 
 foreach(dir ${DIRS})
