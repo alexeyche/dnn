@@ -1,0 +1,21 @@
+package NDnnProto;
+
+
+message THedonisticSynapseState {
+    optional double r = 1;
+    optional double p = 2;
+    optional double c = 3;
+    optional double q = 4;
+    optional double e = 5;
+}
+
+message THedonisticSynapseConst {
+    optional double PspDecay = 1;
+    optional double Amp = 2;
+    optional double TauRef = 3;
+    optional double DeltaCatalyst = 4;
+    optional double TauCatalyst = 5;
+    optional double TauEligibility = 6;
+    optional double LearningRate = 7;
+}
+

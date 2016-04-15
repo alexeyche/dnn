@@ -267,6 +267,11 @@ if(EVAL) {
     } else
       if (EVAL_TYPE == "error_rate") {
         # error rate, density of probability and ROC-curve (required package "ROCR")
+        # conditions:
+        #   - last layer is output InputClassifier layer
+        #   - quantity of neurons in last layer is equivalent to quantity of classes
+        #   - min quantity of classes is 2
+
         print.roc = FALSE
         if ("ROCR" %in% installed.packages()[,"Package"]) {
           require("ROCR")
@@ -274,22 +279,22 @@ if(EVAL) {
         }
         chop.spikes = chop.spikes.list(spikes)
         errors = c()
-        classes = c()
         errors.count = 0
         probability.list = list()
-        
-        first.neuron = length(spikes$values) - const$sim_configuration$layers[[length(const$sim_configuration$layers)]]$size
-        last.neuron = length(spikes$values)
         
         labels.vec = c()
         for (i in 1: length(spikes$info)) {
           labels.vec = c(labels.vec, spikes$info[[i]]$label)
         }
         labels.vec = unique(labels.vec)
+
+        last.neuron <- length(spikes[[1]])
+        first.neuron <- last.neuron - length(labels.vec)
+
         for (i in 1:(last.neuron - first.neuron)) {
           probability.list[[i]] = matrix(NA, 0, length(labels.vec))
         }
-
+        
         for(i in 1:length(chop.spikes)) {
           activity.vec = c()  # neurons activity vector
           quantity.vec = c()  # quantity of spikes vector
@@ -363,7 +368,11 @@ if(EVAL) {
           }
         }
 
-        cat(sprintf("%1.10f", error.rate), "\n")
+        if (print.roc) {
+            cat(sprintf("%1.10f", 1 - auc@y.values[[1]]), "\n")
+        } else {
+            cat(sprintf("%1.10f", error.rate), "\n")
+        }
         if(SAVE_PIC_IN_FILES) {
           dev.off()
           write(paste("Eval debug pic filename: ", eval_debug_pic), stderr())
