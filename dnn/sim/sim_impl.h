@@ -132,7 +132,10 @@ namespace NDnn {
 			}
 
 			barrier.Wait();
-			if (masterThread) StatGatherer.Collect(t);
+			if (masterThread) { 
+				StatGatherer.Collect(t);
+				RewardControl.CalculateDynamics(t);
+			}
 			barrier.Wait();
 
 //======= PERFOMANCE MEASURE ======================================================================
