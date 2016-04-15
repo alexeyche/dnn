@@ -114,8 +114,8 @@ namespace NDnn {
 		}
 
 		void CollectReward() {
-			StatGatherer.ListenStat("Reward", [&]() { return TGlobalCtx::Inst().GetReward(); });	
-			StatGatherer.ListenStat("RewardDelta", [&]() { return TGlobalCtx::Inst().GetRewardDelta(); });
+			StatGatherer.ListenStat("Reward", [&]() { return TGlobalCtx::Inst().GetReward(); }, 0, Conf.Duration);	
+			StatGatherer.ListenStat("RewardDelta", [&]() { return TGlobalCtx::Inst().GetRewardDelta(); }, 0, Conf.Duration);
 		}
  
 		template <size_t layerId, size_t neuronId>

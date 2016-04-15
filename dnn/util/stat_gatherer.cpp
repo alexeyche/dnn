@@ -29,6 +29,11 @@ namespace NDnn {
 		for (auto& stat: Stats) {
 			ActiveStats.push_back(&stat);
 		}
+		std::sort(ActiveStats.begin(), ActiveStats.end(), 
+			[](const TPtr<TStatCollector>& left, const TPtr<TStatCollector>& right) -> bool {
+				return left->GetFrom() > right->GetFrom();
+			}
+		);
 	}
 
 	void TStatGatherer::ListenStat(const TString& name, std::function<double()> cb, ui32 from, ui32 to) {

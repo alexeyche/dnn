@@ -21,8 +21,8 @@ namespace NDnn {
             Presence = true;
         }
 
-        operator bool () {
-            return Presence;
+        operator bool () const {
+            return Defined();
         }
 
         const T& GetRef() const {
@@ -30,6 +30,10 @@ namespace NDnn {
             return Val;
         }
 
+        bool Defined() const {
+            return Presence;
+        }
+        
     private:
         T Val;
         bool Presence;
