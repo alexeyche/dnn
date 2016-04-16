@@ -168,6 +168,7 @@ namespace NDnn {
 					Network.AddLayer(l);
 				});
 			}
+            serial(RewardControl,  NDnnProto::TConfig::kRewardControlFieldNumber);
 		}
 
 		void SetInputSpikes(const TSpikesList&& ts) {
