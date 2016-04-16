@@ -74,8 +74,19 @@ install(
 )
 
 install(CODE
-    "EXECUTE_PROCESS(COMMAND ln -sf ${CMAKE_CURRENT_SOURCE_DIR}/../R/scripts ${CMAKE_INSTALL_PREFIX}/r_scripts)"
+    "EXECUTE_PROCESS(
+        COMMAND 
+        ${CMAKE_SOURCE_DIR}/scripts/ln.py ${CMAKE_SOURCE_DIR}/R/scripts ${CMAKE_INSTALL_PREFIX}/r_scripts
+    )"
 )
+
+install(CODE
+    "EXECUTE_PROCESS(
+        COMMAND 
+        ${CMAKE_SOURCE_DIR}/scripts/ln.py ${CMAKE_SOURCE_DIR}/scripts ${CMAKE_INSTALL_PREFIX}/scripts
+    )"
+)
+
 
 install(CODE
     "EXECUTE_PROCESS(COMMAND mkdir -p ${CMAKE_INSTALL_PREFIX}/spikes)"
