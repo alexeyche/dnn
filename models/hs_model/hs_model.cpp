@@ -17,7 +17,7 @@ int main(int argc, const char** argv) {
         auto sim = BuildModel<
             TLayer<TIntegrateAndFire, 9, TNeuronConfig<THedonisticSynapse, TDeterm, TIdentReceptiveField, TNoLearning>>,
             TLayer<TIntegrateAndFire, 51, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning>>,
-            TLayer<TIntegrateAndFire, 2, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning, TInputClassifier>>
+            TLayer<TIntegrateAndFire, 2, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning, TNoWeightNormalization, TInputClassifier>>
         >(opts);
 
         sim.Run();
@@ -26,13 +26,13 @@ int main(int argc, const char** argv) {
         auto sim = BuildModel<
             TLayer<TIntegrateAndFire, 9, TNeuronConfig<THedonisticSynapse, TDeterm, TIdentReceptiveField>>,
             TLayer<TIntegrateAndFire, 51, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput>>,
-            TLayer<TIntegrateAndFire, 2, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning, TInputClassifier>>
+            TLayer<TIntegrateAndFire, 2, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning, TNoWeightNormalization, TInputClassifier>>
         >(opts);
 
         if (opts.StatFile) {
             sim.ListenBasicStats<2, 0>(0, 2000);
             sim.ListenBasicStats<2, 1>(0, 2000);
-            //sim.CollectReward();
+            sim.CollectReward();
         }
 
         sim.Run();

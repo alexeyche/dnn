@@ -7,7 +7,7 @@
         "TIMED_PATTERN_LENGTH_TEST" : "10000"
     },
     "alexeyche" : {
-        "EVAL_TYPE" : "linear_classifier",
+        "EVAL_TYPE" : "error_rate",
         "TIMED_PATTERN_LENGTH" : "60000",
         "TIMED_PATTERN_LENGTH_TEST" : "60000"
     }
