@@ -1,16 +1,8 @@
 #pragma once
 
-#include <dnn/weight_normalization/weight_normalization.h>
+#include <dnn/neuron/defaults.h>
 
 namespace NDnn {
-
-	using TNoInput = TEmpty;
-
-	template <typename T1, typename T2>
-	using TNoLearning = TEmpty;
-
-	template <typename T>
-	using TNoReinforcement = TEmpty;
 
 	template <
 		typename TSynapseType,
