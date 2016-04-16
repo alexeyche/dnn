@@ -2,7 +2,7 @@
 
 #include <dnn/base/base.h>
 #include <dnn/neuron/spike_neuron_impl.h>
-#include <dnn/neuron/default_config.h>
+#include <dnn/neuron/defaults.h>
 #include <dnn/connection/builder.h>
 
 #include <array>
@@ -10,7 +10,7 @@
 
 namespace NDnn {
 
-	template <typename N, ui32 size, typename TConf = TDefaultConfig>
+	template <typename N, ui32 size, typename TConf>
 	class TLayer: public IMetaProtoSerial {
 	private:
 		using TNeuronImplType = TSpikeNeuronImpl<N, TConf>;
