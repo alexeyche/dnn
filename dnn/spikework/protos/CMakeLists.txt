@@ -16,3 +16,13 @@ target_link_libraries(spikework_protos
     ${PROTOBUF_LIBRARY}
 )
 install(TARGETS spikework_protos  DESTINATION lib/ COMPONENT)
+install(
+    DIRECTORY
+    ${CMAKE_BINARY_DIR}/dnn/spikework/protos
+    DESTINATION
+    include/dnn/spikework
+    FILES_MATCHING
+    PATTERN "*.h"
+    PATTERN "*.hpp"
+)
+

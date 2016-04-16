@@ -16,8 +16,8 @@ Layer {
     GaussReceptiveField {
     	Sigma: 0.1
     	Gain: 1.0
-    	LowLevel: -1.5
-    	HighLevel: 1.5
+    	LowLevel: -2.0
+    	HighLevel: 2.0
     }
 }
 Layer {
@@ -36,10 +36,10 @@ Layer {
 	}
 	Stdp {
 		TauPlus: 30.0
-		TauMinus: 50.0
+		TauMinus: 50.0 			# 0
 		Aplus: 1.0
 		Aminus: 1.0
-		LearningRate: 1e-04
+		LearningRate: 1e-05
 	}
 	SlidingLtd {
 		MaxWeight: 0.1

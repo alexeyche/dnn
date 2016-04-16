@@ -219,6 +219,44 @@ namespace NDnn {
         return true;
     }
 
+    bool TProtoSerial::SerialRepeated(ui32& v, int idx, int protoField) {
+        CHECK_FIELD();
+
+        auto* fd = GetFieldDescr(protoField);
+        switch (Mode) {
+            case ESerialMode::IN:
+            {
+                v = Refl->GetRepeatedUInt32(Message, fd, idx);
+            }
+            break;
+            case ESerialMode::OUT:
+            {
+                Refl->AddUInt32(&Message, fd, v);
+            }
+            break;
+        }
+        return true;
+    }
+
+    bool TProtoSerial::SerialRepeated(TString& v, int idx, int protoField) {
+        CHECK_FIELD();
+
+        auto* fd = GetFieldDescr(protoField);
+        switch (Mode) {
+            case ESerialMode::IN:
+            {
+                v = Refl->GetRepeatedString(Message, fd, idx);
+            }
+            break;
+            case ESerialMode::OUT:
+            {
+                Refl->AddString(&Message, fd, v);
+            }
+            break;
+        }
+        return true;
+    }
+
     bool TProtoSerial::SerialRepeated(NPb::Message& m, int idx, int protoField) {
         CHECK_FIELD();
 

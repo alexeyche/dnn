@@ -6,3 +6,17 @@ message TEpspOptions {
     optional double Length = 3;
     optional double Dt = 4;
 };
+
+
+message TPreprocessorConfig {
+	optional TEpspOptions Epsp = 1;	
+};
+
+
+message TDotOptions {
+}
+
+
+message TKernelConfig {
+    optional TDotOptions Dot = 1;
+};

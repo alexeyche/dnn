@@ -42,3 +42,9 @@ Rcpp::List chopSpikesList(Rcpp::List l) {
 	}
 	return out;
 }
+
+// [[Rcpp::export(name = "binarize.spikes")]]
+Rcpp::List binarizeSpikes(Rcpp::List l, double dt = 1.0) {
+	TSpikesList ts = TProto::TranslateBack<TSpikesList>(l);
+	return TProto::Translate<TTimeSeries>(ts.ConvertToBinaryTimeSeries(dt));
+}

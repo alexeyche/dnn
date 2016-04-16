@@ -1,0 +1,12 @@
+package NDnnProto;
+
+
+message TDoubleMatrix {
+    repeated uint32 ColLabelsIds = 1;
+    repeated uint32 RowLabelsIds = 2;
+    repeated string UniqueLabels = 3;
+    optional uint32 NCol = 4;
+    optional uint32 NRow = 5;
+    repeated double Values = 6;
+}
+
