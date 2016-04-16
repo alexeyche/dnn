@@ -9,15 +9,6 @@ namespace NDnn {
 	double CallCalculateResponseReceptiveField<TEmpty>(TEmpty&, double) { return 0.0; }
 
 	template <>
-	void CallPropagateSynapseSpikeLearningRule<TEmpty>(TEmpty&, const TSynSpike&) {}
-
-	template <>
-	void CallCalculateDynamicsLearningRule<TEmpty>(TEmpty&, const TTime&) {}
-
-	template <>
-	void SerializeProcessNorm<TEmpty>(TMetaProtoSerial& serial, TEmpty& lr) {}
-
-	template <>
 	void CallModulateRewardReinforcement<TEmpty>(TEmpty&) {}
 
 
