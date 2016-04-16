@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <dnn/base/entry.h>
+#include <dnn/neuron/config.h>
 
 #include <dnn/neuron/integrate_and_fire.h>
 #include <dnn/synapse/hedonistic_synapse.h>
