@@ -29,7 +29,7 @@ for (sp in chop.spikes.list(spikes)) {
 K = rates %*% t(rates)
 colnames(K) <- labs
 c(y, M, N, A) := KFD(K)
-metric = -tr(M)/tr(N)
+metric = -log(tr(M)/tr(N))
 
 ans = K %*% y[, 1:2]
 

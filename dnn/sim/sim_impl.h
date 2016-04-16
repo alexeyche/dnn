@@ -116,7 +116,7 @@ namespace NDnn {
 		barrier.Wait();
 
 		for (; t < Conf.Duration; ++t) {
-			if(masterThread) TGlobalCtx().Inst().SetCurrentClassId(Network.GetClassId(t));
+			if (masterThread) TGlobalCtx().Inst().SetCurrentClassId(Network.GetClassId(t));
 			barrier.Wait();
 
 			for(ui32 neuronId=idxFrom; neuronId<idxTo; ++neuronId) {
