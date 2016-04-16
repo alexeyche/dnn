@@ -71,7 +71,6 @@ namespace NDnn {
         void PropagateSpike() {
             if (s.r < 0.1) {
                 s.p = 1.0 / (1.0 + exp(-s.q - s.c));
-                srand(time(0));
                 if (s.p > Rand->GetUnif()) {
                     // release
                     MutPotential() += c.Amp;

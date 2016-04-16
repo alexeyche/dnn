@@ -15,10 +15,28 @@ Layer {
 	HedonisticSynapse {
 		PspDecay: 10.0
 		Amp: 1.0
-		TauRef: 1.0
-		DeltaCatalyst: 0.0
-		TauCatalyst: 20.0
-		TauEligibility: 15.0
+		TauRef: 2.0
+		DeltaCatalyst: 3.0
+		TauCatalyst: 200.0
+		TauEligibility: 25.0
+		LearningRate: 0.05
+	}
+}
+Layer {
+	IntegrateAndFire {
+		TauMem: 10
+		TauRef: 2
+	}
+	Determ {
+		Threshold: 0.20
+	}
+	HedonisticSynapse {
+		PspDecay: 10.0
+		Amp: 1.0
+		TauRef: 2.0
+		DeltaCatalyst: 3.0
+		TauCatalyst: 200.0
+		TauEligibility: 25.0
 		LearningRate: 0.05
 	}
 }
@@ -33,28 +51,10 @@ Layer {
 	HedonisticSynapse {
 		PspDecay: 10.0
 		Amp: 1.0
-		TauRef: 1.0
-		DeltaCatalyst: 0.0
-		TauCatalyst: 20.0
-		TauEligibility: 15.0
-		LearningRate: 0.05
-	}
-}
-Layer {
-	IntegrateAndFire {
-		TauMem: 10
-		TauRef: 2
-	}
-	Determ {
-		Threshold: 0.15
-	}
-	HedonisticSynapse {
-		PspDecay: 10.0
-		Amp: 1.0
-		TauRef: 1.0
-		DeltaCatalyst: 0.0
-		TauCatalyst: 20.0
-		TauEligibility: 15.0
+		TauRef: 2.0
+		DeltaCatalyst: 3.0
+		TauCatalyst: 200.0
+		TauEligibility: 25.0
 		LearningRate: 0.05
 	}
 	InputClassifier {
@@ -66,42 +66,35 @@ Layer {
 Connection {
 	From: 0 To: 1
 	Stochastic {
-		Prob: 0.95
+		Prob: 0.50
 	}
-	Weight: 0.75
+	Weight: 0.50
 }
 Connection {
 	From: 1 To: 1
 	Stochastic {
-		Prob: 0.75
+		Prob: 0.50
 	}
-	Weight: -1.75
+	Weight: -2.0
 }
 Connection {
 	From: 1 To: 2
 	Stochastic {
-		Prob: 0.90
+		Prob: 0.50
 	}
 	Weight: 0.75
 }
 Connection {
 	From: 0 To: 2
 	Stochastic {
-		Prob: 0.20
+		Prob: 0.50
 	}
-	Weight: 0.20
-}
-Connection {
-	From: 2 To: 2
-	Stochastic {
-		Prob: 1.0
-	}
-	Weight: -0.25
+	Weight: 0.10
 }
 
 RewardControl {
 	RewardControl {
-		TauTrace: 20
+		TauTrace: 30
 		TauMeanTrace: 500
 	}
 }
