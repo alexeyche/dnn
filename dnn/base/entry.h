@@ -18,6 +18,9 @@ namespace NDnn {
 		if (options.Seed) {
 	    	sim.SetSeed(*options.Seed);
 	    }
+		if (options.ConnectionSeed) {
+	    	sim.SetConnectionSeed(*options.ConnectionSeed);
+	    }
 
 		if (options.ConfigFile) {
 			L_DEBUG << "Reading config " << *options.ConfigFile;

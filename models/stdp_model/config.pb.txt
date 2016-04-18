@@ -1,5 +1,4 @@
 SimConfiguration {
-	Port: 9090
 	Jobs: 8
 }
 Layer {
@@ -36,7 +35,7 @@ Layer {
 	}
 	Stdp {
 		TauPlus: 30.0
-		TauMinus: 50.0 			# 0
+		TauMinus: 50.0 			
 		Aplus: 1.0
 		Aminus: 1.0
 		LearningRate: 1e-05
@@ -53,6 +52,13 @@ Connection {
 		Prob: 0.25
 	}
 	Weight: 1e-03
+}
+Connection {
+	From: 1 To: 1
+	Stochastic {
+		Prob: 0.25
+	}
+	Weight: -1e-03   # 0
 }
 
 # Connection {

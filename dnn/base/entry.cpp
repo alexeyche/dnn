@@ -24,10 +24,6 @@ namespace NDnn {
 
 	    if (options.has_config()) {
 	    	opts.ConfigFile = options.config();
-
-	    	NDnnProto::TConfig config;
-	        ReadProtoTextFromFile(*opts.ConfigFile, config);
-	        opts.Port = config.simconfiguration().port();
 	    }
 
 	    if (options.has_inputspikes()) {
@@ -73,7 +69,11 @@ namespace NDnn {
 	    if (options.has_seed()) {
 			opts.Seed = options.seed();
 		}
-	    
+
+    	if (options.has_connectionseed()) {
+			opts.ConnectionSeed = options.connectionseed();
+		}
+		
 	    return opts;
 	}
 

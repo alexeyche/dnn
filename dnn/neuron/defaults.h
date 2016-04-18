@@ -16,8 +16,6 @@ namespace NDnn {
 	class TLearningRule;
 
 
-
-
 	template <typename X, typename Y, typename T>
 	class TWeightNormalization;
 

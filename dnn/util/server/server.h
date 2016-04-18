@@ -77,7 +77,14 @@ namespace NDnn {
 			, ShutDownVar(false)
 		{
 		}
-		
+		TServer(ui32 max_connections = DefaultMaxConnections, bool debugMode = false)
+			: DebugMode(debugMode)
+			, Port(80)
+			, MaxConnections(max_connections)
+			, ShutDownVar(false)
+		{
+		}
+
 		void Listen() {
 			int status;
 			struct addrinfo hints;
