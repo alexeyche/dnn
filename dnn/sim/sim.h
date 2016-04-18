@@ -31,16 +31,16 @@ namespace NDnn {
 			serial(Jobs);
 			serial(Duration);
 			serial(Dt);
-			serial(Port);
 			serial(Seed);
+			serial(ConnectionSeed);
 			serial(PastTime);
 		}
 
 		ui32 Jobs = 4;
 		double Duration = 1000;
 		double Dt = 1.0;
-		ui32 Port = 9090;
 		int Seed = -1;
+		int ConnectionSeed = -1;
 		double PastTime = 0.0;
 	};
 
@@ -52,8 +52,7 @@ namespace NDnn {
 		using TParent = IProtoSerial<NDnnProto::TConfig>;
 
 		TSim(const TModelOptions& options)
-			: Dispatcher(options.Port)
-			, PopulationSize(0)
+			: PopulationSize(0)
 			, Options(options)
 		{
 			ForEachEnumerate(Layers, [&](ui32 layerId, auto& l) {
@@ -65,9 +64,7 @@ namespace NDnn {
 			TGlobalCtx::Inst().SetPastTime(Conf.PastTime);
 		}
 
-		TSim(const TSim& other)
-			: Dispatcher(other.Dispatcher.GetPort())
-		{
+		TSim(const TSim& other) {
 			(*this) = other;
 		}
 
@@ -143,6 +140,10 @@ namespace NDnn {
 			Conf.Seed = seed;
 		}
 
+		void SetConnectionSeed(ui32 seed) {
+			Conf.ConnectionSeed = seed;
+		}
+
 		void SetDuration(double duration) {
 			Conf.Duration = duration;
 		}
@@ -159,7 +160,6 @@ namespace NDnn {
 				serial(layer, NDnnProto::TConfig::kLayerFieldNumber, /* newMessage = */ true);
 			});
 			if (serial.IsInput()) {
-				Dispatcher.SetPort(Conf.Port);
 				const NDnnProto::TConfig& inputConfig = serial.GetMessage<NDnnProto::TConfig>();
 				CreateConnections(inputConfig);
 

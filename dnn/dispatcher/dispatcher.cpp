@@ -3,9 +3,8 @@
 
 namespace NDnn {
 
-	TDispatcher::TDispatcher(ui32 port)
-		: Server(port)
-		, InputDataIsReadyVar(false)
+	TDispatcher::TDispatcher()
+		: InputDataIsReadyVar(false)
 	{
 		Server
 			.AddCallback(
@@ -24,9 +23,7 @@ namespace NDnn {
 			);
 	}
 		
-	TDispatcher::TDispatcher(const TDispatcher& other)
-		: Server(other.GetPort()) 
-	{
+	TDispatcher::TDispatcher(const TDispatcher& other) {
 		(*this) = other;
 	}
 
@@ -64,7 +61,7 @@ namespace NDnn {
 
 	void TDispatcher::MainLoop() {
 		L_DEBUG << "Entering dispatcher main loop on port " << Server.GetPort();
-		// Server.MainLoop();
+		Server.MainLoop();
 	}
 
 	void TDispatcher::SetInputTimeSeries(const TTimeSeries&& ts) {

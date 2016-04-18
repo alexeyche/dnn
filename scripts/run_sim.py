@@ -12,6 +12,8 @@ import json
 import random
 import glob
 import re
+import time
+import random
 
 import lib.env as env
 from lib.env import runs_dir
@@ -70,7 +72,10 @@ class TDnnSim(object):
         if self.evaluation_data:
             self.evaluation = True
         self.seed = kwargs.get("seed")
-        
+        self.connection_seed = kwargs.get("connection_seed")
+        if self.seed and self.connection_seed is None:
+            self.connection_seed = self.seed
+
         self.evaluation_script = kwargs.get("evaluation_script")
         if self.evaluation_script:
             self.inspection = False
@@ -179,6 +184,8 @@ class TDnnSim(object):
             cmd += ["--tmax", self.T_max]
         if self.seed:
             cmd += ["--seed", self.seed]
+        if self.connection_seed:
+            cmd += ["--connection-seed", self.connection_seed]
         return cmd
 
     def construct_eval_run_cmd(self):
@@ -333,6 +340,7 @@ class TDnnSim(object):
 
         while i<1000:
             self.working_dir = os.path.join(self.runs_dir, config_hex + "_%04d" % i)
+            time.sleep(0.1 * random.random())
             if not os.path.exists(self.working_dir):
                 break
             if self.old_dir:
@@ -363,6 +371,9 @@ def main(argv):
                         '--stat',
                         action='store_true',
                         help='Save statistics')
+    parser.add_argument('--connection-seed',
+                        required=False,
+                        help='Set seed for random engine of connection builder')
     parser.add_argument('--seed',
                         required=False,
                         help='Set seed for random engine')
@@ -441,6 +452,7 @@ def main(argv):
         "force" : args.force,
         "no_learning" : args.no_learning,
         "seed" : args.seed,
+        "connection_seed" : args.connection_seed,
         "evaluation_script" : args.evaluation_script,
         "ego" : args.ego,
     }
