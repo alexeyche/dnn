@@ -34,8 +34,8 @@ Layer {
 		MaxWeight: 1.0
 	}
 	Stdp {
-		TauPlus: 30.0
-		TauMinus: 50.0 			
+		TauPlus: 30.0           # 0
+		TauMinus: 50.0 			# 1
 		Aplus: 1.0
 		Aminus: 1.0
 		LearningRate: 1e-05
@@ -51,14 +51,14 @@ Connection {
 	Stochastic {
 		Prob: 0.25
 	}
-	Weight: 1e-03
+	Weight: 1e-03    # 2
 }
 Connection {
 	From: 1 To: 1
 	Stochastic {
-		Prob: 0.25
+		Prob: 0.25   # 3
 	}
-	Weight: -1e-03   # 0
+	Weight: -1e-03   # 4
 }
 
 # Connection {

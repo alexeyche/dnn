@@ -174,7 +174,6 @@ namespace NDnn {
 		    while (synIdIt != Synapses.aend()) {
 		    	auto& synapse = Synapses[synIdIt];
 		    	double x = synapse.WeightedPotential();
-
 		    	if (fabs(x) < 0.0001) {
 		        	Synapses.SetInactive(synIdIt);
 		        } else {
@@ -183,6 +182,7 @@ namespace NDnn {
 		        }
 		    }
 			double Irf = CallCalculateResponseReceptiveField(ReceptiveField, Iinput);
+			// ENSURE(!std::isnan(Isyn), "Isyn is nan");
 			Neuron.CalculateDynamics(t, Irf, Isyn);
 
 		    Neuron.MutSpikeProbability() = Activation.SpikeProbability(Neuron.Membrane());
