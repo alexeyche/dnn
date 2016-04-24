@@ -33,7 +33,8 @@ namespace NDnn {
         virtual double PointSimilarity(const TVector<double>& x, const TVector<double>& y) const = 0;
 
         double Similarity(const TTimeSeries& x, const TTimeSeries& y) const {
-            ENSURE((x.Dim() == y.Dim()) && (x.Length() == y.Length()), "Time series must be the same shape");
+            ENSURE((x.Dim() == y.Dim()) && (x.Length() == y.Length()), 
+                "Time series must be the same shape, dimensions: " << x.Dim() << " and " << y.Dim() << ", lengths: " << x.Length() << " and " << y.Length());
             
             double integral = 0.0;
             for(ui32 i=0; i<x.Length(); ++i) {

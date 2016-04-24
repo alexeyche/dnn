@@ -131,9 +131,9 @@ class TDnnSim(object):
             raise Exception("Choose one of the inputs: time series or spikes, can't work with both")
 
         if self.input_ts:
-            shutil.copy(self.input_ts, self.working_dir) 
+            shutil.copy(self.input_ts, pj(self.working_dir, "input_time_series.pb")) 
         if self.input_spikes:
-            shutil.copy(self.input_spikes, self.working_dir) 
+            shutil.copy(self.input_spikes, pj(self.working_dir, "input_spikes_list.pb")) 
                     
         wd_config = pj(self.working_dir, os.path.basename(self.config))
         if wd_config != self.config or not os.path.exists(wd_config):

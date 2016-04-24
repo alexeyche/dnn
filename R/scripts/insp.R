@@ -25,7 +25,7 @@ if(length(grep("RStudio", args))>0) {
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
-    #EP = 2
+    #EP = 1
 }
 
 pfx_f = function(s) s
@@ -211,13 +211,14 @@ if(EVAL) {
         cat("1.0\n")
     } else
     if(EVAL_TYPE == "fisher") {
-        if(!eval_run_mode) {
-            c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$info)-floor(length(eval_spikes$info)/4))
-        }
-        eval_spikes = cut_first_layer(eval_spikes)
+        #if(!eval_run_mode) {
+        #    c(left_spikes, eval_spikes) := split.spikes(eval_spikes, length(eval_spikes$info)-floor(length(eval_spikes$info)/4))
+        #}
+        #eval_spikes = cut_first_layer(eval_spikes)
+        eval_spikes$values = eval_spikes$values[-(1:100)]
         c(metric, K, y, M, N, A) := fisher_eval(eval_spikes, EVAL_VERBOSE, EVAL_JOBS)
         
-        ans = K %*% y[, 1:2]
+        ans = K[1:50, 1:50] %*% y[1:50, 1:2]
         eval_debug_pic = sprintf("%s/4_%s", tmp_d, pfx_f("eval.png"))
         if(SAVE_PIC_IN_FILES) png(eval_debug_pic, width=1024, height=768)
         
@@ -507,3 +508,4 @@ annoying_file = file.path(getwd(), "Rplots.pdf")
 if(file.exists(annoying_file)) {
     success = file.remove(annoying_file)
 }
+

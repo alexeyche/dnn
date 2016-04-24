@@ -171,7 +171,6 @@ namespace NDnn {
         }
 
         TVector<TDerived> Chop() const {
-            ui32 elem_id = 0;
             TVector<TDerived> ts_chopped;
 
             for(ui32 li=0; li<Info.LabelsStart.size(); ++li) {
@@ -182,12 +181,12 @@ namespace NDnn {
                 const string &label = Info.UniqueLabels[label_id].Name;
 
                 TDerived labeled_ts;
-                for(; elem_id < end_of_label; ++elem_id) {
+                for(ui32 elem_id = start_of_label; elem_id < end_of_label; ++elem_id) {
                     for(ui32 di=0; di<Data.size(); ++di) {
                         labeled_ts.AddValue(di, Data[di].Values[elem_id]);
                     }
                 }
-                labeled_ts.Info.AddLabelAtPos(label, 0, labeled_ts.Length());
+                labeled_ts.Info.AddLabelAtPos(label, 0, Info.UniqueLabels[label_id].Duration);
                 ts_chopped.push_back(labeled_ts);
             }
             L_DEBUG << "TimeSeries, Successfully chopped time series in " << ts_chopped.size() << " chunks";

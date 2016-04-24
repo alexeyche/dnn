@@ -63,3 +63,11 @@ read.spikes.wd = function(epoch=NULL) {
         }
     return (list(spikes, epoch))    
 }
+
+read.input.ts.wd = function() {
+    f = "input_time_series.pb"
+    if (!file.exists(f)) {
+        stop(sprintf("Can't find input time series file %s", f))
+    }
+    return(proto.read(f))
+}

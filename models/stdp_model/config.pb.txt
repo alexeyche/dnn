@@ -13,10 +13,10 @@ Layer {
         PspDecay: 10.0
     }
     GaussReceptiveField {
-    	Sigma: 0.1
+    	Sigma: 0.05
     	Gain: 1.0
-    	LowLevel: -2.0
-    	HighLevel: 2.0
+    	LowLevel: -0.5
+    	HighLevel: 3.2
     }
 }
 Layer {
@@ -24,26 +24,79 @@ Layer {
 		TauMem: 10
 		TauRef: 2
 	}
-	Sigmoid {
+	Determ {
 		Threshold: 0.15
-		Slope: 50.0
-	}
-	STPSynapse {
-		D: 200.0
-		F: 50.0
-		MaxWeight: 1.0
 	}
 	Stdp {
-		TauPlus: 30.0           # 0
-		TauMinus: 50.0 			# 1
+		TauPlus: 30.0           
+		TauMinus: 50.0 		
 		Aplus: 1.0
-		Aminus: 1.0
-		LearningRate: 1e-05
+		Aminus: 1.5
+		LearningRate: 1e-03
 	}
-	SlidingLtd {
-		MaxWeight: 0.1
-		TargetRate: 10.0
-		Modulation: 1.0
+}
+Layer {
+	IntegrateAndFire {
+		TauMem: 10
+		TauRef: 2
+	}
+	Determ {
+		Threshold: 0.15
+	}
+	Stdp {
+		TauPlus: 30.0           
+		TauMinus: 50.0 		
+		Aplus: 1.0
+		Aminus: 1.5
+		LearningRate: 1e-03
+	}
+}
+Layer {
+	IntegrateAndFire {
+		TauMem: 10
+		TauRef: 2
+	}
+	Determ {
+		Threshold: 0.10
+	}
+	Stdp {
+		TauPlus: 30.0           
+		TauMinus: 50.0 		
+		Aplus: 1.0
+		Aminus: 1.5
+		LearningRate: 1e-03
+	}
+}
+Layer {
+	IntegrateAndFire {
+		TauMem: 10
+		TauRef: 2
+	}
+	Determ {
+		Threshold: 0.10
+	}
+	Stdp {
+		TauPlus: 30.0           
+		TauMinus: 50.0 		
+		Aplus: 1.0
+		Aminus: 1.5
+		LearningRate: 1e-03
+	}
+}
+Layer {
+	IntegrateAndFire {
+		TauMem: 10
+		TauRef: 2
+	}
+	Determ {
+		Threshold: 0.10
+	}
+	Stdp {
+		TauPlus: 30.0           
+		TauMinus: 50.0 		
+		Aplus: 1.0
+		Aminus: 1.5
+		LearningRate: 1e-03
 	}
 }
 Connection {
@@ -51,42 +104,96 @@ Connection {
 	Stochastic {
 		Prob: 0.25
 	}
-	Weight: 1e-03    # 2
+	Weight: 0.10
 }
 Connection {
 	From: 1 To: 1
 	Stochastic {
-		Prob: 0.25   # 3
+		Prob: 0.50
 	}
-	Weight: -1e-03   # 4
+	Weight: -0.25
 }
-
+Connection {
+	From: 1 To: 2
+	Stochastic {
+		Prob: 0.25
+	}
+	Weight: 0.10
+}
 # Connection {
-# 	From: 1 To: 1
-# 	DifferenceOfGaussians {
-# 		Dimension: 1
-# 	    SigmaPos: 3.0
-# 	    SigmaNeg: 15.0
-# 	    AmpNeg: 3.0
-# 	    AmpPos: 1.0
-# 	}
-# 	Weight: 0.04
-# }
-# Connection {
-# 	From: 1 To: 2
+# 	From: 2 To: 1
 # 	Stochastic {
 # 		Prob: 0.25
 # 	}
-# 	Weight: 0.02
+# 	Weight: 0.10
 # }
+Connection {
+	From: 2 To: 2
+	Stochastic {
+		Prob: 0.50
+	}
+	Weight: -0.25
+}
+Connection {
+	From: 2 To: 3
+	Stochastic {
+		Prob: 0.25
+	}
+	Weight: 0.10
+}
 # Connection {
-# 	From: 2 To: 2
-# 	DifferenceOfGaussians {
-# 		Dimension: 1
-# 	    SigmaPos: 3.0
-# 	    SigmaNeg: 15.0
-# 	    AmpNeg: 3.0
-# 	    AmpPos: 1.0
+# 	From: 3 To: 2
+# 	Stochastic {
+# 		Prob: 0.25
 # 	}
-# 	Weight: 0.04
+# 	Weight: 0.10
 # }
+Connection {
+	From: 3 To: 3
+	Stochastic {
+		Prob: 0.50
+	}
+	Weight: -0.25
+}
+Connection {
+	From: 3 To: 4
+	Stochastic {
+		Prob: 0.25
+	}
+	Weight: 0.10
+}
+# Connection {
+# 	From: 4 To: 3
+# 	Stochastic {
+# 		Prob: 0.25
+# 	}
+# 	Weight: 0.10
+# }
+Connection {
+	From: 4 To: 4
+	Stochastic {
+		Prob: 0.50
+	}
+	Weight: -0.25
+}
+Connection {
+	From: 4 To: 5
+	Stochastic {
+		Prob: 0.25
+	}
+	Weight: 0.10
+}
+# Connection {
+# 	From: 5 To: 4
+# 	Stochastic {
+# 		Prob: 0.25
+# 	}
+# 	Weight: 0.10
+# }
+Connection {
+	From: 5 To: 5
+	Stochastic {
+		Prob: 0.50
+	}
+	Weight: -0.25
+}

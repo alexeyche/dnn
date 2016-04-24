@@ -70,19 +70,13 @@ namespace NDnn {
 	                auto& syn = syns.Get(synapseId);
 	                double& w = syn.MutWeight();
 
-	                // std::cout << w << " " << norm.Ltp(w) << " " << norm.Ltd(w) << " " << std::abs(w) << "\n";
 	                double dw = TPar::c.LearningRate * (
 	                    TPar::c.Aplus  * TPar::s.X[synIdIt] * neuron.Fired() * norm.Ltp(w) -
 	                    TPar::c.Aminus * TPar::s.Y * syn.Fired() * norm.Ltd(w)
 	                );
-	                ENSURE(!std::isnan(w), "Weight is nan");
-
+	                
 	                w += norm.Derivative(w, dw);
 
-	                ENSURE(!std::isnan(w), "Weight is nan");
-	                // if ((w < -1.0) || (w > 1.0)) {
-	                // 	std::cout << TPar::SpaceInfo().GlobalId << " " << synapseId << " " << w << " " <<  norm.Ltp(w) << " " << norm.Ltd(w) << "\n";
- 	               //  }
 	                TPar::s.X[synIdIt] += - t.Dt * TPar::s.X[synIdIt]/TPar::c.TauPlus;
                 	++synIdIt;
                 }
