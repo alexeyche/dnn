@@ -26,7 +26,7 @@ namespace NDnn {
 
     class TGaussReceptiveField : public TReceptiveField<TGaussReceptiveFieldConst> {
     public:
-        void Init(const TNeuronSpaceInfo& info) {
+        void Init(const TNeuronSpaceInfo& info, TRandEngine&) {
             Center = c.LowLevel + (c.HighLevel - c.LowLevel) * static_cast<double>(info.LocalId)/info.LayerSize;
         }
 

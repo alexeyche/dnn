@@ -178,6 +178,11 @@ namespace NDnn {
 				});
 			});
 		}
+		ForEach(Layers, [&](auto& layer) {
+			for (auto& n: layer) {
+				n.InitReceptiveField(rand);
+			}
+		});
 	}
 
 

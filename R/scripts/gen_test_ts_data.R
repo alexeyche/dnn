@@ -19,7 +19,7 @@ v = NULL
 info = list()
 lab = "a"
 for(i in 1:100) {
-    v = c(v, ornstein_uhlenbeck(100, sample_len, 2.0, 0.01, 0.1, 0.0))
+    v = c(v, ornstein_uhlenbeck(100, sample_len, 1.0, 0.01, 0.1, 0.0))
     v = c(v, rep(-100.0, pause))
     info = add.to.list(info, ts.info(duration=sample_len, label=lab, start_time=length(v)-sample_len-pause))
 }

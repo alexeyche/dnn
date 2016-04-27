@@ -3,8 +3,8 @@ SimConfiguration {
 }
 Layer {
 	IntegrateAndFire {
-		TauMem: 15
-		TauRef: 5
+		TauMem: 20.0
+		TauRef: 5.0
 	}
 	Determ {
 		Threshold: 0.15
@@ -13,10 +13,18 @@ Layer {
         PspDecay: 10.0
     }
     GaussReceptiveField {
-    	Sigma: 0.05
-    	Gain: 1.0
-    	LowLevel: -0.5
-    	HighLevel: 3.2
+    	Sigma: 0.1
+    	Gain: 1.5
+    	LowLevel: -3.2
+    	HighLevel: 3.7
+    }
+    LinearReceptiveField {
+    	LowLevel: -1.5
+    	HighLevel: 1.5
+    	LowRate: 25
+    	HighRate: 100
+    	TauRef: 50.0
+    	TauRc: 200.0
     }
 }
 Layer {
@@ -31,8 +39,8 @@ Layer {
 		TauPlus: 30.0           
 		TauMinus: 50.0 		
 		Aplus: 1.0
-		Aminus: 1.5
-		LearningRate: 1e-03
+		Aminus: 1.0
+		LearningRate: 1e-02
 	}
 }
 Layer {
@@ -47,8 +55,8 @@ Layer {
 		TauPlus: 30.0           
 		TauMinus: 50.0 		
 		Aplus: 1.0
-		Aminus: 1.5
-		LearningRate: 1e-03
+		Aminus: 1.0
+		LearningRate: 1e-02
 	}
 }
 Layer {
@@ -63,8 +71,8 @@ Layer {
 		TauPlus: 30.0           
 		TauMinus: 50.0 		
 		Aplus: 1.0
-		Aminus: 1.5
-		LearningRate: 1e-03
+		Aminus: 1.0
+		LearningRate: 1e-02
 	}
 }
 Layer {
@@ -79,8 +87,8 @@ Layer {
 		TauPlus: 30.0           
 		TauMinus: 50.0 		
 		Aplus: 1.0
-		Aminus: 1.5
-		LearningRate: 1e-03
+		Aminus: 1.0
+		LearningRate: 1e-02
 	}
 }
 Layer {
@@ -95,8 +103,8 @@ Layer {
 		TauPlus: 30.0           
 		TauMinus: 50.0 		
 		Aplus: 1.0
-		Aminus: 1.5
-		LearningRate: 1e-03
+		Aminus: 1.0
+		LearningRate: 1e-02
 	}
 }
 Connection {
@@ -104,96 +112,96 @@ Connection {
 	Stochastic {
 		Prob: 0.25
 	}
-	Weight: 0.10
+	Weight: 0.04
 }
 Connection {
 	From: 1 To: 1
 	Stochastic {
-		Prob: 0.50
-	}
-	Weight: -0.25
-}
-Connection {
-	From: 1 To: 2
-	Stochastic {
 		Prob: 0.25
 	}
-	Weight: 0.10
+	Weight: -0.04
 }
 # Connection {
-# 	From: 2 To: 1
+# 	From: 1 To: 2
 # 	Stochastic {
-# 		Prob: 0.25
+# 		Prob: 1.0
 # 	}
-# 	Weight: 0.10
+# 	Weight: 0.01
 # }
-Connection {
-	From: 2 To: 2
-	Stochastic {
-		Prob: 0.50
-	}
-	Weight: -0.25
-}
-Connection {
-	From: 2 To: 3
-	Stochastic {
-		Prob: 0.25
-	}
-	Weight: 0.10
-}
+# # Connection {
+# # 	From: 2 To: 1
+# # 	Stochastic {
+# # 		Prob: 1.0
+# # 	}
+# # 	Weight: 0.01
+# # }
 # Connection {
-# 	From: 3 To: 2
+# 	From: 2 To: 2
 # 	Stochastic {
-# 		Prob: 0.25
+# 		Prob: 1.0
 # 	}
-# 	Weight: 0.10
+# 	Weight: 0.0
 # }
-Connection {
-	From: 3 To: 3
-	Stochastic {
-		Prob: 0.50
-	}
-	Weight: -0.25
-}
-Connection {
-	From: 3 To: 4
-	Stochastic {
-		Prob: 0.25
-	}
-	Weight: 0.10
-}
 # Connection {
-# 	From: 4 To: 3
+# 	From: 2 To: 3
 # 	Stochastic {
-# 		Prob: 0.25
+# 		Prob: 1.0
 # 	}
-# 	Weight: 0.10
+# 	Weight: 0.01
 # }
-Connection {
-	From: 4 To: 4
-	Stochastic {
-		Prob: 0.50
-	}
-	Weight: -0.25
-}
-Connection {
-	From: 4 To: 5
-	Stochastic {
-		Prob: 0.25
-	}
-	Weight: 0.10
-}
+# # Connection {
+# # 	From: 3 To: 2
+# # 	Stochastic {
+# # 		Prob: 1.0
+# # 	}
+# # 	Weight: 0.01
+# # }
 # Connection {
-# 	From: 5 To: 4
+# 	From: 3 To: 3
 # 	Stochastic {
-# 		Prob: 0.25
+# 		Prob: 1.0
 # 	}
-# 	Weight: 0.10
+# 	Weight: 0.0
 # }
-Connection {
-	From: 5 To: 5
-	Stochastic {
-		Prob: 0.50
-	}
-	Weight: -0.25
-}
+# Connection {
+# 	From: 3 To: 4
+# 	Stochastic {
+# 		Prob: 1.0
+# 	}
+# 	Weight: 0.01
+# }
+# # Connection {
+# # 	From: 4 To: 3
+# # 	Stochastic {
+# # 		Prob: 1.0
+# # 	}
+# # 	Weight: 0.01
+# # }
+# Connection {
+# 	From: 4 To: 4
+# 	Stochastic {
+# 		Prob: 1.0
+# 	}
+# 	Weight: 0.0
+# }
+# Connection {
+# 	From: 4 To: 5
+# 	Stochastic {
+# 		Prob: 1.0
+# 	}
+# 	Weight: 0.01
+# }
+# # Connection {
+# # 	From: 5 To: 4
+# # 	Stochastic {
+# # 		Prob: 1.0
+# # 	}
+# # 	Weight: 0.01
+# # }
+# Connection {
+# 	From: 5 To: 5
+# 	Stochastic {
+# 		Prob: 1.0
+# 	}
+# 	Weight: 0.0
+# }

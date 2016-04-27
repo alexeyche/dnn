@@ -1,0 +1,12 @@
+package NDnnProto;
+
+
+message TLinearReceptiveFieldConst {
+    optional double TauRef = 1;
+    optional double TauRc = 2;
+    optional double LowLevel = 3;
+    optional double HighLevel = 4;
+    optional double LowRate = 5;
+    optional double HighRate = 6;
+}
+

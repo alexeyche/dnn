@@ -16,7 +16,7 @@ namespace NDnn {
 
     class TIdentReceptiveField : public TReceptiveField<TIdentReceptiveFieldConst> {
     public:
-        void Init(const TNeuronSpaceInfo& info) {
+        void Init(const TNeuronSpaceInfo&, TRandEngine&) {
         }
 
         double CalculateResponse(double I) const {

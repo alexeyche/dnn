@@ -25,7 +25,7 @@ if(length(grep("RStudio", args))>0) {
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
-    #EP = 1
+    EP = 1
 }
 
 pfx_f = function(s) s

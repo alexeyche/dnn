@@ -109,12 +109,12 @@ namespace NDnn {
 	};
 
 	template <typename RF>
-	void CallInitReceptiveField(RF& rf, const TNeuronSpaceInfo& info) {
-		rf.Init(info);
+	void CallInitReceptiveField(RF& rf, const TNeuronSpaceInfo& info, TRandEngine& rand) {
+		rf.Init(info, rand);
 	}
 
 	template <>
-	void CallInitReceptiveField<TEmpty>(TEmpty&, const TNeuronSpaceInfo&);
+	void CallInitReceptiveField<TEmpty>(TEmpty&, const TNeuronSpaceInfo&, TRandEngine&);
 
 	template <typename RF>
 	double CallCalculateResponseReceptiveField(RF& rf, double I) {
@@ -216,10 +216,13 @@ namespace NDnn {
 			Rand.Set(rand);
 			Neuron.SetRandEngine(rand);
 		}
+		
+		void InitReceptiveField(TRandEngine& rand) {
+			CallInitReceptiveField<typename TConf::TNeuronReceptiveField>(ReceptiveField, SpaceInfo, rand);
+		}
 
 		void Prepare() {
 			ENSURE(Rand, "Random engine is not set");
-			CallInitReceptiveField<typename TConf::TNeuronReceptiveField>(ReceptiveField, SpaceInfo);
 			LearningRule.SetNeuronImpl(*this);
 			LearningRule.Reset();
 			TCallPrepareReinforcement<typename TConf::template TNeuronReinforcement<TSelf>, TSelf>()(Reinforcement, *this);

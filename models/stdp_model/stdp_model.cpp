@@ -11,6 +11,7 @@
 #include <dnn/synapse/stp_synapse.h>
 #include <dnn/protos/options.pb.h>
 #include <dnn/receptive_field/gauss.h>
+#include <dnn/receptive_field/linear.h>
 #include <dnn/learning_rule/stdp.h>
 #include <dnn/learning_rule/pre_post_stdp.h>
 #include <dnn/activation/sigmoid.h>
@@ -25,23 +26,23 @@ int main(int argc, const char** argv) {
     auto opts = InitOptions(argc, argv, "StdpModel");
     if (opts.NoLearning) {
         auto sim = BuildModel<
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TGaussReceptiveField>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm>>,
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TLinearReceptiveField>>,
             TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm>>
+            // TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm>>,
+            // TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm>>,
+            // TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm>>,
+            // TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm>>
         >(opts);
 
         sim.Run();
     } else {
         auto sim = BuildModel<
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TGaussReceptiveField>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TStdp, TNoWeightNormalization>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TStdp, TNoWeightNormalization>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TStdp, TNoWeightNormalization>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TStdp, TNoWeightNormalization>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TStdp, TNoWeightNormalization>>
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TLinearReceptiveField>>,
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TStdp, TSlidingLtd>>
+            // TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TStdp, TSlidingLtd>>,
+            // TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TStdp, TSlidingLtd>>,
+            // TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TStdp, TSlidingLtd>>,
+            // TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TStdp, TSlidingLtd>>
         >(opts);
 
         if (opts.StatFile) {
