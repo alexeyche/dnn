@@ -89,7 +89,7 @@ macro(DEFINE_MODEL BIN CPP)
   endforeach(RScript)
 
   if (APPLE)
-      foreach(LIB libdnn_protos libdnn libspikework_protos)
+      foreach(LIB libdnnpb libdnn libspikeworkpb)
           install(CODE
               "EXECUTE_PROCESS(COMMAND install_name_tool -change ${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/lib/${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/models/${model_bn}/${BIN} )"
           )

@@ -16,6 +16,6 @@ if [ $(uname) == "Darwin" ]; then
     for l in $(ls $DNN_HOME/lib/*.dylib); do
         install_name_tool -change $(basename $l) $l $R_PKG_DIR/Rdnn/libs/Rdnn.so
     done
-    install_name_tool -change libdnn_protos.dylib $DNN_HOME/lib/libdnn_protos.dylib $DNN_HOME/lib/libdnn.dylib
-    install_name_tool -change libspikework_protos.dylib $DNN_HOME/lib/libspikework_protos.dylib $DNN_HOME/lib/libdnn.dylib
+    install_name_tool -change libdnnpb.dylib $DNN_HOME/lib/libdnnpb.dylib $DNN_HOME/lib/libdnn.dylib
+    install_name_tool -change libspikeworkpb.dylib $DNN_HOME/lib/libspikeworkpb.dylib $DNN_HOME/lib/libdnn.dylib
 fi

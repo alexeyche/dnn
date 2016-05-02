@@ -86,7 +86,7 @@ install(CODE
 )
 
 if (APPLE)
-    foreach(LIB libdnn_protos libspikework_protos)
+    foreach(LIB libdnnpb libspikeworkpb)
         install(CODE
             "EXECUTE_PROCESS(COMMAND install_name_tool -change ${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/lib/${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/lib/libdnn.dylib )"
         )
