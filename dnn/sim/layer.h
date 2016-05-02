@@ -1,6 +1,7 @@
 #pragma once
 
-#include <dnn/base/base.h>
+#include <ground/base/base.h>
+#include <ground/base/base.h>
 #include <dnn/neuron/spike_neuron_impl.h>
 #include <dnn/neuron/defaults.h>
 #include <dnn/connection/builder.h>
@@ -9,7 +10,8 @@
 #include <type_traits>
 
 namespace NDnn {
-
+	using namespace NGround;
+	
 	template <typename N, ui32 size, typename TConf>
 	class TLayer: public IMetaProtoSerial {
 	private:

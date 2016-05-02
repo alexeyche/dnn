@@ -2,7 +2,7 @@
 
 #include "receptive_field.h"
 
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/serial/proto_serial.h>
 #include <dnn/protos/linear.pb.h>
 
 namespace NDnn {

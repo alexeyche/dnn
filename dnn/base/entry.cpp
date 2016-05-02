@@ -1,7 +1,7 @@
 #include "entry.h"
 
-#include <dnn/util/string.h>
-#include <dnn/util/proto_options.h>
+#include <ground/string.h>
+#include <ground/proto_options.h>
 #include <dnn/protos/options.pb.h>
 
 #include <cstdlib>

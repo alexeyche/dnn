@@ -1,7 +1,7 @@
 #include "convolve.h"
 #include "fft.h"
 
-#include <dnn/util/ts/time_series_complex.h>
+#include <ground/ts/time_series_complex.h>
 
 namespace NDnn {
 

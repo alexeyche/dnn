@@ -4,7 +4,7 @@
 
 // #include <dnn/protos/nonlinear_norm.pb.h>
 // #include <dnn/protos/config.pb.h>
-// #include <dnn/util/fastapprox/fastpow.h>
+// #include <ground/fastapprox/fastpow.h>
 
 // namespace NDnn {
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <dnn/util/matrix.h>
-#include <dnn/util/thread.h>
+#include <ground/matrix.h>
+#include <ground/thread.h>
 
 #include <dnn/spikework/kernel/dot.h>
 #include <dnn/spikework/kernel/epsp.h>
@@ -9,7 +9,8 @@
 #include <dnn/spikework/protos/spikework_config.pb.h>
 
 namespace NDnn {
-
+	using namespace NGround;
+	
 	class TSpikework {
 	public:
 

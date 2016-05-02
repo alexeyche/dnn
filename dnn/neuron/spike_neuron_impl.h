@@ -3,18 +3,18 @@
 #include <queue>
 #include <atomic>
 
-#include <dnn/util/act_vector.h>
-#include <dnn/util/random.h>
-#include <dnn/util/rand.h>
-#include <dnn/util/optional.h>
-#include <dnn/util/serial/meta_proto_serial.h>
-#include <dnn/util/serial/util.h>
+#include <ground/act_vector.h>
+#include <ground/random.h>
+#include <ground/rand.h>
+#include <ground/optional.h>
+#include <ground/serial/meta_proto_serial.h>
+#include <ground/serial/util.h>
 #include <dnn/protos/config.pb.h>
 #include <dnn/protos/spike_neuron_impl.pb.h>
 
 
 namespace NDnn {
-
+	using namespace NGround;
 
 
 

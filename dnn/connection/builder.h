@@ -2,7 +2,7 @@
 
 #include <dnn/connection/connection.h>
 #include <dnn/protos/config.pb.h>
-#include <dnn/util/rand.h>
+#include <ground/rand.h>
 
 namespace NDnn {
 

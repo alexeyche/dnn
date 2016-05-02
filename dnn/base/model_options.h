@@ -1,10 +1,11 @@
 #pragma once
 
-#include <dnn/util/optional.h>
-#include <dnn/base/base.h>
+#include <ground/optional.h>
+#include <ground/base/base.h>
 
 namespace NDnn {
-
+	using namespace NGround;
+	
 	struct TModelOptions {
 		TOptional<ui32> Port;
 		TOptional<ui32> Seed;

@@ -4,7 +4,7 @@
 #include "weight_normalization.h"
 
 #include <dnn/protos/multiplicative_norm.pb.h>
-#include <dnn/util/fastapprox/fastpow.h>
+#include <ground/fastapprox/fastpow.h>
 
 namespace NDnn {
 

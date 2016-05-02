@@ -3,12 +3,13 @@
 #include <atomic>
 
 #include <dnn/protos/reward_control.pb.h>
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/serial/proto_serial.h>
 
 #include <dnn/protos/config.pb.h>
 
 namespace NDnn {
-
+    using namespace NGround;
+    
     namespace {
 
         double AtomicDoubleAdd(std::atomic<double> &f, double d) {

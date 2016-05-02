@@ -1,11 +1,12 @@
 #pragma once
 
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/serial/proto_serial.h>
 
 #include <dnn/protos/config.pb.h>
 
 namespace NDnn {
-
+	using namespace NGround;
+	
 	template <typename TConstants>
 	class TReceptiveField: public IProtoSerial<NDnnProto::TLayer> {
 	public:

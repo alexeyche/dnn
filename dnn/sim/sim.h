@@ -5,17 +5,17 @@
 #include "global_ctx.h"
 #include "reward_control.h"
 
-#include <dnn/base/base.h>
+#include <ground/base/base.h>
 
 #include <dnn/dispatcher/dispatcher.h>
 
-#include <dnn/util/log/log.h>
-#include <dnn/util/rand.h>
-#include <dnn/util/serial/bin_serial.h>
-#include <dnn/util/spinning_barrier.h>
-#include <dnn/util/thread.h>
-#include <dnn/util/tuple.h>
-#include <dnn/util/stat_gatherer.h>
+#include <ground/log/log.h>
+#include <ground/rand.h>
+#include <ground/serial/bin_serial.h>
+#include <ground/spinning_barrier.h>
+#include <ground/thread.h>
+#include <ground/tuple.h>
+#include <ground/stat_gatherer.h>
 #include <dnn/base/model_options.h>
 
 #include <dnn/neuron/integrate_and_fire.h>

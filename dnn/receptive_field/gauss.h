@@ -2,7 +2,7 @@
 
 #include "receptive_field.h"
 
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/serial/proto_serial.h>
 #include <dnn/protos/gauss.pb.h>
 
 namespace NDnn {

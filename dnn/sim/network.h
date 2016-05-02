@@ -1,8 +1,8 @@
 #pragma once
 
-#include <dnn/util/pretty_print.h>
-#include <dnn/util/ts/spikes_list.h>
-#include <dnn/util/act_vector.h>
+#include <ground/pretty_print.h>
+#include <ground/ts/spikes_list.h>
+#include <ground/act_vector.h>
 #include <dnn/neuron/spike_neuron_impl.h>
 
 namespace NDnn {

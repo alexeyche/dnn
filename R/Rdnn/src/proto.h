@@ -1,7 +1,7 @@
 #ifndef RPROTO_READ_H
 #define RPROTO_READ_H
 
-#include <dnn/base/base.h>
+#include <ground/base/base.h>
 #include <dnn/protos/config.pb.h>
 
 #include <fstream>

@@ -10,7 +10,7 @@ namespace NDnn {
 			.AddCallback(
 				"POST", "api/input",
 				[&](const THttpRequest& req, TResponseBuilder& resp) {
-					NDnnProto::TTimeSeries ts;
+					NGroundProto::TTimeSeries ts;
 					ENSURE(ts.ParseFromString(req.Body), "Failed to deserialize input TTimeSeries from http request");
 					
 					TUniqueLock lock(InputDataMutex);

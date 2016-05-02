@@ -2,13 +2,14 @@
 
 #include "reward_control.h"
 
-#include <dnn/base/base.h>
+#include <ground/base/base.h>
 
-#include <dnn/util/ptr.h>
-#include <dnn/util/maybe.h>
+#include <ground/ptr.h>
+#include <ground/maybe.h>
 
 namespace NDnn {
-
+	using namespace NGround;
+	
 	template <typename ...T>
 	class TSim;
 

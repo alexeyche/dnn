@@ -1,7 +1,7 @@
 #pragma once
 
-#include <dnn/util/serial/proto_serial.h>
-#include <dnn/util/ts/time_series.h>
+#include <ground/serial/proto_serial.h>
+#include <ground/ts/time_series.h>
 
 #include <dnn/spikework/protos/spikework_config.pb.h>
 

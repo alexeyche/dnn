@@ -2,7 +2,7 @@
 
 #include "activation.h"
 
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/serial/proto_serial.h>
 #include <dnn/protos/determ.pb.h>
 
 namespace NDnn {

@@ -1,13 +1,14 @@
 #pragma once
 
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/serial/proto_serial.h>
 
 #include <dnn/protos/config.pb.h>
 
-#include <dnn/util/rand.h>
+#include <ground/rand.h>
 
 namespace NDnn {
-
+	using namespace NGround;
+	
 	struct TConnectionRecipe {
 		double Amplitude = 1.0;
 		bool Exists = false;

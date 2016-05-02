@@ -4,7 +4,7 @@
 
 #include <dnn/protos/pre_post_stdp.pb.h>
 #include <dnn/protos/config.pb.h>
-#include <dnn/util/act_vector.h>
+#include <ground/act_vector.h>
 
 namespace NDnn {
 

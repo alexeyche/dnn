@@ -1,18 +1,23 @@
 file(GLOB ProtoFiles "${CMAKE_CURRENT_SOURCE_DIR}/*.proto")
 
-set(PROTOBUF_IMPORT_DIRS ${PROTOBUF_INCLUDE_DIRS})
+PROTOBUF_GENERATE_CPP_DNN(PROTO_SRCS PROTO_HDRS PROTOFILES ${ProtoFiles} PROTOROOT ${PROJECT_SOURCE_DIR} OUTPATH ${CMAKE_BINARY_DIR})
 
-PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS ${ProtoFiles})
+add_library(dnnpb SHARED ${ProtoFiles} ${PROTO_SRCS})
 
-set(ProtobufIncludePath ${PROTOBUF_INCLUDE_DIRS}
-        CACHE INTERNAL "Path to generated protobuf files.")
+SET_TARGET_PROPERTIES(dnnpb PROPERTIES COMPILE_FLAGS "-fPIC")
 
-add_library(dnn_protos SHARED ${ProtoFiles} ${PROTO_SRCS} ${PROTO_HDRS})
-include_directories(${PROTOBUF_INCLUDE_DIRS})
-
-SET_TARGET_PROPERTIES(dnn_protos PROPERTIES COMPILE_FLAGS "-fPIC")
-
-target_link_libraries(dnn_protos
+target_link_libraries(dnnpb
     ${PROTOBUF_LIBRARY}
 )
-install(TARGETS dnn_protos  DESTINATION lib/ COMPONENT)
+
+install(TARGETS dnnpb  DESTINATION lib/ COMPONENT)
+
+install(
+    DIRECTORY
+    ${CMAKE_BINARY_DIR}/dnn/protos
+    DESTINATION
+    include/dnn
+    FILES_MATCHING
+    PATTERN "*.h"
+    PATTERN "*.hpp"
+)

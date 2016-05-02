@@ -2,9 +2,9 @@
 #define STRICT_R_HEADERS
 #include <Rcpp.h>
 
-#include <dnn/util/log/log.h>
-#include <dnn/util/ts/time_series.h>
-#include <dnn/util/ts/spikes_list.h>
+#include <ground/log/log.h>
+#include <ground/ts/time_series.h>
+#include <ground/ts/spikes_list.h>
 
 #include "proto.h"
 

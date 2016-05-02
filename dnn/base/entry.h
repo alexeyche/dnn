@@ -4,8 +4,8 @@
 
 #include <dnn/protos/config.pb.h>
 #include <dnn/sim/sim.h>
-#include <dnn/util/protobuf.h>
-#include <dnn/util/serial/bin_serial.h>
+#include <ground/protobuf.h>
+#include <ground/serial/bin_serial.h>
 
 namespace NDnn {
 

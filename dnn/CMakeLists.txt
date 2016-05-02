@@ -26,7 +26,6 @@ set(DIRS
     protos
     sim
     synapse
-    util
     learning_rule
     spikework
 )
@@ -38,13 +37,16 @@ endforeach()
 add_library(dnn SHARED ${DNN_SRCS})
 
 include_directories(${PROTOBUF_INCLUDE_DIRS} PARENT_SCOPE)
+include_directories(${CMAKE_BINARY_DIR})
+
 
 SET_TARGET_PROPERTIES(dnn PROPERTIES COMPILE_FLAGS "-fPIC")
 
 
 target_link_libraries(dnn
-    dnn_protos
-    spikework_protos
+    ground
+    spikeworkpb
+    dnnpb
     ${PROTOBUF_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
     m
@@ -59,15 +61,6 @@ install(
     ${PROJECT_SOURCE_DIR}/dnn
     DESTINATION
     include
-    FILES_MATCHING
-    PATTERN "*.h"
-    PATTERN "*.hpp"
-)
-install(
-    DIRECTORY
-    ${CMAKE_BINARY_DIR}/dnn/protos
-    DESTINATION
-    include/dnn
     FILES_MATCHING
     PATTERN "*.h"
     PATTERN "*.hpp"

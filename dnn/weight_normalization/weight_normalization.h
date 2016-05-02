@@ -1,11 +1,11 @@
 #pragma once
 
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/serial/proto_serial.h>
 #include <dnn/protos/config.pb.h>
-#include <dnn/util/ptr.h>
+#include <ground/ptr.h>
 
 namespace NDnn {
-
+	using namespace NGround;
 
 	template <typename TConstants, typename TState, typename TNeuronImpl>
 	class TWeightNormalization: public IProtoSerial<NDnnProto::TLayer> {

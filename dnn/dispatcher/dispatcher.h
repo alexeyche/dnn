@@ -2,12 +2,13 @@
 
 #include <condition_variable>
 
-#include <dnn/base/base.h>
-#include <dnn/util/server/server.h>
-#include <dnn/util/ts/time_series.h>
+#include <ground/base/base.h>
+#include <ground/server/server.h>
+#include <ground/ts/time_series.h>
 
 
 namespace NDnn {
+	using namespace NGround;
 	
 	class TDispatcher {
 	public:

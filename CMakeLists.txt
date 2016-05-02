@@ -19,7 +19,10 @@ option(PROFILE "Compile with profiling information" OFF)
 #  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 #  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 #endif(CMAKE_COMPILER_IS_GNUCC)
-include(FindProtobuf)
+
+include(cmake/FindProtobuf.cmake)
+
+
 
 find_package(Protobuf REQUIRED)
 find_package(Threads REQUIRED)
@@ -59,14 +62,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_BINARY_DIR})
 
-
-
 macro(DEFINE_MODEL BIN CPP)
   add_executable(${BIN}
       ${CPP}
   )
 
-  include_directories(${CMAKE_SOURCE_DIR}/ego)
   target_link_libraries(${BIN} ${PROTOBUF_LIBRARY} dnn m)
 
   get_filename_component(model_bn ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE)
@@ -99,6 +99,15 @@ macro(DEFINE_MODEL BIN CPP)
 endmacro()
 
 # Recurse into the rest of the project.
+FILE(GLOB RESULT "ground")
+LIST(LENGTH ${RESULT} RES_LEN)
+IF(RES_LEN EQUAL 0)
+  
+  MESSAGE(FATAL_ERROR "Module ground not found, need to do this command:\ncd ${CMAKE_SOURCE_DIR}/ground\ngit submodule foreach git pull origin master")
+  
+ENDIF()
+
+add_subdirectory(ground)
 add_subdirectory(dnn)
 add_subdirectory(tools)
 add_subdirectory(models)

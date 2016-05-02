@@ -3,9 +3,9 @@
 #include "activation.h"
 
 #include <dnn/protos/sigmoid.pb.h>
-#include <dnn/util/fastapprox/fastexp.h>
-#include <dnn/util/fastapprox/fastlog.h>
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/fastapprox/fastexp.h>
+#include <ground/fastapprox/fastlog.h>
+#include <ground/serial/proto_serial.h>
 
 namespace NDnn {
 

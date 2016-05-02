@@ -1,9 +1,9 @@
 #ifndef RSPIKEWORK_READ_H
 #define RSPIKEWORK_READ_H
 
-#include <dnn/base/base.h>
-#include <dnn/util/ts/time_series.h>
-#include <dnn/util/ts/spikes_list.h>
+#include <ground/base/base.h>
+#include <ground/ts/time_series.h>
+#include <ground/ts/spikes_list.h>
 #include <dnn/spikework/spikework.h>
 #include <dnn/spikework/protos/spikework_config.pb.h>
 

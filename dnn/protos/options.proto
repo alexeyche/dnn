@@ -1,4 +1,4 @@
-import "extension.proto";
+import "ground/protos/extension.proto";
 
 package NDnnProto;
 
