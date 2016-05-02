@@ -102,8 +102,8 @@ endmacro()
 FILE(GLOB RESULT "ground")
 LIST(LENGTH ${RESULT} RES_LEN)
 IF(RES_LEN EQUAL 0)
-  
-  MESSAGE(FATAL_ERROR "Module ground not found, need to do this command:\ncd ${CMAKE_SOURCE_DIR}/ground\ngit submodule foreach git pull origin master")
+
+  MESSAGE(FATAL_ERROR "Module ground not found, need to do this command:\ncd ${CMAKE_SOURCE_DIR}/ground\ngit submodule init\ngit submodule update")
   
 ENDIF()
 
