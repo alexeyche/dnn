@@ -9,8 +9,6 @@
 
 #include <dnn/protos/config.pb.h>
 
-using namespace NDnn;
-
 template <>
 SEXP TProto::Translate<TTimeSeriesInfo>(const TTimeSeriesInfo& ent) {
 	Rcpp::List ret;

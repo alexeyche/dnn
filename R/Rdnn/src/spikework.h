@@ -17,6 +17,7 @@
 #include "proto.h"
 
 using namespace NDnn;
+using namespace NGround;
 
 
 // [[Rcpp::export(name = "pp.kernel.run")]]

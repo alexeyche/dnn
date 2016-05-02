@@ -12,7 +12,7 @@
 
 #include "common.h"
 
-using namespace NDnn;
+using namespace NGround;
 
 template <typename T>
 bool GetFromList(const Rcpp::List& l, const TString name, T& dst) {

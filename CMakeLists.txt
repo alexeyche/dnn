@@ -98,12 +98,13 @@ macro(DEFINE_MODEL BIN CPP)
 
 endmacro()
 
-# Recurse into the rest of the project.
-FILE(GLOB RESULT "ground")
-LIST(LENGTH ${RESULT} RES_LEN)
+FILE(GLOB RESULT "${CMAKE_SOURCE_DIR}/ground/*")
+
+LIST(LENGTH RESULT RES_LEN)
+
 IF(RES_LEN EQUAL 0)
 
-  MESSAGE(FATAL_ERROR "Module ground not found, need to do this command:\ncd ${CMAKE_SOURCE_DIR}/ground\ngit submodule init\ngit submodule update")
+  MESSAGE(FATAL_ERROR "Module ground not found, need to do this command:\ncd ${CMAKE_SOURCE_DIR}/ground\ngit submodule init && git submodule update")
   
 ENDIF()
 
