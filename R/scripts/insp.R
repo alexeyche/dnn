@@ -25,7 +25,7 @@ if(length(grep("RStudio", args))>0) {
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
-    EP = 1
+    #EP=10
 }
 
 pfx_f = function(s) s
@@ -49,7 +49,7 @@ COPY_PICS = convBool(Sys.getenv('COPY_PICS'), FALSE)
 OPEN_PIC = convBool(Sys.getenv('OPEN_PIC'), TRUE)
 LAYER_MAP = convStr(Sys.getenv('LAYER_MAP'), NULL)
 SAVE_PIC_IN_FILES = convBool(Sys.getenv('SAVE_PIC_IN_FILES'), TRUE)
-EVAL = convBool(Sys.getenv('EVAL'), TRUE)
+EVAL = convBool(Sys.getenv('EVAL'), FALSE)
 EVAL_PROC = convStr(Sys.getenv('EVAL_PROC'), "Epsp(10)")
 EVAL_KERN = convStr(Sys.getenv('EVAL_KERN'), "RbfDot(0.05)")
 EVAL_JOBS = convNum(Sys.getenv('EVAL_JOBS'), 1)
@@ -509,3 +509,10 @@ if(file.exists(annoying_file)) {
     success = file.remove(annoying_file)
 }
 
+pc = prcomp(signal, scale=TRUE)
+plot(-neuron$weights, type="l", ylim=c(0.05, -0.4))
+#lines(-pc$rotation[,1], col="red")
+
+ei = eigen(t(signal) %*% (signal))
+lines(Re(ei$vectors[,1]), col="blue")
+lines(w[nrow(w),]-0.05, col="red",type="l")

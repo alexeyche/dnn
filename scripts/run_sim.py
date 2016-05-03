@@ -447,6 +447,7 @@ def main(argv):
         "jobs" : args.jobs,
         "old_dir" : args.old_dir,
         "inspection" : not args.no_insp,
+        "evaluation" : not args.no_evaluation,
         "slave" : args.slave,
         "evaluation_data" : args.evaluation_data,
         "force" : args.force,

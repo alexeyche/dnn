@@ -2,58 +2,33 @@ SimConfiguration {
 	Jobs: 8
 }
 Layer {
-	IntegrateAndFire {
-		TauMem: 20.0
-		TauRef: 5.0
-	}
-	Determ {
-		Threshold: 0.15
-	}
-    BasicSynapse {
+	BasicSynapse {
         PspDecay: 10.0
-    }
-    GaussReceptiveField {
-    	Sigma: 0.1
-    	Gain: 1.5
-    	LowLevel: -3.2
-    	HighLevel: 3.7
-    }
-    LinearReceptiveField {
-    	LowLevel: -1.5
-    	HighLevel: 1.5
-    	LowRate: 25
-    	HighRate: 100
-    	TauRef: 50.0
-    	TauRc: 200.0
     }
 }
 Layer {
+	BasicSynapse {
+        PspDecay: 10.0
+    }
 	IntegrateAndFire {
 		TauMem: 10
 		TauRef: 2
 	}
 	Determ {
-		Threshold: 0.15
+		Threshold: 0.02
 	}
 	Stdp {
-		TauPlus: 30.0           
-		TauMinus: 50.0 		
+		TauPlus: 5.0           
+		TauMinus: 10.0
 		Aplus: 1.0
 		Aminus: 1.0
-		LearningRate: 1e-02
+		LearningRate: 1e-03
 	}
 }
 Connection {
 	From: 0 To: 1
 	Stochastic {
-		Prob: 0.25
+		Prob: 1.0
 	}
-	Weight: 0.04
-}
-Connection {
-	From: 1 To: 1
-	Stochastic {
-		Prob: 0.25
-	}
-	Weight: -0.04
+	Weight: 0.01
 }
