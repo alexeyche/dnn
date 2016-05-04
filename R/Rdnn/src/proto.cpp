@@ -1,10 +1,10 @@
 #include "proto.h"
 
-#include <ground/ts/time_series.h>
-#include <ground/ts/spikes_list.h>
-#include <ground/matrix.h>
-#include <ground/stat_gatherer.h>
-#include <ground/serial/bin_serial.h>
+#include <dnn/util/ts/time_series.h>
+#include <dnn/util/ts/spikes_list.h>
+#include <dnn/util/matrix.h>
+#include <dnn/util/stat_gatherer.h>
+#include <dnn/util/serial/bin_serial.h>
 #include <dnn/spikework/protos/spikework_config.pb.h>
 
 #include <dnn/protos/config.pb.h>

@@ -1,0 +1,49 @@
+SimConfiguration {
+	Seed: -1
+	Jobs: 8
+}
+Layer {
+	HindmarshRose {
+		A: 1.0
+	}
+	Sigmoid {
+		Threshold: 0.15
+		Slope: 120.0
+	}
+    BasicSynapse {
+        PspDecay: 10.0
+    }
+    GaussReceptiveField {
+    	Sigma: 0.1
+    	Gain: 1.0
+    	LowLevel: -1.5
+    	HighLevel: 1.5
+    }
+}
+Layer {
+	HindmarshRose {
+		A: 1.0
+	}
+	Sigmoid {
+		Threshold: 0.15
+		Slope: 50.0
+	}
+	Stdp {
+		LearningRate: 0.001
+	}
+}
+Connection {
+	From: 0 To: 1
+	Stochastic {
+		Prob: 0.25
+	}
+	Weight: 0.04
+}
+
+Connection {
+	From: 0 To: 1
+	Stochastic {
+		Prob: 0.25
+	}
+	Weight: -0.04
+}

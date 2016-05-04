@@ -1,0 +1,17 @@
+package NDnnProto;
+
+
+message THindmarshRoseConst {
+    optional double A = 1;
+    optional double B = 2;
+    optional double C = 3;
+    optional double D = 4;
+    optional double R = 5;
+    optional double S = 6;
+    optional double XR = 7;
+}
+
+message THindmarshRoseState {
+    optional double SpikingVariable = 1;
+    optional double BurstingVariable = 2;
+}

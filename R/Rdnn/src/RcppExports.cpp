@@ -5,6 +5,17 @@
 
 using namespace Rcpp;
 
+Rcpp::List Lyapunov(Rcpp::List timeSeries, Rcpp::List outputSpikes);
+RcppExport SEXP Rdnn_Lyapunov(SEXP timeSeriesSEXP, SEXP outputSpikesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeries(timeSeriesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type outputSpikes(outputSpikesSEXP);
+    __result = Rcpp::wrap(Lyapunov(timeSeries, outputSpikes));
+    return __result;
+END_RCPP
+}
 // PpKernelRun
 Rcpp::NumericMatrix PpKernelRun(Rcpp::List preProcConfig, Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs);
 RcppExport SEXP Rdnn_PpKernelRun(SEXP preProcConfigSEXP, SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP) {

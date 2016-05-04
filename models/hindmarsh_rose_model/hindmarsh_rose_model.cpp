@@ -3,7 +3,7 @@
 #include <dnn/base/entry.h>
 #include <dnn/neuron/config.h>
 
-#include <dnn/neuron/integrate_and_fire.h>
+#include <dnn/neuron/hindmarsh_rose.h>
 #include <dnn/neuron/spike_sequence_neuron.h>
 #include <dnn/synapse/synapse.h>
 #include <dnn/synapse/basic_synapse.h>
@@ -16,19 +16,19 @@
 using namespace NDnn;
 
 int main(int argc, const char** argv) {
-    auto opts = InitOptions(argc, argv, "TestModel");
+    auto opts = InitOptions(argc, argv, "HindmarshRoseModel");
     if (opts.NoLearning) {
         auto sim = BuildModel<
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TIdentReceptiveField, TNoLearning>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TNoLearning>>
+            TLayer<THindmarshRose, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TIdentReceptiveField, TNoLearning>>,
+            TLayer<THindmarshRose, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TNoLearning>>
         >(opts);
 
         sim.Run();
 
     } else {
         auto sim = BuildModel<
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TIdentReceptiveField>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TStdp>>
+            TLayer<THindmarshRose, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TIdentReceptiveField>>,
+            TLayer<THindmarshRose, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TStdp>>
         >(opts);
 
         if (opts.StatFile) {

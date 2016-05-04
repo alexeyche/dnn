@@ -24,6 +24,7 @@ import "dnn/protos/pre_post_stdp.proto";
 import "dnn/protos/multiplicative_norm.proto";
 import "dnn/protos/sliding_ltd.proto";
 import "dnn/protos/linear.proto";
+import "dnn/protos/hindmarsh_rose.proto";
 
 message TRewardControl {
     optional TRewardControlConst RewardControl = 1;
@@ -71,6 +72,8 @@ message TLayer {
     repeated TSlidingLtdConst SlidingLtd = 30;
     repeated TSlidingLtdState SlidingLtdState = 31;
     repeated TLinearReceptiveFieldConst LinearReceptiveField = 32;
+    repeated THindmarshRoseConst HindmarshRose = 33;
+    repeated THindmarshRoseState HindmarshRoseState = 34;
 }
 
 

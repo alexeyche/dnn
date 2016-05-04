@@ -11,5 +11,8 @@
         "EVAL_TYPE" : "fisher",
         "TIMED_PATTERN_LENGTH" : "60000",
         "TIMED_PATTERN_LENGTH_TEST" : "60000"
+    },
+    "victoria" : {
+        "EVAL": "no"
     }
 }

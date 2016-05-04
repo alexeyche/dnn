@@ -22,4 +22,3 @@ install(
     PATTERN "*.h"
     PATTERN "*.hpp"
 )
-
