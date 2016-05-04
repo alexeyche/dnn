@@ -1,5 +1,4 @@
 SimConfiguration {
-	Port: 9090
 	Seed: -1
 	Jobs: 8
 }

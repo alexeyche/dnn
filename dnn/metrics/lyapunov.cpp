@@ -23,7 +23,9 @@ namespace NDnn {
 		    		if (d_input != 0) {
 		    			double d_net = v_net[val_i + 1] - v_net[val_i];
 			        	/*L_DEBUG << "TLyapunov, calculating metrics " << di_net << "net dimension" << di_input << "input dimension";*/
-			        	values[val_i] += log(d_net / d_input);
+			        	if (d_net != 0) {
+			        		values[val_i] += log(fabs(d_net / d_input));
+			        	}
 			        }
 		    	}
 		    }
