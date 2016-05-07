@@ -18,7 +18,7 @@ Layer {
 		Threshold: 0.15
 	}
 	Stdp {
-		TauPlus: 5.0           
+		TauPlus: 5.0
 		TauMinus: 10.0
 		Aplus: 1.0
 		Aminus: 1.0
@@ -28,7 +28,7 @@ Layer {
 		Unit: 1.0
 		Power: 2.0
 	}
-	
+
 }
 Connection {
 	From: 0 To: 1
