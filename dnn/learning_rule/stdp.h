@@ -63,7 +63,7 @@ namespace NDnn {
 	        
 			auto synIdIt = TPar::s.X.abegin();
 		    while (synIdIt != TPar::s.X.aend()) {
-		    	if(std::fabs(TPar::s.X[synIdIt]) < 0.0001) {
+		    	if (std::fabs(TPar::s.X[synIdIt]) < 0.0001) {
                 	TPar::s.X.SetInactive(synIdIt);
                 } else {
 	                const ui32& synapseId = *synIdIt;

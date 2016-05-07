@@ -1,0 +1,18 @@
+package NDnnProto;
+
+
+message TNNMFHomeostatisConst {
+    optional double TargetRate = 1;
+    optional double TauMean = 2;
+    optional double Alpha = 3;
+    optional double Beta = 4;
+    optional double Gamma = 5;
+    optional double MinWeight = 6;
+    optional double MaxWeight = 7;
+}
+
+message TNNMFHomeostatisState {
+    optional double Pmean = 1;
+    optional bool Saturation = 2;
+}
+

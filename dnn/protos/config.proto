@@ -25,6 +25,8 @@ import "dnn/protos/multiplicative_norm.proto";
 import "dnn/protos/sliding_ltd.proto";
 import "dnn/protos/linear.proto";
 import "dnn/protos/hindmarsh_rose.proto";
+import "dnn/protos/unit_norm.proto";
+import "dnn/protos/nnmf_homeostasis.proto";
 
 message TRewardControl {
     optional TRewardControlConst RewardControl = 1;
@@ -72,8 +74,12 @@ message TLayer {
     repeated TSlidingLtdConst SlidingLtd = 30;
     repeated TSlidingLtdState SlidingLtdState = 31;
     repeated TLinearReceptiveFieldConst LinearReceptiveField = 32;
-    repeated THindmarshRoseConst HindmarshRose = 33;
-    repeated THindmarshRoseState HindmarshRoseState = 34;
+    repeated TUnitNormConst UnitNorm = 33;
+    repeated TUnitNormState UnitNormState = 34;
+    repeated TNNMFHomeostatisConst NNMFHomeostatis = 35;
+    repeated TNNMFHomeostatisState NNMFHomeostatisState = 36;
+    repeated THindmarshRoseConst HindmarshRose = 37;
+    repeated THindmarshRoseState HindmarshRoseState = 38;
 }
 
 

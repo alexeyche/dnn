@@ -15,7 +15,7 @@ Layer {
 		TauRef: 2
 	}
 	Determ {
-		Threshold: 0.10
+		Threshold: 0.15
 	}
 	Stdp {
 		TauPlus: 5.0           
@@ -28,19 +28,12 @@ Layer {
 		Unit: 1.0
 		Power: 2.0
 	}
-	SlidingLtd {
-		Power: 3.0
-	    Modulation: 1.0
-	    TargetRate: 10.0
-	    TauMean: 10000
-	    MinWeight: 0.0
-	    MaxWeight: 1.0
-	}
+	
 }
 Connection {
 	From: 0 To: 1
 	Stochastic {
 		Prob: 1.0
 	}
-	Weight: 0.03
+	Weight: 0.01
 }
