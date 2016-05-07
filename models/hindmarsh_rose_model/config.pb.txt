@@ -17,20 +17,26 @@ Layer {
     GaussReceptiveField {
     	Sigma: 0.1
     	Gain: 1.0
-    	LowLevel: -1.5
-    	HighLevel: 1.5
+    	LowLevel: -2.5
+    	HighLevel: 2.5
     }
 }
 Layer {
 	HindmarshRose {
 		A: 1.0
+		B: 3.0
+        C: 1.0
+        D: 2.0
+        R: 0.001
+        S: 4
+        XR: -2.5
 	}
 	Sigmoid {
 		Threshold: 0.15
 		Slope: 50.0
 	}
 	Stdp {
-		LearningRate: 0.001
+		LearningRate: 0.0001
 	}
 }
 Connection {

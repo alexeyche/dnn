@@ -17,7 +17,7 @@ int main(int argc, const char** argv) {
     auto opts = InitOptions(argc, argv, "HindmarshRoseModel");
     if (opts.NoLearning) {
         auto sim = BuildModel<
-            TLayer<THindmarshRose, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TGaussReceptiveField, TNoLearning>>,
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TGaussReceptiveField, TNoLearning>>,
             TLayer<THindmarshRose, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TNoLearning>>
         >(opts);
 
@@ -25,7 +25,7 @@ int main(int argc, const char** argv) {
 
     } else {
         auto sim = BuildModel<
-            TLayer<THindmarshRose, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TGaussReceptiveField>>,
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TGaussReceptiveField>>,
             TLayer<THindmarshRose, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TStdp>>
         >(opts);
 
