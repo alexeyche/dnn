@@ -26,13 +26,15 @@ W = matrix(runif(N*M), N, M)
 
 K = nrow(input.signal)
 eta = 1e-04
+num.of.mom = 5
 
 
 neuron = list(
     membrane=rep(0, M), 
     weights=W, 
     tau_mem = 10.0,
-    y = rep(0, M)
+    y = rep(0, M),
+    moments = matrix(0, nrow=M, ncol=num.of.mom)
 )
 
 
@@ -55,7 +57,7 @@ oja_rule = function(neuron, x) {
 
 bcm_rule = function(neuron, x) {
     act_deriv = matrix(rep(neuron$y * (1 - neuron$y), N), nrow=N, ncol=M, byrow=TRUE)
-    t((neuron$membrane * (neuron$membrane - mom[, 2])) %*% t(x)) * act_deriv
+    t((neuron$y * (neuron$y - neuron$moments[, 2])) %*% t(x)) * act_deriv
 }
 
 epochs = 10
@@ -65,9 +67,8 @@ w.stat = array(dim=c(N, M, K*epochs))
 dw.stat = array(dim=c(N, M, K*epochs))
 y.stat = array(dim=c(M, K*epochs))
 
-num.of.mom = 5
 mom.stat = array(dim=c(M, num.of.mom, K*epochs))
-mom = matrix(0, nrow=M, ncol=num.of.mom)
+
 
 idx.stat = function(ep, i) K * (ep-1) + i
 
@@ -84,6 +85,7 @@ for (ep in 1:epochs) {
         dw = bcm_rule(neuron, x)
         
         neuron$weights = neuron$weights + eta * dw    
+        neuron$weights = neuron$weights / sqrt(sum(neuron$weights^2))
         
         m.stat[, idx.stat(ep, i)] = neuron$membrane
         y.stat[, idx.stat(ep, i)] = neuron$y
@@ -91,8 +93,8 @@ for (ep in 1:epochs) {
         dw.stat[,, idx.stat(ep, i)] = dw
         for (ni in 1:M) {
             for (mi in 1:num.of.mom) {
-                mom[ni, mi] = mom[ni, mi] - (mom[ni, mi] + neuron$membrane^(mi))/tau_pmean 
-                mom.stat[ni, mi, idx.stat(ep, i)] = mom[ni, mi]
+                neuron$moments[ni, mi] = neuron$moments[ni, mi] - (neuron$moments[ni, mi] + neuron$y^(mi))/tau_pmean 
+                mom.stat[ni, mi, idx.stat(ep, i)] = neuron$moments[ni, mi]
             }
         }
     }
@@ -123,6 +125,6 @@ r.signal = signal %*% Re(ei$vectors[,1])
 membr.final = m.stat[, idx.stat(epochs, 1:5000)]
 
 plot(membr.final,type="l", ylim=c(0.0, 2.0))
-lines(-r.signal[1:5000,1], col="blue")
+lines(-r.signal[1:5000,1]/2.0, col="blue")
 
 #plot(mom.stat[1,4,1:100000] - 3*mom.stat[1,2,1:100000]^2, type="l") # Kurtosis
