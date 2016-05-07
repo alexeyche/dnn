@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 set(DIRS
     example
     stdp_model
+    stdp_pca_model
 )
 
 foreach(dir ${DIRS})

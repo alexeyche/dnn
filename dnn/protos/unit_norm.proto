@@ -1,0 +1,11 @@
+package NDnnProto;
+
+
+message TUnitNormState {
+}
+
+message TUnitNormConst {
+    optional double Unit = 1;
+    optional double Power = 2;
+}
+
