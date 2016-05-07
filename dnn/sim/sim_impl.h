@@ -17,11 +17,15 @@ namespace NDnn {
 		ForEachEnumerate(Layers, [&](ui32 layerId, auto& layer) {
 			SimLayer(layer, perLayerJobs[layerId].Size, threads, errors, errorsMut, barrier, layerId == 0 ? true : false);
 		});
-
+		
 		std::thread dispatcherThread = std::thread([&]() {
-			Dispatcher.MainLoop();
+			if (Options.Port) {
+				Dispatcher.SetPort(*Options.Port);
+				Dispatcher.MainLoop();	
+			}
 		});
-		for(auto& t: threads) {
+		
+		for (auto& t: threads) {
 			t.join();
 		}
 		Dispatcher.ShutDown();
@@ -116,7 +120,7 @@ namespace NDnn {
 		barrier.Wait();
 
 		for (; t < Conf.Duration; ++t) {
-			if(masterThread) TGlobalCtx().Inst().SetCurrentClassId(Network.GetClassId(t));
+			if (masterThread) TGlobalCtx().Inst().SetCurrentClassId(Network.GetClassId(t));
 			barrier.Wait();
 
 			for(ui32 neuronId=idxFrom; neuronId<idxTo; ++neuronId) {
@@ -132,7 +136,10 @@ namespace NDnn {
 			}
 
 			barrier.Wait();
-			if (masterThread) StatGatherer.Collect(t);
+			if (masterThread) { 
+				StatGatherer.Collect(t);
+				RewardControl.CalculateDynamics(t);
+			}
 			barrier.Wait();
 
 //======= PERFOMANCE MEASURE ======================================================================
@@ -156,7 +163,7 @@ namespace NDnn {
 
 	template <typename ...T>
 	void TSim<T...>::CreateConnections(const NDnnProto::TConfig& config) {
-		TRandEngine rand(Conf.Seed);
+		TRandEngine rand(Conf.ConnectionSeed);
 		for (const auto& connection: config.connection()) {
 			ForEach(Layers, [&](auto& leftLayer) {
 				if (leftLayer.GetId() != connection.from()) {

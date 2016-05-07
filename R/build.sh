@@ -15,6 +15,7 @@ if [ $(uname) == "Darwin" ]; then
     R_PKG_DIR=$(echo "cat(.libPaths()[1], '\n')" | R --slave  2>/dev/null | tr -d ' ')
     for l in $(ls $DNN_HOME/lib/*.dylib); do
         install_name_tool -change $(basename $l) $l $R_PKG_DIR/Rdnn/libs/Rdnn.so
-    done    
+    done
     install_name_tool -change libdnn_protos.dylib $DNN_HOME/lib/libdnn_protos.dylib $DNN_HOME/lib/libdnn.dylib
-fi    
+    install_name_tool -change libspikework_protos.dylib $DNN_HOME/lib/libspikework_protos.dylib $DNN_HOME/lib/libdnn.dylib
+fi

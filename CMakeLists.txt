@@ -60,6 +60,44 @@ include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_BINARY_DIR})
 
 
+
+macro(DEFINE_MODEL BIN CPP)
+  add_executable(${BIN}
+      ${CPP}
+  )
+
+  include_directories(${CMAKE_SOURCE_DIR}/ego)
+  target_link_libraries(${BIN} ${PROTOBUF_LIBRARY} dnn m)
+
+  get_filename_component(model_bn ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE)
+  install(TARGETS ${BIN} RUNTIME DESTINATION models/${model_bn})
+
+  file(GLOB ConfigFiles "${CMAKE_CURRENT_SOURCE_DIR}/*.pb.txt")
+
+  foreach(ConfigFile ${ConfigFiles})
+    install(CODE
+        "EXECUTE_PROCESS(COMMAND ln -sf ${ConfigFile} ${CMAKE_INSTALL_PREFIX}/models/${model_bn})"
+    )
+  endforeach(ConfigFile)
+
+  file(GLOB RScripts "${CMAKE_CURRENT_SOURCE_DIR}/*.R")
+
+  foreach(RScript ${RScripts})
+    install(CODE
+        "EXECUTE_PROCESS(COMMAND ln -sf ${RScript} ${CMAKE_INSTALL_PREFIX}/models/${model_bn})"
+    )
+  endforeach(RScript)
+
+  if (APPLE)
+      foreach(LIB libdnn_protos libdnn libspikework_protos)
+          install(CODE
+              "EXECUTE_PROCESS(COMMAND install_name_tool -change ${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/lib/${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/models/${model_bn}/${BIN} )"
+          )
+      endforeach(LIB)
+  endif()
+
+endmacro()
+
 # Recurse into the rest of the project.
 add_subdirectory(dnn)
 add_subdirectory(tools)

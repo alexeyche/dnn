@@ -5,6 +5,58 @@
 
 using namespace Rcpp;
 
+// Lyapunov
+Rcpp::List Lyapunov(Rcpp::List timeSeries, Rcpp::List outputSpikes);
+RcppExport SEXP Rdnn_Lyapunov(SEXP timeSeriesSEXP, SEXP outputSpikesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeries(timeSeriesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type outputSpikes(outputSpikesSEXP);
+    __result = Rcpp::wrap(Lyapunov(timeSeries, outputSpikes));
+    return __result;
+END_RCPP
+}
+// PpKernelRun
+Rcpp::NumericMatrix PpKernelRun(Rcpp::List preProcConfig, Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs);
+RcppExport SEXP Rdnn_PpKernelRun(SEXP preProcConfigSEXP, SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type preProcConfig(preProcConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type kernelConfig(kernelConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeries(timeSeriesSEXP);
+    Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
+    __result = Rcpp::wrap(PpKernelRun(preProcConfig, kernelConfig, timeSeries, jobs));
+    return __result;
+END_RCPP
+}
+// KernelRun
+Rcpp::NumericMatrix KernelRun(Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs);
+RcppExport SEXP Rdnn_KernelRun(SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type kernelConfig(kernelConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeries(timeSeriesSEXP);
+    Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
+    __result = Rcpp::wrap(KernelRun(kernelConfig, timeSeries, jobs));
+    return __result;
+END_RCPP
+}
+// PreprocessRun
+Rcpp::List PreprocessRun(Rcpp::List preProcConfig, Rcpp::List timeSeries, size_t jobs);
+RcppExport SEXP Rdnn_PreprocessRun(SEXP preProcConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type preProcConfig(preProcConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeries(timeSeriesSEXP);
+    Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
+    __result = Rcpp::wrap(PreprocessRun(preProcConfig, timeSeries, jobs));
+    return __result;
+END_RCPP
+}
 // setVerboseLevel
 void setVerboseLevel(int level);
 RcppExport SEXP Rdnn_setVerboseLevel(SEXP levelSEXP) {
@@ -34,6 +86,18 @@ BEGIN_RCPP
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< Rcpp::List >::type l(lSEXP);
     __result = Rcpp::wrap(chopSpikesList(l));
+    return __result;
+END_RCPP
+}
+// binarizeSpikes
+Rcpp::List binarizeSpikes(Rcpp::List l, double dt);
+RcppExport SEXP Rdnn_binarizeSpikes(SEXP lSEXP, SEXP dtSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type l(lSEXP);
+    Rcpp::traits::input_parameter< double >::type dt(dtSEXP);
+    __result = Rcpp::wrap(binarizeSpikes(l, dt));
     return __result;
 END_RCPP
 }

@@ -25,6 +25,7 @@ set(SOURCES
     rand.cpp
     ptr.cpp
     stat_gatherer.cpp
+    matrix.cpp
 )
 
 set(DIR_SRCS)

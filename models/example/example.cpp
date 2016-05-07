@@ -1,13 +1,15 @@
-
 #include <iostream>
 
 #include <dnn/base/entry.h>
+#include <dnn/neuron/config.h>
 
 #include <dnn/neuron/integrate_and_fire.h>
 #include <dnn/neuron/spike_sequence_neuron.h>
 #include <dnn/synapse/synapse.h>
+#include <dnn/synapse/basic_synapse.h>
 #include <dnn/protos/options.pb.h>
 #include <dnn/receptive_field/gauss.h>
+#include <dnn/receptive_field/ident.h>
 #include <dnn/learning_rule/stdp.h>
 #include <dnn/activation/sigmoid.h>
 
@@ -17,7 +19,7 @@ int main(int argc, const char** argv) {
     auto opts = InitOptions(argc, argv, "TestModel");
     if (opts.NoLearning) {
         auto sim = BuildModel<
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TGaussReceptiveField, TNoLearning>>,
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TIdentReceptiveField, TNoLearning>>,
             TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TNoLearning>>
         >(opts);
 
@@ -25,7 +27,7 @@ int main(int argc, const char** argv) {
 
     } else {
         auto sim = BuildModel<
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TGaussReceptiveField>>,
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TIdentReceptiveField>>,
             TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TStdp>>
         >(opts);
 

@@ -2,13 +2,21 @@
 
 #include <dnn/util/ts/time_series.h>
 #include <dnn/util/ts/spikes_list.h>
+#include <dnn/util/matrix.h>
 #include <dnn/util/stat_gatherer.h>
 #include <dnn/util/serial/bin_serial.h>
+#include <dnn/spikework/protos/spikework_config.pb.h>
+
+#include <dnn/protos/config.pb.h>
+
+#include <dnn/protos/config.pb.h>
+
+#include <dnn/protos/config.pb.h>
 
 using namespace NDnn;
 
 template <>
-Rcpp::List TProto::Translate<TTimeSeriesInfo>(const TTimeSeriesInfo& ent) {
+SEXP TProto::Translate<TTimeSeriesInfo>(const TTimeSeriesInfo& ent) {
 	Rcpp::List ret;
     for(const auto& lab_start_info: ent.LabelsStart) {
         const auto& lab_spec = ent.UniqueLabels[lab_start_info.LabelId];
@@ -26,7 +34,34 @@ Rcpp::List TProto::Translate<TTimeSeriesInfo>(const TTimeSeriesInfo& ent) {
 
 
 template <>
-Rcpp::List TProto::Translate<TTimeSeries>(const TTimeSeries& ent) {
+SEXP TProto::Translate<TDoubleMatrix>(const TDoubleMatrix& ent) {
+    Rcpp::NumericMatrix rm(ent.RowSize(), ent.ColSize());
+    for(size_t i=0; i<ent.RowSize(); ++i) {
+        for(size_t j=0; j<ent.ColSize(); ++j) {
+            rm(i,j) = ent(i,j);
+        }
+    }
+    if(ent.GetUniqueLabels().size()>0) {
+        Rcpp::CharacterVector rows(ent.GetRowLabelsIds().size());
+        Rcpp::CharacterVector cols(ent.GetColLabelsIds().size());
+
+        for(size_t el_i=0; el_i<ent.GetRowLabelsIds().size(); ++el_i) {
+            size_t lid = ent.GetRowLabelsIds()[el_i];
+            rows(el_i) = ent.GetUniqueLabels()[lid];
+        }
+        for(size_t el_i=0; el_i<ent.GetColLabelsIds().size(); ++el_i) {
+            size_t lid = ent.GetColLabelsIds()[el_i];
+            cols(el_i) = ent.GetUniqueLabels()[lid];
+        }
+
+        rm.attr("dimnames") = Rcpp::List::create(rows, cols);
+    }
+    return rm;
+}
+
+
+template <>
+SEXP TProto::Translate<TTimeSeries>(const TTimeSeries& ent) {
 	Rcpp::NumericMatrix ts_vals(ent.Dim(), ent.Length());
     for(size_t i=0; i<ent.Data.size(); ++i) {
         for(size_t j=0; j<ent.Data[i].Values.size(); ++j) {
@@ -42,7 +77,7 @@ Rcpp::List TProto::Translate<TTimeSeries>(const TTimeSeries& ent) {
 }
 
 template <>
-Rcpp::List TProto::Translate<TSpikesList>(const TSpikesList& ent) {
+SEXP TProto::Translate<TSpikesList>(const TSpikesList& ent) {
     TVector<TVector<double>> sp;
     for(auto &seq : ent.Data) {
         sp.push_back(seq.Values);
@@ -58,7 +93,7 @@ Rcpp::List TProto::Translate<TSpikesList>(const TSpikesList& ent) {
 
 
 template <>
-Rcpp::List TProto::Translate<TStatistics>(const TStatistics& ent) {
+SEXP TProto::Translate<TStatistics>(const TStatistics& ent) {
     Rcpp::List ret = Rcpp::List::create(
           Rcpp::Named("values") = Rcpp::wrap(ent.Values)
         , Rcpp::Named("name") = ent.Name
@@ -123,6 +158,41 @@ TSpikesList TProto::TranslateBack<TSpikesList>(const Rcpp::List& l) {
     }
     return sl;
 }
+
+#define SET(config, list, field, type,  name, subfield) \
+    { \
+        type v; \
+        if (GetFromList<type>(list, name, v)) { \
+            config.mutable_## field()->set_## subfield(v); \
+        }\
+    } \
+
+template <>
+NDnnProto::TPreprocessorConfig TProto::TranslateBack<NDnnProto::TPreprocessorConfig>(const Rcpp::List& l) {
+    NDnnProto::TPreprocessorConfig config;
+    if (l.containsElementNamed("Epsp")) {
+        *config.mutable_epsp() = NDnnProto::TEpspOptions();
+
+        SET(config, l["Epsp"], epsp, double, "TauRise", taurise);
+        SET(config, l["Epsp"], epsp, double, "TauDecay", taudecay);
+        SET(config, l["Epsp"], epsp, double, "Length", length);
+        SET(config, l["Epsp"], epsp, double, "Dt", dt);
+    }
+    return config;
+}
+
+
+
+template <>
+NDnnProto::TKernelConfig TProto::TranslateBack<NDnnProto::TKernelConfig>(const Rcpp::List& l) {
+    NDnnProto::TKernelConfig config;
+    if (l.containsElementNamed("Dot")) {
+        *config.mutable_dot() = NDnnProto::TDotOptions();
+    }
+    return config;
+}
+
+#undef SET
 
 Rcpp::List TProto::TranslateModel(const NDnnProto::TConfig& config) {
     Rcpp::List res;

@@ -1,0 +1,8 @@
+package NDnnProto;
+
+
+message TComplex {
+	optional double Real = 1;
+	optional double Imag = 2;
+}
+

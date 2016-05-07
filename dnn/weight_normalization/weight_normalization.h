@@ -57,33 +57,6 @@ namespace NDnn {
 		TPtr<TNeuronImpl> NeuronImpl;
 	};
 
-	template <typename T>
-	class TWeightNormalization<TEmpty, TEmpty, T>: public IProtoSerial<NDnnProto::TLayer> {
-	public:
-		void SerialProcess(TProtoSerial& serial) {
-		}
 
-		double Ltp(const double& w) const {
-			return 1.0;
-		}
-
-		double Ltd(const double& w) const {
-			return 1.0;
-		}
-
-		double Derivative(double w, double dw) const {
-			return dw;
-		}
-
-		void CalculateDynamics(const TTime& t) {
-		}
-		
-		void SetNeuronImpl(T& neuron) {
-		}
-
-	};
-
-	template <typename T>
-	using TNoWeightNormalization = TWeightNormalization<TEmpty, TEmpty, T>;
 
 } // namespace NDnn

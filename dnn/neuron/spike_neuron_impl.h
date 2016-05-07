@@ -124,18 +124,6 @@ namespace NDnn {
 	template <>
 	double CallCalculateResponseReceptiveField<TEmpty>(TEmpty&, double);
 
-	template <typename LR, typename N>
-	struct TCallPrepareLearningRule {
-		void operator ()(LR& lr, N& neuron) {
-			lr.SetNeuronImpl(neuron);
-			lr.Reset();
-		}
-	};
-	template <typename N>
-	struct TCallPrepareLearningRule<TEmpty, N> {
-		void operator ()(TEmpty&, N&) {}
-	};
-
 	template <typename R, typename N>
 	struct TCallPrepareReinforcement {
 		void operator ()(R& r, N& neuron) {
@@ -148,23 +136,6 @@ namespace NDnn {
 	};
 
 
-	template <typename LR>
-	void CallPropagateSynapseSpikeLearningRule(LR& lr, const TSynSpike& sp) {
-		lr.PropagateSynapseSpike(sp);
-	}
-
-	template <>
-	void CallPropagateSynapseSpikeLearningRule<TEmpty>(TEmpty&, const TSynSpike&);
-
-	template <typename LR>
-	void CallCalculateDynamicsLearningRule(LR& lr, const TTime& t) {
-		lr.CalculateDynamics(t);
-		lr.MutNorm().CalculateDynamics(t);
-	}
-
-	template <>
-	void CallCalculateDynamicsLearningRule<TEmpty>(TEmpty&, const TTime&);
-
 	template <typename R>
 	void CallModulateRewardReinforcement(R& r) {
 		r.ModulateReward();
@@ -173,15 +144,7 @@ namespace NDnn {
 	template <>
 	void CallModulateRewardReinforcement<TEmpty>(TEmpty&);
 
-
-	template <typename T>
-	void SerializeProcessNorm(TMetaProtoSerial& serial, T& lr) {
-		serial(lr.MutNorm());
-	}
-
-	template <>
-	void SerializeProcessNorm<TEmpty>(TMetaProtoSerial& serial, TEmpty& lr);
-
+	
 	template <typename TNeuron, typename TConf>
 	class TSpikeNeuronImpl: public IMetaProtoSerial {
 	public:
@@ -196,7 +159,7 @@ namespace NDnn {
 		        auto& s = Synapses[sp.SynapseId];
 		        s.MutFired() = true;
 		    	s.PropagateSpike();
-		    	CallPropagateSynapseSpikeLearningRule(LearningRule, sp);
+		    	LearningRule.PropagateSynapseSpike(sp);
 
 		        Queue.InputSpikes.pop();
 		    }
@@ -228,7 +191,9 @@ namespace NDnn {
 		        Neuron.PostSpikeDynamics(t);
 		    }
 
-		    CallCalculateDynamicsLearningRule(LearningRule, t);
+	    	LearningRule.CalculateDynamics(t);
+			LearningRule.MutNorm().CalculateDynamics(t);
+	
 		    CallModulateRewardReinforcement(Reinforcement);
 
 	   		for(auto syn_id_it = Synapses.abegin(); syn_id_it != Synapses.aend(); ++syn_id_it) {
@@ -255,7 +220,8 @@ namespace NDnn {
 		void Prepare() {
 			ENSURE(Rand, "Random engine is not set");
 			CallInitReceptiveField<typename TConf::TNeuronReceptiveField>(ReceptiveField, SpaceInfo);
-			TCallPrepareLearningRule<typename TConf::template TNeuronLearningRule<TSelf>, TSelf>()(LearningRule, *this);
+			LearningRule.SetNeuronImpl(*this);
+			LearningRule.Reset();
 			TCallPrepareReinforcement<typename TConf::template TNeuronReinforcement<TSelf>, TSelf>()(Reinforcement, *this);
 			Neuron.Reset();
 		}
@@ -315,7 +281,7 @@ namespace NDnn {
 				serial(Synapses[synId]);
 			}
 			serial(LearningRule);
-			SerializeProcessNorm(serial, LearningRule);
+			serial(LearningRule.MutNorm());
 			serial(Reinforcement);
 		}
 		const auto& GetPredefinedSynapseConst() const {

@@ -124,4 +124,7 @@ namespace NDnn {
 
 	template <typename T>
 	using TDeque = std::deque<T>;
+
+	template <typename T>
+	using TFunction = std::function<T>;
 } // namespace NEgo

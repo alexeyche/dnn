@@ -7,7 +7,7 @@ PKG_LIBS = -L"@DNN_LIB@" -ldnn -ldnn_protos $(LIBS)
 
 OBJECTS.root= mod.o
 
-OBJECTS=  $(OBJECTS.root) RcppExports.o proto.o util.o
+OBJECTS=  $(OBJECTS.root) RcppExports.o proto.o util.o spikework.o lyapunov.o
 
 all: $(SHLIB) before  after
 

@@ -11,7 +11,7 @@ namespace NDnn {
 	
 	class TDispatcher {
 	public:
-		TDispatcher(ui32 port);
+		TDispatcher();
 		
 		TDispatcher(const TDispatcher& other);
 

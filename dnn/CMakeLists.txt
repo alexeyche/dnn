@@ -28,6 +28,8 @@ set(DIRS
     synapse
     util
     learning_rule
+    spikework
+    metrics
 )
 
 foreach(dir ${DIRS})
@@ -43,6 +45,7 @@ SET_TARGET_PROPERTIES(dnn PROPERTIES COMPILE_FLAGS "-fPIC")
 
 target_link_libraries(dnn
     dnn_protos
+    spikework_protos
     ${PROTOBUF_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
     m
@@ -72,14 +75,32 @@ install(
 )
 
 install(CODE
-    "EXECUTE_PROCESS(COMMAND ln -sf ${PROJECT_SOURCE_DIR}/R/scripts ${CMAKE_INSTALL_PREFIX}/r_scripts)"
+    "EXECUTE_PROCESS(
+        COMMAND 
+        ${CMAKE_SOURCE_DIR}/scripts/ln.py ${CMAKE_SOURCE_DIR}/R/scripts ${CMAKE_INSTALL_PREFIX}/r_scripts
+    )"
 )
+
+install(CODE
+    "EXECUTE_PROCESS(
+        COMMAND 
+        ${CMAKE_SOURCE_DIR}/scripts/ln.py ${CMAKE_SOURCE_DIR}/scripts ${CMAKE_INSTALL_PREFIX}/scripts
+    )"
+)
+
+
 install(CODE
     "EXECUTE_PROCESS(COMMAND mkdir -p ${CMAKE_INSTALL_PREFIX}/spikes)"
 )
 
-if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+if (APPLE)
+    foreach(LIB libdnn_protos libspikework_protos)
+        install(CODE
+            "EXECUTE_PROCESS(COMMAND install_name_tool -change ${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/lib/${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/lib/libdnn.dylib )"
+        )
+    endforeach(LIB)
+
     install(CODE
         "EXECUTE_PROCESS(COMMAND launchctl setenv DNN_HOME ${CMAKE_INSTALL_PREFIX})"
     )
-endif (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+endif()

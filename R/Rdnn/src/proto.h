@@ -14,11 +14,27 @@
 
 using namespace NDnn;
 
+template <typename T>
+bool GetFromList(const Rcpp::List& l, const TString name, T& dst) {
+    SEXP names = Rf_getAttrib(l, R_NamesSymbol);
+    if (Rf_isNull(names) ) {
+        return false;  
+    } 
+    R_xlen_t n = Rf_xlength(names) ;
+    for (R_xlen_t i=0; i<n; i++) {
+        if(name == CHAR(STRING_ELT(names, i))) {
+            dst = Rcpp::as<T>(l[i]);
+            return true;
+        }
+    }
+    return false;
+}
+
 class TProto {
 public:
 
     template <typename T>
-    static Rcpp::List Translate(const T& ent);
+    static SEXP Translate(const T& ent);
 
     static Rcpp::List TranslateModel(const NDnnProto::TConfig& config);
 

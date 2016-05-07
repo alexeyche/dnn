@@ -43,7 +43,7 @@ cpp_re = re.compile("(.*)(\.h|\.cpp)$")
 
 instance_name_from_class = lambda t: re.sub("T([^ ]+)", "\\1", t)
 
-ignore_re = re.compile(".*dnn/(contrib|util/thread|base|neuron/config|util/server).*")
+ignore_re = re.compile(".*dnn/(contrib|util/thread|base|neuron/config|util/server|util/ts|spikework).*")
 
 class TStruct(object):
     def __init__(self, name):

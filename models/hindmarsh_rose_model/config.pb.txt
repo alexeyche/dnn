@@ -1,5 +1,4 @@
 SimConfiguration {
-	Port: 9090
 	Seed: -1
 	Jobs: 8
 }
@@ -26,10 +25,10 @@ Layer {
 		A: 1.0
 		B: 3.0
         C: 1.0
-        D: 2.0
+        D: 5.0
         R: 0.001
         S: 4
-        XR: -2.5
+        XR: -1.6
 	}
 	Sigmoid {
 		Threshold: 0.15

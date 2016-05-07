@@ -3,9 +3,8 @@
 
 namespace NDnn {
 
-	TDispatcher::TDispatcher(ui32 port)
-		: Server(port)
-		, InputDataIsReadyVar(false)
+	TDispatcher::TDispatcher()
+		: InputDataIsReadyVar(false)
 	{
 		Server
 			.AddCallback(
@@ -24,9 +23,7 @@ namespace NDnn {
 			);
 	}
 		
-	TDispatcher::TDispatcher(const TDispatcher& other)
-		: Server(other.GetPort()) 
-	{
+	TDispatcher::TDispatcher(const TDispatcher& other) {
 		(*this) = other;
 	}
 

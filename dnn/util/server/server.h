@@ -7,6 +7,7 @@
 #include <dnn/util/string.h>
 #include <dnn/util/optional.h>
 
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -76,7 +77,14 @@ namespace NDnn {
 			, ShutDownVar(false)
 		{
 		}
-		
+		TServer(ui32 max_connections = DefaultMaxConnections, bool debugMode = false)
+			: DebugMode(debugMode)
+			, Port(80)
+			, MaxConnections(max_connections)
+			, ShutDownVar(false)
+		{
+		}
+
 		void Listen() {
 			int status;
 			struct addrinfo hints;

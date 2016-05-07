@@ -54,14 +54,10 @@ fi
 OLDFLAGS=${LDFLAGS}
 AC_LANG_PUSH(C)
 LDFLAGS=-L${DNN_LIB}
-#AC_CHECK_LIB(snn, snn_version, [],
-#             [AC_MSG_ERROR("Cannot load SNN library in ${SNN_LIB}")])
 
 AC_LANG_POP()
 LDFLAGS=${OLDFLAGS}
 
-#Finally, set optional module directory using --with-snn-modules or
-#environment variable SNN_MODULES
 
 AC_SUBST(DNN_INCLUDE)
 AC_SUBST(DNN_LIB)
