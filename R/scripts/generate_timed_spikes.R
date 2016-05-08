@@ -5,6 +5,8 @@ source(scripts.path("gen_poisson.R"))
 sim_length = convNum(Sys.getenv('TIMED_PATTERN_LENGTH'), 10000)
 test_sim_length = convNum(Sys.getenv('TIMED_PATTERN_LENGTH_TEST'), 10000)
 
+set.seed(10)
+
 neurons = 100
 sample_gap = 0
 sample_duration = 500

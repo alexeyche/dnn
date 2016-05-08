@@ -199,7 +199,7 @@ namespace NDnn {
 					requiredDimSize += layer.Size();	
 				}
 			});
-			Conf.Duration = ts.Length();
+			Conf.Duration = ts.Length() * Conf.Dt;
 			Network.GetMutSpikesList().Info = ts.Info;
 			if (ts.Dim() == 1) {
 				L_DEBUG << "Got one dimensional time series, dnn will duplicate data on " << requiredDimSize << " dimensions";

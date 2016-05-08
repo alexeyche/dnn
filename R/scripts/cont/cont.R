@@ -5,6 +5,7 @@ set.seed(10)
 dt = 1.0
 M = 1
 tau_pmean = 1000.0
+epochs = 10
 
 spikes = proto.read(spikes.path("timed_pattern_spikes.pb"))
 with_spikes = which(sapply(spikes$values, length) > 0)
@@ -13,24 +14,14 @@ input.signal = t(preprocess.run(Epsp(TauDecay=10), binarize.spikes(spikes), 8)$v
 
 N = ncol(input.signal)
 
-W = matrix(runif(N*M), N, M)
-
-
-#input.signal[abs(input.signal) < 1e-07] <- 0
-
-
-
-#input.signal = matrix(rnorm(N*10000), N, 10000)
-
-#input.signal = matrix(rnorm(N*200), 200, N)
+W = matrix(1e-01*runif(N*M), N, M)
 
 K = nrow(input.signal)
 eta = 1e-04
-num.of.mom = 5
+num.of.mom = 2
 
 
 neuron = list(
-    membrane=rep(0, M), 
     weights=W, 
     tau_mem = 10.0,
     y = rep(0, M),
@@ -38,21 +29,18 @@ neuron = list(
 )
 
 
-
 act = function(x) {
     1/(1+exp(-x))
 }
 
 leaky_neuron_calc = function(n, input) {
-    n$y = act(t(input) %*% n$weights)
-    n$membrane = n$membrane + dt * ( - n$membrane + n$y) / n$tau_mem
+    n$y = n$y + dt * ( - n$y + act(t(input) %*% n$weights)) / n$tau_mem
     
     return(n)
 }
 
-
-oja_rule = function(neuron, x) {
-    x %*% neuron$membrane  - neuron$weights * matrix(rep(neuron$membrane^2, N), N, M, byrow=TRUE)
+oja_rule = function(neuron, x, alpha = 2.0) {
+    x %*% neuron$y  - alpha*neuron$weights * matrix(rep(neuron$y^2, N), N, M, byrow=TRUE)
 }
 
 bcm_rule = function(neuron, x) {
@@ -60,15 +48,16 @@ bcm_rule = function(neuron, x) {
     t((neuron$y * (neuron$y - neuron$moments[, 2])) %*% t(x)) * act_deriv
 }
 
-epochs = 10
+norm = function(w, p=2.0) {
+    w/(sum(w^p)^(1.0/p))
+}
 
 m.stat = array(dim=c(M, K*epochs))
 w.stat = array(dim=c(N, M, K*epochs))
 dw.stat = array(dim=c(N, M, K*epochs))
 y.stat = array(dim=c(M, K*epochs))
-
 mom.stat = array(dim=c(M, num.of.mom, K*epochs))
-
+mom.inst = array(dim=c(M, num.of.mom, K*epochs))
 
 idx.stat = function(ep, i) K * (ep-1) + i
 
@@ -81,21 +70,22 @@ for (ep in 1:epochs) {
         neuron = leaky_neuron_calc(neuron, x)    
 
         #dw = oja_rule(neuron, x)
-        
         dw = bcm_rule(neuron, x)
+        if (ep == 1) {
+            dw = 0 # To collect stat
+        }
+        neuron$weights = neuron$weights + eta * dw  
+        neuron$weights = norm(neuron$weights, p = 2.0)
         
-        neuron$weights = neuron$weights + eta * dw    
-        neuron$weights = neuron$weights / sqrt(sum(neuron$weights^2))
-        
-        m.stat[, idx.stat(ep, i)] = neuron$membrane
         y.stat[, idx.stat(ep, i)] = neuron$y
         w.stat[,, idx.stat(ep, i)] = neuron$weights
         dw.stat[,, idx.stat(ep, i)] = dw
         for (ni in 1:M) {
             for (mi in 1:num.of.mom) {
-                neuron$moments[ni, mi] = neuron$moments[ni, mi] - (neuron$moments[ni, mi] + neuron$y^(mi))/tau_pmean 
-                mom.stat[ni, mi, idx.stat(ep, i)] = neuron$moments[ni, mi]
+                neuron$moments[ni, mi] = neuron$moments[ni, mi] + (-neuron$moments[ni, mi] + neuron$y^(mi))/tau_pmean 
+                mom.inst[ni, mi, idx.stat(ep, i)] = neuron$y^(mi)
             }
+            mom.stat[ni,, idx.stat(ep, i)] = neuron$moments[ni,]
         }
     }
 }
@@ -122,9 +112,11 @@ lines(-Re(ei$vectors[,1]), col="blue")
 
 r.signal = signal %*% Re(ei$vectors[,1])
 
-membr.final = m.stat[, idx.stat(epochs, 1:5000)]
+y.final = y.stat[, idx.stat(epochs, 1:5000)]
 
-plot(membr.final,type="l", ylim=c(0.0, 2.0))
-lines(-r.signal[1:5000,1]/2.0, col="blue")
+plot(y.final,type="l")
+lines(act(-r.signal[1:5000,1]), col="blue")
 
-#plot(mom.stat[1,4,1:100000] - 3*mom.stat[1,2,1:100000]^2, type="l") # Kurtosis
+#plot(mom.stat[1,4,1:10000] - 3*mom.stat[1,2,1:10000]^2, type="l") # Kurtosis
+#mean( (y.stat - mean(y.stat[1,]))^2) / (mean( (y.stat - mean(y.stat[1,]))^2))^2
+

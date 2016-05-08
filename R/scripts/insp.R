@@ -509,10 +509,10 @@ if(file.exists(annoying_file)) {
     success = file.remove(annoying_file)
 }
 
-pc = prcomp(signal, scale=TRUE)
-plot(neuron$weights, type="l", ylim=c(-0.2, 0.4))
-#lines(-pc$rotation[,1], col="red")
-
-ei = eigen(t(signal) %*% (signal))
-lines(-Re(ei$vectors[,1]), col="blue")
-lines(-w[nrow(w),], col="red",type="l")
+#pc = prcomp(signal, scale=TRUE)
+#plot(neuron$weights, type="l", ylim=c(-0.2, 0.4))
+##lines(-pc$rotation[,1], col="red")
+#
+#ei = eigen(t(signal) %*% (signal))
+#lines(-Re(ei$vectors[,1]), col="blue")
+#lines(-w[nrow(w),], col="red",type="l")

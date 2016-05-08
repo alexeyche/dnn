@@ -8,7 +8,7 @@ namespace NDnn {
 
     struct TSlidingLtdConst : public IProtoSerial<NDnnProto::TSlidingLtdConst> {
         static const auto ProtoFieldNumber = NDnnProto::TLayer::kSlidingLtdFieldNumber;
-        
+
         TSlidingLtdConst() {
             __TargetRate = 1.0/std::pow(TargetRate, Power);
         }
