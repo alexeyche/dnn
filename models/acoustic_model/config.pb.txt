@@ -3,9 +3,6 @@ SimConfiguration {
 	Dt: 1.0
 }
 Layer {
-	BasicSynapse {
-        PspDecay: 10.0
-    }
 }
 Layer {
 	BasicSynapse {
@@ -16,7 +13,7 @@ Layer {
 		TauRef: 2
 	}
 	Determ {
-		Threshold: 0.10
+		Threshold: 0.01
 	}
 	Stdp {
 		TauPlus: 5.0           
@@ -43,5 +40,5 @@ Connection {
 	Stochastic {
 		Prob: 1.0
 	}
-	Weight: 0.03
+	Weight: 0.0001
 }

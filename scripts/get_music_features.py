@@ -11,7 +11,7 @@ import librosa as lr
 import argparse
 from lib.util import run_proc
 from lib.util import setup_logging
-from lib import write_time_series
+from lib import run_iaf_network
 
 import logging
 import os
@@ -27,7 +27,7 @@ def main(input_file, hop=64, n_mels=256, top_db=60, plot=False):
         logging.info("Got mp3 file, trying to convert")
         f = basef + ".wav"
         if not os.path.exists(f):
-            run_proc(["mpg123", "-w", f, input_file])
+            run_proc(["mpg123", "-w", f, input_file])   
         input_file = f
     elif input_file.endswith(".wav"):
         pass
@@ -38,8 +38,15 @@ def main(input_file, hop=64, n_mels=256, top_db=60, plot=False):
 
     stft = lr.stft(y, hop_length=hop)
     D = lr.logamplitude(np.abs(stft)**2, ref_power=np.max, top_db=top_db)
-    s = lr.feature.melspectrogram(S=D, sr=sr, n_mels=n_mels)
-    
+    s = lr.feature.melspectrogram(S=D, sr=sr, n_mels=n_mels, fmin=0.0)
+    logging.info("Normalizing between 0 and 1")
+    for ri in xrange(s.shape[0]):    
+        denom = np.max(s[ri,:]) - np.min(s[ri,:])
+        if denom > 0:
+            s[ri,:] = (s[ri,:] - np.min(s[ri,:]))/denom
+        else:
+            s[ri,:] = 0
+            
     if plot:
         from matplotlib import pyplot as plt
 
@@ -54,9 +61,8 @@ def main(input_file, hop=64, n_mels=256, top_db=60, plot=False):
         lr.display.specshow(s, sr, hop_length=hop)
         plt.show()
 
-    logging.info("Normalizing between 0 and 1")    
-    s = (s - np.min(s))/(np.max(s) - np.min(s))
-    write_time_series(s, basef+".pb")
+    run_iaf_network(s, basef+".pb", dt=0.5, tau_mem=10, tau_ref=2, threshold=0.25)
+    
     return s
     
 if __name__ == "__main__":

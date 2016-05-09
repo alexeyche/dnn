@@ -223,7 +223,7 @@ FUNCTION(PROTOBUF_GENERATE_CPP_DNN SRCS HDRS)
             OUTPUT "${CPP_FILE}" "${H_FILE}"
             COMMAND ${CMAKE_COMMAND} -E make_directory ${OUTPATH}
             COMMAND ${PROTOBUF_PROTOC_EXECUTABLE}
-            ARGS "--cpp_out=${ARG_EXPORT}${OUTPATH}" --proto_path  "${PROTOBUF_INCLUDE_DIRS}" --proto_path "${PROTOROOT}"  "${MATCH_PATH}"
+            ARGS "--cpp_out=${ARG_EXPORT}${OUTPATH}" --python_out=${ARG_EXPORT}${OUTPATH} --proto_path  "${PROTOBUF_INCLUDE_DIRS}" --proto_path "${PROTOROOT}"  "${MATCH_PATH}"
             DEPENDS ${ABS_FILE}
             COMMENT "Running C++ protocol buffer compiler on ${MATCH_PATH} with root ${PROTOROOT}, generating: ${CPP_FILE}"
             VERBATIM)

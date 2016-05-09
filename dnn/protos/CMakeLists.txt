@@ -21,4 +21,11 @@ install(
     FILES_MATCHING
     PATTERN "*.h"
     PATTERN "*.hpp"
+    PATTERN "*.py"
+)
+install(CODE
+    "EXECUTE_PROCESS(
+        COMMAND 
+        ${CMAKE_SOURCE_DIR}/scripts/touch.py ${CMAKE_INSTALL_PREFIX}/include/dnn/__init__.py ${CMAKE_INSTALL_PREFIX}/include/dnn/protos/__init__.py
+    )"
 )
