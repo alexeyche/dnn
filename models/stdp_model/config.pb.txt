@@ -1,5 +1,6 @@
 SimConfiguration {
 	Jobs: 8
+	Dt: 0.1
 }
 Layer {
 	BasicSynapse {
