@@ -19,8 +19,8 @@ Layer {
 		Threshold: 0.10
 	}
 	Stdp {
-		TauPlus: 5.0           
-		TauMinus: 10.0
+		TauPlus: 30.0           
+		TauMinus: 40.0
 		Aplus: 1.0
 		Aminus: 1.0
 		LearningRate: 1e-03

@@ -38,8 +38,31 @@ namespace NDnn {
     	TActVector<double> X;
 	};
 
-	template <typename TNeuron, typename TWeightNormalizationType>
-	class TStdp: public TLearningRule<TStdpConst, TStdpState, TNeuron, TWeightNormalizationType> {
+	class TAllToAllSpikePolicy {
+	public:
+		static void PropagateSynapseSpike(double& x) {
+			x += 1.0;
+		}
+
+		static void PropagateNeuronSpike(double& y) {
+			y += 1.0;
+		}
+	};
+
+	class TNearestSpikePolicy {
+	public:
+		static void PropagateSynapseSpike(double& x) {
+			x = 1.0;
+		}
+
+		static void PropagateNeuronSpike(double& y) {
+			y = 1.0;
+		}
+	};
+
+
+	template <typename TSpikePolicy, typename TNeuron, typename TWeightNormalizationType>
+	class TStdpBase: public TLearningRule<TStdpConst, TStdpState, TNeuron, TWeightNormalizationType> {
 	public:
 		using TPar = TLearningRule<TStdpConst, TStdpState, TNeuron, TWeightNormalizationType>;
 
@@ -49,7 +72,7 @@ namespace NDnn {
 		}
 
 		void PropagateSynapseSpike(const TSynSpike& sp) {
-	        TPar::s.X[sp.SynapseId] += 1.0;
+			TSpikePolicy::PropagateSynapseSpike(TPar::s.X[sp.SynapseId]);
     	}
 
     	void CalculateDynamics(const TTime& t) {
@@ -58,7 +81,7 @@ namespace NDnn {
     		const auto& neuron = TPar::Neuron();
     		
     		if (neuron.Fired()) {
-    			TPar::s.Y += 1.0;
+    			TSpikePolicy::PropagateNeuronSpike(TPar::s.Y);
     		}
 	        
 			auto synIdIt = TPar::s.X.abegin();
@@ -85,5 +108,14 @@ namespace NDnn {
             TPar::s.Y += - t.Dt * TPar::s.Y/TPar::c.TauMinus;
     	}
 	};
+
+	template <typename TNeuron, typename TWeightNormalizationType>
+	using TNearestStdp = TStdpBase<TNearestSpikePolicy, TNeuron, TWeightNormalizationType>;
+
+	template <typename TNeuron, typename TWeightNormalizationType>
+	using TAllToAllStdp = TStdpBase<TAllToAllSpikePolicy, TNeuron, TWeightNormalizationType>;
+
+	template <typename TNeuron, typename TWeightNormalizationType>
+	using TStdp = TNearestStdp<TNeuron, TWeightNormalizationType>;
 
 } // namespace NDnn

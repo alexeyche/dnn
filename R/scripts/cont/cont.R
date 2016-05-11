@@ -1,20 +1,20 @@
 require(Rdnn)
 
-set.seed(10)
+set.seed(11)
 
 dt = 1.0
 M = 1
 tau_pmean = 9999
 epochs = 10
 
-spikes = proto.read(spikes.path("timed_pattern_spikes.pb"))
+spikes = proto.read(spikes.path("test_licks.pb"))
 with_spikes = which(sapply(spikes$values, length) > 0)
 spikes$values = spikes$values[with_spikes]
 input.signal = t(preprocess.run(Epsp(TauDecay=10), binarize.spikes(spikes), 8)$values)
 
 N = ncol(input.signal)
 
-W = matrix(1e-03*runif(N*M), N, M)
+W = matrix(0.1*rnorm(N*M), N, M)
 
 K = nrow(input.signal)
 eta = 1e-04
@@ -40,7 +40,7 @@ leaky_neuron_calc = function(n, input) {
     return(n)
 }
 
-oja_rule = function(neuron, x, alpha = 2.0) {
+oja_rule = function(neuron, x, alpha = 1.33) {
     x %*% neuron$y  - alpha*neuron$weights * matrix(rep(neuron$y^2, N), N, M, byrow=TRUE)
 }
 
@@ -70,8 +70,8 @@ for (ep in 1:epochs) {
         x = as.matrix(input.signal[i, ])
         neuron = leaky_neuron_calc(neuron, x)    
 
-        #dw = oja_rule(neuron, x)
-        dw = bcm_rule(neuron, x)
+        dw = oja_rule(neuron, x)
+        #dw = bcm_rule(neuron, x)
         if (ep == 1) {
             dw = 0 # To collect stat
         }
@@ -127,11 +127,11 @@ lines(-Re(ei$vectors[,1]), col="blue")
 
 r.signal = signal %*% Re(ei$vectors[,1])
 
-y.final = y.stat[, idx.stat(epochs, 1:5000)]
+y.final = y.stat[, idx.stat(epochs, 1:K)]
 
 plot(y.final,type="l")
-lines(act(-r.signal[1:5000,1]), col="blue")
+lines(act(-r.signal[1:K,1]), col="blue")
 
-#plot(-0.333*mom.stat[1,4,10000+1:30000] + 0.25*mom.stat[1,2,10000+1:30000]^2, type="l") # Kurtosis
+#plot(-0.333*mom.stat[1,4,10000+1:20000] + 0.25*mom.stat[1,2,10000+1:20000]^2, type="l") # Kurtosis
 #mean( (y.stat - mean(y.stat[1,]))^2) / (mean( (y.stat - mean(y.stat[1,]))^2))^2
 

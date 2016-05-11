@@ -2,7 +2,6 @@
 
 #include <stdio.h>
 
-
 #ifdef DNN_DLL
 	#ifdef DNN_EXPORTS
 		#define DNN_API __declspec(dllexport)
