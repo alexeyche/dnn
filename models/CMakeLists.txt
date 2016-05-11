@@ -4,6 +4,7 @@ set(DIRS
     example
     acoustic_model
     stdp_model
+    hindmarsh_rose_model
     stdp_pca_model
 )
 

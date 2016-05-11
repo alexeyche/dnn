@@ -24,6 +24,7 @@ import "dnn/protos/pre_post_stdp.proto";
 import "dnn/protos/multiplicative_norm.proto";
 import "dnn/protos/sliding_ltd.proto";
 import "dnn/protos/linear.proto";
+import "dnn/protos/hindmarsh_rose.proto";
 import "dnn/protos/unit_norm.proto";
 import "dnn/protos/nnmf_homeostasis.proto";
 
@@ -77,6 +78,8 @@ message TLayer {
     repeated TUnitNormState UnitNormState = 34;
     repeated TNNMFHomeostatisConst NNMFHomeostatis = 35;
     repeated TNNMFHomeostatisState NNMFHomeostatisState = 36;
+    repeated THindmarshRoseConst HindmarshRose = 37;
+    repeated THindmarshRoseState HindmarshRoseState = 38;
 }
 
 

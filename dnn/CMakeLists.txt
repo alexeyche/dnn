@@ -28,7 +28,9 @@ set(DIRS
     synapse
     learning_rule
     spikework
+    metrics
 )
+
 
 foreach(dir ${DIRS})
   add_subdirectory(${dir})

@@ -11,7 +11,7 @@
 
 namespace NDnn {
 	using namespace NGround;
-	
+
 	template <typename N, ui32 size, typename TConf>
 	class TLayer: public IMetaProtoSerial {
 	private:
