@@ -5,6 +5,7 @@
 
 using namespace Rcpp;
 
+// Lyapunov
 Rcpp::List Lyapunov(Rcpp::List timeSeries, Rcpp::List outputSpikes);
 RcppExport SEXP Rdnn_Lyapunov(SEXP timeSeriesSEXP, SEXP outputSpikesSEXP) {
 BEGIN_RCPP

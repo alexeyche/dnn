@@ -2,22 +2,22 @@
 
 #include "lyapunov.h"
 
-#include <dnn/util/log/log.h>
+#include <ground/log/log.h>
 
 namespace NDnn {
 
-	TTimeSeries TLyapunov::CalculateMetrics(const TTimeSeries& input, const TTimeSeries& net) {
-		TTimeSeries dst;
-		ui32 ts_size = net.Length();
+	NGround::TTimeSeries TLyapunov::CalculateMetrics(const NGround::TTimeSeries& input, const NGround::TTimeSeries& net) {
+		NGround::TTimeSeries dst;
+		NGround::ui32 ts_size = net.Length();
 		double K = 1.0;
 
 		double *values = new double[ts_size];
 		memset(values, 0, ts_size*sizeof(*values));
-		for(ui32 val_i = 0; val_i < ts_size - 1; ++val_i) {
-		    for(ui32 di_net = 0; di_net < net.Dim(); ++di_net) {
-		    	const TVector<double> &v_net = net.GetVector(di_net);
-		    	for(ui32 di_input = 0; di_input < input.Dim(); ++di_input) {
-		    		const TVector<double> &v_input = input.GetVector(di_input);
+		for(NGround::ui32 val_i = 0; val_i < ts_size - 1; ++val_i) {
+		    for(NGround::ui32 di_net = 0; di_net < net.Dim(); ++di_net) {
+		    	const NGround::TVector<double> &v_net = net.GetVector(di_net);
+		    	for(NGround::ui32 di_input = 0; di_input < input.Dim(); ++di_input) {
+		    		const NGround::TVector<double> &v_input = input.GetVector(di_input);
 
 		    		double d_input = v_input[val_i + 1] - v_input[val_i];
 		    		if (d_input != 0) {
