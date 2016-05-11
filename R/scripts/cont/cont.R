@@ -4,7 +4,7 @@ set.seed(10)
 
 dt = 1.0
 M = 1
-tau_pmean = 1000.0
+tau_pmean = 9999
 epochs = 10
 
 spikes = proto.read(spikes.path("timed_pattern_spikes.pb"))
@@ -14,18 +14,19 @@ input.signal = t(preprocess.run(Epsp(TauDecay=10), binarize.spikes(spikes), 8)$v
 
 N = ncol(input.signal)
 
-W = matrix(1e-01*runif(N*M), N, M)
+W = matrix(1e-03*runif(N*M), N, M)
 
 K = nrow(input.signal)
 eta = 1e-04
-num.of.mom = 2
+num.of.mom = 4
 
 
 neuron = list(
     weights=W, 
     tau_mem = 10.0,
     y = rep(0, M),
-    moments = matrix(0, nrow=M, ncol=num.of.mom)
+    moments = matrix(0, nrow=M, ncol=num.of.mom),
+    moments.stat = vector("list", num.of.mom)
 )
 
 
@@ -75,18 +76,32 @@ for (ep in 1:epochs) {
             dw = 0 # To collect stat
         }
         neuron$weights = neuron$weights + eta * dw  
-        neuron$weights = norm(neuron$weights, p = 2.0)
+        #neuron$weights = norm(neuron$weights, p = 2.0)
         
         y.stat[, idx.stat(ep, i)] = neuron$y
         w.stat[,, idx.stat(ep, i)] = neuron$weights
         dw.stat[,, idx.stat(ep, i)] = dw
-        for (ni in 1:M) {
-            for (mi in 1:num.of.mom) {
-                neuron$moments[ni, mi] = neuron$moments[ni, mi] + (-neuron$moments[ni, mi] + neuron$y^(mi))/tau_pmean 
-                mom.inst[ni, mi, idx.stat(ep, i)] = neuron$y^(mi)
-            }
-            mom.stat[ni,, idx.stat(ep, i)] = neuron$moments[ni,]
+        
+        for (mi in 1:num.of.mom) {
+            v = neuron$y^(mi)
+            
+            neuron$moments[, mi] = neuron$moments[, mi] + (-neuron$moments[, mi] + v)/tau_pmean 
+        
+#             if (length(neuron$moments.stat[[mi]]) < tau_pmean) {
+#                 neuron$moments.stat[[mi]] = c(neuron$moments.stat[[mi]], v)
+#             } else {
+#                 if (neuron$moments[, mi] == 0) {
+#                     neuron$moments[, mi] = mean(neuron$moments.stat[[mi]])
+#                 } else {
+#                     neuron$moments[, mi] = neuron$moments[, mi] - neuron$moments.stat[[mi]][1]/tau_pmean  + v/tau_pmean
+#                     neuron$moments.stat[[mi]] = c(neuron$moments.stat[[mi]][-1], v)
+#                 }
+#             }
+
+            mom.stat[, mi, idx.stat(ep, i)] = neuron$moments[, mi]
+            mom.inst[, mi, idx.stat(ep, i)] = v
         }
+            
     }
 }
 
@@ -117,6 +132,6 @@ y.final = y.stat[, idx.stat(epochs, 1:5000)]
 plot(y.final,type="l")
 lines(act(-r.signal[1:5000,1]), col="blue")
 
-#plot(mom.stat[1,4,1:10000] - 3*mom.stat[1,2,1:10000]^2, type="l") # Kurtosis
+#plot(-0.333*mom.stat[1,4,10000+1:30000] + 0.25*mom.stat[1,2,10000+1:30000]^2, type="l") # Kurtosis
 #mean( (y.stat - mean(y.stat[1,]))^2) / (mean( (y.stat - mean(y.stat[1,]))^2))^2
 

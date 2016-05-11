@@ -105,6 +105,11 @@ namespace NDnn {
 			return synVec.at(synapseId);
 		}
 
+		template <size_t layerId>
+		const auto& GetLayer() const {
+			return std::get<layerId>(Layers);
+		}
+
 
 		void ListenStat(const TString& name, std::function<double()> cb, ui32 from, ui32 to) {
 			StatGatherer.ListenStat(name, cb, from, to);
@@ -176,10 +181,18 @@ namespace NDnn {
 			auto& firstLayer = std::get<0>(Layers);
 			ENSURE(ts.Dim() == firstLayer.Size(), "Size of input spikes list doesn't equal to first layer size: " << ts.Dim() << " != " << firstLayer.Size());
 
+			double max_spike = std::numeric_limits<double>::min();
 			for (auto& n: firstLayer) {
-				n.GetNeuron().SetSpikeSequence(ts[n.GetLocalId()]);
+				const TVector<double>& spikes = ts[n.GetLocalId()];
+				n.GetNeuron().SetSpikeSequence(spikes);
+				if (spikes.size() > 0) {
+					max_spike = std::max(max_spike, spikes.back());	
+				}
 			}
 			Conf.Duration = ts.Info.GetDuration();
+			if (Conf.Duration == 0.0) {
+				Conf.Duration = max_spike;
+			}
 		}
 
 		bool RequireInput() {

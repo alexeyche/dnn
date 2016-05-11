@@ -1,12 +1,14 @@
 #pragma once
 
 #include <dnn/neuron/defaults.h>
+#include <dnn/activation/determ.h>
+#include <dnn/synapse/basic_synapse.h>
 
 namespace NDnn {
 
 	template <
-		typename TSynapseType,
-		typename TActivationFunctionType,
+		typename TSynapseType = TBasicSynapse,
+		typename TActivationFunctionType = TDeterm,
 		typename TReceptiveFieldType = TNoInput,
 		template <typename, typename> class TLearningRuleType = TNoLearning,
 		template <typename> class TWeightNormalizationType = TNoWeightNormalization,

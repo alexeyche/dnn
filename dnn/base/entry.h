@@ -12,7 +12,7 @@ namespace NDnn {
 	TModelOptions InitOptions(const int argc, const char** argv, TString name, std::set<int> fields = {});
 
 	template <typename ... T>
-	auto BuildModel(TModelOptions options) {
+	auto BuildModel(TModelOptions options = TModelOptions()) {
 		auto sim = BuildSim<T...>(options);
 		
 		if (options.Seed) {
@@ -50,8 +50,6 @@ namespace NDnn {
     		std::ifstream input(*options.InputTimeSeries, std::ios::binary);
 		    TBinSerial serial(input);
 	    	sim.SetInputTimeSeries(serial.ReadObject<TTimeSeries>());
-	    } else {
-	    	ENSURE(!sim.RequireInput(), "Need input time series for the simulation with inputs");
 	    }
 
 	    if (options.Jobs) {
