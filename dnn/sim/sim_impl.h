@@ -131,6 +131,7 @@ namespace NDnn {
 				layer[neuronId].CalculateDynamicsInternal(t, input);
 				if (layer[neuronId].GetNeuron().Fired()) {
 					Network.PropagateSpike(layer[neuronId], t.T);
+					layer[neuronId].GetNeuron().PostSpikeDynamics(t);
 					layer[neuronId].GetNeuron().MutFired() = false;
 				}
 			}

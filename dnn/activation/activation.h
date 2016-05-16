@@ -13,7 +13,10 @@ namespace NDnn {
 		void SerialProcess(TProtoSerial& serial) override final {
 			serial(c, TConstants::ProtoFieldNumber); 
 		}
-		
+		TConstants& MutConstants() {
+			return c;
+		}
+
 	protected:
 		TConstants c;
 	};

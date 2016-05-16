@@ -2,7 +2,7 @@ package NDnnProto;
 
 
 message TSigmoidConst {
-    optional double Threshold = 1;
-    optional double Slope = 2;
+    optional double A = 1;
+    optional double B = 2;
 }
 

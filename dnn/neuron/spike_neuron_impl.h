@@ -108,48 +108,13 @@ namespace NDnn {
 		std::atomic_flag InputSpikesLock;
 	};
 
-	template <typename RF>
-	void CallInitReceptiveField(RF& rf, const TNeuronSpaceInfo& info, TRandEngine& rand) {
-		rf.Init(info, rand);
-	}
-
-	template <>
-	void CallInitReceptiveField<TEmpty>(TEmpty&, const TNeuronSpaceInfo&, TRandEngine&);
-
-	template <typename RF>
-	double CallCalculateResponseReceptiveField(RF& rf, double I) {
-		return rf.CalculateResponse(I);
-	}
-
-	template <>
-	double CallCalculateResponseReceptiveField<TEmpty>(TEmpty&, double);
-
-	template <typename R, typename N>
-	struct TCallPrepareReinforcement {
-		void operator ()(R& r, N& neuron) {
-			r.SetNeuronImpl(neuron);
-		}
-	};
-	template <typename N>
-	struct TCallPrepareReinforcement<TEmpty, N> {
-		void operator ()(TEmpty&, N&) {}
-	};
-
-
-	template <typename R>
-	void CallModulateRewardReinforcement(R& r) {
-		r.ModulateReward();
-	}
-
-	template <>
-	void CallModulateRewardReinforcement<TEmpty>(TEmpty&);
-
 	
 	template <typename TNeuron, typename TConf>
 	class TSpikeNeuronImpl: public IMetaProtoSerial {
 	public:
 		using TNeuronType = TNeuron;
 		using TSelf = TSpikeNeuronImpl<TNeuron, TConf>;
+		using TConfig = TConf;
 
 		void ReadInputSpikes(const TTime &t) {
 			while (Queue.InputSpikesLock.test_and_set(std::memory_order_acquire)) {}
@@ -181,20 +146,19 @@ namespace NDnn {
 		        	++synIdIt;
 		        }
 		    }
-			double Irf = CallCalculateResponseReceptiveField(ReceptiveField, Iinput);
+			double Irf = ReceptiveField.CalculateResponse(Iinput);
 			// ENSURE(!std::isnan(Isyn), "Isyn is nan");
 			Neuron.CalculateDynamics(t, Irf, Isyn);
 
 		    Neuron.MutSpikeProbability() = Activation.SpikeProbability(Neuron.Membrane());
 			if(t.Dt * Neuron.SpikeProbability() > Rand->GetUnif()) {
 		        Neuron.MutFired() = true;
-		        Neuron.PostSpikeDynamics(t);
 		    }
 
 	    	LearningRule.CalculateDynamics(t);
 			LearningRule.MutNorm().CalculateDynamics(t);
-	
-		    CallModulateRewardReinforcement(Reinforcement);
+			IntrinsicPlasticity.CalculateDynamics(t);
+		    Reinforcement.ModulateReward();
 
 	   		for(auto syn_id_it = Synapses.abegin(); syn_id_it != Synapses.aend(); ++syn_id_it) {
 	        	auto& s = Synapses[syn_id_it];
@@ -218,14 +182,20 @@ namespace NDnn {
 		}
 		
 		void InitReceptiveField(TRandEngine& rand) {
-			CallInitReceptiveField<typename TConf::TNeuronReceptiveField>(ReceptiveField, SpaceInfo, rand);
+			ReceptiveField.Init(SpaceInfo, rand);
 		}
 
 		void Prepare() {
 			ENSURE(Rand, "Random engine is not set");
+			
 			LearningRule.SetNeuronImpl(*this);
 			LearningRule.Reset();
-			TCallPrepareReinforcement<typename TConf::template TNeuronReinforcement<TSelf>, TSelf>()(Reinforcement, *this);
+			
+			Reinforcement.SetNeuronImpl(*this);
+			
+			IntrinsicPlasticity.SetNeuronImpl(*this);
+			IntrinsicPlasticity.Reset();
+			
 			Neuron.Reset();
 		}
 
@@ -285,6 +255,7 @@ namespace NDnn {
 			}
 			serial(LearningRule);
 			serial(LearningRule.MutNorm());
+			serial(IntrinsicPlasticity);
 			serial(Reinforcement);
 		}
 		const auto& GetPredefinedSynapseConst() const {
@@ -306,7 +277,11 @@ namespace NDnn {
 		const auto& GetLearningRule() const {
 			return LearningRule;
 		}
-
+		
+		auto& GetMutActivationFunction() {
+			return Activation;
+		}
+		
 	private:
 		TPtr<TRandEngine> Rand;
 
@@ -317,6 +292,7 @@ namespace NDnn {
 		typename TConf::TNeuronActivationFunction Activation;
 		typename TConf::TNeuronReceptiveField ReceptiveField;
 		typename TConf::template TNeuronLearningRule<TSelf> LearningRule;
+		typename TConf::template TNeuronIntrinsicPlasticity<TSelf> IntrinsicPlasticity;
 		typename TConf::template TNeuronReinforcement<TSelf> Reinforcement;
 
 		TActVector<typename TConf::TNeuronSynapse> Synapses;

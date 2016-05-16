@@ -12,27 +12,25 @@ Layer {
 		TauMem: 10
 		TauRef: 2
 	}
-	Determ {
-		Threshold: 0.01
+	Sigmoid {
+		A: 20.0					 
+		B: -4.0					 
 	}
 	Stdp {
-		TauPlus: 5.0           
-		TauMinus: 10.0
-		Aplus: 1.0
-		Aminus: 1.0
-		LearningRate: 1e-03
+		TauPlus: 15.0            # [0.1, 100]
+		TauMinus: 20.0			 # [0.1, 100]
+		Aplus: 1.0			     # [0.01, 3.0]
+		Aminus: 1.0				 # [0.01, 3.0]
+		LearningRate: 1e-02
 	}
-	UnitNorm {
-		Unit: 1.0
-		Power: 2.0
+	LogNorm {
+		MeanWeight: 0.1 		 
+		Alpha: 1.0				 
+		Beta: 10.0				 
 	}
-	SlidingLtd {
-		Power: 3.0
-	    Modulation: 1.0
-	    TargetRate: 10.0
-	    TauMean: 10000
-	    MinWeight: 0.0
-	    MaxWeight: 1.0
+	MaxEntropyIP {
+		TargetRate: 10.0
+		LearningRate: 1e-04
 	}
 }
 Connection {
@@ -40,5 +38,5 @@ Connection {
 	Stochastic {
 		Prob: 1.0
 	}
-	Weight: 0.0001
+	Weight: 0.01  				# [0.001, 1.0]
 }

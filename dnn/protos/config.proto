@@ -27,6 +27,9 @@ import "dnn/protos/linear.proto";
 import "dnn/protos/hindmarsh_rose.proto";
 import "dnn/protos/unit_norm.proto";
 import "dnn/protos/nnmf_homeostasis.proto";
+import "dnn/protos/log_norm.proto";
+import "dnn/protos/max_entropy.proto";
+
 
 message TRewardControl {
     optional TRewardControlConst RewardControl = 1;
@@ -80,6 +83,10 @@ message TLayer {
     repeated TNNMFHomeostatisState NNMFHomeostatisState = 36;
     repeated THindmarshRoseConst HindmarshRose = 37;
     repeated THindmarshRoseState HindmarshRoseState = 38;
+    repeated TLogNormConst LogNorm = 39;
+    repeated TLogNormState LogNormState = 40;
+    repeated TMaxEntropyIPConst MaxEntropyIP = 41;
+    repeated TMaxEntropyIPState MaxEntropyIPState = 42;
 }
 
 

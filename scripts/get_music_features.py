@@ -19,7 +19,7 @@ import os
 setup_logging(logging.getLogger())
 
 
-def main(input_file, hop=256, n_mels=256, top_db=60, plot=False):
+def main(input_file, ms_frame=10, n_mels=256, top_db=60, plot=False):
     input_file = os.path.realpath(os.path.expanduser(input_file))
     basef = input_file.rsplit(".",1)[0]
     logging.info("Processing {}".format(input_file))
@@ -35,7 +35,7 @@ def main(input_file, hop=256, n_mels=256, top_db=60, plot=False):
         raise Exception("Need wav or mp3 file to process")
         
     y, sr = lr.load(input_file)
-    
+    hop = int(np.round(ms_frame*sr/1000.0))
     stft = lr.stft(y, hop_length=hop)
     D = lr.logamplitude(np.abs(stft)**2, ref_power=np.max, top_db=top_db)
     s = lr.feature.melspectrogram(S=D, sr=sr, n_mels=n_mels, fmin=100.0)
@@ -68,13 +68,13 @@ def main(input_file, hop=256, n_mels=256, top_db=60, plot=False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Extracting mel spectrogram from file')
     parser.add_argument('file', nargs=1, help="Path to music file")
-    parser.add_argument('--hop', help='Hop length', type=int, default=256)
+    parser.add_argument('--ms-frame', help='Ms in one frame', type=int, default=10)
     parser.add_argument('--n-mels', help='Number of mel components', type=int, default=256)
     parser.add_argument('--top-db', help='Top dB', type=int, default=60)
     parser.add_argument('--plot',action='store_true', help='Debug spectrogram plot')
     args = parser.parse_args()
     
-    main(args.file[0], args.hop, args.n_mels, args.top_db, args.plot)
+    main(args.file[0], args.ms_frame, args.n_mels, args.top_db, args.plot)
     
     
     

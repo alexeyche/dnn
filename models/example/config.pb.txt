@@ -8,8 +8,8 @@ Layer {
 		TauRef: 2
 	}
 	Sigmoid {
-		Threshold: 0.15
-		Slope: 120.0
+		A: 20.0
+		B: -4.0
 	}
     BasicSynapse {
         PspDecay: 10.0

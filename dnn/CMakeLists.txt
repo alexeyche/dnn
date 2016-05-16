@@ -29,6 +29,7 @@ set(DIRS
     learning_rule
     spikework
     metrics
+    intrinsic_plasticity
 )
 
 

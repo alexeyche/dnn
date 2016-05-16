@@ -21,7 +21,9 @@
 #include <dnn/weight_normalization/min_max_norm.h>
 #include <dnn/weight_normalization/sliding_ltd.h>
 #include <dnn/weight_normalization/unit_norm.h>
+#include <dnn/weight_normalization/log_norm.h>
 #include <dnn/weight_normalization/nnmf_homeostasis.h>
+#include <dnn/intrinsic_plasticity/max_entropy.h>
 
 using namespace NDnn;
 
@@ -30,24 +32,25 @@ int main(int argc, const char** argv) {
     if (opts.NoLearning) {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 256, TNeuronConfig<>>,
-            TLayer<TIntegrateAndFire, 1, TNeuronConfig<TBasicSynapse, TDeterm>>
+            TLayer<TIntegrateAndFire, 1, TNeuronConfig<TBasicSynapse, TSigmoid>>
         >(opts);
 
         sim.Run();
     } else {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 256, TNeuronConfig<>>,
-            TLayer<TIntegrateAndFire, 1, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TStdp, TSlidingLtd>>
+            TLayer<TIntegrateAndFire, 1, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TAllToAllStdp, TUnitNorm>>
         >(opts);
 
         if (opts.StatFile) {
             sim.ListenBasicStats<0, 46>(0, 10000);
             sim.ListenBasicStats<1, 0>(0, 10000);
 
-            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 0, 1>().Weight(); }, 0, 10000);
+            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 0, 10>().Weight(); }, 0, 10000);
             sim.ListenStat("StdpX", [&]() { return sim.GetLearningRule<1, 0>().State().X.Get(0); }, 0, 10000);
 
             sim.ListenStat("StdpY", [&]() { return sim.GetLearningRule<1, 0>().State().Y; }, 0, 10000);
+            sim.ListenStat("Ltd", [&]() { return sim.GetLearningRule<1, 0>().Norm().Ltd(sim.GetSynapse<1, 0, 10>().Weight()); }, 0, 10000);
         }
 
         sim.Run();
