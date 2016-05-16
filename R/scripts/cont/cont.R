@@ -119,8 +119,11 @@ par(mfrow=c(2,1))
 
 plot(neuron$weights, type="l")
 
+#ei = eigen(cor(signal))
 ei = eigen(t(signal) %*% (signal))
 lines(Re(ei$vectors[,1]), col="blue")
+
+lines(max(neuron$weights) * sapply(spikes$values,length)/max(sapply(spikes$values,length)), col="red")
 
 r.signal = signal %*% Re(ei$vectors[,1])
 

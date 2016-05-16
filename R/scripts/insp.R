@@ -23,11 +23,11 @@ if(length(grep("RStudio", args))>0) {
     #WD = simruns.path(system(sprintf("ls -t %s | head -n 1", simruns.path()), intern=TRUE))
     WD = file.path(dnn.env(), "runs/last")
     
-    #WD="/home/alexeyche/dnn/runs/cma-run/60699c28659ed54a0fc66fc51b44166a_0304"
+    #WD="/home/alexeyche/dnn/runs/cma-run/60699c28659ed54a0fc66fc51b44166a_0512"
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
-    #EP=2
+    #EP=1
 }
 
 pfx_f = function(s) s
@@ -510,18 +510,11 @@ annoying_file = file.path(getwd(), "Rplots.pdf")
 if(file.exists(annoying_file)) {
     success = file.remove(annoying_file)
 }
-# if (exists("signal")) {
-#     dev.off()
-#     plot(neuron$weights, type="l", ylim=c(-0.2, 1.0))
-#     ei = eigen(t(signal) %*% (signal))
-#     lines(Re(ei$vectors[,1]), col="blue")
-#     lines(w[nrow(w), which(sapply(spikes$values, length) > 0)], col="red",type="l")
-# }
-
-ltd = function(w, w0, alpha) {
-    1.0 + log(1.0 + alpha * (w/w0 - 1.0))/alpha
+if (exists("signal")) {
+    par()
+    plot(neuron$weights, type="l", ylim=c(-0.2, 1.0))
+    ei = eigen(t(signal) %*% (signal))
+    lines(Re(ei$vectors[,1]), col="blue")
+    lines(w[nrow(w), which(sapply(spikes$values, length) > 0)], col="red",type="l")
 }
 
-ltp = function(w, w0, beta) {
-    exp(-w/(w0*beta))
-}

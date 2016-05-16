@@ -30,14 +30,17 @@ namespace NDnn {
 		}
 	};
 
-	class TNonLinearNorm: public TWeightNormalization<TNonLinearNormConst, TNonLinearNormState> {
+    template <typename TNeuron>
+	class TNonLinearNorm: public TWeightNormalization<TNonLinearNormConst, TNonLinearNormState, TNeuron> {
 	public:
+		using TPar = TWeightNormalization<TNonLinearNormConst, TNonLinearNormState, TNeuron>;
+		
 		double Ltp(double w) const {
-	        return std::pow(c.MaxWeight - std::abs(w), c.Mu);
+	        return std::pow(TPar::c.MaxWeight - std::abs(w), TPar::c.Mu);
 	    }
 
 	    double Ltd(double w) const {
-	    	return c.DepressionFactor * std::pow(std::abs(w), c.Mu);
+	    	return TPar::c.DepressionFactor * std::pow(std::abs(w), TPar::c.Mu);
 	    }
 
 	    double Derivative(double w, double dw) const {

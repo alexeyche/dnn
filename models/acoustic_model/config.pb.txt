@@ -14,23 +14,27 @@ Layer {
 	}
 	Sigmoid {
 		A: 20.0					 
-		B: -4.0					 
+		B: -3.0    # Threshold: B/A
 	}
 	Stdp {
-		TauPlus: 15.0            # [0.1, 100]
-		TauMinus: 20.0			 # [0.1, 100]
-		Aplus: 1.0			     # [0.01, 3.0]
-		Aminus: 1.0				 # [0.01, 3.0]
-		LearningRate: 1e-02
+		TauPlus: 17.0            # [0.1, 100]
+		TauMinus: 34.0			 # [0.1, 100]
+		Aplus: 1.0			     
+		Aminus: 1.0
+		LearningRate: 1e-04
 	}
 	LogNorm {
-		MeanWeight: 0.1 		 
-		Alpha: 1.0				 
-		Beta: 10.0				 
+		MeanWeight: 0.05
+		Alpha: 5.0 
+		Beta: 10.0	 
 	}
 	MaxEntropyIP {
-		TargetRate: 10.0
-		LearningRate: 1e-04
+		TargetRate: 15.0
+		LearningRate: 1e-05
+	}
+	NonLinearNorm {
+		Mu: 0.25
+		DepressionFactor: 1.2
 	}
 }
 Connection {
@@ -38,5 +42,5 @@ Connection {
 	Stochastic {
 		Prob: 1.0
 	}
-	Weight: 0.01  				# [0.001, 1.0]
+	Weight: 0.015  				# [0.001, 1.0]
 }
