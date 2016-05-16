@@ -10,8 +10,9 @@ namespace NDnn {
 		typename TSynapseType = TBasicSynapse,
 		typename TActivationFunctionType = TDeterm,
 		typename TReceptiveFieldType = TNoInput,
-		template <typename, typename> class TLearningRuleType = TNoLearning,
+		template <typename> class TLearningRuleType = TNoLearning,
 		template <typename> class TWeightNormalizationType = TNoWeightNormalization,
+		template <typename> class TIntrinsicPlasticityType = TNoIntrinsicPlasticity,
 		template <typename> class TReinforcementType = TNoReinforcement
 	>
 	struct TNeuronConfig {
@@ -20,7 +21,13 @@ namespace NDnn {
 		using TNeuronReceptiveField = TReceptiveFieldType;
 
 		template <typename T>
-		using TNeuronLearningRule = TLearningRuleType<T, TWeightNormalizationType<T>>;
+		using TNeuronLearningRule = TLearningRuleType<T>;
+		
+		template <typename T>
+		using TWeightNormalization = TWeightNormalizationType<T>;
+
+		template <typename T>
+		using TNeuronIntrinsicPlasticity = TIntrinsicPlasticityType<T>;
 
 		template <typename T>
 		using TNeuronReinforcement = TReinforcementType<T>;

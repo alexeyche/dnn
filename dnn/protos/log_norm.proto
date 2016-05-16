@@ -1,0 +1,12 @@
+package NDnnProto;
+
+
+message TLogNormState {
+}
+
+message TLogNormConst {
+    optional double MeanWeight = 1;
+    optional double Alpha = 2;
+    optional double Beta = 3;
+}
+

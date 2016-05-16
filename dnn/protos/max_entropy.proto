@@ -1,0 +1,11 @@
+package NDnnProto;
+
+
+message TMaxEntropyIPConst {
+    optional double TargetRate = 1;
+    optional double LearningRate = 2;
+}
+
+message TMaxEntropyIPState {
+}
+

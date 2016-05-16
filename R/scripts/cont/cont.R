@@ -4,7 +4,7 @@ set.seed(11)
 
 dt = 1.0
 M = 1
-tau_pmean = 9999
+tau_pmean = 1000
 epochs = 10
 
 spikes = proto.read(spikes.path("test_licks.pb"))
@@ -14,10 +14,10 @@ input.signal = t(preprocess.run(Epsp(TauDecay=10), binarize.spikes(spikes), 8)$v
 
 N = ncol(input.signal)
 
-W = matrix(0.1*rnorm(N*M), N, M)
+W = matrix(-0.1 + 0.2 * runif(N*M), N, M)
 
 K = nrow(input.signal)
-eta = 1e-04
+eta = 1e-02
 num.of.mom = 4
 
 
@@ -70,13 +70,13 @@ for (ep in 1:epochs) {
         x = as.matrix(input.signal[i, ])
         neuron = leaky_neuron_calc(neuron, x)    
 
-        dw = oja_rule(neuron, x)
-        #dw = bcm_rule(neuron, x)
+        #dw = oja_rule(neuron, x)
+        dw = bcm_rule(neuron, x)
         if (ep == 1) {
             dw = 0 # To collect stat
         }
         neuron$weights = neuron$weights + eta * dw  
-        #neuron$weights = norm(neuron$weights, p = 2.0)
+        neuron$weights = norm(neuron$weights, p = 2.0)
         
         y.stat[, idx.stat(ep, i)] = neuron$y
         w.stat[,, idx.stat(ep, i)] = neuron$weights
@@ -85,7 +85,7 @@ for (ep in 1:epochs) {
         for (mi in 1:num.of.mom) {
             v = neuron$y^(mi)
             
-            neuron$moments[, mi] = neuron$moments[, mi] + (-neuron$moments[, mi] + v)/tau_pmean 
+            neuron$moments[, mi] = neuron$moments[, mi] + (v - neuron$moments[, mi])/tau_pmean 
         
 #             if (length(neuron$moments.stat[[mi]]) < tau_pmean) {
 #                 neuron$moments.stat[[mi]] = c(neuron$moments.stat[[mi]], v)
@@ -116,22 +116,36 @@ filter.signal = function(signal, tau) {
 par(mfrow=c(2,1))
 
 #signal = filter.signal(input.signal, neuron$tau_mem)
-#signal = input.signal
 
-pc = prcomp(signal, scale=TRUE)
 plot(neuron$weights, type="l")
-#lines(-pc$rotation[,1], col="red")
 
 ei = eigen(t(signal) %*% (signal))
-lines(-Re(ei$vectors[,1]), col="blue")
+lines(Re(ei$vectors[,1]), col="blue")
 
 r.signal = signal %*% Re(ei$vectors[,1])
 
 y.final = y.stat[, idx.stat(epochs, 1:K)]
 
 plot(y.final,type="l")
-lines(act(-r.signal[1:K,1]), col="blue")
+lines(act(r.signal[1:K,1]), col="blue")
 
 #plot(-0.333*mom.stat[1,4,10000+1:20000] + 0.25*mom.stat[1,2,10000+1:20000]^2, type="l") # Kurtosis
 #mean( (y.stat - mean(y.stat[1,]))^2) / (mean( (y.stat - mean(y.stat[1,]))^2))^2
+require(ica)
+r = icafast(signal, 10)
+plot(r$M[,1],type="l")
 
+pca_w = rep(NA, length(spikes$values))
+pca_w[which(sapply(spikes$values, length) > 0)] = Re(ei$vectors[,1])
+write.table(pca_w, runs.path("pca_test_licks.csv"), row.names=FALSE, col.names=FALSE, sep=",")
+
+test_licks = proto.read("~/dnn/spikes/test_licks.pb")
+while (TRUE) {
+    max_t = max(sapply(test_licks$values, function(x) if(length(x)>0) { max(x)} else {0}))
+    if (max_t > 30000) {
+        break
+    }
+    test_licks = add.to.spikes(test_licks, test_licks)
+}
+
+proto.write(test_licks, "/home/alexeyche/dnn/spikes/work_licks.pb")

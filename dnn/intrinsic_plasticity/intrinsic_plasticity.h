@@ -9,10 +9,9 @@ namespace NDnn {
 	using namespace NGround;
 
 	template <typename TConstants, typename TState, typename TNeuronImpl>
-	class TLearningRule: public IProtoSerial<NDnnProto::TLayer> {
+	class TIntrinsicPlasticity: public IProtoSerial<NDnnProto::TLayer> {
 	public:
 		using TNeuronType = TNeuronImpl;
-		using TWeightNormalizationType = typename TNeuronImpl::TConfig::template TWeightNormalization<TNeuronImpl>;
 
 		void SerialProcess(TProtoSerial& serial) override final {
 			serial(c, TConstants::ProtoFieldNumber);
@@ -21,41 +20,24 @@ namespace NDnn {
 
 		void SetNeuronImpl(TNeuronImpl& neuron) {
 			NeuronImpl.Set(neuron);
-			WeightNormalization.SetNeuronImpl(neuron);
 		}
 
 		const typename TNeuronImpl::TNeuronType& Neuron() const {
 			return NeuronImpl->GetNeuron();
 		}
 
-		const auto& GetSynapses() const {
-			return NeuronImpl->GetSynapses();
-		}
-
-		auto& GetMutSynapses() {
-			return NeuronImpl->GetMutSynapses();
+		typename TNeuronImpl::TConfig::TNeuronActivationFunction& MutActivationFunction() {
+			return NeuronImpl->GetMutActivationFunction();
 		}
 
 		const TState& State() const {
 			return s;
 		}
 		
-		const TNeuronSpaceInfo& SpaceInfo() const {
-			return NeuronImpl->GetSpaceInfo();
-		}
-
-		const TWeightNormalizationType& Norm() const {
-			return WeightNormalization;
-		}
-
-		TWeightNormalizationType& MutNorm() {
-			return WeightNormalization;
-		}
 	protected:
 		TConstants c;
 		TState s;
 
-		TWeightNormalizationType WeightNormalization;
 	private:
 		TPtr<TNeuronImpl> NeuronImpl;
 	};

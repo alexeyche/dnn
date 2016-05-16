@@ -61,10 +61,10 @@ namespace NDnn {
 	};
 
 
-	template <typename TSpikePolicy, typename TNeuron, typename TWeightNormalizationType>
-	class TStdpBase: public TLearningRule<TStdpConst, TStdpState, TNeuron, TWeightNormalizationType> {
+	template <typename TSpikePolicy, typename TNeuron>
+	class TStdpBase: public TLearningRule<TStdpConst, TStdpState, TNeuron> {
 	public:
-		using TPar = TLearningRule<TStdpConst, TStdpState, TNeuron, TWeightNormalizationType>;
+		using TPar = TLearningRule<TStdpConst, TStdpState, TNeuron>;
 
 		void Reset() {
 			TPar::s.Y = 0.0;
@@ -92,7 +92,6 @@ namespace NDnn {
 	                const ui32& synapseId = *synIdIt;
 	                auto& syn = syns.Get(synapseId);
 	                double& w = syn.MutWeight();
-
 	                double dw = TPar::c.LearningRate * (
 	                    TPar::c.Aplus  * TPar::s.X[synIdIt] * neuron.Fired() * norm.Ltp(w) -
 	                    TPar::c.Aminus * TPar::s.Y * syn.Fired() * norm.Ltd(w)
@@ -109,13 +108,13 @@ namespace NDnn {
     	}
 	};
 
-	template <typename TNeuron, typename TWeightNormalizationType>
-	using TNearestStdp = TStdpBase<TNearestSpikePolicy, TNeuron, TWeightNormalizationType>;
+	template <typename TNeuron>
+	using TNearestStdp = TStdpBase<TNearestSpikePolicy, TNeuron>;
 
-	template <typename TNeuron, typename TWeightNormalizationType>
-	using TAllToAllStdp = TStdpBase<TAllToAllSpikePolicy, TNeuron, TWeightNormalizationType>;
+	template <typename TNeuron>
+	using TAllToAllStdp = TStdpBase<TAllToAllSpikePolicy, TNeuron>;
 
-	template <typename TNeuron, typename TWeightNormalizationType>
-	using TStdp = TNearestStdp<TNeuron, TWeightNormalizationType>;
+	template <typename TNeuron>
+	using TStdp = TNearestStdp<TNeuron>;
 
 } // namespace NDnn

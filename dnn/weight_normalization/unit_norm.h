@@ -31,6 +31,16 @@ namespace NDnn {
 	public:
 		using TPar = TWeightNormalization<TUnitNormConst, TUnitNormState, TNeuron>;
         
+		double Derivative(double w, double dw) const {
+			if ((w < 0.0) != ((w+dw)<0.0)) {
+				return 0.0;
+			}
+			if ((std::abs(w+dw) > TPar::c.Unit) || (std::abs(w+dw) < 0.0)) {
+	    		return 0.0;
+	    	}
+        	return dw;
+    	}
+
         void CalculateDynamics(const TTime &t) {
         	auto& syns = TPar::GetMutSynapses();
 	        
@@ -38,6 +48,7 @@ namespace NDnn {
 	        for (const auto& s: syns) {
 	            denominator += std::pow(s.Weight(), TPar::c.Power);
 	        }
+	        
 	        double mod = TPar::c.Unit/std::pow(denominator, 1.0/TPar::c.Power);
 	        for (auto& s: syns) {
 	            s.MutWeight() = s.Weight()*mod;

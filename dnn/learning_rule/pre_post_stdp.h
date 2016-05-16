@@ -45,9 +45,9 @@ namespace NDnn {
 	};
 
 	template <typename TNeuron, typename TWeightNormalizationType>
-	class TPrePostStdp: public TLearningRule<TPrePostStdpConst, TPrePostStdpState, TNeuron, TWeightNormalizationType> {
+	class TPrePostStdp: public TLearningRule<TPrePostStdpConst, TPrePostStdpState, TNeuron> {
 	public:
-		using TPar = TLearningRule<TPrePostStdpConst, TPrePostStdpState, TNeuron, TWeightNormalizationType>;
+		using TPar = TLearningRule<TPrePostStdpConst, TPrePostStdpState, TNeuron>;
 
 		void Reset() {
 			TPar::s.Yplus = 0.0;

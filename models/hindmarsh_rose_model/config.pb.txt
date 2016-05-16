@@ -1,12 +1,12 @@
 SimConfiguration {
 	Seed: -1
 	Jobs: 8
-	Dt: 0.01
+	Dt: 0.1
 }
 Layer {
 	Sigmoid {
-		Threshold: 0.15
-		Slope: 120.0
+		A: 120.0
+		B: -18.0
 	}
     BasicSynapse {
         PspDecay: 10.0
@@ -36,8 +36,8 @@ Layer {
         Beta: 1.0
 	}
 	Sigmoid {
-		Threshold: 0.15
-		Slope: 50.0
+		A: 20.0
+		B: -4.0
 	}
 	Stdp {
 		LearningRate: 0.0001
