@@ -30,6 +30,7 @@ import "dnn/protos/nnmf_homeostasis.proto";
 import "dnn/protos/log_norm.proto";
 import "dnn/protos/max_entropy.proto";
 import "dnn/protos/log_exp.proto";
+import "dnn/protos/sum_norm.proto";
 
 
 message TRewardControl {
@@ -89,6 +90,8 @@ message TLayer {
     repeated TMaxEntropyIPConst MaxEntropyIP = 41;
     repeated TMaxEntropyIPState MaxEntropyIPState = 42;
     repeated TLogExpConst LogExp = 43;
+    repeated TSumNormConst SumNorm = 44;
+    repeated TSumNormState SumNormState = 45;
 }
 
 

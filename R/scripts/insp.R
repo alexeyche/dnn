@@ -121,7 +121,7 @@ if(INSP_MODEL) {
         
         weights_pic = sprintf("%s/2_%s", tmp_d, pfx_f("weights.png"))
         if(SAVE_PIC_IN_FILES) png(weights_pic, width=1024, height=768)
-        #print(gr_pl(w))
+        print(gr_pl(w))
         if(SAVE_PIC_IN_FILES) { 
             dev.off()
             write(paste("Weights pic filename: ", weights_pic), stderr())
@@ -504,6 +504,8 @@ get_stat = function(epochs, stname, stat_id, f_template = "%s_stat.pb") {
     return(stat_acc)
 }
 
+m.sort = function(arr) arr[do.call(order, lapply(1:ncol(arr), function(i) arr[, i])), ]
+
 #plotl(get_stat(1:10, "OptimalStdp_w_0", 1))
 
 annoying_file = file.path(getwd(), "Rplots.pdf")
@@ -511,10 +513,12 @@ if(file.exists(annoying_file)) {
     success = file.remove(annoying_file)
 }
 if (exists("signal")) {
-    par()
+    par(mfrow=c(1,1))
     plot(neuron$weights, type="l", ylim=c(-0.2, 1.0))
     ei = eigen(t(signal) %*% (signal))
     lines(Re(ei$vectors[,1]), col="blue")
     lines(w[nrow(w), which(sapply(spikes$values, length) > 0)], col="red",type="l")
+    gr_pl(t(m.sort(w[257:nrow(w),1:256])))
+    gr_pl(t(m.sort(t(abs(ica.signal$M)))))
 }
 

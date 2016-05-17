@@ -1,0 +1,11 @@
+package NDnnProto;
+
+
+message TSumNormConst {
+    optional double ExcUnit = 1;
+    optional double InhUnit = 2;
+}
+
+message TSumNormState {
+}
+

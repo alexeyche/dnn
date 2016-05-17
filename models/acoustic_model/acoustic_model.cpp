@@ -24,7 +24,7 @@
 #include <dnn/weight_normalization/sliding_ltd.h>
 #include <dnn/weight_normalization/unit_norm.h>
 #include <dnn/weight_normalization/log_norm.h>
-#include <dnn/weight_normalization/nnmf_homeostasis.h>
+#include <dnn/weight_normalization/sum_norm.h>
 #include <dnn/intrinsic_plasticity/max_entropy.h>
 
 using namespace NDnn;
@@ -34,14 +34,14 @@ int main(int argc, const char** argv) {
     if (opts.NoLearning) {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 256, TNeuronConfig<>>,
-            TLayer<TIntegrateAndFire, 1, TNeuronConfig<TBasicSynapse, TSigmoid>>
+            TLayer<TIntegrateAndFire, 10, TNeuronConfig<TBasicSynapse, TSigmoid>>
         >(opts);
 
         sim.Run();
     } else {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 256, TNeuronConfig<>>,
-            TLayer<TIntegrateAndFire, 1, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TNonLinearNorm, TMaxEntropyIP>>
+            TLayer<TIntegrateAndFire, 10, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TSumNorm, TMaxEntropyIP>>
         >(opts);
 
         if (opts.StatFile) {

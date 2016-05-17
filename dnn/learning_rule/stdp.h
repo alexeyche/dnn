@@ -96,6 +96,10 @@ namespace NDnn {
 	                    TPar::c.Aplus  * TPar::s.X[synIdIt] * neuron.Fired() * norm.Ltp(w) -
 	                    TPar::c.Aminus * TPar::s.Y * syn.Fired() * norm.Ltd(w)
 	                );
+
+	                if (w < 0.0) {
+	                	dw *= 10.0;
+	                }
 	                
 	                w += norm.Derivative(w, dw);
 

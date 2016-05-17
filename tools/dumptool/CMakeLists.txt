@@ -14,4 +14,4 @@ target_link_libraries(dumptool
     dnn
     m
 )
-install(TARGETS RUNTIME DESTINATION bin)
+install(TARGETS dumptool RUNTIME DESTINATION bin)

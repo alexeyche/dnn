@@ -12,10 +12,6 @@ Layer {
 		TauMem: 10
 		TauRef: 2
 	}
-	Sigmoid {
-		A: 20.0					 
-		B: -3.0    # Threshold: B/A
-	}
 	LogExp {
 		U0: 0.15
 		Ua: 0.05
@@ -24,22 +20,17 @@ Layer {
 	Stdp {
 		TauPlus: 17.0            # [0.1, 100]
 		TauMinus: 34.0			 # [0.1, 100]
-		Aplus: 1.0			     
+		Aplus: 1.0
 		Aminus: 1.0
-		LearningRate: 1e-04
-	}
-	LogNorm {
-		MeanWeight: 0.05
-		Alpha: 5.0 
-		Beta: 10.0	 
+		LearningRate: 1e-03
 	}
 	MaxEntropyIP {
 		TargetRate: 5.0
 		LearningRate: 1e-07
 	}
-	NonLinearNorm {
-		Mu: 0.25
-		DepressionFactor: 1.2
+	SumNorm {
+		ExcUnit: 10.0
+		InhUnit: 4.0
 	}
 }
 Connection {
@@ -48,4 +39,11 @@ Connection {
 		Prob: 1.0
 	}
 	Weight: 0.015  				# [0.001, 1.0]
+}
+Connection {
+	From: 1 To: 1
+	Stochastic {
+		Prob: 1.0
+	}
+	Weight: -0.015  		    # [0.001, 1.0]
 }

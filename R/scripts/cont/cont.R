@@ -1,10 +1,11 @@
 require(Rdnn)
+require(ica)
 
 set.seed(11)
 
 dt = 1.0
 M = 1
-tau_pmean = 1000
+tau_pmean = 500
 epochs = 10
 
 spikes = proto.read(spikes.path("test_licks.pb"))
@@ -113,7 +114,7 @@ filter.signal = function(signal, tau) {
     return(filtered[2:nrow(filtered), ])
 }
 
-par(mfrow=c(2,1))
+par(mfrow=c(3,1))
 
 #signal = filter.signal(input.signal, neuron$tau_mem)
 
@@ -124,6 +125,9 @@ ei = eigen(t(signal) %*% (signal))
 lines(Re(ei$vectors[,1]), col="blue")
 
 lines(max(neuron$weights) * sapply(spikes$values,length)/max(sapply(spikes$values,length)), col="red")
+ica.signal = icafast(signal, 10)
+plot(neuron$weights, type="l")
+lines(-ica.signal$M[,1], type="l", col="blue")
 
 r.signal = signal %*% Re(ei$vectors[,1])
 
@@ -134,21 +138,21 @@ lines(act(r.signal[1:K,1]), col="blue")
 
 #plot(-0.333*mom.stat[1,4,10000+1:20000] + 0.25*mom.stat[1,2,10000+1:20000]^2, type="l") # Kurtosis
 #mean( (y.stat - mean(y.stat[1,]))^2) / (mean( (y.stat - mean(y.stat[1,]))^2))^2
-require(ica)
-r = icafast(signal, 10)
-plot(r$M[,1],type="l")
-
-pca_w = rep(NA, length(spikes$values))
-pca_w[which(sapply(spikes$values, length) > 0)] = Re(ei$vectors[,1])
-write.table(pca_w, runs.path("pca_test_licks.csv"), row.names=FALSE, col.names=FALSE, sep=",")
-
-test_licks = proto.read("~/dnn/spikes/test_licks.pb")
-while (TRUE) {
-    max_t = max(sapply(test_licks$values, function(x) if(length(x)>0) { max(x)} else {0}))
-    if (max_t > 30000) {
-        break
-    }
-    test_licks = add.to.spikes(test_licks, test_licks)
-}
-
-proto.write(test_licks, "/home/alexeyche/dnn/spikes/work_licks.pb")
+# require(ica)
+# r = icafast(signal, 10)
+# plot(r$M[,1],type="l")
+# 
+# pca_w = rep(NA, length(spikes$values))
+# pca_w[which(sapply(spikes$values, length) > 0)] = Re(ei$vectors[,1])
+# write.table(pca_w, runs.path("pca_test_licks.csv"), row.names=FALSE, col.names=FALSE, sep=",")
+# 
+# test_licks = proto.read("~/dnn/spikes/test_licks.pb")
+# while (TRUE) {
+#     max_t = max(sapply(test_licks$values, function(x) if(length(x)>0) { max(x)} else {0}))
+#     if (max_t > 30000) {
+#         break
+#     }
+#     test_licks = add.to.spikes(test_licks, test_licks)
+# }
+# 
+# proto.write(test_licks, "/home/alexeyche/dnn/spikes/work_licks.pb")
