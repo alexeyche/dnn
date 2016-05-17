@@ -4,6 +4,9 @@
 #include <dnn/protos/config.pb.h>
 
 #include <dnn/activation/sigmoid.h>
+#include <dnn/activation/log_exp.h>
+
+#include <type_traits>
 
 namespace NDnn {
 
@@ -33,13 +36,25 @@ namespace NDnn {
 		}
 	};
 
+	template <typename T> 
+	constexpr bool DependentFalse() {
+	    return false;
+	}
+
+
+	template <typename TNeuron, typename TActivation>
+	class TMaxEntropyIPImpl: public TIntrinsicPlasticity<TMaxEntropyIPConst, TMaxEntropyIPState, TNeuron> {
+	public:
+		static_assert(DependentFalse<TActivation>(), "This activation function is not supported by max entropy intrinsic plasticity");
+
+		void Reset() {}
+		void CalculateDynamics(const TTime&) {}
+	};
+
 	template <typename TNeuron>
-	class TMaxEntropyIP: public TIntrinsicPlasticity<TMaxEntropyIPConst, TMaxEntropyIPState, TNeuron> {
+	class TMaxEntropyIPImpl<TNeuron, TSigmoid>: public TIntrinsicPlasticity<TMaxEntropyIPConst, TMaxEntropyIPState, TNeuron> {
 	public:
 		using TPar = TIntrinsicPlasticity<TMaxEntropyIPConst, TMaxEntropyIPState, TNeuron>;
-		
-		static_assert(std::is_same<typename TNeuron::TConfig::TNeuronActivationFunction, TSigmoid>::value, 
-			"Max entropy intrinsic plasticity works only with sigmoid function activation");
 		
 		void Reset() {
 			TSigmoid& actF = static_cast<TSigmoid&>(TPar::MutActivationFunction());
@@ -66,6 +81,48 @@ namespace NDnn {
     	TPtr<double> B;
 	};
 
+
+	template <typename TNeuron>
+	class TMaxEntropyIPImpl<TNeuron, TLogExp>: public TIntrinsicPlasticity<TMaxEntropyIPConst, TMaxEntropyIPState, TNeuron> {
+	public:
+		using TPar = TIntrinsicPlasticity<TMaxEntropyIPConst, TMaxEntropyIPState, TNeuron>;
+		
+		void Reset() {
+			TLogExp& actF = static_cast<TLogExp&>(TPar::MutActivationFunction());
+			
+			R0.Set(&actF.MutConstants().R0);
+			U0.Set(&actF.MutConstants().U0);
+			Ua.Set(&actF.MutConstants().Ua);
+		}
+
+    	void CalculateDynamics(const TTime& t) {
+    		const auto& x = TPar::Neuron().Membrane();
+    		double y = TPar::Neuron().SpikeProbability();
+    		const auto& mu = TPar::c.__TargetRate;
+    		double y2_on_mu = y*y/mu;
+    		
+    		double some_val = (1.0  + *R0 / mu) * (1.0 - std::exp(- y / *R0)) - 1.0;
+
+    		double dr0 = TPar::c.LearningRate * ((1.0 - y / mu) / *R0 );
+    		double du0 = TPar::c.LearningRate * some_val / *U0;
+    		double dua = TPar::c.LearningRate * (((x - *U0) / *Ua) * some_val - 1.0) / *Ua;
+    		
+    		// L_DEBUG << "x: " << x << "; " << *R0 << " + " << dr0 << "; " << *U0 << " + " << du0 << "; " << *Ua << " + " << dua;
+    		
+    		*R0 += t.Dt * dr0;
+    		*U0 += t.Dt * du0;
+    		*Ua += t.Dt * dua;
+    	}
+
+    private:
+    	TPtr<double> R0;
+    	TPtr<double> U0;
+    	TPtr<double> Ua;
+	};
+
+
+	template <typename TNeuron>
+	using TMaxEntropyIP = TMaxEntropyIPImpl<TNeuron, typename TNeuron::TConfig::TNeuronActivationFunction>;
 
 
 } // namespace NDnn

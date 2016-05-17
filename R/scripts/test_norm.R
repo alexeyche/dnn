@@ -17,3 +17,9 @@ w0 = 0.1
 
 plot(w, -ltd(w, w0, 1), type="l", ylim=c(-2.0,2.0), col="blue")
 lines(w, ltp(w, w0, 10), col="red")
+
+
+
+actf = function (u, r0, u0, ua) r0 * log(1.0 + exp( (u - u0) / ua))
+
+u = seq(0, 1.0, length.out = 1000)

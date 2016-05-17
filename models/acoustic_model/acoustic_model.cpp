@@ -16,6 +16,7 @@
 #include <dnn/learning_rule/stdp.h>
 #include <dnn/learning_rule/pre_post_stdp.h>
 #include <dnn/activation/sigmoid.h>
+#include <dnn/activation/log_exp.h>
 #include <dnn/activation/determ.h>
 #include <dnn/weight_normalization/multiplicative_norm.h>
 #include <dnn/weight_normalization/nonlinear_norm.h>
@@ -40,7 +41,7 @@ int main(int argc, const char** argv) {
     } else {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 256, TNeuronConfig<>>,
-            TLayer<TIntegrateAndFire, 1, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TNearestStdp, TNonLinearNorm, TMaxEntropyIP>>
+            TLayer<TIntegrateAndFire, 1, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TNonLinearNorm, TMaxEntropyIP>>
         >(opts);
 
         if (opts.StatFile) {
