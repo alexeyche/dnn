@@ -17,8 +17,35 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// PpClassKernelRun
+Rcpp::NumericMatrix PpClassKernelRun(Rcpp::List preProcConfig, Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs);
+RcppExport SEXP Rdnn_PpClassKernelRun(SEXP preProcConfigSEXP, SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type preProcConfig(preProcConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type kernelConfig(kernelConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeries(timeSeriesSEXP);
+    Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
+    __result = Rcpp::wrap(PpClassKernelRun(preProcConfig, kernelConfig, timeSeries, jobs));
+    return __result;
+END_RCPP
+}
+// ClassKernelRun
+Rcpp::NumericMatrix ClassKernelRun(Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs);
+RcppExport SEXP Rdnn_ClassKernelRun(SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type kernelConfig(kernelConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeries(timeSeriesSEXP);
+    Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
+    __result = Rcpp::wrap(ClassKernelRun(kernelConfig, timeSeries, jobs));
+    return __result;
+END_RCPP
+}
 // PpKernelRun
-Rcpp::NumericMatrix PpKernelRun(Rcpp::List preProcConfig, Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs);
+Rcpp::List PpKernelRun(Rcpp::List preProcConfig, Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs);
 RcppExport SEXP Rdnn_PpKernelRun(SEXP preProcConfigSEXP, SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
@@ -32,7 +59,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // KernelRun
-Rcpp::NumericMatrix KernelRun(Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs);
+Rcpp::List KernelRun(Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs);
 RcppExport SEXP Rdnn_KernelRun(SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;

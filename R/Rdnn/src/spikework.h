@@ -20,8 +20,8 @@ using namespace NDnn;
 using namespace NGround;
 
 
-// [[Rcpp::export(name = "pp.kernel.run")]]
-Rcpp::NumericMatrix PpKernelRun(
+// [[Rcpp::export(name = "pp.class.kernel.run")]]
+Rcpp::NumericMatrix PpClassKernelRun(
 	Rcpp::List preProcConfig, 
 	Rcpp::List kernelConfig, 
 	Rcpp::List timeSeries, 
@@ -35,7 +35,7 @@ Rcpp::NumericMatrix PpKernelRun(
 		ts = TProto::TranslateBack<TTimeSeries>(timeSeries); 
 	}
 	return TProto::Translate<TDoubleMatrix>(
-		TSpikework::KernelRun(
+		TSpikework::ClassKernelRun(
 			TProto::TranslateBack<NDnnProto::TPreprocessorConfig>(preProcConfig), 
 			TProto::TranslateBack<NDnnProto::TKernelConfig>(kernelConfig), 
 			ts, 
@@ -44,20 +44,70 @@ Rcpp::NumericMatrix PpKernelRun(
 	);
 }
 
-// [[Rcpp::export(name = "kernel.run")]]
-Rcpp::NumericMatrix KernelRun(
+// [[Rcpp::export(name = "class.kernel.run")]]
+Rcpp::NumericMatrix ClassKernelRun(
 	Rcpp::List kernelConfig, 
 	Rcpp::List timeSeries, 
 	size_t jobs
 ) {
 	return TProto::Translate<TDoubleMatrix>(
-		TSpikework::KernelRun(
+		TSpikework::ClassKernelRun(
 			TProto::TranslateBack<NDnnProto::TKernelConfig>(kernelConfig), 
 			TProto::TranslateBack<TTimeSeries>(timeSeries), 
 			jobs
 		)
 	);
 }
+
+
+// [[Rcpp::export(name = "pp.kernel.run")]]
+Rcpp::List PpKernelRun(
+	Rcpp::List preProcConfig, 
+	Rcpp::List kernelConfig, 
+	Rcpp::List timeSeries, 
+	size_t jobs
+) {
+	TTimeSeries ts;
+	TString type = timeSeries.attr("class");
+	if (type == "SpikesList") {
+		ts = TProto::TranslateBack<TSpikesList>(timeSeries).ConvertToBinaryTimeSeries(1.0);
+	} else {
+		ts = TProto::TranslateBack<TTimeSeries>(timeSeries); 
+	}
+	auto mVec = TSpikework::KernelRun(
+		TProto::TranslateBack<NDnnProto::TPreprocessorConfig>(preProcConfig), 
+		TProto::TranslateBack<NDnnProto::TKernelConfig>(kernelConfig), 
+		ts, 
+		jobs);
+
+	Rcpp::List ans;
+	for (const auto& m: mVec) {
+		ans.push_back(TProto::Translate<TDoubleMatrix>(m));
+	}
+
+	return ans;
+}
+
+
+// [[Rcpp::export(name = "kernel.run")]]
+Rcpp::List KernelRun(
+	Rcpp::List kernelConfig, 
+	Rcpp::List timeSeries, 
+	size_t jobs
+) {
+	auto mVec = TSpikework::KernelRun(
+		TProto::TranslateBack<NDnnProto::TKernelConfig>(kernelConfig), 
+		TProto::TranslateBack<TTimeSeries>(timeSeries), 
+		jobs);
+
+	Rcpp::List ans;
+	for (const auto& m: mVec) {
+		ans.push_back(TProto::Translate<TDoubleMatrix>(m));
+	}
+
+	return ans;
+}
+
 
 
 // [[Rcpp::export(name = "preprocess.run")]]

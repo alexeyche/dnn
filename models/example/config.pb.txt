@@ -27,8 +27,8 @@ Layer {
 		TauRef: 2
 	}
 	Sigmoid {
-		Threshold: 0.15
-		Slope: 50.0
+		A: 20.0
+		B: -4.0
 	}
 	Stdp {
 		LearningRate: 0.001

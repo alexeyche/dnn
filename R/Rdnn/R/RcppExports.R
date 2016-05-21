@@ -5,6 +5,14 @@ lyapunov <- function(timeSeries, outputSpikes) {
     .Call('Rdnn_Lyapunov', PACKAGE = 'Rdnn', timeSeries, outputSpikes)
 }
 
+pp.class.kernel.run <- function(preProcConfig, kernelConfig, timeSeries, jobs) {
+    .Call('Rdnn_PpClassKernelRun', PACKAGE = 'Rdnn', preProcConfig, kernelConfig, timeSeries, jobs)
+}
+
+class.kernel.run <- function(kernelConfig, timeSeries, jobs) {
+    .Call('Rdnn_ClassKernelRun', PACKAGE = 'Rdnn', kernelConfig, timeSeries, jobs)
+}
+
 pp.kernel.run <- function(preProcConfig, kernelConfig, timeSeries, jobs) {
     .Call('Rdnn_PpKernelRun', PACKAGE = 'Rdnn', preProcConfig, kernelConfig, timeSeries, jobs)
 }

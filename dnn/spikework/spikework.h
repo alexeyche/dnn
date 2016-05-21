@@ -41,11 +41,11 @@ namespace NDnn {
 			return preprocessor->Preprocess(std::move(ts));
 		}
 		
-		static TDoubleMatrix KernelRun(
+		static TDoubleMatrix ClassKernelRun(
 			const NDnnProto::TKernelConfig& kernelConfig, 
 			const TTimeSeries& ts, 
-			ui32 jobs = 8
-		) {
+			ui32 jobs = 8) 
+		{
 			SPtr<IKernel> kernel = CreateKernel(kernelConfig);
 
 			TVector<TTimeSeries> choppedTs = ts.Chop();
@@ -97,16 +97,92 @@ namespace NDnn {
 	        return gram;
 		}
 		
-		static TDoubleMatrix KernelRun(
+		static TDoubleMatrix ClassKernelRun(
 			const NDnnProto::TPreprocessorConfig& preProcConfig, 
 			const NDnnProto::TKernelConfig& kernelConfig, 
 			TTimeSeries ts, 
-			ui32 jobs = 8
-		) {
+			ui32 jobs = 8) 
+		{
+			ts = PreprocessRun(preProcConfig, ts, jobs);
+			return ClassKernelRun(kernelConfig, ts, jobs);
+		}
+
+		static TVector<TDoubleMatrix> KernelRun(
+			const NDnnProto::TKernelConfig& kernelConfig, 
+			const TTimeSeries& ts, 
+			ui32 jobs = 8) 
+		{
+			SPtr<IKernel> kernel = CreateKernel(kernelConfig);
+			TVector<TTimeSeries> choppedTs = ts.Chop();
+			if (choppedTs.size() == 0) {
+				return { KernelRun(kernel, ts, jobs) };
+			} else {
+				TVector<TDoubleMatrix> ans;
+				for (const auto& subTs: choppedTs) {
+					ans.emplace_back(KernelRun(kernel, subTs, jobs));
+				}
+				return ans;
+			}
+
+		}
+
+		static TVector<TDoubleMatrix> KernelRun(
+			const NDnnProto::TPreprocessorConfig& preProcConfig, 
+			const NDnnProto::TKernelConfig& kernelConfig, 
+			TTimeSeries ts, 
+			ui32 jobs = 8) 
+		{
 			ts = PreprocessRun(preProcConfig, ts, jobs);
 			return KernelRun(kernelConfig, ts, jobs);
 		}
 
+	private:
+
+		static TDoubleMatrix KernelRun(
+			SPtr<IKernel> kernel, 
+			const TTimeSeries& ts, 
+			ui32 jobs = 8)
+		{
+			TDoubleMatrix gram(ts.Dim(), ts.Dim());
+
+			typedef std::tuple<ui32, ui32, const TVector<double>&, const TVector<double>&> TKernCorpus;
+
+			TVector<TKernCorpus> corpus;
+
+	        L_DEBUG << "GramMatrix, Calculating kernel values in " << jobs << " jobs";
+
+			for (ui32 i=0; i<ts.Dim(); ++i) {
+	            for(ui32 j=i; j<ts.Dim(); ++j) {
+	                corpus.push_back(TKernCorpus(i, j, ts.GetVector(i), ts.GetVector(j)));
+	            }
+	        }
+
+	        TVector<std::thread> workers;
+	        auto slices = DispatchOnThreads(corpus.size(), jobs);
+	        for (const auto& slice: slices) {
+	            workers.emplace_back(
+	                [&](ui32 from, ui32 to) {
+	                    L_DEBUG << "GramMatrix, Working on slice " << from << ":" << to;
+	                    for(ui32 iter=from; iter<to; ++iter) {
+	                        const auto& tup = corpus[iter];
+	                        gram(std::get<0>(tup), std::get<1>(tup)) = kernel->PointSimilarity(std::get<2>(tup), std::get<3>(tup));
+	                    }
+	                    L_DEBUG << "GramMatrix, " << from << ":" << to << " is done";
+	                }, slice.From, slice.To
+	            );
+	        }
+
+	        for (auto& w: workers) {
+	            w.join();
+	        }
+	        
+	        for (ui32 i=0; i<gram.RowSize(); ++i) {
+	            for(ui32 j=0; j<i; ++j) {
+	                gram(i, j) = gram(j, i);
+	            }
+	        }
+	        return gram;
+		}
 	};
 
 
