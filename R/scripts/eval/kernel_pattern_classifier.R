@@ -13,7 +13,7 @@ c(spikes, epoch) := read.spikes.wd()
 
 spikes$values = spikes$values[-(1:input_neurons)]
 
-K = pp.kernel.run(preprocessor, kernel, spikes, jobs)
+K = pp.class.kernel.run(preprocessor, kernel, spikes, jobs)
 c(y, M, N, A) := KFD(K)
 metric = -log(tr(M)/tr(N))
 
