@@ -7,13 +7,13 @@ input_neurons = 100
 preprocessor = Epsp(TauDecay=10)
 kernel = Dot()
 jobs = 8
-
+dt = 1.0
 
 c(spikes, epoch) := read.spikes.wd()
 
 spikes$values = spikes$values[-(1:input_neurons)]
 
-K = pp.class.kernel.run(preprocessor, kernel, spikes, jobs)
+K = pp.class.kernel.run(preprocessor, kernel, spikes, jobs, dt)
 c(y, M, N, A) := KFD(K)
 metric = -log(tr(M)/tr(N))
 

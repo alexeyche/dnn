@@ -18,8 +18,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // PpClassKernelRun
-Rcpp::NumericMatrix PpClassKernelRun(Rcpp::List preProcConfig, Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs);
-RcppExport SEXP Rdnn_PpClassKernelRun(SEXP preProcConfigSEXP, SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP) {
+Rcpp::NumericMatrix PpClassKernelRun(Rcpp::List preProcConfig, Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs, double dt);
+RcppExport SEXP Rdnn_PpClassKernelRun(SEXP preProcConfigSEXP, SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP, SEXP dtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -27,7 +27,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::List >::type kernelConfig(kernelConfigSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type timeSeries(timeSeriesSEXP);
     Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
-    __result = Rcpp::wrap(PpClassKernelRun(preProcConfig, kernelConfig, timeSeries, jobs));
+    Rcpp::traits::input_parameter< double >::type dt(dtSEXP);
+    __result = Rcpp::wrap(PpClassKernelRun(preProcConfig, kernelConfig, timeSeries, jobs, dt));
     return __result;
 END_RCPP
 }
@@ -45,8 +46,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // PpKernelRun
-Rcpp::List PpKernelRun(Rcpp::List preProcConfig, Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs);
-RcppExport SEXP Rdnn_PpKernelRun(SEXP preProcConfigSEXP, SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP) {
+Rcpp::List PpKernelRun(Rcpp::List preProcConfig, Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs, double dt);
+RcppExport SEXP Rdnn_PpKernelRun(SEXP preProcConfigSEXP, SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP, SEXP dtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -54,7 +55,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::List >::type kernelConfig(kernelConfigSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type timeSeries(timeSeriesSEXP);
     Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
-    __result = Rcpp::wrap(PpKernelRun(preProcConfig, kernelConfig, timeSeries, jobs));
+    Rcpp::traits::input_parameter< double >::type dt(dtSEXP);
+    __result = Rcpp::wrap(PpKernelRun(preProcConfig, kernelConfig, timeSeries, jobs, dt));
     return __result;
 END_RCPP
 }

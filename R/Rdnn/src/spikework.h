@@ -25,12 +25,13 @@ Rcpp::NumericMatrix PpClassKernelRun(
 	Rcpp::List preProcConfig, 
 	Rcpp::List kernelConfig, 
 	Rcpp::List timeSeries, 
-	size_t jobs
+	size_t jobs,
+	double dt = 1.0
 ) {
 	TTimeSeries ts;
 	TString type = timeSeries.attr("class");
 	if (type == "SpikesList") {
-		ts = TProto::TranslateBack<TSpikesList>(timeSeries).ConvertToBinaryTimeSeries(1.0);
+		ts = TProto::TranslateBack<TSpikesList>(timeSeries).ConvertToBinaryTimeSeries(dt);
 	} else {
 		ts = TProto::TranslateBack<TTimeSeries>(timeSeries); 
 	}
@@ -65,12 +66,13 @@ Rcpp::List PpKernelRun(
 	Rcpp::List preProcConfig, 
 	Rcpp::List kernelConfig, 
 	Rcpp::List timeSeries, 
-	size_t jobs
+	size_t jobs,
+	double dt = 1.0
 ) {
 	TTimeSeries ts;
 	TString type = timeSeries.attr("class");
 	if (type == "SpikesList") {
-		ts = TProto::TranslateBack<TSpikesList>(timeSeries).ConvertToBinaryTimeSeries(1.0);
+		ts = TProto::TranslateBack<TSpikesList>(timeSeries).ConvertToBinaryTimeSeries(dt);
 	} else {
 		ts = TProto::TranslateBack<TTimeSeries>(timeSeries); 
 	}
