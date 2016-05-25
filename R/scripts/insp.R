@@ -344,14 +344,18 @@ if(EVAL) {
         for (n in 1:(last.neuron - first.neuron)) {
           if (n != (last.neuron - first.neuron)) {
             for (m in (n + 1):(last.neuron - first.neuron)) {
-              plot(1, type = "n", ylab = "Density", xlab = "Probability", xlim = 0:1, 
-                   ylim = c(0,max(c(max(density(probability.list[[m]][, m])$y), max(density(probability.list[[n]][, n])$y)))),
-                   main = sprintf("Densities, classes %s and %s", labels.vec[n], labels.vec[m]))
+              y.max = max(c(max(density(probability.list[[m]][, m])$y), max(density(probability.list[[n]][, n])$y)))
+              plot(c(0,y.max), type = "n", ylab = "Density", xlab = "Probability",
+                   main = sprintf("Densities, classes %s and %s", labels.vec[n], labels.vec[m]),
+                   xlim = 0:1, xaxt = 'n', yaxt = 'n')
+              axis(1, at=c(0, 0.25, 0.5, 0.75, 1))
+              y.axis.max = y.max/length(probability.list[[m]][, m])
+              axis(2, at=c(0, y.max/4, y.max/2, 3*y.max/4, y.max), labels = c(0, round(y.axis.max/4, 2), round(y.axis.max/2, 2), round(3*y.axis.max/4, 2), round(y.axis.max, 2)))
+              grid(nx = 2, ny = NA, lty = 1, lwd = 2)
               lines(density(probability.list[[n]][, n]), xlim = 0:1, lty = 1, col = n, lwd = 2)
               lines(density(1 - probability.list[[m]][, m]), xlim = 0:1, lty = 1, col = m, lwd = 1.5)
               legend("topleft", bty = "n", c(labels.vec[n], labels.vec[m]),
                      lty = c(1, 1), lwd = c(2, 1.5), col = c(n, m))
-              grid(nx = 2, ny = NA, lty = 1, lwd = 2)
               # ROC-curve and AUC evaluation
               if (print.roc) {
                 tmp.n = length(probability.list[[n]][, n])

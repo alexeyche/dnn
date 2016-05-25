@@ -6,56 +6,56 @@ SimConfiguration {
 
 Layer {
 	IntegrateAndFire {
-		TauMem: 15
+		TauMem: 5
 		TauRef: 2
 	}
 	Determ {
-		Threshold: 0.20
+		Threshold: 0.50
 	}
 	HedonisticSynapse {
 		PspDecay: 10.0
 		Amp: 1.0
-		TauRef: 2.0
-		DeltaCatalyst: 3.0
+		TauRef: 1.0
+		DeltaCatalyst: 0.0
 		TauCatalyst: 200.0
 		TauEligibility: 25.0
-		LearningRate: 0.05
+		LearningRate: 0.15
 	}
 }
 Layer {
 	IntegrateAndFire {
-		TauMem: 10
+		TauMem: 5
 		TauRef: 2
 	}
 	Determ {
-		Threshold: 0.20
+		Threshold: 0.50
 	}
 	HedonisticSynapse {
 		PspDecay: 10.0
 		Amp: 1.0
-		TauRef: 2.0
-		DeltaCatalyst: 3.0
+		TauRef: 1.0
+		DeltaCatalyst: 0.0
 		TauCatalyst: 200.0
 		TauEligibility: 25.0
-		LearningRate: 0.05
+		LearningRate: 0.15
 	}
 }
 Layer {
 	IntegrateAndFire {
-		TauMem: 10
+		TauMem: 5
 		TauRef: 2
 	}
 	Determ {
-		Threshold: 0.15
+		Threshold: 0.50
 	}
 	HedonisticSynapse {
 		PspDecay: 10.0
 		Amp: 1.0
-		TauRef: 2.0
-		DeltaCatalyst: 3.0
+		TauRef: 1.0
+		DeltaCatalyst: 0.0
 		TauCatalyst: 200.0
 		TauEligibility: 25.0
-		LearningRate: 0.05
+		LearningRate: 0.10
 	}
 	InputClassifier {
 		Ltp: 1.0;
@@ -68,14 +68,14 @@ Connection {
 	Stochastic {
 		Prob: 0.50
 	}
-	Weight: 0.50
+	Weight: 0.60
 }
 Connection {
 	From: 1 To: 1
 	Stochastic {
-		Prob: 0.50
+		Prob: 0.25
 	}
-	Weight: -2.0
+	Weight: -0.75
 }
 Connection {
 	From: 1 To: 2
@@ -83,13 +83,6 @@ Connection {
 		Prob: 0.50
 	}
 	Weight: 0.75
-}
-Connection {
-	From: 0 To: 2
-	Stochastic {
-		Prob: 0.50
-	}
-	Weight: 0.10
 }
 
 RewardControl {
