@@ -1,0 +1,16 @@
+package NDnnProto;
+
+
+message TSRMNeuronConst {
+    optional double Urest = 1;
+    optional double AmpRefr = 2;
+    optional double AmpAdapt = 3;
+    optional double TauRefr = 4;
+    optional double TauAdapt = 5;
+}
+
+message TSRMNeuronState {
+    optional double VarRefr = 1;
+    optional double VarAdapt = 2;
+}
+

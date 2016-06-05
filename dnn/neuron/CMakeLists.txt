@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 set(SOURCES
     spike_neuron_impl.cpp
+    srm_neuron.cpp
 )
 
 set(DIR_SRCS)

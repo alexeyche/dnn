@@ -100,9 +100,9 @@ namespace NDnn {
 						syn.MutConstants().SerialProcess(serial);
 					}
 
-					syn.MutWeight() = connRecipe.Amplitude * conn.weight();
+					syn.MutWeight() = connRecipe.Amplitude * rand.DrawValue(conn.weight());
 					syn.MutIdPre() = npre.GetGlobalId();
-					syn.MutDendriteDelay() = conn.dendritedelay();
+					syn.MutDendriteDelay() = rand.DrawValue(conn.dendritedelay());
 
 					npost.AddSynapse(std::move(syn));
 				}

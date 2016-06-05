@@ -150,7 +150,7 @@ namespace NDnn {
 			// ENSURE(!std::isnan(Isyn), "Isyn is nan");
 			Neuron.CalculateDynamics(t, Irf, Isyn);
 
-		    Neuron.MutSpikeProbability() = Activation.SpikeProbability(Neuron.Membrane());
+		    Neuron.MutSpikeProbability() = Activation.SpikeProbability(Neuron.Membrane()) * Neuron.ProbabilityModulation();
 			if(t.Dt * Neuron.SpikeProbability() > Rand->GetUnif()) {
 		        Neuron.MutFired() = true;
 		    }
@@ -279,6 +279,10 @@ namespace NDnn {
 		}
 		
 		auto& GetMutActivationFunction() {
+			return Activation;
+		}
+
+		const auto& GetActivationFunction() const {
 			return Activation;
 		}
 		

@@ -71,3 +71,7 @@ read.input.ts.wd = function() {
     }
     return(proto.read(f))
 }
+
+get.last.epoch.wd = function() {
+    as.numeric(strsplit(system("ls -t *.pb | head -n 1", intern=TRUE), "_")[[1]][1])
+}

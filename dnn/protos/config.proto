@@ -1,5 +1,7 @@
 package NDnnProto;
 
+import "ground/protos/distr.proto";
+
 import "dnn/protos/integrate_and_fire.proto";
 import "dnn/protos/determ.proto";
 import "dnn/protos/spike_neuron.proto";
@@ -31,6 +33,8 @@ import "dnn/protos/log_norm.proto";
 import "dnn/protos/max_entropy.proto";
 import "dnn/protos/log_exp.proto";
 import "dnn/protos/sum_norm.proto";
+import "dnn/protos/optimal_stdp.proto";
+import "dnn/protos/srm_neuron.proto";
 
 
 message TRewardControl {
@@ -88,18 +92,22 @@ message TLayer {
     repeated TLogNormConst LogNorm = 39;
     repeated TLogNormState LogNormState = 40;
     repeated TMaxEntropyIPConst MaxEntropyIP = 41;
-    repeated TMaxEntropyIPState MaxEntropyIPState = 42;
-    repeated TLogExpConst LogExp = 43;
-    repeated TSumNormConst SumNorm = 44;
-    repeated TSumNormState SumNormState = 45;
+    repeated TMaxEntropyIPDefaultState MaxEntropyIPDefaultState = 42;
+    repeated TMaxEntropyIPDetermState MaxEntropyIPDetermState = 43;
+    repeated TLogExpConst LogExp = 44;
+    repeated TSumNormConst SumNorm = 45;
+    repeated TSumNormState SumNormState = 46;
+    repeated TOptimalStdpConst OptimalStdp = 47;
+    repeated TOptimalStdpState OptimalStdpState = 48;
+    repeated TSRMNeuronConst SRMNeuron = 49;
+    repeated TSRMNeuronState SRMNeuronState = 50;
 }
-
 
 message TConnection {
 	optional uint32 From = 1;
 	optional uint32 To = 2;
-	optional double Weight = 3;
-	optional double DendriteDelay = 4;
+	optional NGroundProto.TDistr Weight = 3;
+    optional NGroundProto.TDistr DendriteDelay = 4;
 	optional TStochasticConst Stochastic = 5;
     optional TDifferenceOfGaussiansConst DifferenceOfGaussians = 6;
 }

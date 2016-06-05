@@ -8,4 +8,5 @@ namespace NDnn {
 
 	TConnectionPtr BuildConnection(const NDnnProto::TConnection& conn, TRandEngine& rand);
 
+
 } // namespace NDnn

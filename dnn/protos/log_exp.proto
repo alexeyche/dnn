@@ -2,8 +2,7 @@ package NDnnProto;
 
 
 message TLogExpConst {
-    optional double R0 = 1;
-    optional double U0 = 2;
-    optional double Ua = 3;
+    optional double Threshold = 1;
+    optional double Slope = 2;
 }
 

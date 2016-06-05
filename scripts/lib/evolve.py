@@ -9,6 +9,8 @@ import os
 import time
 import numpy as np
 import sys
+import env
+import traceback
 
 class TEvolveCli(object):
     def __init__(self, runner_args, bounds, bad_value = 10.0, max_running = 8):
@@ -112,3 +114,98 @@ class TCMAStrategy(TStrategy):
 
     def tell(self, x, y):
         self.__es.tell(x, y)
+
+
+class TGpyOptStrategy(TStrategy):
+    def __init__(self, args):
+        import GPyOpt
+        import GPy
+        
+        self.__bounds = (0.0, 1.0)
+        
+        self.__asked_points = None
+        self.__tellings = None
+
+        self.__ready_to_ask = threading.Event()
+        self.__got_answer = threading.Event()
+        self.__got_error = threading.Event()
+        self.file_cache_x = "/var/tmp/bo_cache_x.csv"
+        self.file_cache_y = "/var/tmp/bo_cache_y.csv"
+
+        self.__opt_thread = threading.Thread(target=self.__runner, args = (args,))
+        self.__opt_thread.setDaemon(True)
+        self.__opt_thread.start()
+
+    def __runner(self, args):
+        try:
+            import GPyOpt
+            import GPy
+            x, y = None, None
+            if os.path.exists(self.file_cache_y):
+                y = np.asarray([np.loadtxt(self.file_cache_y)])
+                y = y.T                
+            if os.path.exists(self.file_cache_x):
+                x = np.loadtxt(self.file_cache_x)
+            self.__BO_parallel = GPyOpt.methods.BayesianOptimization(
+                f = self.__asker,
+                bounds = [(0, 1.0)]*args.dim,
+                acquisition = 'EI',                 # Selects the Expected improvement
+                acquisition_par = 2,                 # parameter of the acquisition function
+                normalize = True,
+                verbosity = True,
+                model_optimize_restarts = 10,
+                numdata_initial_design = 50,
+                kernel = GPy.kern.OU(args.dim, ARD=True)+GPy.kern.Bias(args.dim),
+                X = x,
+                Y = y,
+            )
+            if x is None:
+                np.savetxt(self.file_cache_x, self.__asked_points)
+                np.savetxt(self.file_cache_y, self.__tellings)
+
+            self.__BO_parallel.run_optimization(
+                5000,                             # Number of iterations
+                acqu_optimize_method = 'fast_brute',       # method to optimize the acq. function
+                n_inbatch = args.jobs,                        # size of the collected batches (= number of cores)
+                batch_method='predictive',                          # method to collected the batches (maximization-penalization)
+                acqu_optimize_restarts = 20,                # number of local optimizers
+                eps = 0.0
+            )
+            self.__BO_parallel.save_report(pj(env.runs_dir, "report.txt"))
+        except Exception as err:
+            logging.error("Got error in runner thread: {}".format(err))
+            self.__got_error.set()
+
+    
+    def get_bounds(self):
+        return self.__bounds
+    
+    def __asker(self, x):
+        self.__asked_points = x
+        self.__ready_to_ask.set()
+        while not self.__got_answer.is_set():
+            if self.__got_error.is_set():
+                raise Exception("Got error in master thread")
+            time.sleep(0.1)
+        self.__got_answer.clear()
+        return self.__tellings
+
+    def ask(self):
+        while not self.__ready_to_ask.is_set():
+            if self.__got_error.is_set():
+                raise Exception("Got error in master thread")
+            if not self.__opt_thread.isAlive():
+                return []
+            time.sleep(0.1)
+        return self.__asked_points
+
+    def tell(self, x, y):
+        ans = np.asarray([y])
+        self.__tellings = ans.T
+        self.__ready_to_ask.clear()
+        self.__got_answer.set()
+        
+    def stop(self):
+        if self.__got_error.is_set():
+            raise Exception("Got error in master thread")
+        return not self.__opt_thread.isAlive()

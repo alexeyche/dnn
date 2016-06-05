@@ -1,20 +1,24 @@
 #pragma once
 
 #include <ground/serial/proto_serial.h>
+#include <ground/rand.h>
 #include <dnn/protos/spike_neuron.pb.h>
 #include <dnn/protos/config.pb.h>
 
 namespace NDnn {
+	using namespace NGround;
 
 	struct TSpikeNeuronInnerState: public IProtoSerial<NDnnProto::TSpikeNeuronInnerState> {
 		void SerialProcess(TProtoSerial& serial) override final {
             serial(Membrane);
             serial(SpikeProbability);
+            serial(ProbabilityModulation);
             serial(Fired);
         }
 
 		double Membrane = 0.0;
 		double SpikeProbability = 0.0;
+		double ProbabilityModulation = 1.0;
 		bool Fired = false;
 	};
 
@@ -42,6 +46,14 @@ namespace NDnn {
 
 		double& MutSpikeProbability() {
 			return InnerState.SpikeProbability;
+		}
+
+		double& MutProbabilityModulation() {
+			return InnerState.ProbabilityModulation;
+		}
+
+		const double& ProbabilityModulation() const {
+			return InnerState.ProbabilityModulation;
 		}
 
 		const double& SpikeProbability() const {

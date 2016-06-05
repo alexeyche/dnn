@@ -11,7 +11,8 @@ import librosa as lr
 import argparse
 from lib.util import run_proc
 from lib.util import setup_logging
-from lib import run_iaf_network
+from lib import run_iaf_network, write_time_series
+from librosa.core.time_frequency import mel_frequencies
 
 import logging
 import os
@@ -19,7 +20,7 @@ import os
 setup_logging(logging.getLogger())
 
 
-def main(input_file, ms_frame=10, n_mels=256, top_db=60, plot=False):
+def main(input_file, ms_frame=10, n_mels=256, top_db=60, plot=False, fmin=100.0):
     input_file = os.path.realpath(os.path.expanduser(input_file))
     basef = input_file.rsplit(".",1)[0]
     logging.info("Processing {}".format(input_file))
@@ -38,7 +39,9 @@ def main(input_file, ms_frame=10, n_mels=256, top_db=60, plot=False):
     hop = int(np.round(ms_frame*sr/1000.0))
     stft = lr.stft(y, hop_length=hop)
     D = lr.logamplitude(np.abs(stft)**2, ref_power=np.max, top_db=top_db)
-    s = lr.feature.melspectrogram(S=D, sr=sr, n_mels=n_mels, fmin=100.0)
+    s = lr.feature.melspectrogram(S=D, sr=sr, n_mels=n_mels, fmin=fmin, fmax=sr/2.0)
+    mf = mel_frequencies(n_mels, fmin, sr/2.0)
+    
     logging.info("Normalizing between 0 and 1")
     for ri in xrange(s.shape[0]):    
         denom = np.max(s[ri,:]) - np.min(s[ri,:])
@@ -49,18 +52,19 @@ def main(input_file, ms_frame=10, n_mels=256, top_db=60, plot=False):
             
     if plot:
         from matplotlib import pyplot as plt
-
+        
         plt.figure(1)
         plt.subplot(2,1,1)
         lr.display.specshow(
-        lr.logamplitude(
-                lr.stft(np.abs(y))**2, 
-            ref_power=np.max, top_db=top_db), 
-        sr, y_axis="mel")
+            lr.logamplitude(
+                    lr.stft(np.abs(y))**2, 
+                ref_power=np.max, top_db=top_db), 
+            sr, y_axis="mel")
         plt.subplot(2,1,2)
         lr.display.specshow(s, sr, hop_length=hop)
         plt.show()
 
+    write_time_series(s, basef+"_raw.pb")
     run_iaf_network(s, basef+".pb", dt=1.0, tau_mem=10, tau_ref=2, threshold=0.4)
     
     return s

@@ -5,8 +5,8 @@ SimConfiguration {
 }
 Layer {
 	Sigmoid {
-		A: 120.0
-		B: -18.0
+		Threshold: 0.1
+		Slope: 0.1	
 	}
     BasicSynapse {
         PspDecay: 10.0
@@ -48,26 +48,26 @@ Connection {
 	Stochastic {
 		Prob: 0.25
 	}
-	Weight: 0.04
+	Weight: {Value: 0.04}
 }
 Connection {
 	From: 0 To: 1
 	Stochastic {
 		Prob: 0.25
 	}
-	Weight: -0.04
+	Weight: {Value: -0.04}
 }
 Connection {
 	From: 1 To: 1
 	Stochastic {
 		Prob: 0.1
 	}
-	Weight: 0.04
+	Weight: {Value: 0.04}
 }
 Connection {
 	From: 1 To: 1
 	Stochastic {
 		Prob: 0.25
 	}
-	Weight: -0.04
+	Weight: {Value: -0.04}
 }

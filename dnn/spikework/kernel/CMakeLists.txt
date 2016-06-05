@@ -2,8 +2,11 @@ cmake_minimum_required(VERSION 2.8)
 
 set(SOURCES
 	dot.cpp
+	anova_dot.cpp
+	rbf_dot.cpp
 	kernel.cpp
     epsp.cpp
+    shoe.cpp
 )
 
 set(DIR_SRCS)

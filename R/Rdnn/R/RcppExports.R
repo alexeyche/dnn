@@ -13,12 +13,12 @@ class.kernel.run <- function(kernelConfig, timeSeries, jobs) {
     .Call('Rdnn_ClassKernelRun', PACKAGE = 'Rdnn', kernelConfig, timeSeries, jobs)
 }
 
-pp.kernel.run <- function(preProcConfig, kernelConfig, timeSeries, jobs, dt = 1.0) {
-    .Call('Rdnn_PpKernelRun', PACKAGE = 'Rdnn', preProcConfig, kernelConfig, timeSeries, jobs, dt)
+pp.kernel.run <- function(preProcConfig, kernelConfig, timeSeries, jobs, dt = 1.0, timeCorrelation = FALSE) {
+    .Call('Rdnn_PpKernelRun', PACKAGE = 'Rdnn', preProcConfig, kernelConfig, timeSeries, jobs, dt, timeCorrelation)
 }
 
-kernel.run <- function(kernelConfig, timeSeries, jobs) {
-    .Call('Rdnn_KernelRun', PACKAGE = 'Rdnn', kernelConfig, timeSeries, jobs)
+kernel.run <- function(kernelConfig, timeSeries, jobs, timeCorrelation) {
+    .Call('Rdnn_KernelRun', PACKAGE = 'Rdnn', kernelConfig, timeSeries, jobs, timeCorrelation)
 }
 
 preprocess.run <- function(preProcConfig, timeSeries, jobs) {

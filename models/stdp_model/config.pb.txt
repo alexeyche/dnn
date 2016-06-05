@@ -43,5 +43,5 @@ Connection {
 	Stochastic {
 		Prob: 1.0
 	}
-	Weight: 0.03
+	Weight: {Value: 0.03}
 }

@@ -60,11 +60,11 @@ namespace NDnn {
         }
 
         template <typename TNeuron>
-        void PropagateSpike(const TNeuron& neuron, double t) {
-            SpikesList[neuron.GetGlobalId()].push_back(t);
+        void PropagateSpike(const TNeuron& neuron, const TTime& t) {
+            SpikesList[neuron.GetGlobalId()].push_back(t.T);
 
-            ENSURE((t < 1000.0) || (1000.0*((SpikesList[neuron.GetGlobalId()].size())/t) < 300.0),
-                "Rate limit exceeded: " << SpikesList[neuron.GetGlobalId()].size() << " spikes of neuron " << neuron.GetGlobalId() << " at " << t
+            ENSURE((t.T < 1000.0) || (1000.0*((SpikesList[neuron.GetGlobalId()].size())/t.T) < 300.0),
+                "Rate limit exceeded: " << SpikesList[neuron.GetGlobalId()].size() << " spikes of neuron " << neuron.GetGlobalId() << " at " << t.T
             );
 
             for(auto& conn : ConnMap[neuron.GetGlobalId()]) {
@@ -72,7 +72,7 @@ namespace NDnn {
                     TSynSpike(
                           neuron.GetGlobalId() /* source of spike */
                         , conn.SynId /* destination synapse */
-                        , t  + neuron.GetAxonDelay() + conn.DendriteDelay /* time of spike */
+                        , t.T  + neuron.GetAxonDelay() + conn.DendriteDelay /* time of spike */
                     )
                 );
             }

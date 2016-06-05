@@ -5,6 +5,7 @@
 #include <dnn/neuron/config.h>
 
 #include <dnn/neuron/integrate_and_fire.h>
+#include <dnn/neuron/srm_neuron.h>
 #include <dnn/neuron/spike_sequence_neuron.h>
 #include <dnn/synapse/synapse.h>
 #include <dnn/synapse/basic_synapse.h>
@@ -15,6 +16,7 @@
 #include <dnn/receptive_field/ident.h>
 #include <dnn/learning_rule/stdp.h>
 #include <dnn/learning_rule/pre_post_stdp.h>
+#include <dnn/learning_rule/optimal_stdp.h>
 #include <dnn/activation/sigmoid.h>
 #include <dnn/activation/log_exp.h>
 #include <dnn/activation/determ.h>
@@ -29,30 +31,40 @@
 
 using namespace NDnn;
 
+
+
 int main(int argc, const char** argv) {
     auto opts = InitOptions(argc, argv, "AcousticModel");
     if (opts.NoLearning) {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 256, TNeuronConfig<>>,
-            TLayer<TIntegrateAndFire, 10, TNeuronConfig<TBasicSynapse, TSigmoid>>
+            TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TLogExp>>
         >(opts);
 
         sim.Run();
     } else {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 256, TNeuronConfig<>>,
-            TLayer<TIntegrateAndFire, 10, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TSumNorm, TMaxEntropyIP>>
+            TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TSumNorm, TMaxEntropyIP>>
+            // TLayer<TSRMNeuron, 50, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TSumNorm, TMaxEntropyIP>>
+            // TLayer<TIntegrateAndFire, 10, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TOptimalStdp, TSumNorm, TMaxEntropyIP>>
         >(opts);
 
         if (opts.StatFile) {
-            sim.ListenBasicStats<0, 46>(0, 10000);
-            sim.ListenBasicStats<1, 0>(0, 10000);
+            sim.ListenBasicStats<1, 2>(0, 10000);
 
-            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 0, 10>().Weight(); }, 0, 10000);
-            sim.ListenStat("StdpX", [&]() { return sim.GetLearningRule<1, 0>().State().X.Get(0); }, 0, 10000);
+            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 2, 18>().Weight(); }, 0, 10000);
+            sim.ListenStat("M", [&]() { return sim.GetNeuron<1, 2>().ProbabilityModulation(); }, 0, 10000);
+            sim.ListenStat("Refr", [&]() { return sim.GetNeuron<1, 2>().State().VarRefr; }, 0, 10000);
+            sim.ListenStat("Adapt", [&]() { return sim.GetNeuron<1, 2>().State().VarAdapt; }, 0, 10000);
 
-            sim.ListenStat("StdpY", [&]() { return sim.GetLearningRule<1, 0>().State().Y; }, 0, 10000);
-            sim.ListenStat("Ltd", [&]() { return sim.GetLearningRule<1, 0>().Norm().Ltd(sim.GetSynapse<1, 0, 10>().Weight()); }, 0, 10000);
+            // sim.ListenStat("OptimalStdpB", [&]() { return sim.GetLearningRule<1, 0>().State().B; }, 0, 10000);   
+            // sim.ListenStat("OptimalStdpC", [&]() { return sim.GetSynapse<1, 0, 11>().Potential(); }, 0, 10000);
+            // sim.ListenStat("OptimalStdpC", [&]() { return sim.GetLearningRule<1, 0>().State().C.Get(11); }, 0, 10000);
+            // sim.ListenStat("StdpX", [&]() { return sim.GetLearningRule<1, 0>().State().X.Get(0); }, 0, 10000);
+
+            // sim.ListenStat("StdpY", [&]() { return sim.GetLearningRule<1, 0>().State().Y; }, 0, 10000);
+            // sim.ListenStat("Ltd", [&]() { return sim.GetLearningRule<1, 0>().Norm().Ltd(sim.GetSynapse<1, 0, 10>().Weight()); }, 0, 10000);
         }
 
         sim.Run();

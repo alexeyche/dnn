@@ -67,7 +67,8 @@ Rcpp::List PpKernelRun(
 	Rcpp::List kernelConfig, 
 	Rcpp::List timeSeries, 
 	size_t jobs,
-	double dt = 1.0
+	double dt = 1.0,
+	bool timeCorrelation = false
 ) {
 	TTimeSeries ts;
 	TString type = timeSeries.attr("class");
@@ -80,7 +81,8 @@ Rcpp::List PpKernelRun(
 		TProto::TranslateBack<NDnnProto::TPreprocessorConfig>(preProcConfig), 
 		TProto::TranslateBack<NDnnProto::TKernelConfig>(kernelConfig), 
 		ts, 
-		jobs);
+		jobs,
+		timeCorrelation);
 
 	Rcpp::List ans;
 	for (const auto& m: mVec) {
@@ -95,12 +97,14 @@ Rcpp::List PpKernelRun(
 Rcpp::List KernelRun(
 	Rcpp::List kernelConfig, 
 	Rcpp::List timeSeries, 
-	size_t jobs
-) {
+	size_t jobs,
+	bool timeCorrelation) 
+{
 	auto mVec = TSpikework::KernelRun(
 		TProto::TranslateBack<NDnnProto::TKernelConfig>(kernelConfig), 
 		TProto::TranslateBack<TTimeSeries>(timeSeries), 
-		jobs);
+		jobs,
+		timeCorrelation);
 
 	Rcpp::List ans;
 	for (const auto& m: mVec) {

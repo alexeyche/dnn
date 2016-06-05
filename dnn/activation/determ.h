@@ -20,14 +20,14 @@ namespace NDnn {
 
     class TDeterm : public TActivation<TDetermConst> {
     public:
-        double SpikeProbability(const double &u) {
+        double SpikeProbability(const double& u) const {
             if(u >= c.Threshold) {
                 return 1.0;
             }
             return 0.0;
         }
 
-        double SpikeProbabilityDerivative(const double &u) {
+        double SpikeProbabilityDerivative(const double &u) const {
             return 0.0;
         }
     };

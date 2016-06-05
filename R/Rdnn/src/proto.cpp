@@ -172,6 +172,13 @@ NDnnProto::TPreprocessorConfig TProto::TranslateBack<NDnnProto::TPreprocessorCon
         SET(config, l["Epsp"], epsp, double, "Length", length);
         SET(config, l["Epsp"], epsp, double, "Dt", dt);
     }
+    if (l.containsElementNamed("Gauss")) {
+        *config.mutable_gauss() = NDnnProto::TGaussOptions();
+
+        SET(config, l["Gauss"], gauss, double, "Sigma", sigma);
+        SET(config, l["Gauss"], gauss, double, "Length", length);
+        SET(config, l["Gauss"], gauss, double, "Dt", dt);
+    }
     return config;
 }
 
@@ -182,6 +189,27 @@ NDnnProto::TKernelConfig TProto::TranslateBack<NDnnProto::TKernelConfig>(const R
     NDnnProto::TKernelConfig config;
     if (l.containsElementNamed("Dot")) {
         *config.mutable_dot() = NDnnProto::TDotOptions();
+    }
+    if (l.containsElementNamed("RbfDot")) {
+        *config.mutable_rbfdot() = NDnnProto::TRbfDotOptions();   
+
+        SET(config, l["RbfDot"], rbfdot, double, "Sigma", sigma);
+    }
+    if (l.containsElementNamed("AnovaDot")) {
+        *config.mutable_anovadot() = NDnnProto::TAnovaDotOptions();   
+
+        SET(config, l["AnovaDot"], anovadot, double, "Sigma", sigma);
+        SET(config, l["AnovaDot"], anovadot, double, "Power", power);
+    }
+    if (l.containsElementNamed("Shoe")) {
+        *config.mutable_shoe() = NDnnProto::TShoeOptions();
+        
+        SET(config, l["Shoe"], shoe, double, "Sigma", sigma);
+        
+        Rcpp::List shoeList = l["Shoe"];
+        if (shoeList.containsElementNamed("Kernel")) {
+            *(config.mutable_shoe()->mutable_kernel()) = TProto::TranslateBack<NDnnProto::TKernelConfig>(shoeList["Kernel"]);
+        }
     }
     return config;
 }

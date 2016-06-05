@@ -13,27 +13,24 @@ namespace NDnn {
         static const auto ProtoFieldNumber = NDnnProto::TLayer::kSigmoidFieldNumber;
 
         void SerialProcess(TProtoSerial& serial) {
-            serial(A);
-            serial(B);
+            serial(Threshold);
+            serial(Slope);
         }
 
-        double A = 20.0;
-        double B = -4.0;
+        double Threshold = 0.2;
+        double Slope = 1.0;
     };
 
 
     class TSigmoid: public TActivation<TSigmoidConst> {
     public:
-        double SpikeProbability(const double& u) {
-            const double input = c.A*u + c.B;
+        double SpikeProbability(const double& u) const {
+            const double input = (u - c.Threshold)/c.Slope;
             const double p = 1.0/(1.0+std::exp(-input));
-            if(fabs(p)<1e-04) {
-                return 1e-04;
-            }
             return p;
         }
 
-        double SpikeProbabilityDerivative(const double& u) {
+        double SpikeProbabilityDerivative(const double& u) const {
             double p = SpikeProbability(u);
             return p*(1.0-p);
         }

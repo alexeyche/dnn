@@ -3,9 +3,10 @@
 require(methods, quietly=TRUE)
 require(Rdnn, quietly=TRUE)
 
-input_neurons = 100
+input_neurons = 256
 
-c(spikes, epoch) := read.spikes.wd()
+epoch=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", getwd()), intern=TRUE), "_")[[1]][1])
+spikes = proto.read(sprintf("%d_spikes.pb", epoch))
 
 rates = NULL
 labs = NULL

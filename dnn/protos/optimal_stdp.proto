@@ -1,0 +1,19 @@
+package NDnnProto;
+
+
+message TOptimalStdpState {
+    repeated double C = 1;
+    optional double B = 2;
+    optional double Pmean = 3;
+}
+
+message TOptimalStdpConst {
+    optional double TauC = 1;
+    optional double TauMean = 2;
+    optional double TargetRate = 3;
+    optional double TargetRateFactor = 4;
+    optional double WeightDecay = 5;
+    optional double LearningRate = 6;
+    optional double TauHebb = 7;
+}
+

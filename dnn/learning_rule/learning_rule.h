@@ -51,6 +51,11 @@ namespace NDnn {
 		TWeightNormalizationType& MutNorm() {
 			return WeightNormalization;
 		}
+
+		const typename TNeuronImpl::TConfig::TNeuronActivationFunction& ActivationFunction() {
+			return NeuronImpl->GetActivationFunction();
+		}
+
 	protected:
 		TConstants c;
 		TState s;

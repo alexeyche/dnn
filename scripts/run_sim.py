@@ -357,7 +357,7 @@ class TDnnSim(object):
 
         while i<1000:
             self.working_dir = os.path.join(self.runs_dir, config_hex + "_%04d" % i)
-            time.sleep(0.1 * random.random())
+            time.sleep(0.01 * random.random())
             if not os.path.exists(self.working_dir):
                 break
             if self.old_dir:

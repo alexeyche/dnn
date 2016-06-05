@@ -4,8 +4,14 @@ package NDnnProto;
 message TMaxEntropyIPConst {
     optional double TargetRate = 1;
     optional double LearningRate = 2;
+    optional double TauMoment = 3;
 }
 
-message TMaxEntropyIPState {
+message TMaxEntropyIPDefaultState {
+}
+
+message TMaxEntropyIPDetermState {
+	optional double M1 = 1;
+	optional double M2 = 2;
 }
 

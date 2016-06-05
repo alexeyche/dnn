@@ -23,11 +23,11 @@ if(length(grep("RStudio", args))>0) {
     #WD = simruns.path(system(sprintf("ls -t %s | head -n 1", simruns.path()), intern=TRUE))
     WD = file.path(dnn.env(), "runs/last")
     
-    #WD="/home/alexeyche/dnn/runs/cma-run/60699c28659ed54a0fc66fc51b44166a_0512"
+    #WD="/home/alexeyche/dnn/runs/param_range/c230c7d64d9094a83c1ec9fc6a656def_0019"
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
-    #EP=1
+    #EP=4
 }
 
 pfx_f = function(s) s
@@ -119,9 +119,13 @@ if(INSP_MODEL) {
             }
         }
         
+        
         weights_pic = sprintf("%s/2_%s", tmp_d, pfx_f("weights.png"))
         if(SAVE_PIC_IN_FILES) png(weights_pic, width=1024, height=768)
-        print(gr_pl(w))
+        #print(gr_pl(t(w[257:(256+10),1:256])))
+        #print(gr_pl(t(w[257:nrow(w),257:nrow(w)])))
+        
+        #print(gr_pl(w))
         if(SAVE_PIC_IN_FILES) { 
             dev.off()
             write(paste("Weights pic filename: ", weights_pic), stderr())
@@ -512,13 +516,22 @@ annoying_file = file.path(getwd(), "Rplots.pdf")
 if(file.exists(annoying_file)) {
     success = file.remove(annoying_file)
 }
-if (exists("signal")) {
-    par(mfrow=c(1,1))
-    plot(neuron$weights, type="l", ylim=c(-0.2, 1.0))
-    ei = eigen(t(signal) %*% (signal))
-    lines(Re(ei$vectors[,1]), col="blue")
-    lines(w[nrow(w), which(sapply(spikes$values, length) > 0)], col="red",type="l")
-    gr_pl(t(m.sort(w[257:nrow(w),1:256])))
-    gr_pl(t(m.sort(t(abs(ica.signal$M)))))
+# if (exists("signal")) {
+#     par(mfrow=c(1,1))
+#     plot(neuron$weights, type="l", ylim=c(-0.2, 1.0))
+#     ei = eigen(t(signal) %*% (signal))
+#     lines(Re(ei$vectors[,1]), col="blue")
+#     lines(w[nrow(w), which(sapply(spikes$values, length) > 0)], col="red",type="l")
+#     gr_pl(t(m.sort(w[257:nrow(w),1:256])))
+#     gr_pl(t(m.sort(t(abs(ica.signal$M)))))
+# }
+
+sigmoid = function(x, tt=0.1, s=100) {
+    1/(1+exp(-(x-tt)/s))
 }
+logexp = function(x, t=0.1, s=1.0) {
+    log( (1 + exp((x-t)/s))/(1 + exp((-t)/s)))
+}
+
+
 
