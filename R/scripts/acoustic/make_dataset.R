@@ -14,11 +14,12 @@ test_licks = add.ts.info(test_licks, ts.info(label="8", start_time=4670, duratio
 test_licks = add.ts.info(test_licks, ts.info(label="9", start_time=5300, duration=900))
 
 test_licks = add.to.spikes(test_licks, test_licks)
-proto.write(test_licks, spikes.path("work_licks_eval.pb"))
+
+proto.write(add.to.spikes(test_licks, test_licks), spikes.path("work_licks_eval.pb"))
 
 while (TRUE) {
     max_t = max(sapply(test_licks$values, function(x) if(length(x)>0) { max(x)} else {0}))
-    if (max_t > 60000) {
+    if (max_t > 200000) {
         break
     }
     test_licks = add.to.spikes(test_licks, test_licks)

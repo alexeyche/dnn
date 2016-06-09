@@ -32,12 +32,12 @@ void write_time_series(const double* data, int nrows, int ncols, const char* lab
 	auto* info = ts.mutable_info();
 	info->set_dimsize(nrows);
 	info->set_dt(1.0);	
-	auto* lab = info->add_uniquelabels();
-	lab->set_name(label);
-	lab->set_duration(ncols);
-	auto* lab_start = info->add_labelsstart();
-	lab_start->set_start(0);
-	lab_start->set_labelid(0);
+	info->add_uniquelabelnames(label);
+	
+	auto* lab = info->add_labels();
+	lab->set_from(0);
+	lab->set_to(ncols);
+	lab->set_labelid(0);
 
 	for (ui32 rid = 0; rid < nrows; ++rid) {
 		NGrPb::TTimeSeriesData* ts_data = ts.add_data();

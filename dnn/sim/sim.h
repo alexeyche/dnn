@@ -215,11 +215,9 @@ namespace NDnn {
 			Conf.Duration = ts.Length() * Conf.Dt;
 
 			Network.GetMutSpikesList().Info = ts.Info;
-			for (auto& labStart: Network.GetMutSpikesList().Info.LabelsStart) {
-				labStart.Start = labStart.Start * Conf.Dt;
-			}
-			for (auto& uniqLab: Network.GetMutSpikesList().Info.UniqueLabels) {
-				uniqLab.Duration = uniqLab.Duration * Conf.Dt;
+			for (auto& lab: Network.GetMutSpikesList().Info.Labels) {
+				lab.From = lab.From * Conf.Dt;
+				lab.To = lab.To * Conf.Dt;
 			}
 			if (ts.Dim() == 1) {
 				L_DEBUG << "Got one dimensional time series, dnn will duplicate data on " << requiredDimSize << " dimensions";

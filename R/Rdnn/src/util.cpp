@@ -48,3 +48,10 @@ Rcpp::List binarizeSpikes(Rcpp::List l, double dt = 1.0) {
 	TSpikesList ts = TProto::TranslateBack<TSpikesList>(l);
 	return TProto::Translate<TTimeSeries>(ts.ConvertToBinaryTimeSeries(dt));
 }
+
+// [[Rcpp::export(name = "get.rate.vectors")]]
+Rcpp::List getRateVectors(Rcpp::List l, double winLength = 10.0) {
+	TSpikesList ts = TProto::TranslateBack<TSpikesList>(l);
+	return TProto::Translate<TTimeSeries>(ts.ConvertToRateVectors(winLength));
+}
+

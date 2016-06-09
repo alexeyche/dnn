@@ -41,3 +41,7 @@ binarize.spikes <- function(l, dt = 1.0) {
     .Call('Rdnn_binarizeSpikes', PACKAGE = 'Rdnn', l, dt)
 }
 
+get.rate.vectors <- function(l, winLength = 10.0) {
+    .Call('Rdnn_getRateVectors', PACKAGE = 'Rdnn', l, winLength)
+}
+

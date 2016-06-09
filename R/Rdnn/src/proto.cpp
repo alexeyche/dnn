@@ -12,13 +12,13 @@
 template <>
 SEXP TProto::Translate<TTimeSeriesInfo>(const TTimeSeriesInfo& ent) {
     Rcpp::List ret;
-    for(const auto& lab_start_info: ent.LabelsStart) {
-        const auto& lab_spec = ent.UniqueLabels[lab_start_info.LabelId];
+    for(const auto& lab_start_info: ent.Labels) {
+        const auto& lab_name = ent.UniqueLabelNames[lab_start_info.LabelId];
         ret.push_back(
             Rcpp::List::create(
-                Rcpp::Named("label") = lab_spec.Name
-              , Rcpp::Named("start_time") = lab_start_info.Start
-              , Rcpp::Named("duration") = lab_spec.Duration
+                Rcpp::Named("label") = lab_name
+              , Rcpp::Named("start_time") = lab_start_info.From
+              , Rcpp::Named("duration") = lab_start_info.To - lab_start_info.From
             )
         );
     }

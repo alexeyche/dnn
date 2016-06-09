@@ -132,3 +132,15 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// getRateVectors
+Rcpp::List getRateVectors(Rcpp::List l, double winLength);
+RcppExport SEXP Rdnn_getRateVectors(SEXP lSEXP, SEXP winLengthSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type l(lSEXP);
+    Rcpp::traits::input_parameter< double >::type winLength(winLengthSEXP);
+    __result = Rcpp::wrap(getRateVectors(l, winLength));
+    return __result;
+END_RCPP
+}

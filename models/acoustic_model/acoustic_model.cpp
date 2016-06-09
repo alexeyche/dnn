@@ -46,7 +46,7 @@ int main(int argc, const char** argv) {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 256, TNeuronConfig<>>,
             TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TSumNorm, TMaxEntropyIP>>
-            // TLayer<TSRMNeuron, 50, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TSumNorm, TMaxEntropyIP>>
+            // TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TSumNorm, TMaxEntropyIP>>
             // TLayer<TIntegrateAndFire, 10, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TOptimalStdp, TSumNorm, TMaxEntropyIP>>
         >(opts);
 

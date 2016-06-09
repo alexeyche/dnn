@@ -20,8 +20,8 @@ Layer {
 		TauPlus: 14.0            
 		TauMinus: 34.0			 
 		Aplus: 1.0			    
-		Aminus: 0.5			 
-		LearningRate: 1e-05
+		Aminus: 0.5		 
+		LearningRate: 1e-04
 	}
 	MaxEntropyIP {
 		TargetRate: 10.0
@@ -32,41 +32,13 @@ Layer {
 		InhUnit: 0.3			# [0.01, 1.0]
 	}
 }
-# Layer {
-# 	BasicSynapse {
-#         PspDecay: 10.0
-#     }
-# 	SRMNeuron {
-# 		AmpAdapt: 1
-# 		TauAdapt: 100
-# 	}
-# 	LogExp {
-# 		Threshold: 0.1
-# 		Slope: 0.1
-# 	}
-# 	Stdp {
-# 		TauPlus: 14.0            
-# 		TauMinus: 34.0			 
-# 		Aplus: 1.0			     # [0.01, 30.0]
-# 		Aminus: 1.0			 # [0.01, 30.0]
-# 		LearningRate: 1e-04
-# 	}
-# 	MaxEntropyIP {
-# 		TargetRate: 10.0
-# 		LearningRate: 1e-06
-# 	}
-# 	SumNorm {
-# 		ExcUnit: 0.1			# [0.01, 30.0]
-# 		InhUnit: 0.3			# [0.01, 30.0]
-# 	}
-# }
 Connection {
 	From: 0 To: 1
 	Stochastic {
 		Prob: 1.0
 	}
 	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
-	DendriteDelay: {Exp {Rate: 0.25}}
+	# DendriteDelay: {Exp {Rate: 0.5}}
 }
 Connection {
 	From: 1 To: 1
@@ -74,29 +46,5 @@ Connection {
 		Prob: 1.0
 	}
 	Weight: {Norm {Mean: -0.1  Sd: 0.01}}
-	DendriteDelay: {Exp {Rate: 0.25}}
+	# DendriteDelay: {Exp {Rate: 0.5}}
 }
-# Connection {
-# 	From: 1 To: 2
-# 	Stochastic {
-# 		Prob: 1.0
-# 	}
-# 	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
-# 	DendriteDelay: {Exp {Rate: 0.25}}
-# }
-# Connection {
-# 	From: 2 To: 1
-# 	Stochastic {
-# 		Prob: 1.0
-# 	}
-# 	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
-# 	DendriteDelay: {Exp {Rate: 0.25}}
-# }
-# Connection {
-# 	From: 2 To: 2
-# 	Stochastic {
-# 		Prob: 1.0
-# 	}
-# 	Weight: {Norm {Mean: -0.1  Sd: 0.01}}
-# 	DendriteDelay: {Exp {Rate: 0.25}}
-# }
