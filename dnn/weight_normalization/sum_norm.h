@@ -38,13 +38,14 @@ namespace NDnn {
 			if ((std::abs(w+dw) > TPar::c.ExcUnit) || (std::abs(w+dw) < 0.0)) {
 	    		return 0.0;
 	    	}
-        	return dw;
+
+	    	return dw;
     	}
 
         void CalculateDynamics(const TTime &t) {
-        	if (std::fmod(t.T, 10000.0) > std::numeric_limits<double>::epsilon()) {
-        		return;
-        	}
+        	// if (std::fmod(t.T, 10000.0) > std::numeric_limits<double>::epsilon()) {
+        	// 	return;
+        	// }
         	
         	auto& syns = TPar::GetMutSynapses();
 	        

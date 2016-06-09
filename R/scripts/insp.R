@@ -27,7 +27,7 @@ if(length(grep("RStudio", args))>0) {
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
-    #EP=4
+    #EP=2
 }
 
 pfx_f = function(s) s
@@ -122,10 +122,10 @@ if(INSP_MODEL) {
         
         weights_pic = sprintf("%s/2_%s", tmp_d, pfx_f("weights.png"))
         if(SAVE_PIC_IN_FILES) png(weights_pic, width=1024, height=768)
-        print(gr_pl(t(w[257:(256+10),1:256])))
+        #print(gr_pl(t(w[257:(256+10),1:256])))
         #print(gr_pl(t(w[257:nrow(w),257:nrow(w)])))
         
-        #print(gr_pl(w))
+        print(gr_pl(w))
         if(SAVE_PIC_IN_FILES) { 
             dev.off()
             write(paste("Weights pic filename: ", weights_pic), stderr())
@@ -173,16 +173,16 @@ if (file.exists(STAT_FNAME)) {
     if (length(stat_to_plot) > 8) {
         stat_to_plot = stat[1:8]
     }    
-    par(mfrow=c(length(stat_to_plot),1), mar=rep(2,4))
-    for (s in stat_to_plot) {
-        plot(
-            seq(s$from, s$to, length.out=length(s$values)), 
-            s$values, 
-            type="l", 
-            main=sprintf("%s, %d:%d", s$name, s$from, s$to),
-            xlab="Time", ylab=s$name
-        )
-    }
+#     par(mfrow=c(length(stat_to_plot),1), mar=rep(2,4))
+#     for (s in stat_to_plot) {
+#         plot(
+#             seq(s$from, s$to, length.out=length(s$values)), 
+#             s$values, 
+#             type="l", 
+#             main=sprintf("%s, %d:%d", s$name, s$from, s$to),
+#             xlab="Time", ylab=s$name
+#         )
+#     }
     if(SAVE_PIC_IN_FILES) {
         dev.off()
         write(paste("Stat pic filename: ", stat_pic), stderr())
@@ -533,5 +533,14 @@ logexp = function(x, t=0.1, s=1.0) {
     log( (1 + exp((x-t)/s))/(1 + exp((-t)/s)))
 }
 
-
+# for (ep in 1:100) {
+#     model = proto.read(sprintf("%d_model.pb",ep))
+#     w = matrix(0, nrow=length(model), ncol=length(model))
+#     postW = matrix(0.0, nrow=length(model), ncol=length(model))
+#     
+#     for(n in model) {
+#         w[n$id+1, n$synapses$ids_pre+1] = n$synapses$weights
+#     }
+#     print(gr_pl(w[257:266,257:266]))
+# }
 

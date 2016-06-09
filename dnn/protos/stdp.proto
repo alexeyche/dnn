@@ -4,6 +4,7 @@ package NDnnProto;
 message TStdpState {
     optional double Y = 1;
     repeated double X = 2;
+    repeated double Momentum = 3;
 }
 
 message TStdpConst {
@@ -12,5 +13,6 @@ message TStdpConst {
     optional double Aplus = 3;
     optional double Aminus = 4;
     optional double LearningRate = 5;
+    optional double TauMomentum = 6;
 }
 

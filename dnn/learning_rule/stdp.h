@@ -17,6 +17,7 @@ namespace NDnn {
 	        serial(Aplus);
 	        serial(Aminus);
 	        serial(LearningRate);
+	        serial(TauMomentum);
 	    }
 
 	    double TauPlus = 30.0;
@@ -24,6 +25,7 @@ namespace NDnn {
 	    double Aplus = 1.0;
 	    double Aminus = 1.0;
 	    double LearningRate = 0.01;
+	    double TauMomentum = 10.0;
 	};
 
 	struct TStdpState: public IProtoSerial<NDnnProto::TStdpState>  {
@@ -32,10 +34,12 @@ namespace NDnn {
 		void SerialProcess(TProtoSerial& serial) {
 			serial(Y);
 			serial(X);
+			serial(Momentum);
 		}
 
 		double Y = 0.0;
     	TActVector<double> X;
+    	TActVector<double> Momentum;
 	};
 
 	class TAllToAllSpikePolicy {
@@ -68,7 +72,8 @@ namespace NDnn {
 
 		void Reset() {
 			TPar::s.Y = 0.0;
-			TPar::s.X.resize(TPar::GetSynapses().size());
+			TPar::s.X.resize(TPar::GetSynapses().size(), 0.0);
+			TPar::s.Momentum.resize(TPar::GetSynapses().size(), 0.0);
 		}
 
 		void PropagateSynapseSpike(const TSynSpike& sp) {
@@ -92,16 +97,19 @@ namespace NDnn {
 	                const ui32& synapseId = *synIdIt;
 	                auto& syn = syns.Get(synapseId);
 	                double& w = syn.MutWeight();
+	                
 	                double dw = TPar::c.LearningRate * (
 	                    TPar::c.Aplus  * TPar::s.X[synIdIt] * neuron.Fired() * norm.Ltp(w) -
 	                    TPar::c.Aminus * TPar::s.Y * syn.Fired() * norm.Ltd(w)
 	                );
 
-	                if (w < 0.0) {
-	                	dw *= 10.0;
-	                }
+	                TPar::s.Momentum[synIdIt] += - t.Dt * TPar::s.Momentum[synIdIt]/TPar::c.TauMomentum + dw;
+
+	                // if (w < 0.0) {
+	                // 	dw *= 10.0;
+	                // }
 	                
-	                w += norm.Derivative(w, dw);
+	                w += norm.Derivative(w, TPar::s.Momentum[synIdIt]);
 
 	                TPar::s.X[synIdIt] += - t.Dt * TPar::s.X[synIdIt]/TPar::c.TauPlus;
                 	++synIdIt;
