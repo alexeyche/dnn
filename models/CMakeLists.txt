@@ -6,7 +6,7 @@ set(DIRS
     stdp_model
     hindmarsh_rose_model
     stdp_pca_model
-    stdp_analytic
+    #    stdp_analytic
 )
 
 foreach(dir ${DIRS})
