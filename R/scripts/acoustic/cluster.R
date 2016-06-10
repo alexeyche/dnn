@@ -13,13 +13,17 @@ spectral.clust = function(A) {
     eigen(Lnorm)
 }
 
-input_neurons = 256
+#input_neurons = 256
 
-c(spikes, epoch) := read.spikes.wd()
+#c(spikes, epoch) := read.spikes.wd()
+#sp = spikes
+#sp$values = sp$values[-(1:input_neurons)]
+
+
+
+spikes = proto.read("/Users/alexeyche/dnn/spikes/timed_pattern_spikes.pb")
 sp = spikes
 
-
-sp$values = sp$values[-(1:input_neurons)]
 
 samples = chop.spikes.list(sp)
 rates = t(sapply(samples, function(x) sapply(x$values, function(sp) length(sp)/x$info[[1]]$duration)))
@@ -48,7 +52,13 @@ plot(ei$vectors[,1:2], col=cols)
 plot(spectral.clust(K)$vectors[,1:2], col=cols)
 
 
+cols = NULL
 rv = get.rate.vectors(sp)
-plot(svd(t(rv$values))$u[,1:2])
+for (i in rv$info) {
+    col = rainbow_cols[which(i$label == uc)]
+    cols = c(cols, rep(col, i$duration))
+}
+
+plot(svd(t(rv$values))$u[,1:2], col=cols)
 plot(hclust(dist(rates)))
 
