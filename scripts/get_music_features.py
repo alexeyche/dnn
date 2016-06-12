@@ -62,8 +62,8 @@ def main(input_file, ms_frame=10, n_mels=256, top_db=60, plot=False, fmin=100.0)
             sr, y_axis="mel")
         plt.subplot(2,1,2)
         lr.display.specshow(s, sr, hop_length=hop)
-        plt.show()
-
+        plt.savefig(basef + ".png")
+        
     write_time_series(s, basef+"_raw.pb")
     run_iaf_network(s, basef+".pb", dt=1.0, tau_mem=10, tau_ref=2, threshold=0.4)
     

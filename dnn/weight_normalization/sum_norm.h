@@ -43,9 +43,9 @@ namespace NDnn {
     	}
 
         void CalculateDynamics(const TTime &t) {
-        	// if (std::fmod(t.T, 10000.0) > std::numeric_limits<double>::epsilon()) {
-        	// 	return;
-        	// }
+        	if (std::fmod(t.T, 10000.0) > std::numeric_limits<double>::epsilon()) {
+        		return;
+        	}
         	
         	auto& syns = TPar::GetMutSynapses();
 	        

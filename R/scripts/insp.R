@@ -23,7 +23,7 @@ if(length(grep("RStudio", args))>0) {
     #WD = simruns.path(system(sprintf("ls -t %s | head -n 1", simruns.path()), intern=TRUE))
     WD = file.path(dnn.env(), "runs/last")
     
-    #WD="/home/alexeyche/dnn/runs/param_range/c230c7d64d9094a83c1ec9fc6a656def_0019"
+    #WD="/home/alexeyche/dnn/runs/evo_decorr/d392aca245451d99e55806a30e2f44b5_0717"
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
@@ -173,16 +173,16 @@ if (file.exists(STAT_FNAME)) {
     if (length(stat_to_plot) > 8) {
         stat_to_plot = stat[1:8]
     }    
-#     par(mfrow=c(length(stat_to_plot),1), mar=rep(2,4))
-#     for (s in stat_to_plot) {
-#         plot(
-#             seq(s$from, s$to, length.out=length(s$values)), 
-#             s$values, 
-#             type="l", 
-#             main=sprintf("%s, %d:%d", s$name, s$from, s$to),
-#             xlab="Time", ylab=s$name
-#         )
-#     }
+    par(mfrow=c(length(stat_to_plot),1), mar=rep(2,4))
+    for (s in stat_to_plot) {
+        plot(
+            seq(s$from, s$to, length.out=length(s$values)), 
+            s$values, 
+            type="l", 
+            main=sprintf("%s, %d:%d", s$name, s$from, s$to),
+            xlab="Time", ylab=s$name
+        )
+    }
     if(SAVE_PIC_IN_FILES) {
         dev.off()
         write(paste("Stat pic filename: ", stat_pic), stderr())
@@ -543,4 +543,3 @@ logexp = function(x, t=0.1, s=1.0) {
 #     }
 #     print(gr_pl(w[257:266,257:266]))
 # }
-

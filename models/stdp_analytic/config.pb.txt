@@ -9,29 +9,28 @@ Layer {
         PspDecay: 10.0
     }
 	SRMNeuron {
-		AmpAdapt: 0				
-		TauAdapt: 100
+		AmpAdapt: 1
+		TauAdapt: 500
 	}
 	LogExp {
 		Threshold: 0.1
 		Slope: 0.1
 	}
 	Stdp {
-		TauPlus: 14.0       	# [1.0, 100.0]
-		TauMinus: 34.0			# [1.0, 100.0]
-		Aplus: 1.0				# [0.01, 2.0]
-		Aminus: 0.5	 			# [0.01, 2.0]
-		LearningRate: 1e-04
-		TauFirstMoment: 10.0
-		TauSecondMoment: 100.0
+		TauPlus: 14.0            
+		TauMinus: 34.0			 
+		Aplus: 1.0			    
+		Aminus: 0.5
+		LearningRate: 1e-06
+		TauMomentum: 100
 	}
 	MaxEntropyIP {
 		TargetRate: 10.0
 		LearningRate: 1e-06
 	}
 	SumNorm {
-		ExcUnit: 0.2			# [0.2, 3.0]
-		InhUnit: 0.2			# [0.2, 3.0]
+		ExcUnit: 0.3			# [0.01, 1.0]
+		InhUnit: 0.3			# [0.01, 1.0]
 	}
 }
 Connection {
@@ -47,6 +46,6 @@ Connection {
 	Stochastic {
 		Prob: 1.0
 	}
-	Weight: {Norm {Mean: -0.1  Sd: 0.01}}
+	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
 	# DendriteDelay: {Exp {Rate: 0.5}}
 }

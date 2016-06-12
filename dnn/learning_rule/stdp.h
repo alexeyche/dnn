@@ -17,7 +17,8 @@ namespace NDnn {
 	        serial(Aplus);
 	        serial(Aminus);
 	        serial(LearningRate);
-	        serial(TauMomentum);
+	        serial(TauFirstMoment);
+	        serial(TauSecondMoment);
 	    }
 
 	    double TauPlus = 30.0;
@@ -25,7 +26,8 @@ namespace NDnn {
 	    double Aplus = 1.0;
 	    double Aminus = 1.0;
 	    double LearningRate = 0.01;
-	    double TauMomentum = 10.0;
+	    double TauFirstMoment = 10.0;
+	    double TauSecondMoment = 100.0;
 	};
 
 	struct TStdpState: public IProtoSerial<NDnnProto::TStdpState>  {
@@ -34,12 +36,14 @@ namespace NDnn {
 		void SerialProcess(TProtoSerial& serial) {
 			serial(Y);
 			serial(X);
-			serial(Momentum);
+			serial(FirstMoment);
+			serial(SecondMoment);
 		}
 
 		double Y = 0.0;
     	TActVector<double> X;
-    	TActVector<double> Momentum;
+    	TActVector<double> FirstMoment;
+    	TActVector<double> SecondMoment;
 	};
 
 	class TAllToAllSpikePolicy {
@@ -73,7 +77,8 @@ namespace NDnn {
 		void Reset() {
 			TPar::s.Y = 0.0;
 			TPar::s.X.resize(TPar::GetSynapses().size(), 0.0);
-			TPar::s.Momentum.resize(TPar::GetSynapses().size(), 0.0);
+			TPar::s.FirstMoment.resize(TPar::GetSynapses().size(), 0.0);
+			TPar::s.SecondMoment.resize(TPar::GetSynapses().size(), 0.0);
 		}
 
 		void PropagateSynapseSpike(const TSynSpike& sp) {
@@ -91,28 +96,35 @@ namespace NDnn {
 	        
 			auto synIdIt = TPar::s.X.abegin();
 		    while (synIdIt != TPar::s.X.aend()) {
-		    	if (std::fabs(TPar::s.X[synIdIt]) < 0.0001) {
+				const ui32& synapseId = *synIdIt;
+                
+                auto& syn = syns.Get(synapseId);
+                double& w = syn.MutWeight();
+                
+                double dw =  (
+                    TPar::c.Aplus  * TPar::s.X[synIdIt] * neuron.Fired() * norm.Ltp(w) -
+                    TPar::c.Aminus * TPar::s.Y * syn.Fired() * norm.Ltd(w)
+                );
+
+                if (w < 0.0) {
+                	dw *= 10.0;
+                }
+                
+                // TPar::s.FirstMoment.Get(synapseId) += t.Dt * ( - TPar::s.FirstMoment.Get(synapseId) + dw)/TPar::c.TauFirstMoment;
+                // TPar::s.SecondMoment.Get(synapseId) += t.Dt * ( - TPar::s.SecondMoment.Get(synapseId) + dw*dw)/TPar::c.TauSecondMoment;
+                
+                // w += norm.Derivative(w, 
+                // 	TPar::c.LearningRate * TPar::s.FirstMoment.Get(synapseId)/std::sqrt(TPar::s.SecondMoment.Get(synapseId) + 1e-08));
+                
+                w += norm.Derivative(w, TPar::c.LearningRate * dw);
+
+                TPar::s.X[synIdIt] += - t.Dt * TPar::s.X[synIdIt]/TPar::c.TauPlus;
+            	
+            	// if ((std::fabs(TPar::s.SecondMoment.Get(synapseId)) < 1e-06) && (std::fabs(TPar::s.X[synIdIt]) < 1e-04)) {
+                if (std::fabs(TPar::s.X[synIdIt]) < 1e-04) {
                 	TPar::s.X.SetInactive(synIdIt);
                 } else {
-	                const ui32& synapseId = *synIdIt;
-	                auto& syn = syns.Get(synapseId);
-	                double& w = syn.MutWeight();
-	                
-	                double dw = TPar::c.LearningRate * (
-	                    TPar::c.Aplus  * TPar::s.X[synIdIt] * neuron.Fired() * norm.Ltp(w) -
-	                    TPar::c.Aminus * TPar::s.Y * syn.Fired() * norm.Ltd(w)
-	                );
-
-	                TPar::s.Momentum[synIdIt] += - t.Dt * TPar::s.Momentum[synIdIt]/TPar::c.TauMomentum + dw;
-
-	                // if (w < 0.0) {
-	                // 	dw *= 10.0;
-	                // }
-	                
-	                w += norm.Derivative(w, TPar::s.Momentum[synIdIt]);
-
-	                TPar::s.X[synIdIt] += - t.Dt * TPar::s.X[synIdIt]/TPar::c.TauPlus;
-                	++synIdIt;
+	                ++synIdIt;
                 }
             }
 
