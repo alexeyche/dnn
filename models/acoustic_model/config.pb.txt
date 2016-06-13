@@ -17,10 +17,10 @@ Layer {
 		Slope: 0.1
 	}
 	Stdp {
-		TauPlus: 14.0       	# [1.0, 100.0]
-		TauMinus: 34.0			# [1.0, 100.0]
-		Aplus: 1.0				# [0.01, 2.0]
-		Aminus: 0.5	 			# [0.01, 2.0]
+		TauPlus: 14.0       	
+		TauMinus: 34.0			
+		Aplus: 1.0				
+		Aminus: 0.5	 			
 		LearningRate: 1e-04
 		TauFirstMoment: 10.0
 		TauSecondMoment: 100.0

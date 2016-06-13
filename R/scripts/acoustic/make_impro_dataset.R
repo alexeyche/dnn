@@ -21,4 +21,13 @@ for (f in system("ls *.pb", intern=TRUE)) {
     }
 }
 
+while (TRUE) {
+    max_t = max(sapply(data$values, function(x) if(length(x)>0) { max(x)} else {0}))
+    if (max_t > 200000) {
+        break
+    }
+    data = add.to.spikes(data, data)
+}
+
+
 proto.write(data, spikes.path("impro.pb"))

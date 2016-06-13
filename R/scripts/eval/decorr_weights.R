@@ -21,22 +21,34 @@ mw = matrix(0, nrow=length(inputs_of_interest), ncol=length(neurons_of_interest)
 for (ni in 1:length(neurons_of_interest)) {
     mw[, ni] = w[neurons_of_interest[ni], inputs_of_interest]
 }
+# 
+# angles = matrix(0, nrow=length(neurons_of_interest), ncol = length(neurons_of_interest))
+# 
+# for (ni in 1:length(neurons_of_interest)) {
+#     for (nj in 1:length(neurons_of_interest)) {
+#         if (ni == nj) {
+#             next
+#         }
+#         angles[ni, nj] = t(mw[, ni]) %*% mw[, nj] / (norm(mw[, ni], type="2") * norm(mw[,nj], type="2"))
+#     }
+# }
 
-angles = matrix(0, nrow=length(neurons_of_interest), ncol = length(neurons_of_interest))
+dist.m = matrix(0, nrow=length(neurons_of_interest), ncol = length(neurons_of_interest))
 
 for (ni in 1:length(neurons_of_interest)) {
     for (nj in 1:length(neurons_of_interest)) {
         if (ni == nj) {
             next
         }
-        angles[ni, nj] = t(mw[, ni]) %*% mw[, nj] / (norm(mw[, ni], type="2") * norm(mw[,nj], type="2"))
+        dist.m[ni, nj] = sqrt(sum((mw[,ni] - mw[,nj])^2))
     }
 }
+
 
 png(sprintf("%d_eval.png", epoch), width=1024, height=768)
 print(gr_pl(mw))
 dev.off()
 
-cat(mean(angles), "\n")
+cat(-mean(dist.m), "\n")
 
 

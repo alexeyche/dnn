@@ -13,14 +13,14 @@ from lib.evolve import TCMAStrategy, TGpyOptStrategy, TEvolveCli
 
 setup_logging(logging.getLogger())
 
-START = "1.1832974296 2.9283499075 9.9628038855 7.12223105109 1.34217607074 0.77473632932"
+#START = "1.1832974296 2.9283499075 9.9628038855 7.12223105109 1.34217607074 0.77473632932"
 
 def evolve(args, runner_args):
     es = TCMAStrategy(
         args, 
         popsize = 50,
-        start = [ float(v) for v in START.split(" ") ], 
-        dev = 0.5
+        # start = [ float(v) for v in START.split(" ") ], 
+        # dev = 0.5
     )
     
     #es = TGpyOptStrategy(args)
