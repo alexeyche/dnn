@@ -11,18 +11,24 @@ rainbow_cols = rainbow(length(uc))
 
 
 cols = NULL
-rv = get.rate.vectors(sp, 100)
+labs = NULL
+rv = get.rate.vectors(sp, 50)
 tc = 0
 for (i in rv$info) {
     col = rainbow_cols[which(i$label == uc)]
     cols = c(cols, rep("black", i$start_time - tc), rep(col, i$duration))
+    labs = c(labs, rep("none", i$start_time - tc), rep(i$label, i$duration))
     tc = i$start_time + i$duration
 }
 
-d = svd(t(rv$values))$u[,1:2]
+#d = svd(t(rv$values))$u[,1:2]
 
-plot(d, col=cols)
+#plot(d, col=cols)
 
+dups = duplicated(t(rv$values))
+ans.tsne = Rtsne(t(rv$values[, !dups]))
+cols = cols[!dups]
+plot(ans.tsne$Y, col=cols)
 
 mydata <- d
 wss <- (nrow(mydata)-1)*sum(apply(mydata,2,var))
@@ -74,3 +80,5 @@ nb <- NbClust(d, distance = "euclidean",
               min.nc=2, max.nc=30, method = "kmeans", 
               index = "alllong", alphaBeale = 0.1)
 hist(nb$Best.nc[1,], breaks = max(na.omit(nb$Best.nc[1,])))
+
+
