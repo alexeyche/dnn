@@ -71,14 +71,14 @@ install(
 
 install(CODE
     "EXECUTE_PROCESS(
-        COMMAND 
+        COMMAND
         ${CMAKE_SOURCE_DIR}/scripts/ln.py ${CMAKE_SOURCE_DIR}/R/scripts ${CMAKE_INSTALL_PREFIX}/r_scripts
     )"
 )
 
 install(CODE
     "EXECUTE_PROCESS(
-        COMMAND 
+        COMMAND
         ${CMAKE_SOURCE_DIR}/scripts/ln.py ${CMAKE_SOURCE_DIR}/scripts ${CMAKE_INSTALL_PREFIX}/scripts
     )"
 )
@@ -88,13 +88,9 @@ install(CODE
     "EXECUTE_PROCESS(COMMAND mkdir -p ${CMAKE_INSTALL_PREFIX}/spikes)"
 )
 
-if (APPLE)
-    foreach(LIB libdnnpb libspikeworkpb)
-        install(CODE
-            "EXECUTE_PROCESS(COMMAND install_name_tool -change ${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/lib/${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/lib/libdnn.dylib )"
-        )
-    endforeach(LIB)
+PATCH_APPLE(lib/libdnn.dylib)
 
+if (APPLE)
     install(CODE
         "EXECUTE_PROCESS(COMMAND launchctl setenv DNN_HOME ${CMAKE_INSTALL_PREFIX})"
     )

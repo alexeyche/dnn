@@ -62,6 +62,18 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_BINARY_DIR})
 
+set(LIBLIST libdnnpb libdnn libspikeworkpb libground libgroundpb)
+
+macro(PATCH_APPLE DST)
+  if (APPLE)
+      foreach(LIB ${LIBLIST})
+          install(CODE
+              "EXECUTE_PROCESS(COMMAND install_name_tool -change ${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/lib/${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/${DST})"
+          )
+      endforeach(LIB)
+  endif()
+endmacro()
+
 macro(DEFINE_MODEL BIN CPP)
   add_executable(${BIN}
       ${CPP}
@@ -87,6 +99,7 @@ macro(DEFINE_MODEL BIN CPP)
         "EXECUTE_PROCESS(COMMAND ln -sf ${RScript} ${CMAKE_INSTALL_PREFIX}/models/${model_bn})"
     )
   endforeach(RScript)
+  PATCH_APPLE(models/${model_bn}/${BIN})
 
   if (APPLE)
       foreach(LIB libdnnpb libdnn libspikeworkpb libground libgroundpb)

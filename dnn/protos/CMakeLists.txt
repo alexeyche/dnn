@@ -25,7 +25,9 @@ install(
 )
 install(CODE
     "EXECUTE_PROCESS(
-        COMMAND 
+        COMMAND
         ${CMAKE_SOURCE_DIR}/scripts/touch.py ${CMAKE_INSTALL_PREFIX}/include/dnn/__init__.py ${CMAKE_INSTALL_PREFIX}/include/dnn/protos/__init__.py
     )"
 )
+
+PATCH_APPLE(lib/libdnnpb.dylib)

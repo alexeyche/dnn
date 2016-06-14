@@ -28,12 +28,12 @@ namespace NGrPb = NGroundProto;
 void write_time_series(const double* data, int nrows, int ncols, const char* label, const char* dst_file) {
 	L_INFO << "Writing TimeSeries of size " << nrows << "x" << ncols << " into " << dst_file;
 	NGrPb::TTimeSeries ts;
-	
+
 	auto* info = ts.mutable_info();
 	info->set_dimsize(nrows);
-	info->set_dt(1.0);	
+	info->set_dt(1.0);
 	info->add_uniquelabelnames(label);
-	
+
 	auto* lab = info->add_labels();
 	lab->set_from(0);
 	lab->set_to(ncols);
@@ -51,13 +51,13 @@ void write_time_series(const double* data, int nrows, int ncols, const char* lab
 
 void run_iaf_network(const char* config, const double* data, int nrows, int ncols, const char* dst_file) {
 	TLog::Instance().SetLogLevel(TLog::DEBUG_LEVEL);
-	
+
 	NDnnProto::TConfig protoConfig;
 	ReadProtoText(config, protoConfig);
-	
+
 	TModelOptions options;
 	options.OutputSpikesFile.emplace(dst_file);
-	
+
 	auto sim = BuildModel<
 		TLayer<TIntegrateAndFire, 256, TNeuronConfig<TBasicSynapse, TDeterm, TIdentReceptiveField>>
 	>(options);
