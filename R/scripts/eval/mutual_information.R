@@ -12,10 +12,12 @@ sp = spikes
 sp$values = sp$values[-(1:input_neurons)]
 
 input_spikes = spikes
-
+input_spikes$values = input_spikes$values[1:input_neurons]
 
 rv = get.rate.vectors(sp, win)
+inp_rv = get.rate.vectors(input_spikes, win)
 
 df = as.data.frame(sapply(1:nrow(rv$values), function(i) as.integer(win*rv$values[i, ]) ))
+inp_df = as.data.frame(sapply(1:nrow(inp_rv$values), function(i) as.integer(win*inp_rv$values[i, ]) ))
 
-cat(-entropy(df), "\n")
+cat(-mutinformation(inp_df, df), "\n")
