@@ -1,5 +1,6 @@
 #!/usr/bin/env Rscript
 
+require(methods, quietly=TRUE)
 require(Rdnn, quietly=TRUE)
 require(infotheo, quietly=TRUE)
 

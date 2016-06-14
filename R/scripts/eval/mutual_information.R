@@ -1,9 +1,10 @@
 #!/usr/bin/env Rscript
 
+require(methods, quietly=TRUE)
 require(Rdnn, quietly=TRUE)
 require(infotheo, quietly=TRUE)
 
-win = 100
+win = 25
 input_neurons = 256
 
 c(spikes, epoch) := read.spikes.wd()
@@ -20,4 +21,6 @@ inp_rv = get.rate.vectors(input_spikes, win)
 df = as.data.frame(sapply(1:nrow(rv$values), function(i) as.integer(win*rv$values[i, ]) ))
 inp_df = as.data.frame(sapply(1:nrow(inp_rv$values), function(i) as.integer(win*inp_rv$values[i, ]) ))
 
-cat(-mutinformation(inp_df, df), "\n")
+mean_spikes = mean(sapply(spikes$values, length))
+
+cat(-mutinformation(inp_df, df)/mean_spikes, "\n")
