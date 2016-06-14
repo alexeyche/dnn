@@ -12,7 +12,8 @@ rainbow_cols = rainbow(length(uc))
 
 cols = NULL
 labs = NULL
-rv = get.rate.vectors(sp, 50)
+win = 100
+rv = get.rate.vectors(sp, win)
 tc = 0
 for (i in rv$info) {
     col = rainbow_cols[which(i$label == uc)]
@@ -29,6 +30,7 @@ dups = duplicated(t(rv$values))
 ans.tsne = Rtsne(t(rv$values[, !dups]))
 cols = cols[!dups]
 plot(ans.tsne$Y, col=cols)
+
 
 mydata <- d
 wss <- (nrow(mydata)-1)*sum(apply(mydata,2,var))

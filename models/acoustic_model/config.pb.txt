@@ -9,7 +9,7 @@ Layer {
         PspDecay: 10.0
     }
 	SRMNeuron {
-		AmpAdapt: 0				
+		AmpAdapt: 0
 		TauAdapt: 100
 	}
 	LogExp {
@@ -17,10 +17,10 @@ Layer {
 		Slope: 0.1
 	}
 	Stdp {
-		TauPlus: 14.0       	
-		TauMinus: 34.0			
-		Aplus: 1.0				
-		Aminus: 0.5	 			
+		TauPlus: 14.0
+		TauMinus: 34.0
+		Aplus: 1.0
+		Aminus: 0.5
 		LearningRate: 5e-06
 		TauFirstMoment: 10.0
 		TauSecondMoment: 100.0
@@ -30,7 +30,7 @@ Layer {
 		LearningRate: 1e-06
 	}
 	SumNorm {
-		ExcUnit: 0.75			# [0.2, 3.0]
+		ExcUnit: 2.5			# [0.2, 3.0]
 		InhUnit: 1.0			# [0.2, 3.0]
 	}
 }
