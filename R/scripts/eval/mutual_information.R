@@ -26,4 +26,4 @@ max_t = spikes.list.max.t(sp)
 mean_rate = mean(sapply(sp$values, length)) / (max_t/1000)
 mi = mutinformation(inp_df, df)
 
-cat(- (log(mi) - 0.1*log(mean_rate)), "\n")
+cat(- (log(mi) - 0.5*log(mean_rate)), "\n")
