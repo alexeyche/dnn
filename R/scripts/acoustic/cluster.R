@@ -1,3 +1,4 @@
+require(Rtsne)
 
 input_neurons = 256
 
@@ -22,14 +23,17 @@ for (i in rv$info) {
     tc = i$start_time + i$duration
 }
 
-#d = svd(t(rv$values))$u[,1:2]
-
-#plot(d, col=cols)
 
 dups = duplicated(t(rv$values))
 ans.tsne = Rtsne(t(rv$values[, !dups]))
 cols = cols[!dups]
 plot(ans.tsne$Y, col=cols)
+
+
+d = svd(t(rv$values))$u[,1:2]
+
+plot(d, col=cols)
+
 
 
 mydata <- d

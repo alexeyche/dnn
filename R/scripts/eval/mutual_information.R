@@ -21,6 +21,9 @@ inp_rv = get.rate.vectors(input_spikes, win)
 df = as.data.frame(sapply(1:nrow(rv$values), function(i) as.integer(win*rv$values[i, ]) ))
 inp_df = as.data.frame(sapply(1:nrow(inp_rv$values), function(i) as.integer(win*inp_rv$values[i, ]) ))
 
-mean_spikes = mean(sapply(spikes$values, length))
+max_t = spikes.list.max.t(sp)
 
-cat(-mutinformation(inp_df, df)/mean_spikes, "\n")
+mean_rate = mean(sapply(sp$values, length)) / (max_t/1000)
+mi = mutinformation(inp_df, df)
+
+cat(- (log(mi) - 0.1*log(mean_rate)), "\n")

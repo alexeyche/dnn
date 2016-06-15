@@ -17,10 +17,10 @@ Layer {
 		Slope: 0.1
 	}
 	Stdp {
-		TauPlus: 14.0
-		TauMinus: 34.0
-		Aplus: 1.0				# [0.1, 10.0]
-		Aminus: 0.5				# [0.1, 10.0]
+		TauPlus: 14.0			# [1, 50]
+		TauMinus: 34.0			# [1, 50]
+		Aplus: 1.0				# [0.1, 20.0]
+		Aminus: 0.5				# [0.1, 20.0]
 		LearningRate: 5e-06
 		TauFirstMoment: 10.0
 		TauSecondMoment: 100.0
@@ -30,8 +30,8 @@ Layer {
 		LearningRate: 1e-06
 	}
 	SumNorm {
-		ExcUnit: 2.5			# [0.1, 3.0]
-		InhUnit: 1.0			# [0.1, 3.0]
+		ExcUnit: 2.5			# [0.1, 5.0]
+		InhUnit: 1.0			# [0.1, 5.0]
 	}
 }
 Connection {

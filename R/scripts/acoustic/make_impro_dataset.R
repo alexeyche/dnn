@@ -22,7 +22,7 @@ for (f in system("ls *.pb", intern=TRUE)) {
 }
 
 while (TRUE) {
-    max_t = max(sapply(data$values, function(x) if(length(x)>0) { max(x)} else {0}))
+    max_t = spikes.list.max.t(data)
     if (max_t > 200000) {
         break
     }
