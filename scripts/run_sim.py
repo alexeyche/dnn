@@ -355,15 +355,16 @@ class TDnnSim(object):
         config_hex = md5.new(open(self.config).read()).hexdigest()
         i = 0
 
-        while i<1000:
+        found = False
+        while i<9999:
             self.working_dir = os.path.join(self.runs_dir, config_hex + "_%04d" % i)
-            time.sleep(0.01 * random.random())
-            if not os.path.exists(self.working_dir):
-                break
-            if self.old_dir:
+            time.sleep(0.001 * random.random())
+            if not os.path.exists(self.working_dir) or self.old_dir:
+                found = True
                 break
             i+=1
-    
+        if not found:
+            raise Exception("Failed to find directory. Too much runs here ({})".format(i))
         return self.working_dir
     
 def main(argv):

@@ -6,6 +6,7 @@ require(infotheo, quietly=TRUE)
 
 win = 25
 input_neurons = 256
+target_rate = 10
 
 c(spikes, epoch) := read.spikes.wd()
 
@@ -26,4 +27,8 @@ max_t = spikes.list.max.t(sp)
 mean_rate = mean(sapply(sp$values, length)) / (max_t/1000)
 mi = mutinformation(inp_df, df)
 
-cat(- (log(mi) - 0.5*log(mean_rate)), "\n")
+rect = function(x) if (x>0) {x} else {0.0}
+
+rate_denom = 1+rect(exp((mean_rate-target_rate)/10)-1)
+
+cat(- mi/rate_denom, "\n")
