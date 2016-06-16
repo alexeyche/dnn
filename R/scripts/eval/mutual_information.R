@@ -29,6 +29,6 @@ mi = mutinformation(inp_df, df)
 
 rect = function(x) if (x>0) {x} else {0.0}
 
-rate_denom = 1+rect(exp((mean_rate-target_rate)/10)-1)
+rate_denom = 1+rect(exp(mean_rate-target_rate)*1e-04-1e-04)
 
 cat(- mi/rate_denom, "\n")
