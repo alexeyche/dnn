@@ -6,6 +6,9 @@ data = spikes.list(vector("list", 256))
 
 lab = 0
 for (f in system("ls *.pb", intern=TRUE)) {
+    if (length(grep("parfum", f)) == 0) {
+        next
+    }
     if (length(grep("_raw", f)) == 0) {
         cat(f, "\n")    
         sp = proto.read(f)
@@ -21,13 +24,16 @@ for (f in system("ls *.pb", intern=TRUE)) {
     }
 }
 
+work_data = data
+
 while (TRUE) {
-    max_t = spikes.list.max.t(data)
+    max_t = spikes.list.max.t(work_data)
     if (max_t > 200000) {
         break
     }
-    data = add.to.spikes(data, data)
+    work_data = add.to.spikes(work_data, work_data)
 }
 
 
-proto.write(data, spikes.path("impro.pb"))
+proto.write(data, spikes.path("impro_eval.pb"))
+proto.write(work_data, spikes.path("impro.pb"))

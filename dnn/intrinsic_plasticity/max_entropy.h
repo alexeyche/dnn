@@ -191,17 +191,15 @@ namespace NDnn {
 
     	void CalculateDynamics(const TTime& t) {
     		LOG_EXP_CALCULATIONS();
-		    if( (TGlobalCtx::Inst().GetPastTime() + t.T) < 5*TPar::c.TauMoment ) {
+		    if( (TGlobalCtx::Inst().GetPastTime() + t.T) < 10.0*TPar::c.TauMoment ) {
 		        return;
 		    }
 
     		const auto& mu = TPar::c.__TargetRate;
 		    TPar::s.M1 += t.Dt * (-TPar::s.M1 + TPar::Neuron().SpikeProbability())/TPar::c.TauMoment;
-		    // TPar::s.M2 += (-TPar::s.M2 + TPar::Neuron().SpikeProbability()*TPar::Neuron().SpikeProbability())/TPar::c.TauMoment;
-
-		    // double deriv = TPar::c.LearningRate * (TPar::s.M1 - mu) / std::sqrt(TPar::s.M2);
-		    double deriv = 1000*TPar::c.LearningRate * (TPar::s.M1 - mu);
 		    
+		    double deriv = 1000*TPar::c.LearningRate * (TPar::s.M1 - mu);
+
 		    *ExcUnit += - deriv;
 		    *InhUnit += deriv;
 

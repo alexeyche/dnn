@@ -1,7 +1,7 @@
 require(ica)
 
-spikes = proto.read(spikes.path("work_licks.pb"))
-#spikes = proto.read(spikes.path("impro.pb"))
+#spikes = proto.read(spikes.path("work_licks.pb"))
+spikes = proto.read(spikes.path("impro.pb"))
 #with_spikes = which(sapply(spikes$values, length) > 0)
 #spikes$values = spikes$values[with_spikes]
 

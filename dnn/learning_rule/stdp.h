@@ -110,20 +110,20 @@ namespace NDnn {
                 	dw *= 10.0;
                 }
                 
-                TPar::s.FirstMoment.Get(synapseId) += t.Dt * ( - TPar::s.FirstMoment.Get(synapseId) + dw)/TPar::c.TauFirstMoment;
-                TPar::s.SecondMoment.Get(synapseId) += t.Dt * ( - TPar::s.SecondMoment.Get(synapseId) + dw*dw)/TPar::c.TauSecondMoment;
+                // TPar::s.FirstMoment.Get(synapseId) += t.Dt * ( - TPar::s.FirstMoment.Get(synapseId) + dw)/TPar::c.TauFirstMoment;
+                // TPar::s.SecondMoment.Get(synapseId) += t.Dt * ( - TPar::s.SecondMoment.Get(synapseId) + dw*dw)/TPar::c.TauSecondMoment;
                 
-                w += norm.Derivative(w, 
-                	TPar::c.LearningRate * TPar::s.FirstMoment.Get(synapseId)/std::sqrt(TPar::s.SecondMoment.Get(synapseId) + 1e-08));
+                // w += norm.Derivative(w, 
+                // 	TPar::c.LearningRate * TPar::s.FirstMoment.Get(synapseId)/std::sqrt(TPar::s.SecondMoment.Get(synapseId) + 1e-08));
                 
                 // w += norm.Derivative(w, TPar::c.LearningRate * TPar::s.FirstMoment.Get(synapseId));
 
-                // w += norm.Derivative(w, TPar::c.LearningRate * dw);
+                w += norm.Derivative(w, TPar::c.LearningRate * dw);
 
                 TPar::s.X[synIdIt] += - t.Dt * TPar::s.X[synIdIt]/TPar::c.TauPlus;
             	
-            	if ((std::fabs(TPar::s.SecondMoment.Get(synapseId)) < 1e-06) && (std::fabs(TPar::s.FirstMoment.Get(synapseId)) < 1e-06) && (std::fabs(TPar::s.X[synIdIt]) < 1e-04)) {
-                // if (std::fabs(TPar::s.X[synIdIt]) < 1e-04) {
+            	// if ((std::fabs(TPar::s.SecondMoment.Get(synapseId)) < 1e-06) && (std::fabs(TPar::s.FirstMoment.Get(synapseId)) < 1e-06) && (std::fabs(TPar::s.X[synIdIt]) < 1e-04)) {
+                if (std::fabs(TPar::s.X[synIdIt]) < 1e-04) {
                 	TPar::s.X.SetInactive(synIdIt);
                 } else {
 	                ++synIdIt;
