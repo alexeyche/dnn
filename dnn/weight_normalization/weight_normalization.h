@@ -50,6 +50,10 @@ namespace NDnn {
 			return NeuronImpl->GetNeuron();
 		}
 		
+		TConstants& MutConstants() {
+			return c;
+		}
+
 	protected:
 		TConstants c;
 		TState s;

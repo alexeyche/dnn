@@ -10,7 +10,7 @@ message TMaxEntropyIPConst {
 message TMaxEntropyIPDefaultState {
 }
 
-message TMaxEntropyIPDetermState {
+message TMaxEntropyIPMomentState {
 	optional double M1 = 1;
 	optional double M2 = 2;
 }

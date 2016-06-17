@@ -30,6 +30,10 @@ namespace NDnn {
 			return NeuronImpl->GetMutActivationFunction();
 		}
 
+		typename TNeuronImpl::TConfig::template TWeightNormalization<TNeuronImpl>& MutWeightNormalization() {
+			return NeuronImpl->GetMutWeightNormalization();
+		}
+
 		const TState& State() const {
 			return s;
 		}

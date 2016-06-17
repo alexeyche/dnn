@@ -93,7 +93,7 @@ message TLayer {
     repeated TLogNormState LogNormState = 40;
     repeated TMaxEntropyIPConst MaxEntropyIP = 41;
     repeated TMaxEntropyIPDefaultState MaxEntropyIPDefaultState = 42;
-    repeated TMaxEntropyIPDetermState MaxEntropyIPDetermState = 43;
+    repeated TMaxEntropyIPMomentState MaxEntropyIPMomentState = 43;
     repeated TLogExpConst LogExp = 44;
     repeated TSumNormConst SumNorm = 45;
     repeated TSumNormState SumNormState = 46;

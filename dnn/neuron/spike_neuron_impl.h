@@ -285,6 +285,10 @@ namespace NDnn {
 		const auto& GetActivationFunction() const {
 			return Activation;
 		}
+
+		auto& GetMutWeightNormalization() {
+			return LearningRule.MutNorm();
+		}
 		
 	private:
 		TPtr<TRandEngine> Rand;

@@ -36,7 +36,7 @@ class TEvolveCli(object):
             if self.bad_value:
                 return self.bad_value
             raise Exception("Found failed command: \nstdout:\n{}\nstderr:\n{}".format(stdout, stderr))
-        return float(stdout.strip())
+        return [ float(o.strip()) for o in stdout.split(" ") if o.strip() ]
 
     def sync_finished(self):
         finished_calcs, non_finished_calcs = [], []
@@ -91,8 +91,61 @@ class TStrategy(object):
         
     def tell(self, x, y):
         raise NotImplementedError("Need override in inherited class")
-        
 
+class TCallbackStrategy(TStrategy):
+    def __init__(self, args):
+        self.__asked_points = None
+        self.__tellings = None
+
+        self.__ready_to_ask = threading.Event()
+        self.__got_answer = threading.Event()
+        self.__got_error = threading.Event()
+
+        self.__opt_thread = threading.Thread(target=self.__runner, args = (args,))
+        self.__opt_thread.setDaemon(True)
+        self.__opt_thread.start()
+
+    def entry(self):
+        raise NotImplementedError("Need override in inherited class")
+
+    def __runner(self, args):
+        try:
+            self.entry(args)
+        except Exception as err:
+            logging.exception("Got error in runner thread: {}".format(err))
+            self.__got_error.set()
+
+    
+    def callback(self, x):
+        self.__asked_points = x
+        self.__ready_to_ask.set()
+        while not self.__got_answer.is_set():
+            if self.__got_error.is_set():
+                raise Exception("Got error in master thread")
+            time.sleep(0.1)
+        self.__got_answer.clear()
+        return self.__tellings
+
+    def ask(self):
+        while not self.__ready_to_ask.is_set():
+            if self.__got_error.is_set():
+                raise Exception("Got error in master thread")
+            if not self.__opt_thread.isAlive():
+                return []
+            time.sleep(0.1)
+        return self.__asked_points
+
+    def tell(self, x, y):
+        self.__tellings = y
+        self.__ready_to_ask.clear()
+        self.__got_answer.set()
+        
+    def stop(self):
+        if self.__got_error.is_set():
+            raise Exception("Got error in master thread")
+        return not self.__opt_thread.isAlive()
+
+    
 class TCMAStrategy(TStrategy):
     def __init__(self, args, start=None, dev = 2.0, popsize = 20):
         if start is None:
@@ -116,96 +169,143 @@ class TCMAStrategy(TStrategy):
         self.__es.tell(x, y)
 
 
-class TGpyOptStrategy(TStrategy):
-    def __init__(self, args):
-        import GPyOpt
-        import GPy
+class TCMAMOStrategy(TCallbackStrategy):
+    def __init__(self, args, dev = 1.0, popsize = 20):
+        self.__bounds = (0, 1.0)
+        self.popsize = popsize
+        self.dev = dev 
+        super(TCMAMOStrategy, self).__init__(args)
         
+
+    def entry(self, args):
+        from deap import cma
+        from deap import base
+        from deap import creator
+        from deap import tools
+        def get_min():
+            return np.float32(self.get_bounds()[0])
+        def get_max():
+            return np.float32(self.get_bounds()[1])
+
+
+        def distance(feasible_ind, original_ind):
+            """A distance function to the feasibility region."""
+            return sum((f - o)**2 for f, o in zip(feasible_ind, original_ind))
+
+        def closest_feasible(individual):
+            """A function returning a valid individual from an invalid one."""
+            feasible_ind = np.array(individual)
+            feasible_ind = np.maximum(get_min(), feasible_ind)
+            feasible_ind = np.minimum(get_max(), feasible_ind)
+            return feasible_ind
+
+        def valid(individual):
+            """Determines if the individual is valid or not."""
+            if np.any(individual < get_min()) or np.any(individual > get_max()):
+                return False
+            return True
+
+        MU, LAMBDA = 3, 10
+        
+        creator.create("FitnessMin", base.Fitness, weights=[-1.0])# *(args.dim+1))
+        creator.create("Individual", list, fitness=creator.FitnessMin)
+
+        toolbox = base.Toolbox()
+        toolbox.register("evaluate", self.callback)
+        toolbox.decorate("evaluate", tools.ClosestValidPenality(valid, closest_feasible, 1.0e-6, distance))
+
+        population = [creator.Individual(x) for x in np.random.uniform(get_min(), get_max(), (MU, args.dim)) ]
+        print population, "1"
+        for ev_idx, ev in enumerate(toolbox.evaluate(population)):
+            population[ev_idx].fitness.values = ev
+
+        strategy = cma.StrategyMultiObjective(population, sigma=self.dev, mu=MU, lambda_=LAMBDA)
+        toolbox.register("generate", strategy.generate, creator.Individual)
+        toolbox.register("update", strategy.update)
+
+    
+        stats = tools.Statistics(lambda ind: ind.fitness.values)
+        
+        stats.register("min", np.min, axis=0)
+        stats.register("max", np.max, axis=0)
+   
+        logbook = tools.Logbook()
+        logbook.header = ["gen", "nevals"] + (stats.fields if stats else [])
+        
+        for gen in range(self.popsize):
+            population = toolbox.generate()
+            print population, "2"
+            for ev_idx, ev in enumerate(toolbox.evaluate(population)):
+                population[ev_idx].fitness.values = ev
+
+            # Evaluate the individuals
+            # fitnesses = toolbox.map(toolbox.evaluate, population)
+            # for ind, fit in zip(population, fitnesses):
+            #     ind.fitness.values = fit
+            
+            # Update the strategy with the evaluated individuals
+            toolbox.update(population)
+            
+            record = stats.compile(population) if stats is not None else {}
+            logbook.record(gen=gen, nevals=len(population), **record)
+            print(logbook.stream)
+
+    def get_bounds(self):
+        return self.__bounds
+
+
+class TGpyOptStrategy(TCallbackStrategy):
+    def __init__(self, args):
         self.__bounds = (0.0, 1.0)
         
-        self.__asked_points = None
-        self.__tellings = None
-
-        self.__ready_to_ask = threading.Event()
-        self.__got_answer = threading.Event()
-        self.__got_error = threading.Event()
         self.file_cache_x = "/var/tmp/bo_cache_x.csv"
         self.file_cache_y = "/var/tmp/bo_cache_y.csv"
 
-        self.__opt_thread = threading.Thread(target=self.__runner, args = (args,))
-        self.__opt_thread.setDaemon(True)
-        self.__opt_thread.start()
+        super(TGpyOptStrategy, self).__init__(args)
+        
+        
+    def entry(self, args):
+        import GPyOpt
+        import GPy
+        x, y = None, None
+        if os.path.exists(self.file_cache_y):
+            y = np.asarray([np.loadtxt(self.file_cache_y)])
+            y = y.T                
+        if os.path.exists(self.file_cache_x):
+            x = np.loadtxt(self.file_cache_x)
+        self.__BO_parallel = GPyOpt.methods.BayesianOptimization(
+            f = self.callback,
+            bounds = [(0, 1.0)]*args.dim,
+            acquisition = 'EI',                 # Selects the Expected improvement
+            acquisition_par = 2,                 # parameter of the acquisition function
+            normalize = True,
+            verbosity = True,
+            model_optimize_restarts = 10,
+            numdata_initial_design = 50,
+            kernel = GPy.kern.OU(args.dim, ARD=True)+GPy.kern.Bias(args.dim),
+            X = x,
+            Y = y,
+        )
+        if x is None:
+            np.savetxt(self.file_cache_x, self.__asked_points)
+            np.savetxt(self.file_cache_y, self.__tellings)
 
-    def __runner(self, args):
-        try:
-            import GPyOpt
-            import GPy
-            x, y = None, None
-            if os.path.exists(self.file_cache_y):
-                y = np.asarray([np.loadtxt(self.file_cache_y)])
-                y = y.T                
-            if os.path.exists(self.file_cache_x):
-                x = np.loadtxt(self.file_cache_x)
-            self.__BO_parallel = GPyOpt.methods.BayesianOptimization(
-                f = self.__asker,
-                bounds = [(0, 1.0)]*args.dim,
-                acquisition = 'EI',                 # Selects the Expected improvement
-                acquisition_par = 2,                 # parameter of the acquisition function
-                normalize = True,
-                verbosity = True,
-                model_optimize_restarts = 10,
-                numdata_initial_design = 50,
-                kernel = GPy.kern.OU(args.dim, ARD=True)+GPy.kern.Bias(args.dim),
-                X = x,
-                Y = y,
-            )
-            if x is None:
-                np.savetxt(self.file_cache_x, self.__asked_points)
-                np.savetxt(self.file_cache_y, self.__tellings)
-
-            self.__BO_parallel.run_optimization(
-                5000,                             # Number of iterations
-                acqu_optimize_method = 'fast_brute',       # method to optimize the acq. function
-                n_inbatch = args.jobs,                        # size of the collected batches (= number of cores)
-                batch_method='predictive',                          # method to collected the batches (maximization-penalization)
-                acqu_optimize_restarts = 20,                # number of local optimizers
-                eps = 0.0
-            )
-            self.__BO_parallel.save_report(pj(env.runs_dir, "report.txt"))
-        except Exception as err:
-            logging.error("Got error in runner thread: {}".format(err))
-            self.__got_error.set()
+        self.__BO_parallel.run_optimization(
+            5000,                             # Number of iterations
+            acqu_optimize_method = 'fast_brute',       # method to optimize the acq. function
+            n_inbatch = args.jobs,                        # size of the collected batches (= number of cores)
+            batch_method='predictive',                          # method to collected the batches (maximization-penalization)
+            acqu_optimize_restarts = 20,                # number of local optimizers
+            eps = 0.0
+        )
+        self.__BO_parallel.save_report(pj(env.runs_dir, "report.txt"))
 
     
     def get_bounds(self):
         return self.__bounds
-    
-    def __asker(self, x):
-        self.__asked_points = x
-        self.__ready_to_ask.set()
-        while not self.__got_answer.is_set():
-            if self.__got_error.is_set():
-                raise Exception("Got error in master thread")
-            time.sleep(0.1)
-        self.__got_answer.clear()
-        return self.__tellings
-
-    def ask(self):
-        while not self.__ready_to_ask.is_set():
-            if self.__got_error.is_set():
-                raise Exception("Got error in master thread")
-            if not self.__opt_thread.isAlive():
-                return []
-            time.sleep(0.1)
-        return self.__asked_points
 
     def tell(self, x, y):
-        ans = np.asarray([y])
-        self.__tellings = ans.T
-        self.__ready_to_ask.clear()
-        self.__got_answer.set()
+        super(TGpyOptStrategy, self).tell(x, np.asarray([y]).T)
         
-    def stop(self):
-        if self.__got_error.is_set():
-            raise Exception("Got error in master thread")
-        return not self.__opt_thread.isAlive()
+        
+    

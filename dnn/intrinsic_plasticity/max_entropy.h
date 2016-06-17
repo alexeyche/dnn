@@ -7,6 +7,8 @@
 #include <dnn/activation/sigmoid.h>
 #include <dnn/activation/log_exp.h>
 
+#include <dnn/weight_normalization/sum_norm.h>
+
 #include <type_traits>
 
 namespace NDnn {
@@ -45,7 +47,7 @@ namespace NDnn {
 	}
 
 
-	template <typename TNeuron, typename TActivation>
+	template <typename TNeuron, typename TActivation, typename TWeightNormalizationType>
 	class TMaxEntropyIPImpl: public TIntrinsicPlasticity<TMaxEntropyIPConst, TMaxEntropyIPDefaultState, TNeuron> {
 	public:
 		static_assert(DependentFalse<TActivation>(), "This activation function is not supported by max entropy intrinsic plasticity");
@@ -54,8 +56,8 @@ namespace NDnn {
 		void CalculateDynamics(const TTime&) {}
 	};
 
-	template <typename TNeuron>
-	class TMaxEntropyIPImpl<TNeuron, TSigmoid>: public TIntrinsicPlasticity<TMaxEntropyIPConst, TMaxEntropyIPDefaultState, TNeuron> {
+	template <typename TNeuron, typename TWeightNormalizationType>
+	class TMaxEntropyIPImpl<TNeuron, TSigmoid, TWeightNormalizationType>: public TIntrinsicPlasticity<TMaxEntropyIPConst, TMaxEntropyIPDefaultState, TNeuron> {
 	public:
 		using TPar = TIntrinsicPlasticity<TMaxEntropyIPConst, TMaxEntropyIPDefaultState, TNeuron>;
 		
@@ -102,48 +104,55 @@ namespace NDnn {
     	double Slope;
 	};
 
+	#define LOG_EXP_RESET() { \
+		TLogExp& actF = static_cast<TLogExp&>(TPar::MutActivationFunction()); \
+		\
+		ExpThreshold.Set(&actF.MutConstants().Threshold); \
+		ExpSlope.Set(&actF.MutConstants().Slope); \
+		\
+		ENSURE(*ExpThreshold > 0.0, "Need Threshold in LogExp activation be >= 0.0"); \
+		ENSURE(*ExpSlope > 0.0, "Need Slope in LogExp activation be >= 0.0"); \
+		\
+		Threshold = std::log(*ExpThreshold); \
+		Slope = std::log(*ExpSlope); \
+	}
 
-	template <typename TNeuron>
-	class TMaxEntropyIPImpl<TNeuron, TLogExp>: public TIntrinsicPlasticity<TMaxEntropyIPConst, TMaxEntropyIPDefaultState, TNeuron> {
+	#define LOG_EXP_CALCULATIONS() { \
+		const auto& x = TPar::Neuron().Membrane(); \
+		const double& y = TPar::Neuron().SpikeProbability(); \
+		const auto& mu = TPar::c.__TargetRate; \
+		\
+		const double expT = std::exp(Threshold); \
+		const double expS = std::exp(Slope); \
+		const double x1 = (x - expT)/expS; \
+		const double x0 = - expT/expS; \
+		const double exp_x1 = std::exp(x1); \
+		const double exp_x0 = std::exp(x0); \
+		const double x1val = exp_x1 / (exp_x1 + 1.0); \
+		const double x0val = exp_x0 / (exp_x0 + 1.0); \
+		\
+		double dSlope = - TPar::c.LearningRate * (x1val * (-x1) + x1 + 1.0 + (1.0/mu) * (x1val * (-x1) - x0val * (-x0))); \
+		\
+		double dThreshold = - TPar::c.LearningRate * ( -x0 + x1val * x0 + (1.0/mu) * (x1val * x0 - x0val * x0)); \
+		\
+		Slope += t.Dt * dSlope; \
+		Threshold += t.Dt * dThreshold; \
+		\
+		*ExpSlope = expS; \
+		*ExpThreshold = expT; \
+	}
+
+	template <typename TNeuron, typename TWeightNormalizationType>
+	class TMaxEntropyIPImpl<TNeuron, TLogExp, TWeightNormalizationType>: public TIntrinsicPlasticity<TMaxEntropyIPConst, TMaxEntropyIPDefaultState, TNeuron> {
 	public:
 		using TPar = TIntrinsicPlasticity<TMaxEntropyIPConst, TMaxEntropyIPDefaultState, TNeuron>;
 		
 		void Reset() {
-			TLogExp& actF = static_cast<TLogExp&>(TPar::MutActivationFunction());
-			
-			ExpThreshold.Set(&actF.MutConstants().Threshold);
-			ExpSlope.Set(&actF.MutConstants().Slope);
-
-			ENSURE(*ExpThreshold > 0.0, "Need Threshold in LogExp activation be >= 0.0");
-			ENSURE(*ExpSlope > 0.0, "Need Slope in LogExp activation be >= 0.0");
-			
-			Threshold = std::log(*ExpThreshold);
-			Slope = std::log(*ExpSlope);
+			LOG_EXP_RESET();
 		}
 
     	void CalculateDynamics(const TTime& t) {
-    		const auto& x = TPar::Neuron().Membrane();
-    		const double& y = TPar::Neuron().SpikeProbability();
-    		const auto& mu = TPar::c.__TargetRate;
-    	
-    		const double expT = std::exp(Threshold);
-    		const double expS = std::exp(Slope);
-    		const double x1 = (x - expT)/expS;
-    		const double x0 = - expT/expS;
-    		const double exp_x1 = std::exp(x1);
-    		const double exp_x0 = std::exp(x0);
-    		const double x1val = exp_x1 / (exp_x1 + 1.0);
-    		const double x0val = exp_x0 / (exp_x0 + 1.0);
-
-    		double dSlope = - TPar::c.LearningRate * (x1val * (-x1) + x1 + 1.0 + (1.0/mu) * (x1val * (-x1) - x0val * (-x0)));
-
-    		double dThreshold = - TPar::c.LearningRate * ( -x0 + x1val * x0 + (1.0/mu) * (x1val * x0 - x0val * x0));
-    		    		
-    		Slope += t.Dt * dSlope;
-    		Threshold += t.Dt * dThreshold;
-
-    		*ExpSlope = expS;
-    		*ExpThreshold = expT;
+    		LOG_EXP_CALCULATIONS();
     	}
 
     private:
@@ -153,6 +162,63 @@ namespace NDnn {
     	double Threshold;
     	double Slope;
 	};
+
+	struct TMaxEntropyIPMomentState: public IProtoSerial<NDnnProto::TMaxEntropyIPMomentState>  {
+		static const auto ProtoFieldNumber = NDnnProto::TLayer::kMaxEntropyIPMomentStateFieldNumber;
+
+		void SerialProcess(TProtoSerial& serial) {
+			serial(M1);
+			serial(M2);
+		}
+
+		double M1 = 0.0;
+		double M2 = 0.0;
+	};
+
+
+	template <typename TNeuron>
+	class TMaxEntropyIPImpl<TNeuron, TLogExp, TSumNorm<TNeuron>>: public TIntrinsicPlasticity<TMaxEntropyIPConst, TMaxEntropyIPMomentState, TNeuron> {
+	public:
+		using TPar = TIntrinsicPlasticity<TMaxEntropyIPConst, TMaxEntropyIPMomentState, TNeuron>;
+		
+		void Reset() {
+			LOG_EXP_RESET();
+			TSumNorm<TNeuron>& weightNorm = static_cast<TSumNorm<TNeuron>&>(TPar::MutWeightNormalization());
+			
+			ExcUnit.Set(&weightNorm.MutConstants().ExcUnit);
+			InhUnit.Set(&weightNorm.MutConstants().InhUnit);
+		}
+
+    	void CalculateDynamics(const TTime& t) {
+    		LOG_EXP_CALCULATIONS();
+		    if( (TGlobalCtx::Inst().GetPastTime() + t.T) < 5*TPar::c.TauMoment ) {
+		        return;
+		    }
+
+    		const auto& mu = TPar::c.__TargetRate;
+		    TPar::s.M1 += t.Dt * (-TPar::s.M1 + TPar::Neuron().SpikeProbability())/TPar::c.TauMoment;
+		    // TPar::s.M2 += (-TPar::s.M2 + TPar::Neuron().SpikeProbability()*TPar::Neuron().SpikeProbability())/TPar::c.TauMoment;
+
+		    // double deriv = TPar::c.LearningRate * (TPar::s.M1 - mu) / std::sqrt(TPar::s.M2);
+		    double deriv = 1000*TPar::c.LearningRate * (TPar::s.M1 - mu);
+		    
+		    *ExcUnit += - deriv;
+		    *InhUnit += deriv;
+
+		    // L_INFO << "deriv: " << deriv << " M1: " << TPar::s.M1 << " M2: " << TPar::s.M2 << ", E: " << *ExcUnit << ", I: " << *InhUnit;
+    	}
+
+    private:
+    	TPtr<double> ExpThreshold;
+    	TPtr<double> ExpSlope;
+
+    	double Threshold;
+    	double Slope;
+
+    	TPtr<double> ExcUnit;
+    	TPtr<double> InhUnit;
+	};
+
 
 	// struct TMaxEntropyIPDetermState: public IProtoSerial<NDnnProto::TMaxEntropyIPDetermState>  {
 	// 	static const auto ProtoFieldNumber = NDnnProto::TLayer::kMaxEntropyIPDetermStateFieldNumber;
@@ -202,7 +268,11 @@ namespace NDnn {
 
 
 	template <typename TNeuron>
-	using TMaxEntropyIP = TMaxEntropyIPImpl<TNeuron, typename TNeuron::TConfig::TNeuronActivationFunction>;
+	using TMaxEntropyIP = TMaxEntropyIPImpl<
+		TNeuron, 
+		typename TNeuron::TConfig::TNeuronActivationFunction, 
+		typename TNeuron::TConfig::template TWeightNormalization<TNeuron>
+	>;
 
 
 } // namespace NDnn
