@@ -185,8 +185,11 @@ namespace NDnn {
 			LOG_EXP_RESET();
 			TSumNorm<TNeuron>& weightNorm = static_cast<TSumNorm<TNeuron>&>(TPar::MutWeightNormalization());
 			
-			ExcUnit.Set(&weightNorm.MutConstants().ExcUnit);
-			InhUnit.Set(&weightNorm.MutConstants().InhUnit);
+			ExpExcUnit.Set(&weightNorm.MutConstants().ExcUnit);
+			ExpInhUnit.Set(&weightNorm.MutConstants().InhUnit);
+			
+			ExcUnit = std::log(*ExpExcUnit);
+			InhUnit = std::log(*ExpInhUnit);
 		}
 
     	void CalculateDynamics(const TTime& t) {
@@ -200,9 +203,11 @@ namespace NDnn {
 		    
 		    double deriv = 1000*TPar::c.LearningRate * (TPar::s.M1 - mu);
 
-		    *ExcUnit += - deriv;
-		    *InhUnit += deriv;
+		    ExcUnit += - deriv;
+		    InhUnit += deriv;
 
+		    *ExpExcUnit = std::exp(ExcUnit);
+		    *ExpInhUnit = std::exp(InhUnit);
 		    // L_INFO << "deriv: " << deriv << " M1: " << TPar::s.M1 << " M2: " << TPar::s.M2 << ", E: " << *ExcUnit << ", I: " << *InhUnit;
     	}
 
@@ -213,8 +218,11 @@ namespace NDnn {
     	double Threshold;
     	double Slope;
 
-    	TPtr<double> ExcUnit;
-    	TPtr<double> InhUnit;
+    	TPtr<double> ExpExcUnit;
+    	TPtr<double> ExpInhUnit;
+
+    	double ExcUnit;
+    	double InhUnit;
 	};
 
 

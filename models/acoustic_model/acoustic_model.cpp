@@ -38,6 +38,7 @@ int main(int argc, const char** argv) {
     if (opts.NoLearning) {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 256, TNeuronConfig<>>,
+            TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TLogExp>>,
             TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TLogExp>>
         >(opts);
 
@@ -45,24 +46,23 @@ int main(int argc, const char** argv) {
     } else {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 256, TNeuronConfig<>>,
+            TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TSumNorm, TMaxEntropyIP>>,
             TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TSumNorm, TMaxEntropyIP>>
         >(opts);
 
         if (opts.StatFile) {
-            // sim.ListenBasicStats<1, 2>(0, 10000);
+            sim.ListenBasicStats<1, 7>(0, std::numeric_limits<ui32>::max());
 
             // sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 2, 18>().Weight(); }, 0, 10000);
             // sim.ListenStat("M", [&]() { return sim.GetNeuron<1, 2>().ProbabilityModulation(); }, 0, 10000);
             // sim.ListenStat("Refr", [&]() { return sim.GetNeuron<1, 2>().State().VarRefr; }, 0, 10000);
             // sim.ListenStat("Adapt", [&]() { return sim.GetNeuron<1, 2>().State().VarAdapt; }, 0, 10000);
             
-            // sim.ListenStat("X", [&]() { return sim.GetLearningRule<1, 0>().State().X.Get(50); }, 0, std::numeric_limits<ui32>::max());
-            // sim.ListenStat("X", [&]() { return sim.GetLearningRule<1, 1>().State().X.Get(50); }, 0, std::numeric_limits<ui32>::max());
-            // sim.ListenStat("X", [&]() { return sim.GetLearningRule<1, 2>().State().X.Get(50); }, 0, std::numeric_limits<ui32>::max());
-            // sim.ListenStat("X", [&]() { return sim.GetLearningRule<1, 3>().State().X.Get(50); }, 0, std::numeric_limits<ui32>::max());
-            // sim.ListenStat("X", [&]() { return sim.GetLearningRule<1, 4>().State().X.Get(50); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("X", [&]() { return sim.GetLearningRule<1, 7>().State().X.Get(30); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("Y", [&]() { return sim.GetLearningRule<1, 7>().State().Y; }, 0, std::numeric_limits<ui32>::max());
             
-
+            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 7, 30>().Weight(); }, 0, std::numeric_limits<ui32>::max());
+            
             // sim.ListenStat("FirstMoment", [&]() { return sim.GetLearningRule<1, 0>().State().FirstMoment.Get(50); }, 0, std::numeric_limits<ui32>::max());
             // sim.ListenStat("FirstMoment", [&]() { return sim.GetLearningRule<1, 1>().State().FirstMoment.Get(50); }, 0, std::numeric_limits<ui32>::max());
             // sim.ListenStat("FirstMoment", [&]() { return sim.GetLearningRule<1, 2>().State().FirstMoment.Get(50); }, 0, std::numeric_limits<ui32>::max());

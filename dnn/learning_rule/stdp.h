@@ -116,10 +116,8 @@ namespace NDnn {
                 // w += norm.Derivative(w, 
                 // 	TPar::c.LearningRate * TPar::s.FirstMoment.Get(synapseId)/std::sqrt(TPar::s.SecondMoment.Get(synapseId) + 1e-08));
                 
-                // w += norm.Derivative(w, TPar::c.LearningRate * TPar::s.FirstMoment.Get(synapseId));
-
                 w += norm.Derivative(w, TPar::c.LearningRate * dw);
-
+            	
                 TPar::s.X[synIdIt] += - t.Dt * TPar::s.X[synIdIt]/TPar::c.TauPlus;
             	
             	// if ((std::fabs(TPar::s.SecondMoment.Get(synapseId)) < 1e-06) && (std::fabs(TPar::s.FirstMoment.Get(synapseId)) < 1e-06) && (std::fabs(TPar::s.X[synIdIt]) < 1e-04)) {

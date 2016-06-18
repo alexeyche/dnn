@@ -1,14 +1,14 @@
 
-setwd(path.expand("~/Music/ml/impro"))
+setwd(path.expand("~/Music/ml/jp"))
 
 
 data = spikes.list(vector("list", 256))
 
 lab = 0
 for (f in system("ls *.pb", intern=TRUE)) {
-    if (length(grep("parfum", f)) == 0) {
-        next
-    }
+#     if (length(grep("07. Impro", f)) == 0) {
+#         next
+#     }
     if (length(grep("_raw", f)) == 0) {
         cat(f, "\n")    
         sp = proto.read(f)
