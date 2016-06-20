@@ -23,7 +23,7 @@ if(length(grep("RStudio", args))>0) {
     #WD = simruns.path(system(sprintf("ls -t %s | head -n 1", simruns.path()), intern=TRUE))
     WD = file.path(dnn.env(), "runs/last")
     
-    #WD="/home/alexeyche/dnn/runs/evo_mi/0bd621b74e6f03ac8ac7c97df0c6d170_0472"
+    #WD="/home/alexeyche/dnn/runs/evo_mi_impro_adapt/82bc3906e61612962e33126914e79846_1990"
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
@@ -122,7 +122,7 @@ if(INSP_MODEL) {
         
         weights_pic = sprintf("%s/2_%s", tmp_d, pfx_f("weights.png"))
         if(SAVE_PIC_IN_FILES) png(weights_pic, width=1024, height=768)
-        lsize = 10
+        lsize = 50
         print(gr_pl(t(w[257:(256+lsize),1:256])))
         print(gr_pl(t(w[(257+lsize):(256+2*lsize),257:(256+lsize)])))
         print(gr_pl(t(w[257:(256+lsize), (257+lsize):(256+2*lsize)])))

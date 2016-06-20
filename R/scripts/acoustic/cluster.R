@@ -13,7 +13,7 @@ rainbow_cols = rainbow(length(uc))
 
 cols = NULL
 labs = NULL
-win = 25
+win = 500
 rv = get.rate.vectors(sp, win)
 tc = 0
 for (i in rv$info) {

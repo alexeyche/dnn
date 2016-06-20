@@ -55,12 +55,14 @@ namespace NDnn {
 			: PopulationSize(0)
 			, Options(options)
 		{
+			TVector<ui32> sizeOfLayers;
 			ForEachEnumerate(Layers, [&](ui32 layerId, auto& l) {
 				l.SetupSpaceInfo(layerId, PopulationSize);
 				PopulationSize += l.Size();
+				sizeOfLayers.push_back(l.Size());
 			});
 
-			TGlobalCtx::Inst().Init(RewardControl);
+			TGlobalCtx::Inst().Init(RewardControl, sizeOfLayers);
 			TGlobalCtx::Inst().SetPastTime(Conf.PastTime);
 		}
 
@@ -77,13 +79,15 @@ namespace NDnn {
 				Options = other.Options;
 				Dispatcher = other.Dispatcher;
 				RewardControl = other.RewardControl;
-				TGlobalCtx::Inst().Init(RewardControl);
-				TGlobalCtx::Inst().SetPastTime(Conf.PastTime);
 				Network = other.Network;
 				Network.Init(PopulationSize);
+				TVector<ui32> sizeOfLayers;
 				ForEach(Layers, [&](auto& l) {
 					Network.AddLayer(l);
+					sizeOfLayers.push_back(l.Size());
 				});
+				TGlobalCtx::Inst().Init(RewardControl, sizeOfLayers);
+				TGlobalCtx::Inst().SetPastTime(Conf.PastTime);
 			}
 			return *this;
 		}

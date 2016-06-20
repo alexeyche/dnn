@@ -21,8 +21,9 @@ namespace NDnn {
 	public:
 		static TGlobalCtx& Inst();
 
-		void Init(TRewardControl& rewardControl) {
+		void Init(TRewardControl& rewardControl, const TVector<ui32>& sizeOfLayers) {
 			RewardControl.Set(rewardControl);
+			SizeOfLayers = sizeOfLayers;
 		}
 
 		const double& GetReward() const {
@@ -45,6 +46,16 @@ namespace NDnn {
 		const double& GetPastTime() const {
 			return PastTime;
 		}
+		
+		ui32 GetNeuronLayerId(ui32 globalNeuronId) {
+			ui32 id = 0;
+			while (id < SizeOfLayers.size()) {
+				if (SizeOfLayers[id] > globalNeuronId) {
+					return id;
+				}
+			}
+			throw TErrException() << "Can't find neuron by global id: " << globalNeuronId;
+		}
 
 	private:
 		void SetPastTime(double pastTime) {
@@ -59,6 +70,7 @@ namespace NDnn {
 
 		TMaybe<ui32> CurrentClassId;
 		double PastTime = 0;
+		TVector<ui32> SizeOfLayers;
 	};
 
 
