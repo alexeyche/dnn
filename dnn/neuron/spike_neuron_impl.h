@@ -190,7 +190,8 @@ namespace NDnn {
 			
 			LearningRule.SetNeuronImpl(*this);
 			LearningRule.Reset();
-			
+			LearningRule.MutNorm().Reset();
+
 			Reinforcement.SetNeuronImpl(*this);
 			
 			IntrinsicPlasticity.SetNeuronImpl(*this);

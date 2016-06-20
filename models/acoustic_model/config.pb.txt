@@ -28,8 +28,9 @@ Layer {
 		LearningRate: 1e-06
 	}
 	SumNorm {
-		ExcUnit: 2.0			# [0.1, 5.0]
-		InhUnit: 1.0			# [0.1, 5.0]
+		Layer { Id: 0 ExcUnit: 2.0 }
+		Layer { Id: 1 InhUnit: 1.0 }
+		Layer { Id: 2 ExcUnit: 0.1 }
 	}
 }
 Layer {
@@ -56,8 +57,8 @@ Layer {
 		LearningRate: 1e-06
 	}
 	SumNorm {
-		ExcUnit: 2.0			# [0.1, 5.0]
-		InhUnit: 1.0			# [0.1, 5.0]
+		Layer { Id: 1 ExcUnit: 2.0 }
+		Layer { Id: 2 InhUnit: 1.0 }
 	}
 }
 Connection {

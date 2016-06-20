@@ -57,7 +57,8 @@ namespace NDnn {
 		const TNeuronSpaceInfo& SpaceInfo() const {
 			return NeuronImpl->GetSpaceInfo();
 		}
-		
+		void Reset() {
+		}		
 	protected:
 		TConstants c;
 		TState s;

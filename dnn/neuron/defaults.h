@@ -126,6 +126,9 @@ namespace NDnn {
 		void SetNeuronImpl(T& neuron) {
 		}
 
+		void Reset() {
+		}
+
 	};
 
 	template <typename T>

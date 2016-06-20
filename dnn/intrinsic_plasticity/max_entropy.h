@@ -185,11 +185,12 @@ namespace NDnn {
 			LOG_EXP_RESET();
 			TSumNorm<TNeuron>& weightNorm = static_cast<TSumNorm<TNeuron>&>(TPar::MutWeightNormalization());
 			
-			ExpExcUnit.Set(&weightNorm.MutConstants().ExcUnit);
-			ExpInhUnit.Set(&weightNorm.MutConstants().InhUnit);
-			
-			ExcUnit = std::log(*ExpExcUnit);
-			InhUnit = std::log(*ExpInhUnit);
+			for (auto& layerNorm: weightNorm.GetMutLayerNorm()) {
+				ExpExcUnit.push_back(&layerNorm.ExcUnit);
+				ExpInhUnit.push_back(&layerNorm.InhUnit);
+				ExcUnit.push_back(std::log(*ExpExcUnit.back()));
+				InhUnit.push_back(std::log(*ExpInhUnit.back()));
+			}
 		}
 
     	void CalculateDynamics(const TTime& t) {
@@ -203,11 +204,13 @@ namespace NDnn {
 		    
 		    double deriv = 1000*TPar::c.LearningRate * (TPar::s.M1 - mu);
 
-		    ExcUnit += - deriv;
-		    InhUnit += deriv;
+		    for (ui32 layerId=0; layerId < ExpExcUnit.size(); ++layerId) {
+		    	ExcUnit[layerId] += - deriv;
+		    	InhUnit[layerId] += deriv;
 
-		    *ExpExcUnit = std::exp(ExcUnit);
-		    *ExpInhUnit = std::exp(InhUnit);
+		    	*ExpExcUnit[layerId] = std::exp(ExcUnit[layerId]);
+		    	*ExpInhUnit[layerId] = std::exp(InhUnit[layerId]);	
+		    }		    
 		    // L_INFO << "deriv: " << deriv << " M1: " << TPar::s.M1 << " M2: " << TPar::s.M2 << ", E: " << *ExcUnit << ", I: " << *InhUnit;
     	}
 
@@ -218,11 +221,11 @@ namespace NDnn {
     	double Threshold;
     	double Slope;
 
-    	TPtr<double> ExpExcUnit;
-    	TPtr<double> ExpInhUnit;
+    	TVector<TPtr<double>> ExpExcUnit;
+    	TVector<TPtr<double>> ExpInhUnit;
 
-    	double ExcUnit;
-    	double InhUnit;
+    	TVector<double> ExcUnit;
+    	TVector<double> InhUnit;
 	};
 
 
