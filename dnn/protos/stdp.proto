@@ -13,8 +13,7 @@ message TStdpConst {
     optional double TauMinus = 2;
     optional double Aplus = 3;
     optional double Aminus = 4;
-    optional double LearningRate = 5;
-    optional double TauFirstMoment = 6;
-    optional double TauSecondMoment = 7;
+    optional double TauFirstMoment = 5;
+    optional double TauSecondMoment = 6;
 }
 

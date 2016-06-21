@@ -23,7 +23,6 @@ Layer {
 		TauMinus: 40.0
 		Aplus: 1.0
 		Aminus: 1.0
-		LearningRate: 1e-03
 	}
 	UnitNorm {
 		Unit: 1.0
@@ -44,4 +43,5 @@ Connection {
 		Prob: 1.0
 	}
 	Weight: {Value: 0.03}
+	LearningRate: 1e-03
 }

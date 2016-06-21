@@ -15,6 +15,7 @@ namespace NDnn {
 			serial(Potential);
 			serial(Fired);
 			serial(PostSynapticWeight);
+			serial(LearningRate);
 		}
 
 		size_t IdPre = 0;
@@ -23,6 +24,7 @@ namespace NDnn {
 		double Potential = 0.0;
 		bool Fired = false;
 		double PostSynapticWeight = 1.0;
+		double LearningRate = 1.0;
 	};
 
 	template <typename TConstants, typename TState>
@@ -95,6 +97,14 @@ namespace NDnn {
 
 		const TState& State() const {
 			return s;
+		}
+
+		const double& LearningRate() const {
+			return InnerState.LearningRate;
+		}
+
+		double& MutLearningRate() {
+			return InnerState.LearningRate;
 		}
 	private:
 		TSynapseInnerState InnerState;

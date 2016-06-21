@@ -108,6 +108,7 @@ message TConnection {
 	optional uint32 To = 2;
 	optional NGroundProto.TDistr Weight = 3;
     optional NGroundProto.TDistr DendriteDelay = 4;
-	optional TStochasticConst Stochastic = 5;
-    optional TDifferenceOfGaussiansConst DifferenceOfGaussians = 6;
+    optional double LearningRate = 5;
+	optional TStochasticConst Stochastic = 6;
+    optional TDifferenceOfGaussiansConst DifferenceOfGaussians = 7;
 }

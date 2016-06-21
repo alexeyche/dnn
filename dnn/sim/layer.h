@@ -1,7 +1,6 @@
 #pragma once
 
 #include <ground/base/base.h>
-#include <ground/base/base.h>
 #include <dnn/neuron/spike_neuron_impl.h>
 #include <dnn/neuron/defaults.h>
 #include <dnn/connection/builder.h>
@@ -103,7 +102,8 @@ namespace NDnn {
 					syn.MutWeight() = connRecipe.Amplitude * rand.DrawValue(conn.weight());
 					syn.MutIdPre() = npre.GetGlobalId();
 					syn.MutDendriteDelay() = rand.DrawValue(conn.dendritedelay());
-
+					syn.MutLearningRate() = conn.learningrate();
+					
 					npost.AddSynapse(std::move(syn));
 				}
 			}

@@ -16,7 +16,6 @@ namespace NDnn {
 	        serial(TauMinus);
 	        serial(Aplus);
 	        serial(Aminus);
-	        serial(LearningRate);
 	        serial(TauFirstMoment);
 	        serial(TauSecondMoment);
 	    }
@@ -25,7 +24,6 @@ namespace NDnn {
 	    double TauMinus = 50.0;
 	    double Aplus = 1.0;
 	    double Aminus = 1.0;
-	    double LearningRate = 0.01;
 	    double TauFirstMoment = 10.0;
 	    double TauSecondMoment = 100.0;
 	};
@@ -116,7 +114,7 @@ namespace NDnn {
                 // w += norm.Derivative(w, 
                 // 	TPar::c.LearningRate * TPar::s.FirstMoment.Get(synapseId)/std::sqrt(TPar::s.SecondMoment.Get(synapseId) + 1e-08));
                 
-                w += norm.Derivative(w, TPar::c.LearningRate * dw);
+                w += norm.Derivative(w, syn.LearningRate() * dw);
             	
                 TPar::s.X[synIdIt] += - t.Dt * TPar::s.X[synIdIt]/TPar::c.TauPlus;
             	

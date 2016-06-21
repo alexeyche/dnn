@@ -21,7 +21,6 @@ Layer {
 		TauMinus: 34.0			 
 		Aplus: 1.0			    
 		Aminus: 0.5
-		LearningRate: 1e-06
 		TauMomentum: 100
 	}
 	MaxEntropyIP {
@@ -40,6 +39,7 @@ Connection {
 	}
 	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
 	# DendriteDelay: {Exp {Rate: 0.5}}
+	LearningRate: 1e-06
 }
 Connection {
 	From: 1 To: 1
@@ -48,4 +48,5 @@ Connection {
 	}
 	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
 	# DendriteDelay: {Exp {Rate: 0.5}}
+	LearningRate: 1e-06
 }
