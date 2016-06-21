@@ -23,7 +23,7 @@ if(length(grep("RStudio", args))>0) {
     #WD = simruns.path(system(sprintf("ls -t %s | head -n 1", simruns.path()), intern=TRUE))
     WD = file.path(dnn.env(), "runs/last")
     
-    #WD="/home/alexeyche/dnn/runs/evo_mi_impro_adapt/82bc3906e61612962e33126914e79846_1990"
+    WD="/home/alexeyche/dnn/runs/evo_2l/66b0acb024f47e1a2de6c16c6bfc4df5_0342"
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])

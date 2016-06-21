@@ -5,6 +5,7 @@ message TMaxEntropyIPConst {
     optional double TargetRate = 1;
     optional double LearningRate = 2;
     optional double TauMoment = 3;
+    optional double MomentDynamicRate = 4;
 }
 
 message TMaxEntropyIPDefaultState {

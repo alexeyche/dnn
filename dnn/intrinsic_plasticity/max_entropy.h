@@ -24,6 +24,7 @@ namespace NDnn {
 	        serial(TargetRate);
 	        serial(LearningRate);
 	        serial(TauMoment);
+	        serial(MomentDynamicRate);
 
 	        __TargetRate = TargetRate/1000.0;
 	    }
@@ -31,6 +32,7 @@ namespace NDnn {
 	    double TargetRate = 10.0;
 	    double LearningRate = 0.01;
 	    double TauMoment = 1000.0;
+	    double MomentDynamicRate = 0.01;
 	    double __TargetRate;
 	};
 
@@ -202,7 +204,7 @@ namespace NDnn {
     		const auto& mu = TPar::c.__TargetRate;
 		    TPar::s.M1 += t.Dt * (-TPar::s.M1 + TPar::Neuron().SpikeProbability())/TPar::c.TauMoment;
 		    
-		    double deriv = 1000*TPar::c.LearningRate * (TPar::s.M1 - mu);
+		    double deriv = TPar::c.MomentDynamicRate * (TPar::s.M1 - mu);
 
 		    for (ui32 layerId=0; layerId < ExpExcUnit.size(); ++layerId) {
 		    	ExcUnit[layerId] += - deriv;

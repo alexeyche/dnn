@@ -38,20 +38,22 @@ int main(int argc, const char** argv) {
     if (opts.NoLearning) {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 256, TNeuronConfig<>>,
-            TLayer<TSRMNeuron, 50, TNeuronConfig<TBasicSynapse, TLogExp>>,
-            TLayer<TSRMNeuron, 50, TNeuronConfig<TBasicSynapse, TLogExp>>
+            TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TLogExp>>,
+            TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TLogExp>>
         >(opts);
-
+        
         sim.Run();
     } else {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 256, TNeuronConfig<>>,
-            TLayer<TSRMNeuron, 50, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TSumNorm, TMaxEntropyIP>>,
-            TLayer<TSRMNeuron, 50, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TSumNorm, TMaxEntropyIP>>
+            TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TSumNorm, TMaxEntropyIP>>,
+            TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TSumNorm, TMaxEntropyIP>>
         >(opts);
 
         if (opts.StatFile) {
-            sim.ListenBasicStats<1, 7>(0, std::numeric_limits<ui32>::max());
+            // sim.ListenBasicStats<2, 0>(0, std::numeric_limits<ui32>::max());
+            // sim.ListenBasicStats<2, 1>(0, std::numeric_limits<ui32>::max());
+            // sim.ListenBasicStats<2, 2>(0, std::numeric_limits<ui32>::max());
 
             // sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 2, 18>().Weight(); }, 0, 10000);
             // sim.ListenStat("M", [&]() { return sim.GetNeuron<1, 2>().ProbabilityModulation(); }, 0, 10000);

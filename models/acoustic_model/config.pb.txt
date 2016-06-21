@@ -26,11 +26,17 @@ Layer {
 	MaxEntropyIP {
 		TargetRate: 10.0
 		LearningRate: 1e-06
+		MomentDynamicRate: 1e-03
 	}
 	SumNorm {
-		Layer { Id: 0 ExcUnit: 2.0 }
-		Layer { Id: 1 InhUnit: 1.0 }
-		Layer { Id: 2 ExcUnit: 0.1 }
+		Layer { 
+			Id: 0 
+			ExcUnit: 2.0      # [0.1, 10.0]
+		}
+		Layer { 
+			Id: 1
+			InhUnit: 1.0      # [0.1, 10.0]
+		}
 	}
 }
 Layer {
@@ -55,10 +61,17 @@ Layer {
 	MaxEntropyIP {
 		TargetRate: 10.0
 		LearningRate: 1e-06
+		MomentDynamicRate: 5e-03
 	}
 	SumNorm {
-		Layer { Id: 1 ExcUnit: 2.0 }
-		Layer { Id: 2 InhUnit: 1.0 }
+		Layer { 
+			Id: 1 
+			ExcUnit: 0.5 		# [0.1, 10.0]
+		}
+		Layer { 
+			Id: 2 
+			InhUnit: 0.5 		# [0.1, 10.0]
+		}
 	}
 }
 Connection {
@@ -83,16 +96,16 @@ Connection {
 	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
 }
 Connection {
-	From: 2 To: 1
-	Stochastic {
-		Prob: 1.0
-	}
-	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
-}
-Connection {
 	From: 2 To: 2
 	Stochastic {
 		Prob: 1.0
 	}
 	Weight: {Norm {Mean: -0.1  Sd: 0.01}}
+}
+Connection {
+	From: 2 To: 1
+	Stochastic {
+		Prob: 1.0
+	}
+	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
 }

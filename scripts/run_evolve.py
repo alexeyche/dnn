@@ -9,23 +9,20 @@ import os
 import numpy as np
 
 from lib.util import setup_logging
-from lib.evolve import TCMAStrategy, TGpyOptStrategy, TEvolveCli, TCMAMOStrategy
+from lib.evolve import TCMAStrategy, TGpyOptStrategy, TEvolveCli
 
 
 setup_logging(logging.getLogger())
 
 
-def evolve_cma_mo(args, runner_args):
-    es = TCMAMOStrategy(
-        args, 
-        popsize = 50
-    )
+def direct(args, runner_args):
+    es = TDirectStrategy(args)
         
     while not es.stop():
-        cli = TEvolveCli(runner_args = runner_args, bounds = es.get_bounds(), bad_value=[np.float32(100000)], max_running = args.jobs)
+        cli = TEvolveCli(runner_args = runner_args, bounds = es.get_bounds(), bad_value=100000, max_running = args.jobs)
         
         for x in es.ask():
-            cli.run(x)
+            cli.run([x])
         cli.sync()
 
         es.tell([ c[0] for c in cli.points ], [ c[1] for c in cli.points ])
@@ -52,7 +49,6 @@ def evolve_cma(args, runner_args):
 
 strategies = {
     "cma": evolve_cma,
-    "cma_mo" : evolve_cma_mo,
 }
 
 
