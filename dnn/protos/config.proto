@@ -35,6 +35,7 @@ import "dnn/protos/log_exp.proto";
 import "dnn/protos/sum_norm.proto";
 import "dnn/protos/optimal_stdp.proto";
 import "dnn/protos/srm_neuron.proto";
+import "dnn/protos/random_neuron.proto";
 
 
 message TRewardControl {
@@ -111,4 +112,5 @@ message TConnection {
     optional double LearningRate = 5;
 	optional TStochasticConst Stochastic = 6;
     optional TDifferenceOfGaussiansConst DifferenceOfGaussians = 7;
+    optional TRandomNeuronConst RandomNeuron = 8;
 }

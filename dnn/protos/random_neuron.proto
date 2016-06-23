@@ -1,0 +1,8 @@
+package NDnnProto;
+
+
+message TRandomNeuronConst {
+    optional double NeuronProb = 1;
+    optional double SynapseProb = 2;
+}
+

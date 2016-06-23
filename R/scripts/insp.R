@@ -27,7 +27,7 @@ if(length(grep("RStudio", args))>0) {
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
-    #EP=6
+    #EP=2
 }
 
 pfx_f = function(s) s
@@ -122,11 +122,14 @@ if(INSP_MODEL) {
         
         weights_pic = sprintf("%s/2_%s", tmp_d, pfx_f("weights.png"))
         if(SAVE_PIC_IN_FILES) png(weights_pic, width=1024, height=768)
-        lsize = 10
-        print(gr_pl(t(w[257:(256+lsize),1:256])))
-        print(gr_pl(t(w[(257+lsize):(256+2*lsize),257:(256+lsize)])))
-        print(gr_pl(t(w[257:(256+lsize), (257+lsize):(256+2*lsize)])))
-        #print(gr_pl(w))
+        lsize = 50
+        l1 = 1:256
+        l2 = (max(l1)+1):(max(l1)+lsize)
+        #l3 = (max(l2)+1):(max(l2)+lsize)
+        
+        print(gr_pl(t(w[l2, l1])))
+        print(gr_pl(t(w[l2, l2])))
+        #print(gr_pl(t(w[l2, l3])))
         
         if(SAVE_PIC_IN_FILES) { 
             dev.off()

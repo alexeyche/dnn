@@ -30,89 +30,37 @@ Layer {
 	SumNorm {
 		Layer { 
 			Id: 0 
-			ExcUnit: 2.0        # [0.01, 10.0]
+			ExcUnit: 1.0        # [0.01, 10.0]
 		}
 		Layer { 
 			Id: 1
-			InhUnit: 1.0        # [0.01, 10.0]
-		}
-		Layer { 
-			Id: 2
-			ExcUnit: 0.1        # [0.01, 10.0]
-		}
-	}
-}
-Layer {
-	BasicSynapse {
-        PspDecay: 10.0
-    }
-	SRMNeuron {
-		AmpAdapt: 0.5		    # [0.0, 10.0]
-		TauAdapt: 100
-	}
-	LogExp {
-		Threshold: 0.1
-		Slope: 0.1
-	}
-	Stdp {
-		TauPlus: 14.0			
-		TauMinus: 34.0			
-		Aplus: 1.0				# [0.1, 20.0]
-		Aminus: 0.5				# [0.1, 20.0]
-	}
-	MaxEntropyIP {
-		TargetRate: 10.0
-		LearningRate: 1e-06
-		MomentDynamicRate: 5e-03
-	}
-	SumNorm {
-		Layer {
-			Id: 1 
-			ExcUnit: 0.5 		# [0.01, 10.0]
-		}
-		Layer { 
-			Id: 2 
-			InhUnit: 0.5 		# [0.01, 10.0]
+			ExcUnit: 0.25		# [0.01, 10.0]
+			InhUnit: 0.25       # [0.01, 10.0]
 		}
 	}
 }
 Connection {
 	From: 0 To: 1
-	Stochastic {
-		Prob: 1.0
+	RandomNeuron {
+		NeuronProb: 0.2
+		SynapseProb: 1.0
 	}
 	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
-	LearningRate: 1e-04
+	LearningRate: 5e-04
 }
 Connection {
 	From: 1 To: 1
 	Stochastic {
-		Prob: 1.0
+		Prob: 0.25			  # [0.0, 1.0]
 	}
 	Weight: {Norm {Mean: -0.1  Sd: 0.01}}
-	LearningRate: 1e-03
+	LearningRate: 5e-03
 }
 Connection {
-	From: 1 To: 2
+	From: 1 To: 1
 	Stochastic {
-		Prob: 1.0
+		Prob: 0.25			  # [0.0, 1.0]
 	}
 	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
-	LearningRate: 1e-05
-}
-Connection {
-	From: 2 To: 2
-	Stochastic {
-		Prob: 1.0
-	}
-	Weight: {Norm {Mean: -0.1  Sd: 0.01}}
-	LearningRate: 1e-04
-}
-Connection {
-	From: 2 To: 1
-	Stochastic {
-		Prob: 1.0
-	}
-	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
-	LearningRate: 1e-05
+	LearningRate: 5e-04
 }

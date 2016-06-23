@@ -6,15 +6,16 @@ c(spikes, epoch) := read.spikes.wd()
 sp = spikes
 sp$values = sp$values[-(1:input_neurons)]
 
+win = 500
+rv = get.rate.vectors(sp, win)
+
+
 cl = sapply(sp$info, function(x) x$label)
 uc = unique(cl)
 rainbow_cols = rainbow(length(uc))
 
-
 cols = NULL
 labs = NULL
-win = 500
-rv = get.rate.vectors(sp, win)
 tc = 0
 for (i in rv$info) {
     col = rainbow_cols[which(i$label == uc)]

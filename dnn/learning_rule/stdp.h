@@ -104,10 +104,6 @@ namespace NDnn {
                     TPar::c.Aminus * TPar::s.Y * syn.Fired() * norm.Ltd(w)
                 );
 
-                if (w < 0.0) {
-                	dw *= 10.0;
-                }
-                
                 // TPar::s.FirstMoment.Get(synapseId) += t.Dt * ( - TPar::s.FirstMoment.Get(synapseId) + dw)/TPar::c.TauFirstMoment;
                 // TPar::s.SecondMoment.Get(synapseId) += t.Dt * ( - TPar::s.SecondMoment.Get(synapseId) + dw*dw)/TPar::c.TauSecondMoment;
                 
