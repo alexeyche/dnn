@@ -6,7 +6,7 @@ c(spikes, epoch) := read.spikes.wd()
 sp = spikes
 sp$values = sp$values[-(1:input_neurons)]
 
-win = 500
+win = 1000
 rv = get.rate.vectors(sp, win)
 
 

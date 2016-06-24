@@ -38,14 +38,14 @@ int main(int argc, const char** argv) {
     if (opts.NoLearning) {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 256, TNeuronConfig<>>,
-            TLayer<TSRMNeuron, 50, TNeuronConfig<TBasicSynapse, TLogExp>>
+            TLayer<TSRMNeuron, 100, TNeuronConfig<TBasicSynapse, TLogExp>>
         >(opts);
         
         sim.Run();
     } else {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 256, TNeuronConfig<>>,
-            TLayer<TSRMNeuron, 50, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TSumNorm, TMaxEntropyIP>>
+            TLayer<TSRMNeuron, 100, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TNearestStdp, TSumNorm, TMaxEntropyIP>>
         >(opts);
 
         if (opts.StatFile) {

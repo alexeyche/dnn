@@ -122,14 +122,13 @@ if(INSP_MODEL) {
         
         weights_pic = sprintf("%s/2_%s", tmp_d, pfx_f("weights.png"))
         if(SAVE_PIC_IN_FILES) png(weights_pic, width=1024, height=768)
-        lsize = 50
+        lsize = 100
         l1 = 1:256
         l2 = (max(l1)+1):(max(l1)+lsize)
         #l3 = (max(l2)+1):(max(l2)+lsize)
         
         print(gr_pl(t(w[l2, l1])))
         print(gr_pl(t(w[l2, l2])))
-        #print(gr_pl(t(w[l2, l3])))
         
         if(SAVE_PIC_IN_FILES) { 
             dev.off()

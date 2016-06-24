@@ -34,16 +34,15 @@ Layer {
 		}
 		Layer { 
 			Id: 1
-			ExcUnit: 0.25		# [0.01, 10.0]
-			InhUnit: 0.25       # [0.01, 10.0]
+			ExcUnit: 1.0
+			InhUnit: 1.0       # [0.01, 10.0]
 		}
 	}
 }
 Connection {
 	From: 0 To: 1
-	RandomNeuron {
-		NeuronProb: 0.2
-		SynapseProb: 1.0
+	Stochastic {
+		Prob: 0.25
 	}
 	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
 	LearningRate: 5e-04
@@ -51,7 +50,7 @@ Connection {
 Connection {
 	From: 1 To: 1
 	Stochastic {
-		Prob: 0.25			  # [0.0, 1.0]
+		Prob: 0.1			  # [0.0, 1.0]
 	}
 	Weight: {Norm {Mean: -0.1  Sd: 0.01}}
 	LearningRate: 5e-03
@@ -59,7 +58,7 @@ Connection {
 Connection {
 	From: 1 To: 1
 	Stochastic {
-		Prob: 0.25			  # [0.0, 1.0]
+		Prob: 0.1			  # [0.0, 1.0]
 	}
 	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
 	LearningRate: 5e-04
