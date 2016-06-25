@@ -55,7 +55,7 @@ Connection {
 		SynapseProb: 0.25		# [0.0, 1.0]
 	}
 	Weight: {Norm {Mean: -0.1  Sd: 0.01}}
-	LearningRate: 5e-04
+	LearningRate: 5e-03
 }
 Connection {
 	From: 1 To: 1
