@@ -6,7 +6,7 @@ c(spikes, epoch) := read.spikes.wd()
 sp = spikes
 sp$values = sp$values[-(1:input_neurons)]
 
-win = 1000
+win = 25
 rv = get.rate.vectors(sp, win)
 
 
@@ -26,13 +26,12 @@ for (i in rv$info) {
 
 
 dups = duplicated(t(rv$values))
-ans.tsne = Rtsne(t(rv$values[, !dups]))
+ans.tsne = Rtsne(t(rv$values[, !dups]), perplexity = 10)
 cols = cols[!dups]
 plot(ans.tsne$Y, col=cols)
 
 
 d = svd(t(rv$values))$u[,1:2]
-
 plot(d, col=cols)
 
 
@@ -65,7 +64,7 @@ library(mclust)
 # Run the function to see how many clusters
 # it finds to be optimal, set it to search for
 # at least 1 model and up 20.
-d_clust <- Mclust(as.matrix(d), G=1:40)
+d_clust <- Mclust(as.matrix(d), G=1:10)
 m.best <- dim(d_clust$z)[2]
 cat("model-based optimal number of clusters:", m.best, "\n")
 # 4 clusters

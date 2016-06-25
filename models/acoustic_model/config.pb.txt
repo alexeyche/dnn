@@ -23,9 +23,9 @@ Layer {
 		Aminus: 0.5				# [0.1, 20.0]
 	}
 	MaxEntropyIP {
-		TargetRate: 10.0
+		TargetRate: 5.0
 		LearningRate: 1e-06
-		MomentDynamicRate: 5e-03
+		MomentDynamicRate: 1e-03
 	}
 	SumNorm {
 		Layer { 
@@ -41,24 +41,27 @@ Layer {
 }
 Connection {
 	From: 0 To: 1
-	Stochastic {
-		Prob: 0.25
+	RandomNeuron {
+		NeuronProb: 0.5
+		SynapseProb: 0.05
 	}
 	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
 	LearningRate: 5e-04
 }
 Connection {
 	From: 1 To: 1
-	Stochastic {
-		Prob: 0.1			  # [0.0, 1.0]
+	RandomNeuron {
+		NeuronProb: 0.25
+		SynapseProb: 0.25
 	}
 	Weight: {Norm {Mean: -0.1  Sd: 0.01}}
 	LearningRate: 5e-03
 }
 Connection {
 	From: 1 To: 1
-	Stochastic {
-		Prob: 0.1			  # [0.0, 1.0]
+	RandomNeuron {
+		NeuronProb: 0.25
+		SynapseProb: 0.25
 	}
 	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
 	LearningRate: 5e-04
