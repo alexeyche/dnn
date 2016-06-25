@@ -4,7 +4,7 @@ require(methods, quietly=TRUE)
 require(Rdnn, quietly=TRUE)
 require(infotheo, quietly=TRUE)
 
-win = 25
+win = 500
 input_neurons = 256
 target_rate = 10
 

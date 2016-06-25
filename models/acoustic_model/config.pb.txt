@@ -17,8 +17,8 @@ Layer {
 		Slope: 0.1
 	}
 	Stdp {
-		TauPlus: 14.0			
-		TauMinus: 34.0			
+		TauPlus: 14.0
+		TauMinus: 34.0
 		Aplus: 1.0				# [0.1, 20.0]
 		Aminus: 0.5				# [0.1, 20.0]
 	}
@@ -28,22 +28,22 @@ Layer {
 		MomentDynamicRate: 1e-03
 	}
 	SumNorm {
-		Layer { 
-			Id: 0 
+		Layer {
+			Id: 0
 			ExcUnit: 1.0        # [0.01, 10.0]
 		}
-		Layer { 
+		Layer {
 			Id: 1
 			ExcUnit: 1.0
-			InhUnit: 1.0       # [0.01, 10.0]
+			InhUnit: 1.0        # [0.01, 10.0]
 		}
 	}
 }
 Connection {
 	From: 0 To: 1
 	RandomNeuron {
-		NeuronProb: 0.5
-		SynapseProb: 0.05
+		NeuronProb: 0.5			# [0.01, 1.0]
+		SynapseProb: 0.05		# [0.01, 1.0]
 	}
 	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
 	LearningRate: 5e-04
@@ -51,17 +51,17 @@ Connection {
 Connection {
 	From: 1 To: 1
 	RandomNeuron {
-		NeuronProb: 0.25
-		SynapseProb: 0.25
+		NeuronProb: 0.25		# [0.0, 1.0]
+		SynapseProb: 0.25		# [0.0, 1.0]
 	}
 	Weight: {Norm {Mean: -0.1  Sd: 0.01}}
-	LearningRate: 5e-03
+	LearningRate: 5e-04
 }
 Connection {
 	From: 1 To: 1
 	RandomNeuron {
-		NeuronProb: 0.25
-		SynapseProb: 0.25
+		NeuronProb: 0.25        # [0.0, 1.0]
+		SynapseProb: 0.25		# [0.0, 1.0]
 	}
 	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
 	LearningRate: 5e-04
