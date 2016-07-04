@@ -6,6 +6,9 @@ add_library(dnnpb SHARED ${ProtoFiles} ${PROTO_SRCS})
 
 SET_TARGET_PROPERTIES(dnnpb PROPERTIES COMPILE_FLAGS "-fPIC")
 
+include_directories(
+    ${PROTOBUF_INCLUDE_DIR}
+)
 target_link_libraries(dnnpb
     groundpb
     ${PROTOBUF_LIBRARY}

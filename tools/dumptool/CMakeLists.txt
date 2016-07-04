@@ -5,6 +5,7 @@ add_executable(dumptool
     dumptool.cpp
 )
 
+include_directories(${PROTOBUF_INCLUDE_DIR})
 include_directories(${CMAKE_BINARY_DIR}/ground/protos PARENT_SCOPE)
 include_directories(${CMAKE_BINARY_DIR}/dnn/protos PARENT_SCOPE)
 

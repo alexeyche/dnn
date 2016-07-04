@@ -7,6 +7,10 @@ add_library(spikeworkpb SHARED ${ProtoFiles} ${PROTO_SRCS})
 
 SET_TARGET_PROPERTIES(spikeworkpb PROPERTIES COMPILE_FLAGS "-fPIC")
 
+include_directories(
+    ${PROTOBUF_INCLUDE_DIR}
+)
+
 target_link_libraries(spikeworkpb
     ${PROTOBUF_LIBRARY}
 )

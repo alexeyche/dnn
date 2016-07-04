@@ -11,7 +11,7 @@ set(DNN_VERSION
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information" OFF)
 option(PROFILE "Compile with profiling information" OFF)
-
+option(PROTOBUF_PREFIX "Destination of installed protobuf" "")
 # Set the CFLAGS and CXXFLAGS depending on the options the user specified.
 # Only GCC-like compilers support -Wextra, and other compilers give tons of
 # output for -Wall, so only -Wall and -Wextra on GCC.
@@ -20,11 +20,14 @@ option(PROFILE "Compile with profiling information" OFF)
 #  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 #endif(CMAKE_COMPILER_IS_GNUCC)
 
+if (PROTOBUF_PREFIX)
+    set(PROTOBUF_LIBRARIES "${PROTOBUF_PREFIX}/lib")
+    set(PROTOBUF_INCLUDE_DIR "${PROTOBUF_PREFIX}/include")
+    set(PROTOBUF_PROTOC_EXECUTABLE "${PROTOBUF_PREFIX}/bin/protoc")
+endif(PROTOBUF_PREFIX)
+
 include(cmake/FindProtobuf.cmake)
 
-
-
-find_package(Protobuf REQUIRED)
 find_package(Threads REQUIRED)
 
 
@@ -78,7 +81,8 @@ macro(DEFINE_MODEL BIN CPP)
   add_executable(${BIN}
       ${CPP}
   )
-
+  
+  include_directories(${PROTOBUF_INCLUDE_DIR})
   target_link_libraries(${BIN} ${PROTOBUF_LIBRARY} dnn m)
 
   get_filename_component(model_bn ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE)
