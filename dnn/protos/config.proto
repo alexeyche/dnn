@@ -36,6 +36,7 @@ import "dnn/protos/sum_norm.proto";
 import "dnn/protos/optimal_stdp.proto";
 import "dnn/protos/srm_neuron.proto";
 import "dnn/protos/random_neuron.proto";
+import "dnn/protos/supervised_spike.proto";
 
 
 message TRewardControl {
@@ -102,6 +103,8 @@ message TLayer {
     repeated TOptimalStdpState OptimalStdpState = 48;
     repeated TSRMNeuronConst SRMNeuron = 49;
     repeated TSRMNeuronState SRMNeuronState = 50;
+    repeated TSupervisedSpikeConst SupervisedSpike = 51;
+    repeated TSupervisedSpikeState SupervisedSpikeState = 52;
 }
 
 message TConnection {

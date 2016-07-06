@@ -278,6 +278,10 @@ namespace NDnn {
 		const auto& GetLearningRule() const {
 			return LearningRule;
 		}
+
+		auto& GetMutLearningRule() {
+			return LearningRule;
+		}
 		
 		auto& GetMutActivationFunction() {
 			return Activation;

@@ -28,6 +28,10 @@ namespace NDnn {
 
 	    if (options.has_inputspikes()) {
 	    	opts.InputSpikesFile = options.inputspikes();
+	    	L_DEBUG << "Reading input spikes " << *opts.InputSpikesFile;
+    		std::ifstream input(*opts.InputSpikesFile, std::ios::binary);
+		    TBinSerial serial(input);
+		    opts.InputSpikes = serial.ReadObject<TSpikesList>();
 	    }
 
 	    if (options.has_inputtimeseries()) {

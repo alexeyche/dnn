@@ -39,10 +39,7 @@ namespace NDnn {
 		}
 
 	    if (options.InputSpikesFile) {
-	    	L_DEBUG << "Reading input spikes " << *options.InputSpikesFile;
-    		std::ifstream input(*options.InputSpikesFile, std::ios::binary);
-		    TBinSerial serial(input);
-	    	sim.SetInputSpikes(serial.ReadObject<TSpikesList>());
+	    	sim.SetInputSpikes(*options.InputSpikes);
 	    }
 
 	    if (options.InputTimeSeries) {

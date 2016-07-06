@@ -2,6 +2,7 @@
 
 #include <ground/optional.h>
 #include <ground/base/base.h>
+#include <ground/ts/spikes_list.h>
 
 namespace NDnn {
 	using namespace NGround;
@@ -19,6 +20,7 @@ namespace NDnn {
 		TOptional<TString> OutputSpikesFile;
 		TOptional<TString> StatFile;
 		TOptional<double> Tmax;
+		TOptional<TSpikesList> InputSpikes;
 		TString Name;
 		bool NoLearning = false;
 	};

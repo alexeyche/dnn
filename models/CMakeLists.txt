@@ -7,6 +7,7 @@ set(DIRS
     hindmarsh_rose_model
     stdp_pca_model
     stdp_analytic
+    supervised_task
 )
 
 foreach(dir ${DIRS})

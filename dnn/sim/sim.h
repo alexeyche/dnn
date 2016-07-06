@@ -114,6 +114,11 @@ namespace NDnn {
 			return std::get<layerId>(Layers);
 		}
 
+		template <size_t layerId>
+		auto& GetMutLayer() {
+			return std::get<layerId>(Layers);
+		}
+
 
 		void ListenStat(const TString& name, std::function<double()> cb, ui32 from, ui32 to) {
 			StatGatherer.ListenStat(name, cb, from, to);
@@ -180,7 +185,7 @@ namespace NDnn {
             serial(RewardControl,  NDnnProto::TConfig::kRewardControlFieldNumber);
 		}
 
-		void SetInputSpikes(const TSpikesList&& ts) {
+		void SetInputSpikes(const TSpikesList& ts) {
 			Network.GetMutSpikesList().Info = ts.Info;
 			auto& firstLayer = std::get<0>(Layers);
 			ENSURE(ts.Dim() == firstLayer.Size(), "Size of input spikes list doesn't equal to first layer size: " << ts.Dim() << " != " << firstLayer.Size());
