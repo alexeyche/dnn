@@ -2,18 +2,18 @@
 require(Rdnn)
 source(scripts.path("gen_poisson.R"))
 
-sim_length = convNum(Sys.getenv('TIMED_PATTERN_LENGTH'), 100000)
-test_sim_length = convNum(Sys.getenv('TIMED_PATTERN_LENGTH_TEST'), 100000)
+sim_length = convNum(Sys.getenv('TIMED_PATTERN_LENGTH'), 10000)
+test_sim_length = convNum(Sys.getenv('TIMED_PATTERN_LENGTH_TEST'), 10000)
 
 set.seed(10)
 
-neurons = 100
+neurons = 10
 sample_gap = 0
 sample_duration = 500
 classes = 2
 high_rate = 40
 
-got.rid.of.silent.neurons = TRUE
+got.rid.of.silent.neurons = FALSE
 
 rates = sapply(1:classes, function(ci) high_rate*rbeta(neurons, 0.2,0.9))
 mean_rate = rowMeans(rates)

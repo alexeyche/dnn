@@ -63,7 +63,7 @@ namespace NDnn {
                 auto& syn = syns.Get(synapseId);
                 double& w = syn.MutWeight();
                 
-                TPar::s.FirstMoment[synIdIt] += (p_deriv/(p/M)) * syn.Potential() * (fired - p);
+                TPar::s.FirstMoment[synIdIt] += 1e-03 * (p_deriv/(p/M)) * syn.Potential() * (fired - p);
 
                 w += norm.Derivative(w, syn.LearningRate() * TPar::s.FirstMoment[synIdIt]);
             	

@@ -114,9 +114,9 @@ if(INSP_MODEL) {
         
         weights_pic = sprintf("%s/2_%s", tmp_d, pfx_f("weights.png"))
         if(SAVE_PIC_IN_FILES) png(weights_pic, width=1024, height=768)
-        lsize = 100
-        l1 = 1:256
-        l2 = (max(l1)+1):(max(l1)+lsize)
+        #lsize = 10
+        #l1 = 10
+        #l2 = (max(l1)+1):(max(l1)+lsize)
         #l3 = (max(l2)+1):(max(l2)+lsize)
         
         plw = function(ww, exc=TRUE) {
@@ -129,10 +129,10 @@ if(INSP_MODEL) {
             }
         }
         
-        print(gr_pl(t(w[l2, l1])))
-        plw(w[l2,l2], exc=TRUE)
-        plw(w[l2,l2], exc=FALSE)
-        
+        #print(gr_pl(t(w[l2, l1])))
+        #plw(w[l2,l2], exc=TRUE)
+        #plw(w[l2,l2], exc=FALSE)
+        gr_pl(w)
         if(SAVE_PIC_IN_FILES) { 
             dev.off()
             write(paste("Weights pic filename: ", weights_pic), stderr())
@@ -186,7 +186,7 @@ if (file.exists(STAT_FNAME)) {
             seq(s$from, s$to, length.out=length(s$values)), 
             s$values, 
             type="l", 
-            main=sprintf("%s, %d:%d", s$name, s$from, s$to),
+            main=sprintf("%s", s$name),
             xlab="Time", ylab=s$name
         )
     }

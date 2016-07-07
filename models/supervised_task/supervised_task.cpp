@@ -31,14 +31,14 @@ int main(int argc, const char** argv) {
     if (opts.NoLearning) {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 10, TNeuronConfig<>>,
-            TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TLogExp>>
+            TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TSigmoid>>
         >(opts);
 
         sim.Run();
     } else {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 10, TNeuronConfig<>>,
-            TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TSupervisedSpike, TSumNorm>>
+            TLayer<TSRMNeuron, 10, TNeuronConfig<TBasicSynapse, TSigmoid, TNoInput, TSupervisedSpike, TSumNorm>>
         >(opts);
         
         for (auto& n: sim.GetMutLayer<1>()) {
