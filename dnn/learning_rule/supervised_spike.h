@@ -54,7 +54,7 @@ namespace NDnn {
     		const double& p = neuron.SpikeProbability();
 			const double p_deriv = act.SpikeProbabilityDerivative(neuron.Membrane());
 			const double& M = neuron.ProbabilityModulation();
-			const double fired = static_cast<double>(neuron.Fired());
+			const double fired = GetTarget(t);
 
     		auto synIdIt = TPar::s.FirstMoment.abegin();
 		    while (synIdIt != TPar::s.FirstMoment.aend()) {
@@ -62,14 +62,15 @@ namespace NDnn {
                 
                 auto& syn = syns.Get(synapseId);
                 double& w = syn.MutWeight();
-                
-                TPar::s.FirstMoment[synIdIt] += 1e-03 * (p_deriv/(p/M)) * syn.Potential() * (fired - p);
+                // L_INFO << "(" << p_deriv << "/" << p/M << ") * " << syn.Potential() << " * (" << fired << " - " << p << ")";
+                double dw = (p_deriv/(p/M)) * syn.Potential() * (fired - p);
 
+                TPar::s.FirstMoment[synIdIt] += t.Dt * ( - TPar::s.FirstMoment[synIdIt] + dw)/TPar::c.TauFirstMoment;
+                // TPar::s.FirstMoment[synIdIt] = dw;
                 w += norm.Derivative(w, syn.LearningRate() * TPar::s.FirstMoment[synIdIt]);
             	
-                TPar::s.FirstMoment[synIdIt] += - t.Dt * TPar::s.FirstMoment[synIdIt]/TPar::c.TauFirstMoment;
-            	
-            	if (std::fabs(TPar::s.FirstMoment.Get(synapseId)) < 1e-06) {
+                
+            	if (std::fabs(TPar::s.FirstMoment[synIdIt]) < 1e-06) {
                 	TPar::s.FirstMoment.SetInactive(synIdIt);
                 } else {
 	                ++synIdIt;
@@ -81,7 +82,9 @@ namespace NDnn {
     		if (!TargetSet) {
     			return static_cast<double>(TPar::Neuron().Fired());
     		}
-    		if ((CurrentId < Target.size()) && (t.T >= Target[CurrentId]) && ((t.T+t.Dt) < Target[CurrentId])) {
+            // if (CurrentId < Target.size()) L_INFO << CurrentId << " " << Target.size() << " " << t.T << " >= " << Target[CurrentId] << ", " << t.T+t.Dt << " < " << Target[CurrentId]; 
+    		if ((CurrentId < Target.size()) && (Target[CurrentId] >= t.T) && (Target[CurrentId] < (t.T+t.Dt))) {
+                ++CurrentId;
     			return 1.0;
     		}
     		return 0.0;

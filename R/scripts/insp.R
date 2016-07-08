@@ -132,7 +132,9 @@ if(INSP_MODEL) {
         #print(gr_pl(t(w[l2, l1])))
         #plw(w[l2,l2], exc=TRUE)
         #plw(w[l2,l2], exc=FALSE)
-        gr_pl(w)
+        
+        print(gr_pl(w))
+        
         if(SAVE_PIC_IN_FILES) { 
             dev.off()
             write(paste("Weights pic filename: ", weights_pic), stderr())
@@ -177,9 +179,9 @@ if (file.exists(STAT_FNAME)) {
     stat_pic = sprintf("%s/3_%s", tmp_d, pfx_f("stat.png"))
     if(SAVE_PIC_IN_FILES) png(stat_pic, width=1024, height=768*6)
     stat_to_plot = stat
-    if (length(stat_to_plot) > 8) {
-        stat_to_plot = stat[1:8]
-    }    
+    #if (length(stat_to_plot) > 8) {
+    #    stat_to_plot = stat[1:8]
+    #}    
     par(mfrow=c(length(stat_to_plot),1), mar=rep(2,4))
     for (s in stat_to_plot) {
         plot(
@@ -255,14 +257,3 @@ sigmoid = function(x, tt=0.1, s=100) {
 logexp = function(x, t=0.1, s=1.0) {
     log( (1 + exp((x-t)/s))/(1 + exp((-t)/s)))
 }
-
-# for (ep in 1:100) {
-#     model = proto.read(sprintf("%d_model.pb",ep))
-#     w = matrix(0, nrow=length(model), ncol=length(model))
-#     postW = matrix(0.0, nrow=length(model), ncol=length(model))
-#     
-#     for(n in model) {
-#         w[n$id+1, n$synapses$ids_pre+1] = n$synapses$weights
-#     }
-#     print(gr_pl(w[257:266,257:266]))
-# }

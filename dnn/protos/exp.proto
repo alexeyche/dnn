@@ -1,0 +1,9 @@
+package NDnnProto;
+
+
+message TExpConst {
+    optional double Threshold = 1;
+    optional double Slope = 2;
+    optional double Amplitude = 3;
+}
+
