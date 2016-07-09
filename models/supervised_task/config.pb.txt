@@ -13,23 +13,16 @@ Layer {
 		TauAdapt: 100
 	}
 	Exp {
-		Threshold: 0.2
-		Slope: 0.05
+		Threshold: 0.5
+		Slope: 0.1
 	}
 	SupervisedSpike {
-		TauFirstMoment: 1.0
-		TauSecondMoment: 50.0
+		TauFirstMoment: 10.0
+		TauSecondMoment: 1.0
 	}
-	SumNorm {
-		Layer {
-			Id: 0
-			ExcUnit: 0.1        # [0.01, 10.0]
-		}
-		Layer {
-			Id: 1
-			ExcUnit: 0.1
-			InhUnit: 0.1        # [0.01, 10.0]
-		}
+	MinMaxNorm {
+		MinWeight: 0.0
+		MaxWeight: 1.0
 	}
 }
 Connection {
@@ -38,6 +31,6 @@ Connection {
 		NeuronProb: 1.0			# [0.01, 1.0]
 		SynapseProb: 1.0		# [0.01, 1.0]
 	}
-	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
-	LearningRate: 1e-06
+	Weight: {Value: 0.1}
+	LearningRate: 1e-02
 }

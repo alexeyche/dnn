@@ -20,7 +20,9 @@ namespace NDnn {
 		TOptional<TString> OutputSpikesFile;
 		TOptional<TString> StatFile;
 		TOptional<double> Tmax;
+		TOptional<TString> TargetSpikesFile;
 		TOptional<TSpikesList> InputSpikes;
+		TOptional<TSpikesList> TargetSpikes;
 		TString Name;
 		bool NoLearning = false;
 	};

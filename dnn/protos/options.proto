@@ -60,6 +60,10 @@ message TDnnOptions {
         (description) = "Seed for random engine for creating connections",
         (short_option) = "-csd"
     ];
+    optional string TargetSpikes = 15 [
+        (description) = "Target spikes for supervised learning",
+        (short_option) = "-ts"
+    ];
 }
 
 message TDumptoolOptions {

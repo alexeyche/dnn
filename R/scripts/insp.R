@@ -27,7 +27,7 @@ if(length(grep("RStudio", args))>0) {
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
-    #EP=2
+    #EP=1
 }
 
 pfx_f = function(s) s
@@ -81,7 +81,7 @@ if(INSP_SPIKES) {
         
         spikes_pic = sprintf("%s/1_%s", tmp_d, pfx_f("spikes.png"))
         if(SAVE_PIC_IN_FILES) png(spikes_pic, width=SP_PIX0, height=SP_PIX1)
-        pspikes = plot(spikes, T0=T0,Tmax=T1)
+        pspikes = plot(spikes, T0=T0,Tmax=min(spikes.list.max.t(spikes), T1))
         
         print(pspikes)
         
@@ -179,9 +179,10 @@ if (file.exists(STAT_FNAME)) {
     stat_pic = sprintf("%s/3_%s", tmp_d, pfx_f("stat.png"))
     if(SAVE_PIC_IN_FILES) png(stat_pic, width=1024, height=768*6)
     stat_to_plot = stat
-    #if (length(stat_to_plot) > 8) {
-    #    stat_to_plot = stat[1:8]
-    #}    
+    stat = stat[10:17]
+    if (length(stat_to_plot) > 8) {
+       stat_to_plot = stat[1:8]
+    }
     par(mfrow=c(length(stat_to_plot),1), mar=rep(2,4))
     for (s in stat_to_plot) {
         plot(
@@ -256,4 +257,7 @@ sigmoid = function(x, tt=0.1, s=100) {
 }
 logexp = function(x, t=0.1, s=1.0) {
     log( (1 + exp((x-t)/s))/(1 + exp((-t)/s)))
+}
+exp.act = function(x, t=0.2, s=0.05, p=1.0) {
+  p * exp((x-t)/s)
 }

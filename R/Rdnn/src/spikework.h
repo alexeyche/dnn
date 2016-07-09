@@ -131,5 +131,54 @@ Rcpp::List PreprocessRun(
 	);
 }
 
+// [[Rcpp::export(name = "spike.distance")]]
+double SpikeDistance(
+	Rcpp::List kernelConfig, 
+	Rcpp::List timeSeriesLeft,
+	Rcpp::List timeSeriesRight, 
+	size_t jobs)
+{
+	return TSpikework::Distance(
+		TProto::TranslateBack<NDnnProto::TKernelConfig>(kernelConfig), 
+		TProto::TranslateBack<TTimeSeries>(timeSeriesLeft), 
+		TProto::TranslateBack<TTimeSeries>(timeSeriesRight), 
+		jobs
+	);
+}
+	
+// [[Rcpp::export(name = "pp.spike.distance")]]
+double PpSpikeDistance(
+	Rcpp::List preProcConfig,
+	Rcpp::List kernelConfig, 
+	Rcpp::List timeSeriesLeft,
+	Rcpp::List timeSeriesRight, 
+	size_t jobs,
+	double dt = 1.0)
+{
+	TTimeSeries tsLeft;
+	TString typeLeft = timeSeriesLeft.attr("class");
+	if (typeLeft == "SpikesList") {
+		tsLeft = TProto::TranslateBack<TSpikesList>(timeSeriesLeft).ConvertToBinaryTimeSeries(dt);
+	} else {
+		tsLeft = TProto::TranslateBack<TTimeSeries>(timeSeriesLeft); 
+	}
+	TTimeSeries tsRight;
+	TString typeRight = timeSeriesRight.attr("class");
+	if (typeRight == "SpikesList") {
+		tsRight = TProto::TranslateBack<TSpikesList>(timeSeriesRight).ConvertToBinaryTimeSeries(dt);
+	} else {
+		tsRight = TProto::TranslateBack<TTimeSeries>(timeSeriesRight); 
+	}
+	return TSpikework::Distance(
+		TProto::TranslateBack<NDnnProto::TPreprocessorConfig>(preProcConfig), 
+		TProto::TranslateBack<NDnnProto::TKernelConfig>(kernelConfig), 
+		std::move(tsLeft),
+		std::move(tsRight),
+		jobs
+	);
+}
+
+
+
 
 #endif

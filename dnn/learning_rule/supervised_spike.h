@@ -62,15 +62,20 @@ namespace NDnn {
                 
                 auto& syn = syns.Get(synapseId);
                 double& w = syn.MutWeight();
-                // L_INFO << "(" << p_deriv << "/" << p/M << ") * " << syn.Potential() << " * (" << fired << " - " << p << ")";
                 double dw = (p_deriv/(p/M)) * syn.Potential() * (fired - p);
-
+                L_INFO << "(" << p_deriv << "/" << p/M << ") * " << syn.Potential() << " * (" << fired << " - " << p << ")" << " -> " << dw;    
+                
                 TPar::s.FirstMoment[synIdIt] += t.Dt * ( - TPar::s.FirstMoment[synIdIt] + dw)/TPar::c.TauFirstMoment;
+                // TPar::s.SecondMoment.Get(synapseId) += t.Dt * ( - TPar::s.SecondMoment.Get(synapseId) + dw*dw)/TPar::c.TauSecondMoment;
+
                 // TPar::s.FirstMoment[synIdIt] = dw;
+
+                // w += norm.Derivative(w, 
+                //     syn.LearningRate() * TPar::s.FirstMoment.Get(synapseId)/std::sqrt(TPar::s.SecondMoment.Get(synapseId) + 1e-08));
                 w += norm.Derivative(w, syn.LearningRate() * TPar::s.FirstMoment[synIdIt]);
             	
                 
-            	if (std::fabs(TPar::s.FirstMoment[synIdIt]) < 1e-06) {
+            	if ((std::fabs(TPar::s.FirstMoment[synIdIt]) < 1e-06)&&(std::fabs(TPar::s.SecondMoment.Get(synapseId)) < 1e-06)) {
                 	TPar::s.FirstMoment.SetInactive(synIdIt);
                 } else {
 	                ++synIdIt;
@@ -82,12 +87,14 @@ namespace NDnn {
     		if (!TargetSet) {
     			return static_cast<double>(TPar::Neuron().Fired());
     		}
-            // if (CurrentId < Target.size()) L_INFO << CurrentId << " " << Target.size() << " " << t.T << " >= " << Target[CurrentId] << ", " << t.T+t.Dt << " < " << Target[CurrentId]; 
-    		if ((CurrentId < Target.size()) && (Target[CurrentId] >= t.T) && (Target[CurrentId] < (t.T+t.Dt))) {
+            double val = 0.0;
+            if (CurrentId < Target.size()) L_INFO << CurrentId << " " << Target.size() << " " << t.T << " >= " << Target[CurrentId] << ", " << t.T+t.Dt << " < " << Target[CurrentId]; 
+    		while ((CurrentId < Target.size()) && (std::numeric_limits<double>::epsilon() + Target[CurrentId] >= t.T) && (Target[CurrentId] < (t.T+t.Dt))) {
                 ++CurrentId;
-    			return 1.0;
+    			val = 1.0;
     		}
-    		return 0.0;
+            L_INFO << t.T << " " << val;
+    		return val;
     	}
 
     	void SetTarget(const TVector<double>& targetSeq) {

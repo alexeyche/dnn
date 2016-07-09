@@ -70,6 +70,7 @@ class TDnnSim(object):
         self.prepare_data = kwargs.get("prepare_data", False)
         self.evaluation_data = kwargs.get("evaluation_data", None)
         self.no_learning = kwargs.get("no_learning", False)
+        self.target_spikes = kwargs.get("target_spikes", None)
         self.evo = kwargs.get("evo", False)
         if self.evo:
             self.slave = True
@@ -261,7 +262,10 @@ class TDnnSim(object):
             cmd += [
                 "--input-time-series", self.input_ts
             ]
-
+        if self.target_spikes:
+            cmd += [
+                "--target-spikes", self.target_spikes
+            ]
         return { "cmd" : cmd, "print_root_log_on_fail" : self.slave, "stdout": pj(self.working_dir, "{}.log".format(self.current_epoch)) }
 
     def construct_eval_script_cmd(self):
@@ -424,6 +428,10 @@ def main(argv):
                         '--input-spikes', 
                         required=False,
                         help='Input spikes that required for model')
+    parser.add_argument('-ts', 
+                        '--target-spikes', 
+                        required=False,
+                        help='Target spikes for supervised learning')
     parser.add_argument('-it', 
                         '--input-ts', 
                         required=False,
@@ -474,6 +482,7 @@ def main(argv):
         "connection_seed" : args.connection_seed,
         "evaluation_script" : args.evaluation_script,
         "evo" : args.evo,
+        "target_spikes" : args.target_spikes,
     }
     TDnnSim(**args).run()
     

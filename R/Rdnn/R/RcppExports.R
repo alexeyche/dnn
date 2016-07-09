@@ -25,6 +25,14 @@ preprocess.run <- function(preProcConfig, timeSeries, jobs) {
     .Call('Rdnn_PreprocessRun', PACKAGE = 'Rdnn', preProcConfig, timeSeries, jobs)
 }
 
+spike.distance <- function(kernelConfig, timeSeriesLeft, timeSeriesRight, jobs) {
+    .Call('Rdnn_SpikeDistance', PACKAGE = 'Rdnn', kernelConfig, timeSeriesLeft, timeSeriesRight, jobs)
+}
+
+pp.spike.distance <- function(preProcConfig, kernelConfig, timeSeriesLeft, timeSeriesRight, jobs, dt = 1.0) {
+    .Call('Rdnn_PpSpikeDistance', PACKAGE = 'Rdnn', preProcConfig, kernelConfig, timeSeriesLeft, timeSeriesRight, jobs, dt)
+}
+
 set.verbose.level <- function(level) {
     invisible(.Call('Rdnn_setVerboseLevel', PACKAGE = 'Rdnn', level))
 }

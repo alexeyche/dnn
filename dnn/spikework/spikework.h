@@ -126,6 +126,64 @@ namespace NDnn {
 			return KernelRun(kernelConfig, ts, jobs, timeCorrelation);
 		}
 
+		static double Distance(
+			const NDnnProto::TPreprocessorConfig& preProcConfig, 
+			const NDnnProto::TKernelConfig& kernelConfig, 
+			TTimeSeries&& tsLeft,
+			TTimeSeries&& tsRight,
+			ui32 jobs = 8)
+		{
+			tsLeft = PreprocessRun(preProcConfig, tsLeft, jobs);
+			tsRight = PreprocessRun(preProcConfig, tsRight, jobs);
+			return Distance(kernelConfig, std::move(tsLeft), std::move(tsRight), jobs);		
+		}
+
+		static double Distance(
+			const NDnnProto::TKernelConfig& kernelConfig, 
+			TTimeSeries&& tsLeft,
+			TTimeSeries&& tsRight,
+			ui32 jobs = 8)
+		{
+			ENSURE(tsLeft.Dim() == tsRight.Dim(), "Need time series with same dimensions");
+			int diffLen = tsLeft.Length() - tsRight.Length();
+			if (diffLen > 0) {
+				tsRight.PadRightWithZeros(diffLen);
+			} else 
+			if (diffLen < 0) {
+				tsLeft.PadRightWithZeros(std::abs(diffLen));
+			}
+			
+			SPtr<IKernel> kernel = CreateKernel(kernelConfig);
+			TVector<TIndexSlice> slices;
+			if (jobs > tsLeft.Dim()) {
+				for (ui32 dimId=0; dimId < tsLeft.Dim(); ++dimId) {
+					slices.emplace_back(dimId, dimId + 1);
+				}  
+			} else {
+				slices = DispatchOnThreads(tsLeft.Dim(), jobs);
+			}
+	        
+			TVector<double> ans(tsLeft.Dim(), 0.0);
+			TVector<std::thread> workers;
+	        for (const auto& slice: slices) {
+	        	workers.emplace_back(
+	            	[&](ui32 from, ui32 to) {
+	                    L_DEBUG << "Distance, Working on dimension " << from << ":" << to << " ...";
+    		            for(ui32 iter=from; iter<to; ++iter) {        
+		            		ans[iter] = kernel->PointSimilarity(tsLeft.GetVector(iter), tsRight.GetVector(iter));	
+		            	}
+	            		L_DEBUG << "Distance, Working on dimension " << from << ":" << to << " ... Done";
+	                }, slice.From, slice.To
+	            );
+	       	}
+	       	for (auto& w: workers) {
+	            w.join();
+	        }
+	        
+	       	return std::accumulate(ans.begin(), ans.end(), 0.0)/tsLeft.Dim(); 		
+		} 
+			
+
 	private:
 
 		static TDoubleMatrix KernelRun(

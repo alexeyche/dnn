@@ -88,6 +88,36 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// SpikeDistance
+double SpikeDistance(Rcpp::List kernelConfig, Rcpp::List timeSeriesLeft, Rcpp::List timeSeriesRight, size_t jobs);
+RcppExport SEXP Rdnn_SpikeDistance(SEXP kernelConfigSEXP, SEXP timeSeriesLeftSEXP, SEXP timeSeriesRightSEXP, SEXP jobsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type kernelConfig(kernelConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeriesLeft(timeSeriesLeftSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeriesRight(timeSeriesRightSEXP);
+    Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
+    __result = Rcpp::wrap(SpikeDistance(kernelConfig, timeSeriesLeft, timeSeriesRight, jobs));
+    return __result;
+END_RCPP
+}
+// PpSpikeDistance
+double PpSpikeDistance(Rcpp::List preProcConfig, Rcpp::List kernelConfig, Rcpp::List timeSeriesLeft, Rcpp::List timeSeriesRight, size_t jobs, double dt);
+RcppExport SEXP Rdnn_PpSpikeDistance(SEXP preProcConfigSEXP, SEXP kernelConfigSEXP, SEXP timeSeriesLeftSEXP, SEXP timeSeriesRightSEXP, SEXP jobsSEXP, SEXP dtSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type preProcConfig(preProcConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type kernelConfig(kernelConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeriesLeft(timeSeriesLeftSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeriesRight(timeSeriesRightSEXP);
+    Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
+    Rcpp::traits::input_parameter< double >::type dt(dtSEXP);
+    __result = Rcpp::wrap(PpSpikeDistance(preProcConfig, kernelConfig, timeSeriesLeft, timeSeriesRight, jobs, dt));
+    return __result;
+END_RCPP
+}
 // setVerboseLevel
 void setVerboseLevel(int level);
 RcppExport SEXP Rdnn_setVerboseLevel(SEXP levelSEXP) {
