@@ -1,5 +1,4 @@
 SimConfiguration {
-	Port: 9090
 	Seed: -1
 	Jobs: 4
 }
@@ -68,21 +67,27 @@ Connection {
 	Stochastic {
 		Prob: 0.50
 	}
-	Weight: 0.60
+	Weight {
+		Value: 0.6
+	}
 }
 Connection {
 	From: 1 To: 1
 	Stochastic {
 		Prob: 0.25
 	}
-	Weight: -0.75
+	Weight {
+		Value: -0.75
+	}
 }
 Connection {
 	From: 1 To: 2
 	Stochastic {
 		Prob: 0.50
 	}
-	Weight: 0.75
+	Weight {
+		Value: 0.75
+	}
 }
 
 RewardControl {
