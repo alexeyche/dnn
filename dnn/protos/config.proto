@@ -1,29 +1,45 @@
 package NDnnProto;
 
-import "integrate_and_fire.proto";
-import "determ.proto";
-import "spike_neuron.proto";
-import "basic_synapse.proto";
-import "sim.proto";
-import "synapse.proto";
-import "stochastic.proto";
-import "spike_neuron_impl.proto";
-import "spike_sequence_neuron.proto";
-import "reward_control.proto";
-import "ident.proto";
-import "gauss.proto";
-import "stdp.proto";
-import "sigmoid.proto";
-import "min_max_norm.proto";
-import "input_classifier.proto";
-import "difference_of_gaussians.proto";
-import "nonlinear_norm.proto";
-import "soft_bounds.proto";
-import "hedonistic_synapse.proto";
-import "stp_synapse.proto";
-import "pre_post_stdp.proto";
-import "multiplicative_norm.proto";
-import "sliding_ltd.proto";
+import "ground/protos/distr.proto";
+
+import "dnn/protos/integrate_and_fire.proto";
+import "dnn/protos/determ.proto";
+import "dnn/protos/spike_neuron.proto";
+import "dnn/protos/basic_synapse.proto";
+import "dnn/protos/sim.proto";
+import "dnn/protos/synapse.proto";
+import "dnn/protos/stochastic.proto";
+import "dnn/protos/spike_neuron_impl.proto";
+import "dnn/protos/spike_sequence_neuron.proto";
+import "dnn/protos/reward_control.proto";
+import "dnn/protos/ident.proto";
+import "dnn/protos/gauss.proto";
+import "dnn/protos/stdp.proto";
+import "dnn/protos/sigmoid.proto";
+import "dnn/protos/min_max_norm.proto";
+import "dnn/protos/input_classifier.proto";
+import "dnn/protos/difference_of_gaussians.proto";
+import "dnn/protos/nonlinear_norm.proto";
+import "dnn/protos/soft_bounds.proto";
+import "dnn/protos/stp_synapse.proto";
+import "dnn/protos/hedonistic_synapse.proto";
+import "dnn/protos/pre_post_stdp.proto";
+import "dnn/protos/multiplicative_norm.proto";
+import "dnn/protos/sliding_ltd.proto";
+import "dnn/protos/linear.proto";
+import "dnn/protos/hindmarsh_rose.proto";
+import "dnn/protos/unit_norm.proto";
+import "dnn/protos/nnmf_homeostasis.proto";
+import "dnn/protos/log_norm.proto";
+import "dnn/protos/max_entropy.proto";
+import "dnn/protos/log_exp.proto";
+import "dnn/protos/sum_norm.proto";
+import "dnn/protos/optimal_stdp.proto";
+import "dnn/protos/srm_neuron.proto";
+import "dnn/protos/random_neuron.proto";
+import "dnn/protos/supervised_spike.proto";
+import "dnn/protos/exp.proto";
+
 
 message TRewardControl {
     optional TRewardControlConst RewardControl = 1;
@@ -70,16 +86,39 @@ message TLayer {
     repeated TMultiplicativeNormState MultiplicativeNormState = 29;
     repeated TSlidingLtdConst SlidingLtd = 30;
     repeated TSlidingLtdState SlidingLtdState = 31;
-    repeated THedonisticSynapseConst HedonisticSynapse = 32;
-    repeated THedonisticSynapseState HedonisticSynapseState = 33;
+    repeated TLinearReceptiveFieldConst LinearReceptiveField = 32;
+    repeated TUnitNormConst UnitNorm = 33;
+    repeated TUnitNormState UnitNormState = 34;
+    repeated TNNMFHomeostatisConst NNMFHomeostatis = 35;
+    repeated TNNMFHomeostatisState NNMFHomeostatisState = 36;
+    repeated THindmarshRoseConst HindmarshRose = 37;
+    repeated THindmarshRoseState HindmarshRoseState = 38;
+    repeated TLogNormConst LogNorm = 39;
+    repeated TLogNormState LogNormState = 40;
+    repeated TMaxEntropyIPConst MaxEntropyIP = 41;
+    repeated TMaxEntropyIPDefaultState MaxEntropyIPDefaultState = 42;
+    repeated TMaxEntropyIPMomentState MaxEntropyIPMomentState = 43;
+    repeated TLogExpConst LogExp = 44;
+    repeated TSumNormConst SumNorm = 45;
+    repeated TSumNormState SumNormState = 46;
+    repeated TOptimalStdpConst OptimalStdp = 47;
+    repeated TOptimalStdpState OptimalStdpState = 48;
+    repeated TSRMNeuronConst SRMNeuron = 49;
+    repeated TSRMNeuronState SRMNeuronState = 50;
+    repeated TSupervisedSpikeConst SupervisedSpike = 51;
+    repeated TSupervisedSpikeState SupervisedSpikeState = 52;
+    repeated TExpConst Exp = 53;
+    repeated THedonisticSynapseConst HedonisticSynapse = 54;
+    repeated THedonisticSynapseState HedonisticSynapseState = 55;
 }
-
 
 message TConnection {
 	optional uint32 From = 1;
 	optional uint32 To = 2;
-	optional double Weight = 3;
-	optional double DendriteDelay = 4;
-	optional TStochasticConst Stochastic = 5;
-    optional TDifferenceOfGaussiansConst DifferenceOfGaussians = 6;
+	optional NGroundProto.TDistr Weight = 3;
+    optional NGroundProto.TDistr DendriteDelay = 4;
+    optional double LearningRate = 5;
+	optional TStochasticConst Stochastic = 6;
+    optional TDifferenceOfGaussiansConst DifferenceOfGaussians = 7;
+    optional TRandomNeuronConst RandomNeuron = 8;
 }

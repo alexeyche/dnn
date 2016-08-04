@@ -43,3 +43,35 @@ read.state.script = function() {
 run.evolve.script = function() {
     file.path(dnn.env(), "scripts", "run_evolve.py")
 }
+
+read.spikes.wd = function(epoch=NULL) {
+    if (is.null(epoch)) {
+        epoch = as.numeric(strsplit(system("ls -t *.pb | head -n 1", intern=TRUE), "_")[[1]][1])    
+    }
+    
+    eval_spikes_fname = sprintf("%d_eval_spikes.pb", epoch)
+    spikes_fname = sprintf("%d_spikes.pb", epoch)
+    
+    spikes = NULL
+    if (file.exists(eval_spikes_fname)) {
+        spikes = proto.read(eval_spikes_fname)
+    } else 
+        if (file.exists(spikes_fname)) {
+            spikes = proto.read(spikes_fname)    
+        } else {
+            stop(sprintf("Failed to find spikes in directory %d", getwd()))
+        }
+    return (list(spikes, epoch))    
+}
+
+read.input.ts.wd = function() {
+    f = "input_time_series.pb"
+    if (!file.exists(f)) {
+        stop(sprintf("Can't find input time series file %s", f))
+    }
+    return(proto.read(f))
+}
+
+get.last.epoch.wd = function() {
+    as.numeric(strsplit(system("ls -t *.pb | head -n 1", intern=TRUE), "_")[[1]][1])
+}

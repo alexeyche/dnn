@@ -3,15 +3,14 @@
 #include "weight_normalization.h"
 
 #include <dnn/protos/sliding_ltd.pb.h>
-#include <dnn/util/fastapprox/fastpow.h>
 
 namespace NDnn {
 
     struct TSlidingLtdConst : public IProtoSerial<NDnnProto::TSlidingLtdConst> {
         static const auto ProtoFieldNumber = NDnnProto::TLayer::kSlidingLtdFieldNumber;
-        
+
         TSlidingLtdConst() {
-            __TargetRate = 1.0/fastpow(TargetRate, Power);
+            __TargetRate = 1.0/std::pow(TargetRate, Power);
         }
 
         void SerialProcess(TProtoSerial& serial) override final {
@@ -22,7 +21,7 @@ namespace NDnn {
             serial(MinWeight);
             serial(MaxWeight);
 
-            __TargetRate = 1.0/fastpow(TargetRate, Power);
+            __TargetRate = 1.0/std::pow(TargetRate, Power);
         }
 
         double Power = 3.0;
@@ -55,7 +54,7 @@ namespace NDnn {
             if(!TPar::s.Saturation) {
                 return 0.0;
             }
-            return TPar::c.Modulation * fastpow(1000.0*TPar::s.Pmean, TPar::c.Power) * TPar::c.__TargetRate;
+            return TPar::c.Modulation * std::pow(1000.0*TPar::s.Pmean, TPar::c.Power) * TPar::c.__TargetRate;
         }
 
         double Ltp(double w) const {

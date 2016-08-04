@@ -56,6 +56,16 @@ def add_coloring_to_emit_ansi(fn):
         return fn(*args)
     return new 
 
+def setup_logging(logger, console_out=sys.stdout, level=logging.DEBUG):
+    logFormatter = logging.Formatter("%(asctime)s [%(levelname)s]  %(message)-100s")
+    logger.setLevel(level)
+    if console_out:
+        consoleHandler = logging.StreamHandler(console_out)
+        consoleHandler.emit = add_coloring_to_emit_ansi(consoleHandler.emit)
+        consoleHandler.setFormatter(logFormatter)
+        logger.addHandler(consoleHandler)
+
+
 @contextmanager
 def pushd(newDir):
     previousDir = os.getcwd()

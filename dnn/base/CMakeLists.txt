@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 set(SOURCES
-    base.cpp
     entry.cpp
-    errors.cpp
 )
 
 set(DIR_SRCS)

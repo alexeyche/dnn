@@ -30,7 +30,7 @@ def build_field_re(known_types):
         for l, r in known_types.iteritems():
             all_types["{}<{}>".format(v, l)] = r
 
-    return re.compile("[ ]*({})[\W]+(?!__)([a-zA-Z]+)([ ]*=[ ]*[^ ]+)*;[ ]*$".format(
+    return re.compile("[ ]*({})[\W]+(?!__)([a-zA-Z0-9]+)([ ]*=[ ]*[^ ]+)*;[ ]*$".format(
         "|".join(all_types)
     ))
 

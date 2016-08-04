@@ -1,0 +1,11 @@
+package NDnnProto;
+
+message TSupervisedSpikeConst {
+	optional double TauFirstMoment = 1;
+	optional double TauSecondMoment = 2;
+}
+
+message TSupervisedSpikeState {
+	repeated double FirstMoment = 1;
+	repeated double SecondMoment = 2;
+}

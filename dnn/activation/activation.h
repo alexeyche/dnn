@@ -1,11 +1,11 @@
 #pragma once
 
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/serial/proto_serial.h>
 
 #include <dnn/protos/config.pb.h>
 
 namespace NDnn {
-
+	using namespace NGround;
 
 	template <typename TConstants>
 	class TActivation: public IProtoSerial<NDnnProto::TLayer> {
@@ -13,7 +13,10 @@ namespace NDnn {
 		void SerialProcess(TProtoSerial& serial) override final {
 			serial(c, TConstants::ProtoFieldNumber); 
 		}
-		
+		TConstants& MutConstants() {
+			return c;
+		}
+
 	protected:
 		TConstants c;
 	};

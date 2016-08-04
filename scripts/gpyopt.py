@@ -139,3 +139,5 @@ def main(argv):
                         '--epochs', 
                         required=False,
                         help='Number of epochs to run', default=TDnnSim.EPOCHS,type=int)
+
+

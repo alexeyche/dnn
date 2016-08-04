@@ -12,6 +12,9 @@ namespace NDnn {
 	    }
 	    x_norm = sqrt(x_norm);
 	    y_norm = sqrt(y_norm);
+	    if ((std::fabs(x_norm) < std::numeric_limits<double>::epsilon()) || (std::fabs(y_norm) < std::numeric_limits<double>::epsilon())) {
+	    	return 0.0;
+	    }
 	    return acc/(x_norm*y_norm);
 	}
 

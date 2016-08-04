@@ -1,0 +1,52 @@
+SimConfiguration {
+	Jobs: 8
+	Dt: 1.0
+}
+Layer {
+}
+Layer {
+	BasicSynapse {
+        PspDecay: 10.0
+    }
+	SRMNeuron {
+		AmpAdapt: 1
+		TauAdapt: 500
+	}
+	LogExp {
+		Threshold: 0.1
+		Slope: 0.1
+	}
+	Stdp {
+		TauPlus: 14.0            
+		TauMinus: 34.0			 
+		Aplus: 1.0			    
+		Aminus: 0.5
+		TauMomentum: 100
+	}
+	MaxEntropyIP {
+		TargetRate: 10.0
+		LearningRate: 1e-06
+	}
+	SumNorm {
+		ExcUnit: 0.3			# [0.01, 1.0]
+		InhUnit: 0.3			# [0.01, 1.0]
+	}
+}
+Connection {
+	From: 0 To: 1
+	Stochastic {
+		Prob: 1.0
+	}
+	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
+	# DendriteDelay: {Exp {Rate: 0.5}}
+	LearningRate: 1e-06
+}
+Connection {
+	From: 1 To: 1
+	Stochastic {
+		Prob: 1.0
+	}
+	Weight: {Norm {Mean: 0.1  Sd: 0.01}}
+	# DendriteDelay: {Exp {Rate: 0.5}}
+	LearningRate: 1e-06
+}

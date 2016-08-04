@@ -12,6 +12,8 @@ import json
 import random
 import glob
 import re
+import time
+import random
 
 import lib.env as env
 from lib.env import runs_dir
@@ -24,6 +26,10 @@ from lib.util import str_to_opt
 THIS_FILE = os.path.realpath(__file__)
 SCRIPTS_DIR = os.path.dirname(os.path.realpath(__file__))
 
+def scale_to(x, min, max, a, b):
+    return ((b-a)*(x - min)/(max-min)) + a
+
+
 class TDnnSim(object):
     JOBS = multiprocessing.cpu_count()
     EPOCHS = 1
@@ -33,7 +39,8 @@ class TDnnSim(object):
     USER_JSON_FILE = pj(SCRIPTS_DIR, "user.json")
     USER_JSON = json.load(open(USER_JSON_FILE))
     USER = os.environ["USER"]
-    EGO_PATCH = re.compile("[\s]*([a-zA-Z]+)[\s]*:[\s]*([^#]+)[\s]*#[\s]*([0-9]+)")
+    
+    EVO_RE = re.compile("[\s]*(?P<Name>[a-zA-Z]+):[\s]*(?P<Given>[-.e0-9]+)[\s]*#[\s]*\[(?P<From>[-.e0-9]+),[\s]*(?P<To>[-.e0-9]+)\].*")    
 
     LOG_FILE_BASE = "run_sim.log"
 
@@ -63,14 +70,18 @@ class TDnnSim(object):
         self.prepare_data = kwargs.get("prepare_data", False)
         self.evaluation_data = kwargs.get("evaluation_data", None)
         self.no_learning = kwargs.get("no_learning", False)
-        self.ego = kwargs.get("ego", False)
-        if self.ego:
+        self.target_spikes = kwargs.get("target_spikes", None)
+        self.evo = kwargs.get("evo", False)
+        if self.evo:
             self.slave = True
             
         if self.evaluation_data:
             self.evaluation = True
         self.seed = kwargs.get("seed")
-        
+        self.connection_seed = kwargs.get("connection_seed")
+        if self.seed and self.connection_seed is None:
+            self.connection_seed = self.seed
+
         self.evaluation_script = kwargs.get("evaluation_script")
         if self.evaluation_script:
             self.inspection = False
@@ -126,39 +137,51 @@ class TDnnSim(object):
             raise Exception("Choose one of the inputs: time series or spikes, can't work with both")
 
         if self.input_ts:
-            shutil.copy(self.input_ts, self.working_dir) 
+            shutil.copy(self.input_ts, pj(self.working_dir, "input_time_series.pb")) 
         if self.input_spikes:
-            shutil.copy(self.input_spikes, self.working_dir) 
+            shutil.copy(self.input_spikes, pj(self.working_dir, "input_spikes_list.pb")) 
                     
         wd_config = pj(self.working_dir, os.path.basename(self.config))
         if wd_config != self.config or not os.path.exists(wd_config):
             shutil.copy(self.config, self.working_dir)
             self.config = wd_config
 
-        if self.ego:
+        if self.evo:
             pars = sys.stdin.readline()
             pars = [ p.strip() for p in pars.split(" ") if p.strip() ]
             config = open(self.config).readlines()
+            
+            emin, emax = float(os.environ.get("EVOLVE_MIN", "0.0")), float(os.environ.get("EVOLVE_MAX", "1.0"))
+
+            patch_left = len(pars)
             with open(self.config, "w") as fptr:
+                fptr.write("# PATCHED by run_sim.py in evo mode with values (min: {}, max: {}): \n# {}\n".format(emin, emax, " ".join(pars)))
                 for l in config:
-                    m = TDnnSim.EGO_PATCH.match(l)
+                    m = TDnnSim.EVO_RE.match(l)
                     if m:
-                        field = m.group(1)
-                        val = m.group(2)
-                        new_val = pars.pop(0)
-                        num = m.group(3)
+                        field = m.group("Name")
+                        val = m.group("Given")
+                        fr = m.group("From")
+                        to = m.group("To")
                         
-                        logging.info("Found patch for field {} (#{}) with value {}".format(field, num, new_val))
+                        new_val = float(pars.pop(0))
+                        logging.info("Found patch for field {} with value {} {} {}".format(field, new_val, fr, to))
+                        if new_val > emax or new_val < emin:
+                            raise Exception("Need input value between {} or {}, got {}".format(emin, emax, new_val))
                         
+                        new_val = scale_to(new_val, emin, emax, float(fr), float(to))
                         new_line = ""
                         spm = re.match("^([\s]*)", l)
                         if spm:
                             new_line += spm.group(1)
-                        new_line += "{}: {}      # PATCHED {}\n".format(field, new_val, num)
+                        new_line += "{}: {}      # PATCHED {}\n".format(field, new_val, patch_left-1)
                         fptr.write(new_line)
+                        patch_left -= 1
                     else:
                         fptr.write(l)
 
+            if patch_left>0:
+                raise Exception("Too many variables in input to patch, {} variables left to patch".format(patch_left))
 
     def get_fname(self, f, ep=None):
         return os.path.join(self.working_dir, "{}_{}".format(ep if not ep is None else self.current_epoch, f)) 
@@ -179,6 +202,8 @@ class TDnnSim(object):
             cmd += ["--tmax", self.T_max]
         if self.seed:
             cmd += ["--seed", self.seed]
+        if self.connection_seed:
+            cmd += ["--connection-seed", self.connection_seed]
         return cmd
 
     def construct_eval_run_cmd(self):
@@ -237,7 +262,10 @@ class TDnnSim(object):
             cmd += [
                 "--input-time-series", self.input_ts
             ]
-
+        if self.target_spikes:
+            cmd += [
+                "--target-spikes", self.target_spikes
+            ]
         return { "cmd" : cmd, "print_root_log_on_fail" : self.slave, "stdout": pj(self.working_dir, "{}.log".format(self.current_epoch)) }
 
     def construct_eval_script_cmd(self):
@@ -331,14 +359,16 @@ class TDnnSim(object):
         config_hex = md5.new(open(self.config).read()).hexdigest()
         i = 0
 
-        while i<1000:
+        found = False
+        while i<9999:
             self.working_dir = os.path.join(self.runs_dir, config_hex + "_%04d" % i)
-            if not os.path.exists(self.working_dir):
-                break
-            if self.old_dir:
+            time.sleep(0.001 * random.random())
+            if not os.path.exists(self.working_dir) or self.old_dir:
+                found = True
                 break
             i+=1
-    
+        if not found:
+            raise Exception("Failed to find directory. Too much runs here ({})".format(i))
         return self.working_dir
     
 def main(argv):
@@ -363,6 +393,9 @@ def main(argv):
                         '--stat',
                         action='store_true',
                         help='Save statistics')
+    parser.add_argument('--connection-seed',
+                        required=False,
+                        help='Set seed for random engine of connection builder')
     parser.add_argument('--seed',
                         required=False,
                         help='Set seed for random engine')
@@ -373,9 +406,9 @@ def main(argv):
     parser.add_argument('--slave',
                         action='store_true',
                         help='Run script as slave and print only evaluation score')
-    parser.add_argument('--ego',
+    parser.add_argument('--evo',
                         action='store_true',
-                        help='Take from stdin parameters given by ego-cli')
+                        help='Take from stdin parameters given by some BO optimizer')
     parser.add_argument('-f', '--force',
                         action='store_true',
                         help="Don't ask questions, just use directory")
@@ -395,6 +428,10 @@ def main(argv):
                         '--input-spikes', 
                         required=False,
                         help='Input spikes that required for model')
+    parser.add_argument('-ts', 
+                        '--target-spikes', 
+                        required=False,
+                        help='Target spikes for supervised learning')
     parser.add_argument('-it', 
                         '--input-ts', 
                         required=False,
@@ -436,13 +473,16 @@ def main(argv):
         "jobs" : args.jobs,
         "old_dir" : args.old_dir,
         "inspection" : not args.no_insp,
+        "evaluation" : not args.no_evaluation,
         "slave" : args.slave,
         "evaluation_data" : args.evaluation_data,
         "force" : args.force,
         "no_learning" : args.no_learning,
         "seed" : args.seed,
+        "connection_seed" : args.connection_seed,
         "evaluation_script" : args.evaluation_script,
-        "ego" : args.ego,
+        "evo" : args.evo,
+        "target_spikes" : args.target_spikes,
     }
     TDnnSim(**args).run()
     

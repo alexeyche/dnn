@@ -2,13 +2,14 @@
 
 #include "reward_control.h"
 
-#include <dnn/base/base.h>
+#include <ground/base/base.h>
 
-#include <dnn/util/ptr.h>
-#include <dnn/util/maybe.h>
+#include <ground/ptr.h>
+#include <ground/maybe.h>
 
 namespace NDnn {
-
+	using namespace NGround;
+	
 	template <typename ...T>
 	class TSim;
 
@@ -20,8 +21,19 @@ namespace NDnn {
 	public:
 		static TGlobalCtx& Inst();
 
-		void Init(TRewardControl& rewardControl) {
+		void Init(TRewardControl& rewardControl, const TVector<ui32>& sizeOfLayers) {
 			RewardControl.Set(rewardControl);
+			
+			ui32 layerId = 0;
+			ui32 cumulativeSize = 0;
+			for (const auto& layerSize: sizeOfLayers) {
+				cumulativeSize += layerSize;
+				while (LayerId.size() < cumulativeSize) {
+					LayerId.push_back(layerId);
+				}
+				++layerId;
+			}
+			LayerSize = sizeOfLayers.size();
 		}
 
 		const double& GetReward() const {
@@ -44,6 +56,14 @@ namespace NDnn {
 		const double& GetPastTime() const {
 			return PastTime;
 		}
+		
+		const ui32& GetNeuronLayerId(const ui32& globalNeuronId) const {
+			return LayerId[globalNeuronId];
+		}
+		
+		const ui32& GetLayerSize() const {
+			return LayerSize;
+		}
 
 	private:
 		void SetPastTime(double pastTime) {
@@ -58,6 +78,8 @@ namespace NDnn {
 
 		TMaybe<ui32> CurrentClassId;
 		double PastTime = 0;
+		TVector<ui32> LayerId;
+		ui32 LayerSize;
 	};
 
 

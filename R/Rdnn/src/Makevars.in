@@ -2,12 +2,12 @@ PKG_CXXFLAGS = -std=c++14
 
 PKG_CPPFLAGS=-I"@DNN_INCLUDE@"
 
-PKG_LIBS = -L"@DNN_LIB@" -ldnn -ldnn_protos $(LIBS)
+PKG_LIBS = -L"@DNN_LIB@" -ldnn -ldnnpb $(LIBS)
 
 
 OBJECTS.root= mod.o
 
-OBJECTS=  $(OBJECTS.root) RcppExports.o proto.o util.o spikework.o
+OBJECTS=  $(OBJECTS.root) RcppExports.o proto.o util.o spikework.o lyapunov.o
 
 all: $(SHLIB) before  after
 

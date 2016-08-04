@@ -8,5 +8,6 @@ message TSynapseInnerState {
     optional double Potential = 4;
     optional bool Fired = 5;
     optional double PostSynapticWeight = 6;
+    optional double LearningRate = 7;
 }
 

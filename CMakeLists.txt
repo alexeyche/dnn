@@ -11,7 +11,7 @@ set(DNN_VERSION
 # We default to debugging mode for developers.
 option(DEBUG "Compile with debugging information" OFF)
 option(PROFILE "Compile with profiling information" OFF)
-
+option(PROTOBUF_PREFIX "Destination of installed protobuf" "")
 # Set the CFLAGS and CXXFLAGS depending on the options the user specified.
 # Only GCC-like compilers support -Wextra, and other compilers give tons of
 # output for -Wall, so only -Wall and -Wextra on GCC.
@@ -19,9 +19,15 @@ option(PROFILE "Compile with profiling information" OFF)
 #  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 #  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 #endif(CMAKE_COMPILER_IS_GNUCC)
-include(FindProtobuf)
 
-find_package(Protobuf REQUIRED)
+if (PROTOBUF_PREFIX)
+    set(PROTOBUF_LIBRARIES "${PROTOBUF_PREFIX}/lib")
+    set(PROTOBUF_INCLUDE_DIR "${PROTOBUF_PREFIX}/include")
+    set(PROTOBUF_PROTOC_EXECUTABLE "${PROTOBUF_PREFIX}/bin/protoc")
+endif(PROTOBUF_PREFIX)
+
+include(cmake/FindProtobuf.cmake)
+
 find_package(Threads REQUIRED)
 
 
@@ -59,14 +65,24 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${CMAKE_BINARY_DIR})
 
+set(LIBLIST libdnnpb libdnn libspikeworkpb libground libgroundpb)
 
+macro(PATCH_APPLE DST)
+  if (APPLE)
+      foreach(LIB ${LIBLIST})
+          install(CODE
+              "EXECUTE_PROCESS(COMMAND install_name_tool -change ${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/lib/${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/${DST})"
+          )
+      endforeach(LIB)
+  endif()
+endmacro()
 
 macro(DEFINE_MODEL BIN CPP)
   add_executable(${BIN}
       ${CPP}
   )
-
-  include_directories(${CMAKE_SOURCE_DIR}/ego)
+  
+  include_directories(${PROTOBUF_INCLUDE_DIR})
   target_link_libraries(${BIN} ${PROTOBUF_LIBRARY} dnn m)
 
   get_filename_component(model_bn ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE)
@@ -87,9 +103,10 @@ macro(DEFINE_MODEL BIN CPP)
         "EXECUTE_PROCESS(COMMAND ln -sf ${RScript} ${CMAKE_INSTALL_PREFIX}/models/${model_bn})"
     )
   endforeach(RScript)
+  PATCH_APPLE(models/${model_bn}/${BIN})
 
   if (APPLE)
-      foreach(LIB libdnn_protos libdnn libspikework_protos)
+      foreach(LIB libdnnpb libdnn libspikeworkpb libground libgroundpb)
           install(CODE
               "EXECUTE_PROCESS(COMMAND install_name_tool -change ${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/lib/${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/models/${model_bn}/${BIN} )"
           )
@@ -98,7 +115,17 @@ macro(DEFINE_MODEL BIN CPP)
 
 endmacro()
 
-# Recurse into the rest of the project.
+FILE(GLOB RESULT "${CMAKE_SOURCE_DIR}/ground/*")
+
+LIST(LENGTH RESULT RES_LEN)
+
+IF(RES_LEN EQUAL 0)
+
+  MESSAGE(FATAL_ERROR "Module ground not found, need to do this command:\ncd ${CMAKE_SOURCE_DIR}/ground\ngit submodule init && git submodule update")
+
+ENDIF()
+
+add_subdirectory(ground)
 add_subdirectory(dnn)
 add_subdirectory(tools)
 add_subdirectory(models)

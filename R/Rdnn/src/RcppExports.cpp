@@ -5,9 +5,21 @@
 
 using namespace Rcpp;
 
-// PpKernelRun
-Rcpp::NumericMatrix PpKernelRun(Rcpp::List preProcConfig, Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs);
-RcppExport SEXP Rdnn_PpKernelRun(SEXP preProcConfigSEXP, SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP) {
+// Lyapunov
+Rcpp::List Lyapunov(Rcpp::List timeSeries, Rcpp::List outputSpikes);
+RcppExport SEXP Rdnn_Lyapunov(SEXP timeSeriesSEXP, SEXP outputSpikesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeries(timeSeriesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type outputSpikes(outputSpikesSEXP);
+    __result = Rcpp::wrap(Lyapunov(timeSeries, outputSpikes));
+    return __result;
+END_RCPP
+}
+// PpClassKernelRun
+Rcpp::NumericMatrix PpClassKernelRun(Rcpp::List preProcConfig, Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs, double dt);
+RcppExport SEXP Rdnn_PpClassKernelRun(SEXP preProcConfigSEXP, SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP, SEXP dtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -15,20 +27,51 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::List >::type kernelConfig(kernelConfigSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type timeSeries(timeSeriesSEXP);
     Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
-    __result = Rcpp::wrap(PpKernelRun(preProcConfig, kernelConfig, timeSeries, jobs));
+    Rcpp::traits::input_parameter< double >::type dt(dtSEXP);
+    __result = Rcpp::wrap(PpClassKernelRun(preProcConfig, kernelConfig, timeSeries, jobs, dt));
     return __result;
 END_RCPP
 }
-// KernelRun
-Rcpp::NumericMatrix KernelRun(Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs);
-RcppExport SEXP Rdnn_KernelRun(SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP) {
+// ClassKernelRun
+Rcpp::NumericMatrix ClassKernelRun(Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs);
+RcppExport SEXP Rdnn_ClassKernelRun(SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
     Rcpp::traits::input_parameter< Rcpp::List >::type kernelConfig(kernelConfigSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type timeSeries(timeSeriesSEXP);
     Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
-    __result = Rcpp::wrap(KernelRun(kernelConfig, timeSeries, jobs));
+    __result = Rcpp::wrap(ClassKernelRun(kernelConfig, timeSeries, jobs));
+    return __result;
+END_RCPP
+}
+// PpKernelRun
+Rcpp::List PpKernelRun(Rcpp::List preProcConfig, Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs, double dt, bool timeCorrelation);
+RcppExport SEXP Rdnn_PpKernelRun(SEXP preProcConfigSEXP, SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP, SEXP dtSEXP, SEXP timeCorrelationSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type preProcConfig(preProcConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type kernelConfig(kernelConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeries(timeSeriesSEXP);
+    Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
+    Rcpp::traits::input_parameter< double >::type dt(dtSEXP);
+    Rcpp::traits::input_parameter< bool >::type timeCorrelation(timeCorrelationSEXP);
+    __result = Rcpp::wrap(PpKernelRun(preProcConfig, kernelConfig, timeSeries, jobs, dt, timeCorrelation));
+    return __result;
+END_RCPP
+}
+// KernelRun
+Rcpp::List KernelRun(Rcpp::List kernelConfig, Rcpp::List timeSeries, size_t jobs, bool timeCorrelation);
+RcppExport SEXP Rdnn_KernelRun(SEXP kernelConfigSEXP, SEXP timeSeriesSEXP, SEXP jobsSEXP, SEXP timeCorrelationSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type kernelConfig(kernelConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeries(timeSeriesSEXP);
+    Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
+    Rcpp::traits::input_parameter< bool >::type timeCorrelation(timeCorrelationSEXP);
+    __result = Rcpp::wrap(KernelRun(kernelConfig, timeSeries, jobs, timeCorrelation));
     return __result;
 END_RCPP
 }
@@ -42,6 +85,36 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::List >::type timeSeries(timeSeriesSEXP);
     Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
     __result = Rcpp::wrap(PreprocessRun(preProcConfig, timeSeries, jobs));
+    return __result;
+END_RCPP
+}
+// SpikeDistance
+double SpikeDistance(Rcpp::List kernelConfig, Rcpp::List timeSeriesLeft, Rcpp::List timeSeriesRight, size_t jobs);
+RcppExport SEXP Rdnn_SpikeDistance(SEXP kernelConfigSEXP, SEXP timeSeriesLeftSEXP, SEXP timeSeriesRightSEXP, SEXP jobsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type kernelConfig(kernelConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeriesLeft(timeSeriesLeftSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeriesRight(timeSeriesRightSEXP);
+    Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
+    __result = Rcpp::wrap(SpikeDistance(kernelConfig, timeSeriesLeft, timeSeriesRight, jobs));
+    return __result;
+END_RCPP
+}
+// PpSpikeDistance
+double PpSpikeDistance(Rcpp::List preProcConfig, Rcpp::List kernelConfig, Rcpp::List timeSeriesLeft, Rcpp::List timeSeriesRight, size_t jobs, double dt);
+RcppExport SEXP Rdnn_PpSpikeDistance(SEXP preProcConfigSEXP, SEXP kernelConfigSEXP, SEXP timeSeriesLeftSEXP, SEXP timeSeriesRightSEXP, SEXP jobsSEXP, SEXP dtSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type preProcConfig(preProcConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type kernelConfig(kernelConfigSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeriesLeft(timeSeriesLeftSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type timeSeriesRight(timeSeriesRightSEXP);
+    Rcpp::traits::input_parameter< size_t >::type jobs(jobsSEXP);
+    Rcpp::traits::input_parameter< double >::type dt(dtSEXP);
+    __result = Rcpp::wrap(PpSpikeDistance(preProcConfig, kernelConfig, timeSeriesLeft, timeSeriesRight, jobs, dt));
     return __result;
 END_RCPP
 }
@@ -86,6 +159,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::List >::type l(lSEXP);
     Rcpp::traits::input_parameter< double >::type dt(dtSEXP);
     __result = Rcpp::wrap(binarizeSpikes(l, dt));
+    return __result;
+END_RCPP
+}
+// getRateVectors
+Rcpp::List getRateVectors(Rcpp::List l, double winLength);
+RcppExport SEXP Rdnn_getRateVectors(SEXP lSEXP, SEXP winLengthSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< Rcpp::List >::type l(lSEXP);
+    Rcpp::traits::input_parameter< double >::type winLength(winLengthSEXP);
+    __result = Rcpp::wrap(getRateVectors(l, winLength));
     return __result;
 END_RCPP
 }

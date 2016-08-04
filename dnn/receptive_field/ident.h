@@ -2,7 +2,7 @@
 
 #include "receptive_field.h"
 
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/serial/proto_serial.h>
 #include <dnn/protos/ident.pb.h>
 
 namespace NDnn {
@@ -16,7 +16,7 @@ namespace NDnn {
 
     class TIdentReceptiveField : public TReceptiveField<TIdentReceptiveFieldConst> {
     public:
-        void Init(const TNeuronSpaceInfo& info) {
+        void Init(const TNeuronSpaceInfo&, TRandEngine&) {
         }
 
         double CalculateResponse(double I) const {

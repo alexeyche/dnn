@@ -1,26 +1,24 @@
 #include "proto.h"
 
-#include <dnn/util/ts/time_series.h>
-#include <dnn/util/ts/spikes_list.h>
-#include <dnn/util/matrix.h>
-#include <dnn/util/stat_gatherer.h>
-#include <dnn/util/serial/bin_serial.h>
+#include <ground/ts/time_series.h>
+#include <ground/ts/spikes_list.h>
+#include <ground/matrix.h>
+#include <ground/stat_gatherer.h>
+#include <ground/serial/bin_serial.h>
 #include <dnn/spikework/protos/spikework_config.pb.h>
 
 #include <dnn/protos/config.pb.h>
 
-using namespace NDnn;
-
 template <>
 SEXP TProto::Translate<TTimeSeriesInfo>(const TTimeSeriesInfo& ent) {
-	Rcpp::List ret;
-    for(const auto& lab_start_info: ent.LabelsStart) {
-        const auto& lab_spec = ent.UniqueLabels[lab_start_info.LabelId];
+    Rcpp::List ret;
+    for(const auto& lab_start_info: ent.Labels) {
+        const auto& lab_name = ent.UniqueLabelNames[lab_start_info.LabelId];
         ret.push_back(
             Rcpp::List::create(
-                Rcpp::Named("label") = lab_spec.Name
-              , Rcpp::Named("start_time") = lab_start_info.Start
-              , Rcpp::Named("duration") = lab_spec.Duration
+                Rcpp::Named("label") = lab_name
+              , Rcpp::Named("start_time") = lab_start_info.From
+              , Rcpp::Named("duration") = lab_start_info.To - lab_start_info.From
             )
         );
     }
@@ -58,7 +56,7 @@ SEXP TProto::Translate<TDoubleMatrix>(const TDoubleMatrix& ent) {
 
 template <>
 SEXP TProto::Translate<TTimeSeries>(const TTimeSeries& ent) {
-	Rcpp::NumericMatrix ts_vals(ent.Dim(), ent.Length());
+    Rcpp::NumericMatrix ts_vals(ent.Dim(), ent.Length());
     for(size_t i=0; i<ent.Data.size(); ++i) {
         for(size_t j=0; j<ent.Data[i].Values.size(); ++j) {
             ts_vals(i, j) = ent.Data[i].Values[j];
@@ -103,7 +101,7 @@ SEXP TProto::Translate<TStatistics>(const TStatistics& ent) {
 
 template <>
 TTimeSeriesInfo TProto::TranslateBack<TTimeSeriesInfo>(const Rcpp::List& l) {
-	TTimeSeriesInfo ret;
+    TTimeSeriesInfo ret;
     for(size_t li=0; li<l.size(); ++li) {
         Rcpp::List elem(l[li]);
         ret.AddLabelAtPos(elem["label"], elem["start_time"], elem["duration"]);
@@ -174,6 +172,13 @@ NDnnProto::TPreprocessorConfig TProto::TranslateBack<NDnnProto::TPreprocessorCon
         SET(config, l["Epsp"], epsp, double, "Length", length);
         SET(config, l["Epsp"], epsp, double, "Dt", dt);
     }
+    if (l.containsElementNamed("Gauss")) {
+        *config.mutable_gauss() = NDnnProto::TGaussOptions();
+
+        SET(config, l["Gauss"], gauss, double, "Sigma", sigma);
+        SET(config, l["Gauss"], gauss, double, "Length", length);
+        SET(config, l["Gauss"], gauss, double, "Dt", dt);
+    }
     return config;
 }
 
@@ -184,6 +189,27 @@ NDnnProto::TKernelConfig TProto::TranslateBack<NDnnProto::TKernelConfig>(const R
     NDnnProto::TKernelConfig config;
     if (l.containsElementNamed("Dot")) {
         *config.mutable_dot() = NDnnProto::TDotOptions();
+    }
+    if (l.containsElementNamed("RbfDot")) {
+        *config.mutable_rbfdot() = NDnnProto::TRbfDotOptions();   
+
+        SET(config, l["RbfDot"], rbfdot, double, "Sigma", sigma);
+    }
+    if (l.containsElementNamed("AnovaDot")) {
+        *config.mutable_anovadot() = NDnnProto::TAnovaDotOptions();   
+
+        SET(config, l["AnovaDot"], anovadot, double, "Sigma", sigma);
+        SET(config, l["AnovaDot"], anovadot, double, "Power", power);
+    }
+    if (l.containsElementNamed("Shoe")) {
+        *config.mutable_shoe() = NDnnProto::TShoeOptions();
+        
+        SET(config, l["Shoe"], shoe, double, "Sigma", sigma);
+        
+        Rcpp::List shoeList = l["Shoe"];
+        if (shoeList.containsElementNamed("Kernel")) {
+            *(config.mutable_shoe()->mutable_kernel()) = TProto::TranslateBack<NDnnProto::TKernelConfig>(shoeList["Kernel"]);
+        }
     }
     return config;
 }
@@ -222,10 +248,10 @@ Rcpp::List TProto::TranslateModel(const NDnnProto::TConfig& config) {
 
 
 Rcpp::List TProto::ReadFromFile(TString protofile) {
-	std::ifstream input(protofile, std::ios::binary);
+    std::ifstream input(protofile, std::ios::binary);
     TBinSerial serial(input);
 
-	Rcpp::List l;
+    Rcpp::List l;
     switch (serial.ReadProtobufType()) {
         case EProto::TIME_SERIES:
             l = Translate(serial.ReadObject<TTimeSeries>());
@@ -255,17 +281,17 @@ Rcpp::List TProto::ReadFromFile(TString protofile) {
         default:
             ERR("Unknown protobuf type " << protofile);
     }
-	return l;
+    return l;
 }
 
 void TProto::WriteToFile(Rcpp::List l, TString protofile) {
-	std::ofstream output(protofile, std::ios::binary);
+    std::ofstream output(protofile, std::ios::binary);
     TBinSerial serial(output);
 
     TString name = l.attr("class");
     if (name == "TimeSeries") {
         serial.WriteObject(TranslateBack<TTimeSeries>(l));
-    	return;
+        return;
     }
     if (name == "SpikesList") {
         serial.WriteObject(TranslateBack<TSpikesList>(l));

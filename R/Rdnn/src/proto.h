@@ -1,7 +1,7 @@
 #ifndef RPROTO_READ_H
 #define RPROTO_READ_H
 
-#include <dnn/base/base.h>
+#include <ground/base/base.h>
 #include <dnn/protos/config.pb.h>
 
 #include <fstream>
@@ -12,7 +12,7 @@
 
 #include "common.h"
 
-using namespace NDnn;
+using namespace NGround;
 
 template <typename T>
 bool GetFromList(const Rcpp::List& l, const TString name, T& dst) {
@@ -39,13 +39,13 @@ public:
     static Rcpp::List TranslateModel(const NDnnProto::TConfig& config);
 
 
-	template <typename T>
+    template <typename T>
     static T TranslateBack(const Rcpp::List& l);
 
     template <typename T>
     void WriteEntity(T&& v, std::ostream& ostr) {
-    	typename T::TProto pb = v.Serialize();
-    	pb.SerializeToOstream(&ostr);
+        typename T::TProto pb = v.Serialize();
+        pb.SerializeToOstream(&ostr);
     }
 
     Rcpp::List ReadFromFile(TString protofile);

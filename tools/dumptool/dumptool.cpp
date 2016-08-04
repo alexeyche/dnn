@@ -4,14 +4,14 @@
 
 #include <dnn/protos/options.pb.h>
 #include <dnn/protos/config.pb.h>
-#include <dnn/util/proto_options.h>
-#include <dnn/util/ts/time_series.h>
-#include <dnn/util/ts/spikes_list.h>
-#include <dnn/util/serial/bin_serial.h>
-#include <dnn/util/log/log.h>
-#include <dnn/util/stat_gatherer.h>
+#include <ground/proto_options.h>
+#include <ground/ts/time_series.h>
+#include <ground/ts/spikes_list.h>
+#include <ground/serial/bin_serial.h>
+#include <ground/log/log.h>
+#include <ground/stat_gatherer.h>
 
-using namespace NDnn;
+using namespace NGround;
 
 #include "dumptool.h"
 

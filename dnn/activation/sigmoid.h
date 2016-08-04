@@ -3,9 +3,9 @@
 #include "activation.h"
 
 #include <dnn/protos/sigmoid.pb.h>
-#include <dnn/util/fastapprox/fastexp.h>
-#include <dnn/util/fastapprox/fastlog.h>
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/fastapprox/fastexp.h>
+#include <ground/fastapprox/fastlog.h>
+#include <ground/serial/proto_serial.h>
 
 namespace NDnn {
 
@@ -17,23 +17,20 @@ namespace NDnn {
             serial(Slope);
         }
 
-
-        double Threshold = 0.15;
-        double Slope = 50.0;
+        double Threshold = 0.2;
+        double Slope = 1.0;
     };
 
 
     class TSigmoid: public TActivation<TSigmoidConst> {
     public:
-        double SpikeProbability(const double& u) {
-            double p = 1.0/(1.0+exp( - c.Slope * (u - c.Threshold) ));
-            if(fabs(p)<1e-04) {
-                return 1e-04;
-            }
+        double SpikeProbability(const double& u) const {
+            const double input = (u - c.Threshold)/c.Slope;
+            const double p = 1.0/(1.0+std::exp(-input));
             return p;
         }
 
-        double SpikeProbabilityDerivative(const double& u) {
+        double SpikeProbabilityDerivative(const double& u) const {
             double p = SpikeProbability(u);
             return p*(1.0-p);
         }

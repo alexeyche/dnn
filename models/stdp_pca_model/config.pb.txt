@@ -1,0 +1,39 @@
+SimConfiguration {
+	Jobs: 8
+}
+Layer {
+	BasicSynapse {
+        PspDecay: 10.0
+    }
+}
+Layer {
+	BasicSynapse {
+        PspDecay: 10.0
+    }
+	IntegrateAndFire {
+		TauMem: 10
+		TauRef: 2
+	}
+	Determ {
+		Threshold: 0.15
+	}
+	Stdp {
+		TauPlus: 5.0
+		TauMinus: 10.0
+		Aplus: 1.0
+		Aminus: 1.0
+	}
+	UnitNorm {
+		Unit: 1.0
+		Power: 2.0
+	}
+
+}
+Connection {
+	From: 0 To: 1
+	Stochastic {
+		Prob: 1.0
+	}
+	Weight: {Value: 0.01}
+	LearningRate: 1e-03
+}

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <dnn/base/base.h>
+#include <ground/base/base.h>
 #include <dnn/neuron/spike_neuron_impl.h>
 #include <dnn/neuron/defaults.h>
 #include <dnn/connection/builder.h>
@@ -9,6 +9,7 @@
 #include <type_traits>
 
 namespace NDnn {
+	using namespace NGround;
 
 	template <typename N, ui32 size, typename TConf>
 	class TLayer: public IMetaProtoSerial {
@@ -98,10 +99,11 @@ namespace NDnn {
 						syn.MutConstants().SerialProcess(serial);
 					}
 
-					syn.MutWeight() = connRecipe.Amplitude * conn.weight();
+					syn.MutWeight() = connRecipe.Amplitude * rand.DrawValue(conn.weight());
 					syn.MutIdPre() = npre.GetGlobalId();
-					syn.MutDendriteDelay() = conn.dendritedelay();
-
+					syn.MutDendriteDelay() = rand.DrawValue(conn.dendritedelay());
+					syn.MutLearningRate() = conn.learningrate();
+					
 					npost.AddSynapse(std::move(syn));
 				}
 			}

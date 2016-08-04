@@ -1,59 +1,59 @@
 #pragma once	
 
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/serial/proto_serial.h>
 
 namespace NDnn {
 
+	
+	template <typename TConstants>
+	class TReceptiveField;
 
-
-	using TNoInput = TEmpty;
-
-	template <typename T>
-	using TNoReinforcement = TEmpty;
-
-
-	template <typename TConstants, typename TState, typename TNeuronImpl, typename TWeightNormalizationType>
+	template <typename TConstants, typename TState, typename TNeuronImpl>
 	class TLearningRule;
 
-
-
-
-	template <typename X, typename Y, typename T>
+	template <typename TConstants, typename TState, typename TNeuronImpl>
 	class TWeightNormalization;
 
-	template <typename T>
-	class TWeightNormalization<TEmpty, TEmpty, T>: public IProtoSerial<NDnnProto::TLayer> {
-	public:
-		void SerialProcess(TProtoSerial& serial) {
-		}
+	template <typename TConstants, typename TState, typename TNeuronImpl>
+	class TIntrinsicPlasticity;
 
-		double Ltp(const double& w) const {
-			return 1.0;
-		}
+	template <typename TConstants, typename TNeuronImpl>
+	class TReinforcement;
 
-		double Ltd(const double& w) const {
-			return 1.0;
-		}
 
-		double Derivative(double w, double dw) const {
-			return dw;
-		}
+	using TNoInput = TReceptiveField<TEmpty>;
 
-		void CalculateDynamics(const TTime& t) {
-		}
-		
-		void SetNeuronImpl(T& neuron) {
-		}
-
-	};
+	template <typename TNeuron>
+	using TNoLearning = TLearningRule<TEmpty, TEmpty, TNeuron>;
 
 	template <typename T>
 	using TNoWeightNormalization = TWeightNormalization<TEmpty, TEmpty, T>;
 
+	template <typename T>
+	using TNoIntrinsicPlasticity = TIntrinsicPlasticity<TEmpty, TEmpty, T>;
 
-	template <typename TNeuronImpl, typename TWeightNormalizationType>
-	class TLearningRule<TEmpty, TEmpty, TNeuronImpl, TWeightNormalizationType>: public IProtoSerial<NDnnProto::TLayer> {
+	template <typename T>
+	using TNoReinforcement = TReinforcement<TEmpty, T>;
+
+	template <>
+	class TReceptiveField<TEmpty>: public IProtoSerial<NDnnProto::TLayer> {
 	public:
+		void SerialProcess(TProtoSerial& serial) {
+		}
+
+		void Init(const TNeuronSpaceInfo&, TRandEngine&) {
+        }
+
+        double CalculateResponse(double I) const {
+            return 0.0;
+        }
+	};
+
+	template <typename TNeuronImpl>
+	class TLearningRule<TEmpty, TEmpty, TNeuronImpl>: public IProtoSerial<NDnnProto::TLayer> {
+	public:
+		using TWeightNormalizationType = typename TNeuronImpl::TConfig::template TWeightNormalization<TNeuronImpl>;
+
 		static_assert(std::is_same<TWeightNormalizationType, TNoWeightNormalization<TNeuronImpl>>::value,
 			"Trying to use weight normalization with empty learning rule");
 		
@@ -102,10 +102,63 @@ namespace NDnn {
 		TWeightNormalizationType WeightNormalization;
 	};
 
-	template <typename T3, typename T4>
-	using TNoLearning = TLearningRule<TEmpty, TEmpty, T3, T4>;
+	template <typename T>
+	class TWeightNormalization<TEmpty, TEmpty, T>: public IProtoSerial<NDnnProto::TLayer> {
+	public:
+		void SerialProcess(TProtoSerial& serial) {
+		}
 
+		double Ltp(const double& w) const {
+			return 1.0;
+		}
 
+		double Ltd(const double& w) const {
+			return 1.0;
+		}
+
+		double Derivative(double w, double dw) const {
+			return dw;
+		}
+
+		void CalculateDynamics(const TTime& t) {
+		}
+		
+		void SetNeuronImpl(T& neuron) {
+		}
+
+		void Reset() {
+		}
+
+	};
+
+	template <typename T>
+	class TIntrinsicPlasticity<TEmpty, TEmpty, T>: public IProtoSerial<NDnnProto::TLayer> {
+	public:
+		void SerialProcess(TProtoSerial& serial) {
+		}
+
+		void Reset() {
+		}
+
+		void CalculateDynamics(const TTime& t) {
+		}
+		
+		void SetNeuronImpl(T& neuron) {
+		}
+	};
+
+	template <typename T>
+	class TReinforcement<TEmpty, T>: public IProtoSerial<NDnnProto::TLayer> {
+	public:
+		void SerialProcess(TProtoSerial& serial) {
+		}
+
+		void ModulateReward() {
+		}
+		
+		void SetNeuronImpl(T& neuron) {
+		}
+	};
 
 
 } // namespace NDnn

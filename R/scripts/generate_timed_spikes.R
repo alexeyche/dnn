@@ -2,16 +2,20 @@
 require(Rdnn)
 source(scripts.path("gen_poisson.R"))
 
-sim_length = convNum(Sys.getenv('TIMED_PATTERN_LENGTH'), 300000)
-test_sim_length = convNum(Sys.getenv('TIMED_PATTERN_LENGTH_TEST'), 300000)
+sim_length = convNum(Sys.getenv('TIMED_PATTERN_LENGTH'), 500)
+test_sim_length = convNum(Sys.getenv('TIMED_PATTERN_LENGTH_TEST'), 500)
+
+set.seed(15)
 
 neurons = 100
-sample_gap = 250
+sample_gap = 0
 sample_duration = 500
-classes = 4
-high_rate = 20
+classes = 1
+high_rate = 50
 
-rates = sapply(1:classes, function(ci) high_rate*rbeta(neurons, 0.2,0.9))
+got.rid.of.silent.neurons = FALSE
+
+rates = sapply(1:classes, function(ci) high_rate*rbeta(neurons, 1.0,0.9))
 mean_rate = rowMeans(rates)
 
 patterns_spikes = list()
@@ -53,6 +57,15 @@ realize_patterns = function(patterns_spikes, mean_rates, sim_length, sample_gap)
 
 final_spikes = realize_patterns(patterns_spikes, mean_rate, sim_length, sample_gap)
 test_final_spikes = realize_patterns(patterns_spikes, mean_rate, test_sim_length, sample_gap)
+
+if (got.rid.of.silent.neurons) {
+    with_spikes = which(sapply(final_spikes$values, length) > 0)
+    final_spikes$values = final_spikes$values[with_spikes]
+    
+    with_spikes = which(sapply(test_final_spikes$values, length) > 0)
+    test_final_spikes$values = test_final_spikes$values[with_spikes]
+}
+
 
 proto.write(final_spikes, spikes.path("timed_pattern_spikes.pb"))
 proto.write(test_final_spikes, spikes.path("timed_pattern_spikes_test.pb"))

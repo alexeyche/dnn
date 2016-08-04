@@ -1,5 +1,4 @@
 SimConfiguration {
-	Port: 9090
 	Seed: -1
 	Jobs: 8
 }
@@ -9,8 +8,8 @@ Layer {
 		TauRef: 2
 	}
 	Sigmoid {
-		Threshold: 0.15
-		Slope: 120.0
+		Threshold: 0.1
+		Slope: 0.1	
 	}
     BasicSynapse {
         PspDecay: 10.0
@@ -28,8 +27,8 @@ Layer {
 		TauRef: 2
 	}
 	Sigmoid {
-		Threshold: 0.15
-		Slope: 50.0
+		A: 20.0
+		B: -4.0
 	}
 	Stdp {
 		LearningRate: 0.001
@@ -40,7 +39,7 @@ Connection {
 	Stochastic {
 		Prob: 0.25
 	}
-	Weight: 0.04
+	Weight: {Norm {Mean: 0.04  Sd: 0.01}}
 }
 
 Connection {
@@ -48,5 +47,5 @@ Connection {
 	Stochastic {
 		Prob: 0.25
 	}
-	Weight: -0.04
+	Weight: {Norm {Mean: -0.04  Sd: 0.01}}
 }

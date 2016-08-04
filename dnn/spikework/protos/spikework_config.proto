@@ -5,18 +5,42 @@ message TEpspOptions {
     optional double TauDecay = 2;
     optional double Length = 3;
     optional double Dt = 4;
-};
+}
 
+message TGaussOptions {
+    optional double Sigma = 1;
+    optional double Length = 2;
+    optional double Dt = 3;
+}
 
 message TPreprocessorConfig {
 	optional TEpspOptions Epsp = 1;	
-};
+    optional TGaussOptions Gauss = 2; 
+}
 
+// 
 
 message TDotOptions {
 }
 
+message TAnovaDotOptions {
+	optional double Sigma = 1;
+	optional double Power = 2;
+}
+
+message TRbfDotOptions {
+	optional double Sigma = 1;
+}
+
+
+message TShoeOptions {
+    optional double Sigma = 1;
+    optional TKernelConfig Kernel = 2;
+}
 
 message TKernelConfig {
     optional TDotOptions Dot = 1;
-};
+    optional TRbfDotOptions RbfDot = 2;
+    optional TAnovaDotOptions AnovaDot = 3;
+    optional TShoeOptions Shoe = 4;
+}

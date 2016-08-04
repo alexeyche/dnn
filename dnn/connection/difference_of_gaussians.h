@@ -21,8 +21,8 @@ namespace NDnn {
 
         int Dimension = 1;
         double SigmaPos = 3.0;
-        double SigmaNeg = 10.0;
-        double AmpNeg = 2.0;
+        double SigmaNeg = 15.0;
+        double AmpNeg = 3.0;
         double AmpPos = 1.0;
         bool ApplyAmplitude = true;
     };

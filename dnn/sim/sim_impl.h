@@ -1,12 +1,26 @@
 #pragma once
 
+#include <dnn/neuron/spike_sequence_neuron.h>
+
 namespace NDnn {
 
 	template <typename ... T>
 	void TSim<T...>::Run() {
 		L_DEBUG << "Going to run simulation of " << LayersSize() << " layers, for " << Conf.Duration << " ms in " << Conf.Jobs << " jobs";
+		
 		TVector<TIndexSlice> perLayerJobs = DispatchOnThreads(Conf.Jobs, LayersSize());
-
+		
+		// Hack for spending one thread for SpikeSequence neuron
+		if (std::is_same<typename std::tuple_element<0,decltype(Layers)>::type::TNeuronType, TSpikeSequenceNeuron>::value) {
+			ui32 firstLayerJobs = perLayerJobs[0].Size;
+			perLayerJobs[0].From = 0;
+			perLayerJobs[0].To = 1;
+			perLayerJobs[0].Size = 1;
+			ENSURE(perLayerJobs.size() > 1, "It is strange to simulate only SpikeSequence neuron");
+			perLayerJobs[1].From -= firstLayerJobs-1;
+			perLayerJobs[1].Size += firstLayerJobs-1;
+		}
+	 	
 	 	TSpinningBarrier barrier(Conf.Jobs);
 		TVector<std::thread> threads;
 		std::mutex errorsMut;
@@ -17,11 +31,15 @@ namespace NDnn {
 		ForEachEnumerate(Layers, [&](ui32 layerId, auto& layer) {
 			SimLayer(layer, perLayerJobs[layerId].Size, threads, errors, errorsMut, barrier, layerId == 0 ? true : false);
 		});
-
+		
 		std::thread dispatcherThread = std::thread([&]() {
-			Dispatcher.MainLoop();
+			if (Options.Port) {
+				Dispatcher.SetPort(*Options.Port);
+				Dispatcher.MainLoop();	
+			}
 		});
-		for(auto& t: threads) {
+		
+		for (auto& t: threads) {
 			t.join();
 		}
 		Dispatcher.ShutDown();
@@ -51,21 +69,34 @@ namespace NDnn {
 	template <typename ...T>
 	template <typename L>
 	void TSim<T...>::SimLayer(L& layer, ui32 jobs, TVector<std::thread>& threads, TVector<std::exception_ptr>& errors, std::mutex& errorsMut, TSpinningBarrier& barrier, bool masterThread) {
-		TVector<TIndexSlice> layerJobSlices = DispatchOnThreads(layer.Size(), jobs);
-		for (ui32 sliceId = 0; sliceId < layerJobSlices.size(); ++sliceId) {
-			const TIndexSlice& slice = layerJobSlices[sliceId];
+		if (std::is_same<typename L::TNeuronType, TSpikeSequenceNeuron>::value) {
 			threads.emplace_back(
 				TSelf::RunWorker<L>,
 				std::ref(*this),
 				std::ref(layer),
-				slice.From,
-				slice.To,
+				0,
+				layer.Size(),
 				std::ref(barrier),
-				(masterThread && (sliceId == 0)) ? true : false,
+				masterThread ? true : false,
 				std::ref(errors),
 				std::ref(errorsMut)
 			);
-
+		} else {
+			TVector<TIndexSlice> layerJobSlices = DispatchOnThreads(layer.Size(), jobs);
+			for (ui32 sliceId = 0; sliceId < layerJobSlices.size(); ++sliceId) {
+				const TIndexSlice& slice = layerJobSlices[sliceId];
+				threads.emplace_back(
+					TSelf::RunWorker<L>,
+					std::ref(*this),
+					std::ref(layer),
+					slice.From,
+					slice.To,
+					std::ref(barrier),
+					(masterThread && (sliceId == 0)) ? true : false,
+					std::ref(errors),
+					std::ref(errorsMut)
+				);
+			}	
 		}
 	}
 
@@ -126,7 +157,8 @@ namespace NDnn {
 				}
 				layer[neuronId].CalculateDynamicsInternal(t, input);
 				if (layer[neuronId].GetNeuron().Fired()) {
-					Network.PropagateSpike(layer[neuronId], t.T);
+					Network.PropagateSpike(layer[neuronId], t);
+					layer[neuronId].GetNeuron().PostSpikeDynamics(t);
 					layer[neuronId].GetNeuron().MutFired() = false;
 				}
 			}
@@ -159,7 +191,7 @@ namespace NDnn {
 
 	template <typename ...T>
 	void TSim<T...>::CreateConnections(const NDnnProto::TConfig& config) {
-		TRandEngine rand(Conf.Seed);
+		TRandEngine rand(Conf.ConnectionSeed);
 		for (const auto& connection: config.connection()) {
 			ForEach(Layers, [&](auto& leftLayer) {
 				if (leftLayer.GetId() != connection.from()) {
@@ -174,6 +206,11 @@ namespace NDnn {
 				});
 			});
 		}
+		ForEach(Layers, [&](auto& layer) {
+			for (auto& n: layer) {
+				n.InitReceptiveField(rand);
+			}
+		});
 	}
 
 

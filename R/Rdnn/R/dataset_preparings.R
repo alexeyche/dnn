@@ -14,15 +14,16 @@ add.to.list = function(l, v) {
 }
 
 prepare.ucr.data = function(
-    sample_size = 60
-  , data_name = UCR.SYNTH
+    data_name = UCR.SYNTH
+  , sample_size = NULL
   , sel = NULL
   , gap_between_patterns = 0
   , dt = 1.0
   , save_on_disk=TRUE
   , use_cache=TRUE
+  , gap_value = 0
 ) {
-
+    
     c(data_train, data_test) := read_ucr_file(data_name, sample_size)
     data_complect = list(train=data_train, test=data_test)
     
@@ -33,7 +34,9 @@ prepare.ucr.data = function(
         if(is.null(sel.w)) {
             sel.w = 1:length(ts)    
         }
-        
+        if (is.null(sample_size)) {
+            sample_size = length(data_train[[1]]$values)
+        }
         fname = sprintf(
             "%s/%s_%snum_%slen_%sclasses_%sgap_%s.pb"
           , ts.path()
@@ -63,7 +66,7 @@ prepare.ucr.data = function(
                 }
                 time = time + gap_between_patterns
                 
-                ts_data =c(ts_data, ts[[i]]$values, rep(0, gap_between_patterns))
+                ts_data =c(ts_data, ts[[i]]$values, rep(gap_value, gap_between_patterns))
             }
             data_out[[data_part]] = time.series(values=matrix(ts_data, nrow=1, ncol=length(ts_data)), info=ts_info)
             if(save_on_disk) {
@@ -76,7 +79,7 @@ prepare.ucr.data = function(
 }
 
 
-read_ucr_file <- function(ts_name, sample_size, ucr_dir=ds.path("ucr")) {
+read_ucr_file <- function(ts_name, sample_size=NULL, ucr_dir=ds.path("ucr")) {
     process_datamatrix <- function(m) {
         l = ncol(m)
         out = list()
@@ -85,11 +88,11 @@ read_ucr_file <- function(ts_name, sample_size, ucr_dir=ds.path("ucr")) {
         }  
         return(out)
     }
-    if(!is.na(sample_size)) {
+    if(!is.null(sample_size)) {
         ts_file_train = sprintf("%s/%s/%s_TRAIN_%s", ucr_dir, ts_name, ts_name, sample_size)
         ts_file_test = sprintf("%s/%s/%s_TEST_%s", ucr_dir, ts_name, ts_name, sample_size)
         if(!file.exists(ts_file_train)) {
-            c(train_dataset, test_dataset) := read_ucr_file(ts_name, NA, ucr_dir)
+            c(train_dataset, test_dataset) := read_ucr_file(ts_name, NULL, ucr_dir)
             train_dataset_inter = matrix(0, length(train_dataset), sample_size+1)
             test_dataset_inter = matrix(0, length(test_dataset), sample_size+1)
             for(i in 1:length(train_dataset)) {
@@ -120,7 +123,11 @@ read_ucr_file <- function(ts_name, sample_size, ucr_dir=ds.path("ucr")) {
 UCR.SYNTH = "synthetic_control"
 UCR.ECG = "ECG200"
 UCR.FACE = "FaceAll"
-UCR.STARLIGH = "StarLightCurves"
+UCR.STARLIGHT = "StarLightCurves"
+UCR.OSULEAF = "OSULeaf"
+UCR.FACEFOUR = "FaceFour"
+UCR.YOGA = "yoga"
+UCR.LIGHTING2 = "Lighting2"
 
 empty.ts = function() {
     time.series(values=c(), info=list())

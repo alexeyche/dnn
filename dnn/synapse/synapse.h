@@ -1,12 +1,13 @@
 #pragma once
 
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/serial/proto_serial.h>
 #include <dnn/protos/synapse.pb.h>
 #include <dnn/protos/config.pb.h>
-#include <dnn/util/rand.h>
+#include <ground/rand.h>
 
 namespace NDnn {
-
+	using namespace NGround;
+	
 	struct TSynapseInnerState: public IProtoSerial<NDnnProto::TSynapseInnerState> {
 		void SerialProcess(TProtoSerial& serial) override {
 			serial(IdPre);
@@ -15,6 +16,7 @@ namespace NDnn {
 			serial(Potential);
 			serial(Fired);
 			serial(PostSynapticWeight);
+			serial(LearningRate);
 		}
 
 		size_t IdPre = 0;
@@ -23,6 +25,7 @@ namespace NDnn {
 		double Potential = 0.0;
 		bool Fired = false;
 		double PostSynapticWeight = 1.0;
+		double LearningRate = 1.0;
 	};
 
 	template <typename TConstants, typename TState>
@@ -101,6 +104,13 @@ namespace NDnn {
 			Rand.Set(rand);
 		}
 
+		const double& LearningRate() const {
+			return InnerState.LearningRate;
+		}
+
+		double& MutLearningRate() {
+			return InnerState.LearningRate;
+		}
 	private:
 		TSynapseInnerState InnerState;
 

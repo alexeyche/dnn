@@ -7,8 +7,11 @@
         "TIMED_PATTERN_LENGTH_TEST" : "10000"
     },
     "alexeyche" : {
-        "EVAL_TYPE" : "error_rate",
+        "EVAL_TYPE" : "fisher",
         "TIMED_PATTERN_LENGTH" : "60000",
         "TIMED_PATTERN_LENGTH_TEST" : "60000"
+    },
+    "victoria" : {
+        "EVAL": "no"
     }
 }

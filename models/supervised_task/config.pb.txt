@@ -1,0 +1,36 @@
+SimConfiguration {
+	Jobs: 8
+	Dt: 1.0
+}
+Layer {
+}
+Layer {
+	BasicSynapse {
+        PspDecay: 10.0
+    }
+	SRMNeuron {
+		AmpAdapt: 0.0	     	# [0.0, 10.0]
+		TauAdapt: 100
+	}
+	Exp {
+		Threshold: 0.5
+		Slope: 0.1
+	}
+	SupervisedSpike {
+		TauFirstMoment: 10.0
+		TauSecondMoment: 1.0
+	}
+	MinMaxNorm {
+		MinWeight: 0.0
+		MaxWeight: 1.0
+	}
+}
+Connection {
+	From: 0 To: 1
+	RandomNeuron {
+		NeuronProb: 1.0			# [0.01, 1.0]
+		SynapseProb: 1.0		# [0.01, 1.0]
+	}
+	Weight: {Value: 0.1}
+	LearningRate: 1e-02
+}

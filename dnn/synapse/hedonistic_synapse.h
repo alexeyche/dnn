@@ -3,7 +3,7 @@
 #include "synapse.h"
 #include "dnn/sim/global_ctx.h"
 
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/serial/proto_serial.h>
 #include <dnn/protos/hedonistic_synapse.pb.h>
 #include <dnn/protos/config.pb.h>
 

@@ -1,7 +1,7 @@
 #include "fft.h"
 
 #include <dnn/contrib/kiss_fft/kiss_fftndr.h>
-#include <dnn/util/log/log.h>
+#include <ground/log/log.h>
 
 namespace NDnn {
 

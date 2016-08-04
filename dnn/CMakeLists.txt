@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into DNN.
 set(SOURCES
-
+    bindings.cpp
 )
 
 # add directory name to sources
@@ -26,10 +26,12 @@ set(DIRS
     protos
     sim
     synapse
-    util
     learning_rule
     spikework
+    metrics
+    intrinsic_plasticity
 )
+
 
 foreach(dir ${DIRS})
   add_subdirectory(${dir})
@@ -38,13 +40,16 @@ endforeach()
 add_library(dnn SHARED ${DNN_SRCS})
 
 include_directories(${PROTOBUF_INCLUDE_DIRS} PARENT_SCOPE)
+include_directories(${CMAKE_BINARY_DIR})
+
 
 SET_TARGET_PROPERTIES(dnn PROPERTIES COMPILE_FLAGS "-fPIC")
 
 
 target_link_libraries(dnn
-    dnn_protos
-    spikework_protos
+    ground
+    spikeworkpb
+    dnnpb
     ${PROTOBUF_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
     m
@@ -63,26 +68,17 @@ install(
     PATTERN "*.h"
     PATTERN "*.hpp"
 )
-install(
-    DIRECTORY
-    ${CMAKE_BINARY_DIR}/dnn/protos
-    DESTINATION
-    include/dnn
-    FILES_MATCHING
-    PATTERN "*.h"
-    PATTERN "*.hpp"
-)
 
 install(CODE
     "EXECUTE_PROCESS(
-        COMMAND 
+        COMMAND
         ${CMAKE_SOURCE_DIR}/scripts/ln.py ${CMAKE_SOURCE_DIR}/R/scripts ${CMAKE_INSTALL_PREFIX}/r_scripts
     )"
 )
 
 install(CODE
     "EXECUTE_PROCESS(
-        COMMAND 
+        COMMAND
         ${CMAKE_SOURCE_DIR}/scripts/ln.py ${CMAKE_SOURCE_DIR}/scripts ${CMAKE_INSTALL_PREFIX}/scripts
     )"
 )
@@ -92,13 +88,9 @@ install(CODE
     "EXECUTE_PROCESS(COMMAND mkdir -p ${CMAKE_INSTALL_PREFIX}/spikes)"
 )
 
-if (APPLE)
-    foreach(LIB libdnn_protos libspikework_protos)
-        install(CODE
-            "EXECUTE_PROCESS(COMMAND install_name_tool -change ${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/lib/${LIB}.dylib ${CMAKE_INSTALL_PREFIX}/lib/libdnn.dylib )"
-        )
-    endforeach(LIB)
+PATCH_APPLE(lib/libdnn.dylib)
 
+if (APPLE)
     install(CODE
         "EXECUTE_PROCESS(COMMAND launchctl setenv DNN_HOME ${CMAKE_INSTALL_PREFIX})"
     )

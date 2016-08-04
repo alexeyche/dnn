@@ -17,7 +17,7 @@ int main(int argc, const char** argv) {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 50, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning>>,
             TLayer<TIntegrateAndFire, 250, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning>>,
-            TLayer<TIntegrateAndFire, 2, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning, TNoWeightNormalization, TInputClassifier>>
+            TLayer<TIntegrateAndFire, 2, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning, TNoWeightNormalization, TNoIntrinsicPlasticity, TInputClassifier>>
         >(opts);
 
         sim.Run();
@@ -26,7 +26,7 @@ int main(int argc, const char** argv) {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 50, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput>>,
             TLayer<TIntegrateAndFire, 250, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput>>,
-            TLayer<TIntegrateAndFire, 2, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning, TNoWeightNormalization, TInputClassifier>>
+            TLayer<TIntegrateAndFire, 2, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning, TNoWeightNormalization, TNoIntrinsicPlasticity, TInputClassifier>>
         >(opts);
 
         if (opts.StatFile) {

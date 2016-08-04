@@ -104,13 +104,38 @@ plot.Statistics = function(obj, ...) {
 
 
 plot.TimeSeries = function(obj, i=NULL, ...) {
-    if(is.null(nrow(obj$values))) {
-        plot(obj$values, type="l", ...)
+    v = obj$values
+    lab = NULL
+    if (!is.null(i)) {
+        inf = obj$info[[i]]
+        ids = inf$start_time:(inf$start_time + inf$duration)
+        if (is.null(nrow(v))) {
+            v = v[ids]
+        } else {
+            v = v[, ids]
+        }
+        lab = inf$label
+    }
+    if(is.null(nrow(v))) {
+        if (!is.null(lab)) {
+            plot(v, type="l", main=sprintf("Label: %s", lab), ...)
+        } else {
+            plot(v, type="l", ...)
+        }
+        
     } else
-    if(nrow(obj$values) == 1) {
-        plot(obj$values[1, ], type="l", ...)
+    if(nrow(v) == 1) {
+        if (!is.null(lab)) {
+            plot(v[1, ], type="l", main=sprintf("Label: %s", lab), ...)    
+        } else {
+            plot(v[1, ], type="l", ...)
+        }
     } else {
-        gr_pl(t(obj$values), ...)
+        if (!is.null(lab)) {
+            gr_pl(t(v), main=sprintf("Label: %s", lab), ...)
+        } else {
+            gr_pl(t(v), ...)
+        }
     }
 }
 

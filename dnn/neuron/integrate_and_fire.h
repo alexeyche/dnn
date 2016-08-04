@@ -2,7 +2,7 @@
 
 #include "spike_neuron.h"
 
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/serial/proto_serial.h>
 #include <dnn/protos/integrate_and_fire.pb.h>
 #include <dnn/protos/config.pb.h>
 

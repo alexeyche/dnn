@@ -1,11 +1,10 @@
-import "extension.proto";
+import "ground/protos/extension.proto";
 
 package NDnnProto;
 
 message TDnnOptions {
     optional uint32 Port = 1 [
         (description) = "Input time series port",
-        (default_value) = "9090",
         (short_option) = "-p"
     ];
     optional bool Verbose = 2 [
@@ -56,6 +55,14 @@ message TDnnOptions {
     optional uint32 Seed = 13 [
         (description) = "Seed for random engine",
         (short_option) = "-sd"
+    ];
+    optional uint32 ConnectionSeed = 14 [
+        (description) = "Seed for random engine for creating connections",
+        (short_option) = "-csd"
+    ];
+    optional string TargetSpikes = 15 [
+        (description) = "Target spikes for supervised learning",
+        (short_option) = "-ts"
     ];
 }
 

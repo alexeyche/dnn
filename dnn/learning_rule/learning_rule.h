@@ -1,17 +1,18 @@
 #pragma once
 
-#include <dnn/util/serial/proto_serial.h>
+#include <ground/serial/proto_serial.h>
 #include <dnn/protos/config.pb.h>
-#include <dnn/util/ptr.h>
+#include <ground/ptr.h>
 #include <dnn/neuron/spike_neuron_impl.h>
 
 namespace NDnn {
+	using namespace NGround;
 
-
-	template <typename TConstants, typename TState, typename TNeuronImpl, typename TWeightNormalizationType>
+	template <typename TConstants, typename TState, typename TNeuronImpl>
 	class TLearningRule: public IProtoSerial<NDnnProto::TLayer> {
 	public:
 		using TNeuronType = TNeuronImpl;
+		using TWeightNormalizationType = typename TNeuronImpl::TConfig::template TWeightNormalization<TNeuronImpl>;
 
 		void SerialProcess(TProtoSerial& serial) override final {
 			serial(c, TConstants::ProtoFieldNumber);
@@ -50,6 +51,11 @@ namespace NDnn {
 		TWeightNormalizationType& MutNorm() {
 			return WeightNormalization;
 		}
+
+		const typename TNeuronImpl::TConfig::TNeuronActivationFunction& ActivationFunction() {
+			return NeuronImpl->GetActivationFunction();
+		}
+
 	protected:
 		TConstants c;
 		TState s;

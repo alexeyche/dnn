@@ -1,11 +1,8 @@
 package NDnnProto;
 
 
-message TCallPrepareLearningRule {
-}
-
-message TAsyncSpikeQueue {
-    optional TNeuronSpaceInfo Info = 1;
+message TSpikeNeuronImplInnerState {
+    optional uint32 SynapsesSize = 1;
 }
 
 message TNeuronSpaceInfo {
@@ -18,11 +15,8 @@ message TNeuronSpaceInfo {
     optional uint32 LayerSize = 7;
 }
 
-message TCallPrepareReinforcement {
-}
-
-message TSpikeNeuronImplInnerState {
-    optional uint32 SynapsesSize = 1;
+message TAsyncSpikeQueue {
+    optional TNeuronSpaceInfo Info = 1;
 }
 
 message TSpikeNeuronConst {

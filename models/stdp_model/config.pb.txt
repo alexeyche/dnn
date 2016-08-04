@@ -1,86 +1,47 @@
 SimConfiguration {
-	Port: 9090
 	Jobs: 8
+	Dt: 1.0
 }
 Layer {
-	IntegrateAndFire {
-		TauMem: 15
-		TauRef: 5
-	}
-	Determ {
-		Threshold: 0.15
-	}
-    BasicSynapse {
+	BasicSynapse {
         PspDecay: 10.0
     }
-    GaussReceptiveField {
-    	Sigma: 0.1
-    	Gain: 1.0
-    	LowLevel: -2.0
-    	HighLevel: 2.0
-    }
 }
 Layer {
+	BasicSynapse {
+        PspDecay: 10.0
+    }
 	IntegrateAndFire {
 		TauMem: 10
 		TauRef: 2
 	}
-	Sigmoid {
-		Threshold: 0.15
-		Slope: 50.0
-	}
-	STPSynapse {
-		D: 200.0
-		F: 50.0
-		MaxWeight: 1.0
+	Determ {
+		Threshold: 0.10
 	}
 	Stdp {
-		TauPlus: 30.0
-		TauMinus: 50.0 			# 0
+		TauPlus: 30.0           
+		TauMinus: 40.0
 		Aplus: 1.0
 		Aminus: 1.0
-		LearningRate: 1e-05
+	}
+	UnitNorm {
+		Unit: 1.0
+		Power: 2.0
 	}
 	SlidingLtd {
-		MaxWeight: 0.1
-		TargetRate: 10.0
-		Modulation: 1.0
+		Power: 3.0
+	    Modulation: 1.0
+	    TargetRate: 10.0
+	    TauMean: 10000
+	    MinWeight: 0.0
+	    MaxWeight: 1.0
 	}
 }
 Connection {
 	From: 0 To: 1
 	Stochastic {
-		Prob: 0.25
+		Prob: 1.0
 	}
-	Weight: 1e-03
+	Weight: {Value: 0.03}
+	LearningRate: 1e-03
 }
-
-# Connection {
-# 	From: 1 To: 1
-# 	DifferenceOfGaussians {
-# 		Dimension: 1
-# 	    SigmaPos: 3.0
-# 	    SigmaNeg: 15.0
-# 	    AmpNeg: 3.0
-# 	    AmpPos: 1.0
-# 	}
-# 	Weight: 0.04
-# }
-# Connection {
-# 	From: 1 To: 2
-# 	Stochastic {
-# 		Prob: 0.25
-# 	}
-# 	Weight: 0.02
-# }
-# Connection {
-# 	From: 2 To: 2
-# 	DifferenceOfGaussians {
-# 		Dimension: 1
-# 	    SigmaPos: 3.0
-# 	    SigmaNeg: 15.0
-# 	    AmpNeg: 3.0
-# 	    AmpPos: 1.0
-# 	}
-# 	Weight: 0.04
-# }

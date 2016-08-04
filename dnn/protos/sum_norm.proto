@@ -1,0 +1,15 @@
+package NDnnProto;
+
+
+message TSumNormConst {
+	repeated TLayerNorm Layer = 1;
+}
+
+message TSumNormState {
+}
+
+message TLayerNorm {
+	optional uint32 Id = 1;
+	optional double ExcUnit = 2;
+    optional double InhUnit = 3;	
+}

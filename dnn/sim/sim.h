@@ -5,17 +5,17 @@
 #include "global_ctx.h"
 #include "reward_control.h"
 
-#include <dnn/base/base.h>
+#include <ground/base/base.h>
 
 #include <dnn/dispatcher/dispatcher.h>
 
-#include <dnn/util/log/log.h>
-#include <dnn/util/rand.h>
-#include <dnn/util/serial/bin_serial.h>
-#include <dnn/util/spinning_barrier.h>
-#include <dnn/util/thread.h>
-#include <dnn/util/tuple.h>
-#include <dnn/util/stat_gatherer.h>
+#include <ground/log/log.h>
+#include <ground/rand.h>
+#include <ground/serial/bin_serial.h>
+#include <ground/spinning_barrier.h>
+#include <ground/thread.h>
+#include <ground/tuple.h>
+#include <ground/stat_gatherer.h>
 #include <dnn/base/model_options.h>
 
 #include <dnn/neuron/integrate_and_fire.h>
@@ -31,16 +31,16 @@ namespace NDnn {
 			serial(Jobs);
 			serial(Duration);
 			serial(Dt);
-			serial(Port);
 			serial(Seed);
+			serial(ConnectionSeed);
 			serial(PastTime);
 		}
 
 		ui32 Jobs = 4;
 		double Duration = 1000;
 		double Dt = 1.0;
-		ui32 Port = 9090;
 		int Seed = -1;
+		int ConnectionSeed = -1;
 		double PastTime = 0.0;
 	};
 
@@ -52,22 +52,21 @@ namespace NDnn {
 		using TParent = IProtoSerial<NDnnProto::TConfig>;
 
 		TSim(const TModelOptions& options)
-			: Dispatcher(options.Port)
-			, PopulationSize(0)
+			: PopulationSize(0)
 			, Options(options)
 		{
+			TVector<ui32> sizeOfLayers;
 			ForEachEnumerate(Layers, [&](ui32 layerId, auto& l) {
 				l.SetupSpaceInfo(layerId, PopulationSize);
 				PopulationSize += l.Size();
+				sizeOfLayers.push_back(l.Size());
 			});
 
-			TGlobalCtx::Inst().Init(RewardControl);
+			TGlobalCtx::Inst().Init(RewardControl, sizeOfLayers);
 			TGlobalCtx::Inst().SetPastTime(Conf.PastTime);
 		}
 
-		TSim(const TSim& other)
-			: Dispatcher(other.Dispatcher.GetPort())
-		{
+		TSim(const TSim& other) {
 			(*this) = other;
 		}
 
@@ -80,13 +79,15 @@ namespace NDnn {
 				Options = other.Options;
 				Dispatcher = other.Dispatcher;
 				RewardControl = other.RewardControl;
-				TGlobalCtx::Inst().Init(RewardControl);
-				TGlobalCtx::Inst().SetPastTime(Conf.PastTime);
 				Network = other.Network;
 				Network.Init(PopulationSize);
+				TVector<ui32> sizeOfLayers;
 				ForEach(Layers, [&](auto& l) {
 					Network.AddLayer(l);
+					sizeOfLayers.push_back(l.Size());
 				});
+				TGlobalCtx::Inst().Init(RewardControl, sizeOfLayers);
+				TGlobalCtx::Inst().SetPastTime(Conf.PastTime);
 			}
 			return *this;
 		}
@@ -106,6 +107,16 @@ namespace NDnn {
 		auto GetSynapse() {
 			const auto& synVec = std::get<layerId>(Layers)[neuronId].GetSynapses();
 			return synVec.at(synapseId);
+		}
+
+		template <size_t layerId>
+		const auto& GetLayer() const {
+			return std::get<layerId>(Layers);
+		}
+
+		template <size_t layerId>
+		auto& GetMutLayer() {
+			return std::get<layerId>(Layers);
 		}
 
 
@@ -143,8 +154,16 @@ namespace NDnn {
 			Conf.Seed = seed;
 		}
 
+		void SetConnectionSeed(ui32 seed) {
+			Conf.ConnectionSeed = seed;
+		}
+
 		void SetDuration(double duration) {
 			Conf.Duration = duration;
+		}
+
+		const double& GetDuration() const {
+			return Conf.Duration;
 		}
 
 		ui32 LayersSize() const {
@@ -159,7 +178,6 @@ namespace NDnn {
 				serial(layer, NDnnProto::TConfig::kLayerFieldNumber, /* newMessage = */ true);
 			});
 			if (serial.IsInput()) {
-				Dispatcher.SetPort(Conf.Port);
 				const NDnnProto::TConfig& inputConfig = serial.GetMessage<NDnnProto::TConfig>();
 				CreateConnections(inputConfig);
 
@@ -171,15 +189,23 @@ namespace NDnn {
             serial(RewardControl,  NDnnProto::TConfig::kRewardControlFieldNumber);
 		}
 
-		void SetInputSpikes(const TSpikesList&& ts) {
+		void SetInputSpikes(const TSpikesList& ts) {
 			Network.GetMutSpikesList().Info = ts.Info;
 			auto& firstLayer = std::get<0>(Layers);
 			ENSURE(ts.Dim() == firstLayer.Size(), "Size of input spikes list doesn't equal to first layer size: " << ts.Dim() << " != " << firstLayer.Size());
 
+			double max_spike = std::numeric_limits<double>::min();
 			for (auto& n: firstLayer) {
-				n.GetNeuron().SetSpikeSequence(ts[n.GetLocalId()]);
+				const TVector<double>& spikes = ts[n.GetLocalId()];
+				n.GetNeuron().SetSpikeSequence(spikes);
+				if (spikes.size() > 0) {
+					max_spike = std::max(max_spike, spikes.back());	
+				}
 			}
 			Conf.Duration = ts.Info.GetDuration();
+			if (Conf.Duration == 0.0) {
+				Conf.Duration = max_spike;
+			}
 		}
 
 		bool RequireInput() {
@@ -199,8 +225,13 @@ namespace NDnn {
 					requiredDimSize += layer.Size();	
 				}
 			});
-			Conf.Duration = ts.Length();
+			Conf.Duration = ts.Length() * Conf.Dt;
+
 			Network.GetMutSpikesList().Info = ts.Info;
+			for (auto& lab: Network.GetMutSpikesList().Info.Labels) {
+				lab.From = lab.From * Conf.Dt;
+				lab.To = lab.To * Conf.Dt;
+			}
 			if (ts.Dim() == 1) {
 				L_DEBUG << "Got one dimensional time series, dnn will duplicate data on " << requiredDimSize << " dimensions";
 				TTimeSeries dupTs(ts);

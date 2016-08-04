@@ -4,19 +4,22 @@
 
 #include <dnn/protos/config.pb.h>
 #include <dnn/sim/sim.h>
-#include <dnn/util/protobuf.h>
-#include <dnn/util/serial/bin_serial.h>
+#include <ground/protobuf.h>
+#include <ground/serial/bin_serial.h>
 
 namespace NDnn {
 
 	TModelOptions InitOptions(const int argc, const char** argv, TString name, std::set<int> fields = {});
 
 	template <typename ... T>
-	auto BuildModel(TModelOptions options) {
+	auto BuildModel(TModelOptions options = TModelOptions()) {
 		auto sim = BuildSim<T...>(options);
 		
 		if (options.Seed) {
 	    	sim.SetSeed(*options.Seed);
+	    }
+		if (options.ConnectionSeed) {
+	    	sim.SetConnectionSeed(*options.ConnectionSeed);
 	    }
 
 		if (options.ConfigFile) {
@@ -36,10 +39,7 @@ namespace NDnn {
 		}
 
 	    if (options.InputSpikesFile) {
-	    	L_DEBUG << "Reading input spikes " << *options.InputSpikesFile;
-    		std::ifstream input(*options.InputSpikesFile, std::ios::binary);
-		    TBinSerial serial(input);
-	    	sim.SetInputSpikes(serial.ReadObject<TSpikesList>());
+	    	sim.SetInputSpikes(*options.InputSpikes);
 	    }
 
 	    if (options.InputTimeSeries) {
@@ -47,8 +47,6 @@ namespace NDnn {
     		std::ifstream input(*options.InputTimeSeries, std::ios::binary);
 		    TBinSerial serial(input);
 	    	sim.SetInputTimeSeries(serial.ReadObject<TTimeSeries>());
-	    } else {
-	    	ENSURE(!sim.RequireInput(), "Need input time series for the simulation with inputs");
 	    }
 
 	    if (options.Jobs) {

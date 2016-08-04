@@ -1,7 +1,7 @@
 #include "entry.h"
 
-#include <dnn/util/string.h>
-#include <dnn/util/proto_options.h>
+#include <ground/string.h>
+#include <ground/proto_options.h>
 #include <dnn/protos/options.pb.h>
 
 #include <cstdlib>
@@ -24,14 +24,22 @@ namespace NDnn {
 
 	    if (options.has_config()) {
 	    	opts.ConfigFile = options.config();
-
-	    	NDnnProto::TConfig config;
-	        ReadProtoTextFromFile(*opts.ConfigFile, config);
-	        opts.Port = config.simconfiguration().port();
 	    }
 
 	    if (options.has_inputspikes()) {
 	    	opts.InputSpikesFile = options.inputspikes();
+	    	L_DEBUG << "Reading input spikes " << *opts.InputSpikesFile;
+    		std::ifstream input(*opts.InputSpikesFile, std::ios::binary);
+		    TBinSerial serial(input);
+		    opts.InputSpikes = serial.ReadObject<TSpikesList>();
+	    }
+
+	    if (options.has_targetspikes()) {
+	    	opts.TargetSpikesFile = options.targetspikes();
+	    	L_DEBUG << "Reading target spikes " << *opts.TargetSpikesFile;
+    		std::ifstream input(*opts.TargetSpikesFile, std::ios::binary);
+		    TBinSerial serial(input);
+		    opts.TargetSpikes = serial.ReadObject<TSpikesList>();
 	    }
 
 	    if (options.has_inputtimeseries()) {
@@ -73,7 +81,11 @@ namespace NDnn {
 	    if (options.has_seed()) {
 			opts.Seed = options.seed();
 		}
-	    
+
+    	if (options.has_connectionseed()) {
+			opts.ConnectionSeed = options.connectionseed();
+		}
+		
 	    return opts;
 	}
 

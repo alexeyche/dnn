@@ -4,7 +4,7 @@
 
 #include <dnn/protos/pre_post_stdp.pb.h>
 #include <dnn/protos/config.pb.h>
-#include <dnn/util/act_vector.h>
+#include <ground/act_vector.h>
 
 namespace NDnn {
 
@@ -45,9 +45,9 @@ namespace NDnn {
 	};
 
 	template <typename TNeuron, typename TWeightNormalizationType>
-	class TPrePostStdp: public TLearningRule<TPrePostStdpConst, TPrePostStdpState, TNeuron, TWeightNormalizationType> {
+	class TPrePostStdp: public TLearningRule<TPrePostStdpConst, TPrePostStdpState, TNeuron> {
 	public:
-		using TPar = TLearningRule<TPrePostStdpConst, TPrePostStdpState, TNeuron, TWeightNormalizationType>;
+		using TPar = TLearningRule<TPrePostStdpConst, TPrePostStdpState, TNeuron>;
 
 		void Reset() {
 			TPar::s.Yplus = 0.0;

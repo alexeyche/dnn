@@ -20,6 +20,11 @@ time.series = function(values, info=NULL) {
     return(o)
 }
 
+add.ts.info = function(ent, info) {
+    ent$info = add.to.list(ent$info, info)
+    return(ent)
+}
+
 spikes.list = function(values, info=NULL) {
     if(is.null(info)) {
         info = list()

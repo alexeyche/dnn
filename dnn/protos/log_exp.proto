@@ -1,0 +1,8 @@
+package NDnnProto;
+
+
+message TLogExpConst {
+    optional double Threshold = 1;
+    optional double Slope = 2;
+}
+
