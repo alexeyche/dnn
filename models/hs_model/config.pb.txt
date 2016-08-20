@@ -9,7 +9,7 @@ Layer {
 		TauRef: 2
 	}
 	Determ {
-		Threshold: 0.50
+		Threshold: 0.750
 	}
 	HedonisticSynapse {
 		PspDecay: 10.0
@@ -27,7 +27,7 @@ Layer {
 		TauRef: 2
 	}
 	Determ {
-		Threshold: 0.50
+		Threshold: 0.750
 	}
 	HedonisticSynapse {
 		PspDecay: 10.0
@@ -45,7 +45,7 @@ Layer {
 		TauRef: 2
 	}
 	Determ {
-		Threshold: 0.50
+		Threshold: 0.750
 	}
 	HedonisticSynapse {
 		PspDecay: 10.0
@@ -68,7 +68,7 @@ Connection {
 		Prob: 0.50
 	}
 	Weight {
-		Value: 0.6
+		Value: 0.15
 	}
 }
 Connection {
@@ -86,7 +86,7 @@ Connection {
 		Prob: 0.50
 	}
 	Weight {
-		Value: 0.75
+		Value: 0.25
 	}
 }
 

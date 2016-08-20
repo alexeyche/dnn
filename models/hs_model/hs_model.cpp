@@ -15,7 +15,7 @@ int main(int argc, const char** argv) {
     auto opts = InitOptions(argc, argv, "HsModel");
     if (opts.NoLearning) {
         auto sim = BuildModel<
-            TLayer<TSpikeSequenceNeuron, 50, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning>>,
+            TLayer<TSpikeSequenceNeuron, 100, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning>>,
             TLayer<TIntegrateAndFire, 250, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning>>,
             TLayer<TIntegrateAndFire, 2, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning, TNoWeightNormalization, TNoIntrinsicPlasticity, TInputClassifier>>
         >(opts);
@@ -24,7 +24,7 @@ int main(int argc, const char** argv) {
 
     } else {
         auto sim = BuildModel<
-            TLayer<TSpikeSequenceNeuron, 50, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput>>,
+            TLayer<TSpikeSequenceNeuron, 100, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput>>,
             TLayer<TIntegrateAndFire, 250, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput>>,
             TLayer<TIntegrateAndFire, 2, TNeuronConfig<THedonisticSynapse, TDeterm, TNoInput, TNoLearning, TNoWeightNormalization, TNoIntrinsicPlasticity, TInputClassifier>>
         >(opts);
