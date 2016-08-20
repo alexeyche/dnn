@@ -22,6 +22,7 @@ import "dnn/protos/difference_of_gaussians.proto";
 import "dnn/protos/nonlinear_norm.proto";
 import "dnn/protos/soft_bounds.proto";
 import "dnn/protos/stp_synapse.proto";
+import "dnn/protos/hedonistic_synapse.proto";
 import "dnn/protos/pre_post_stdp.proto";
 import "dnn/protos/multiplicative_norm.proto";
 import "dnn/protos/sliding_ltd.proto";
@@ -107,6 +108,8 @@ message TLayer {
     repeated TSupervisedSpikeConst SupervisedSpike = 51;
     repeated TSupervisedSpikeState SupervisedSpikeState = 52;
     repeated TExpConst Exp = 53;
+    repeated THedonisticSynapseConst HedonisticSynapse = 54;
+    repeated THedonisticSynapseState HedonisticSynapseState = 55;
 }
 
 message TConnection {

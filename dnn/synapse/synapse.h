@@ -3,6 +3,7 @@
 #include <ground/serial/proto_serial.h>
 #include <dnn/protos/synapse.pb.h>
 #include <dnn/protos/config.pb.h>
+#include <ground/rand.h>
 
 namespace NDnn {
 	using namespace NGround;
@@ -99,6 +100,10 @@ namespace NDnn {
 			return s;
 		}
 
+		void SetRandEngine(TRandEngine& rand) {
+			Rand.Set(rand);
+		}
+
 		const double& LearningRate() const {
 			return InnerState.LearningRate;
 		}
@@ -110,6 +115,7 @@ namespace NDnn {
 		TSynapseInnerState InnerState;
 
 	protected:
+		TPtr<TRandEngine> Rand;
 
 		TConstants c;
 		TState s;

@@ -209,8 +209,6 @@ cut_first_layer = function(sp) {
     return(sp)
 }
 
-
-
 if(COPY_PICS) {
     new_pic_files = NULL
     for(p in pic_files) {
