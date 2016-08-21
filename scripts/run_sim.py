@@ -63,7 +63,7 @@ class TDnnSim(object):
             self.config = configs[0]
 
         self.runs_dir = kwargs.get("runs_dir", self.RUNS_DIR)
-        self.inspection = kwargs.get("inspection", True)
+        self.inspection = kwargs.get("inspection", False)
         self.working_dir = kwargs.get("working_dir", None)
         self.evaluation = kwargs.get("evaluation", True)
         self.slave = kwargs.get("slave", False)
@@ -83,8 +83,6 @@ class TDnnSim(object):
             self.connection_seed = self.seed
 
         self.evaluation_script = kwargs.get("evaluation_script")
-        if self.evaluation_script:
-            self.inspection = False
 
         logFormatter = logging.Formatter("%(asctime)s [%(levelname)s]  %(message)-100s")
         rootLogger = logging.getLogger()
@@ -312,10 +310,8 @@ class TDnnSim(object):
                 logging.info("inspecting ... ")
                 with pushd(self.working_dir):
                     o = run_proc(**self.construct_inspect_cmd())
-                    if self.evaluation:
-                        evals.append(float([ line.strip("\n") for line in o.split("\n") if line.strip() ][-1]))
-                        logging.info("Evaluation score: {}".format(evals[-1]))
-            elif self.evaluation_script:
+            if self.evaluation_script:
+                logging.info("evaluating ... ")
                 with pushd(self.working_dir):
                     o = run_proc(**self.construct_eval_script_cmd())
                 evals.append(float([ line.strip("\n") for line in o.split("\n") if line.strip() ][-1]))
@@ -399,10 +395,10 @@ def main(argv):
     parser.add_argument('--seed',
                         required=False,
                         help='Set seed for random engine')
-    parser.add_argument('-ni', 
-                        '--no-insp',
+    parser.add_argument('-in',
+                        '--inspection',
                         action='store_true',
-                        help='No inspection after every epoch')
+                        help='Run inspection after every epoch')
     parser.add_argument('--slave',
                         action='store_true',
                         help='Run script as slave and print only evaluation score')
@@ -472,7 +468,7 @@ def main(argv):
         "epochs" : args.epochs,
         "jobs" : args.jobs,
         "old_dir" : args.old_dir,
-        "inspection" : not args.no_insp,
+        "inspection" : args.inspection,
         "evaluation" : not args.no_evaluation,
         "slave" : args.slave,
         "evaluation_data" : args.evaluation_data,
