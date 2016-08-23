@@ -5,7 +5,7 @@ Main library consist of multithreaded simulator of recurrent spiking (impulse) n
 
 ## Dependencies and submodules
 To install DNN on linux you need to satisfy dependencies (tested on Ubuntu 16.04.1 LTS):
-* clang v3.8 or higher (use `sudo update-alternatives --config c++` and ` sudo update-alternatives --config cc` to set clang as default compiler for C and C++)
+* clang v3.8 or higher (use `sudo update-alternatives --config cc` and `sudo update-alternatives --config c++` to set clang as default compiler for C and C++)
 * cmake v3.5.1 or higher
 * protobuf-compiler v2.6.1
 * libprotobuf-dev
@@ -43,7 +43,7 @@ export LD_LIBRARY_PATH="$DNN_HOME/lib:$LD_LIBRARY_PATH"
 ```
 Please, check this environment variables before go to last step (e. g. `echo $LD_LIBRARY_PATH`)!
 
-Last step. Install R package `Rdnn` from **source directories**:
+Last step. Install R package `Rdnn` from **source directory**:
 ``` bash
 $ cd [path_to_source_directory]/dnn/R
 $ ./build.sh
