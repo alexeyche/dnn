@@ -133,7 +133,7 @@ if(INSP_MODEL) {
         #plw(w[l2,l2], exc=TRUE)
         #plw(w[l2,l2], exc=FALSE)
         
-        print(gr_pl(w))
+        # print(gr_pl(w))
         
         if(SAVE_PIC_IN_FILES) { 
             dev.off()

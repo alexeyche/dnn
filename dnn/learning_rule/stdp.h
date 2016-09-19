@@ -91,7 +91,7 @@ namespace NDnn {
     		if (neuron.Fired()) {
     			TSpikePolicy::PropagateNeuronSpike(TPar::s.Y);
     		}
-	        
+
 			auto synIdIt = TPar::s.X.abegin();
 		    while (synIdIt != TPar::s.X.aend()) {
 				const ui32& synapseId = *synIdIt;

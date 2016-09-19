@@ -3,6 +3,7 @@
 #include <ground/optional.h>
 #include <ground/base/base.h>
 #include <ground/ts/spikes_list.h>
+#include <ground/ts/time_series.h>
 
 namespace NDnn {
 	using namespace NGround;
@@ -23,6 +24,8 @@ namespace NDnn {
 		TOptional<TString> TargetSpikesFile;
 		TOptional<TSpikesList> InputSpikes;
 		TOptional<TSpikesList> TargetSpikes;
+		TOptional<TString> TargetTimeSeriesFile;
+		TOptional<TTimeSeries> TargetTimeSeries;
 		TString Name;
 		bool NoLearning = false;
 	};

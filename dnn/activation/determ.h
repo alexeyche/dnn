@@ -28,7 +28,7 @@ namespace NDnn {
         }
 
         double SpikeProbabilityDerivative(const double &u) const {
-            return 0.0;
+            return 1.0;
         }
     };
 

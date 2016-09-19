@@ -1,0 +1,7 @@
+package NDnnProto;
+
+message TChronotronRuleConst {
+}
+
+message TChronotronRuleState {
+}

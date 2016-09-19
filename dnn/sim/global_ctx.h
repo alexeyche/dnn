@@ -34,6 +34,7 @@ namespace NDnn {
 				++layerId;
 			}
 			LayerSize = sizeOfLayers.size();
+			Errors.resize(cumulativeSize, 0.0);
 		}
 
 		const double& GetReward() const {
@@ -65,6 +66,15 @@ namespace NDnn {
 			return LayerSize;
 		}
 
+		void SetError(ui32 globalNeuronId, double error) {
+			Errors[globalNeuronId] += error;
+		}
+
+		const TVector<double>& GetErrors() const {
+			return Errors;
+		}
+
+
 	private:
 		void SetPastTime(double pastTime) {
 			PastTime = pastTime;
@@ -79,6 +89,9 @@ namespace NDnn {
 		TMaybe<ui32> CurrentClassId;
 		double PastTime = 0;
 		TVector<ui32> LayerId;
+		
+		TVector<double> Errors;
+
 		ui32 LayerSize;
 	};
 

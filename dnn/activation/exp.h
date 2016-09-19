@@ -26,9 +26,10 @@ namespace NDnn {
     public:
         double SpikeProbability(const double& u) const {
             const double p = c.Amplitude * std::exp((u - c.Threshold)/c.Slope);
-            // if (p < 1e-06) {
-            //     return 1e-06;
-            // }
+            // L_INFO << c.Slope << " " << u - c.Threshold << " " << (u - c.Threshold)/c.Slope << " " << p;
+            if (p < 1e-06) {
+                return 1e-06;
+            }
             return p;
         }
 

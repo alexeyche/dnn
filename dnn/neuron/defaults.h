@@ -20,6 +20,8 @@ namespace NDnn {
 	template <typename TConstants, typename TNeuronImpl>
 	class TReinforcement;
 
+	template <typename TConstants, typename TNeuronImpl>
+	class TCostFunction;
 
 	using TNoInput = TReceptiveField<TEmpty>;
 
@@ -34,6 +36,9 @@ namespace NDnn {
 
 	template <typename T>
 	using TNoReinforcement = TReinforcement<TEmpty, T>;
+
+	template <typename T>
+	using TNoCostFunction = TCostFunction<TEmpty, T>;
 
 	template <>
 	class TReceptiveField<TEmpty>: public IProtoSerial<NDnnProto::TLayer> {
@@ -160,5 +165,17 @@ namespace NDnn {
 		}
 	};
 
+	template <typename T>
+	class TCostFunction<TEmpty, T>: public IProtoSerial<NDnnProto::TLayer> {
+	public:
+		void SerialProcess(TProtoSerial& serial) {
+		}
+
+		void CalculateError() {
+		}
+		
+		void SetNeuronImpl(T& neuron) {
+		}
+	};
 
 } // namespace NDnn

@@ -46,6 +46,14 @@ namespace NDnn {
 	    	opts.InputTimeSeries = options.inputtimeseries();
 	    }
 
+	    if (options.has_targettimeseries()) {
+	    	opts.TargetTimeSeriesFile = options.targettimeseries();
+	    	L_DEBUG << "Reading target time series " << *opts.TargetTimeSeriesFile;
+    		std::ifstream input(*opts.TargetTimeSeriesFile, std::ios::binary);
+		    TBinSerial serial(input);
+		    opts.TargetTimeSeries = serial.ReadObject<TTimeSeries>();
+	    }
+
 	    if (options.has_port()) {
 	        opts.Port = options.port();
 	    }

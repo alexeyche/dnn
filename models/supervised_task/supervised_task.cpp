@@ -33,20 +33,22 @@ int main(int argc, const char** argv) {
     if (opts.NoLearning) {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 15, TNeuronConfig<>>,
-            TLayer<TSRMNeuron, 1, TNeuronConfig<TBasicSynapse, TExp>>
+            TLayer<TSRMNeuron, 15, TNeuronConfig<TBasicSynapse, TLogExp>>,
+            TLayer<TSRMNeuron, 15, TNeuronConfig<TBasicSynapse, TLogExp>>
         >(opts);
 
         sim.Run();
     } else {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 15, TNeuronConfig<>>,
-            TLayer<TSRMNeuron, 1, TNeuronConfig<TBasicSynapse, TExp, TNoInput, TSupervisedSpike, TMinMaxNorm>>
+            TLayer<TSRMNeuron, 15, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TSupervisedSpike, TMinMaxNorm>>,
+            TLayer<TSRMNeuron, 15, TNeuronConfig<TBasicSynapse, TLogExp, TNoInput, TSupervisedSpike, TMinMaxNorm>>
         >(opts);
         
         ENSURE(opts.TargetSpikes, "Need target spikes");
         ENSURE(opts.TargetSpikes->Dim() == sim.GetLayer<1>().Size(), "Need target spikes with size of last layer: " << sim.GetLayer<1>().Size());
 
-        for (auto& n: sim.GetMutLayer<1>()) {
+        for (auto& n: sim.GetMutLayer<2>()) {
             n.GetMutLearningRule().SetTarget((*opts.TargetSpikes)[n.GetSpaceInfo().LocalId]);
         }
 

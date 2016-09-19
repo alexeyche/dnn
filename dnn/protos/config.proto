@@ -39,6 +39,8 @@ import "dnn/protos/srm_neuron.proto";
 import "dnn/protos/random_neuron.proto";
 import "dnn/protos/supervised_spike.proto";
 import "dnn/protos/exp.proto";
+import "dnn/protos/regression.proto";
+import "dnn/protos/chronotron_rule.proto";
 
 
 message TRewardControl {
@@ -110,6 +112,8 @@ message TLayer {
     repeated TExpConst Exp = 53;
     repeated THedonisticSynapseConst HedonisticSynapse = 54;
     repeated THedonisticSynapseState HedonisticSynapseState = 55;
+    repeated TChronotronRuleConst ChronotronRule = 56;
+    repeated TChronotronRuleState ChronotronRuleState = 57;
 }
 
 message TConnection {

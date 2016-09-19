@@ -76,6 +76,11 @@ namespace NDnn {
 		void SetRandEngine(TRandEngine& rand) {
 			Rand.Set(rand);
 		}
+
+		TPtr<TRandEngine> GetRand() const {
+			return Rand;
+		}
+		
 	private:
 		TSpikeNeuronInnerState InnerState;
 

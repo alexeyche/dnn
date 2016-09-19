@@ -12,13 +12,13 @@ Layer {
 		AmpAdapt: 0.0	     	# [0.0, 10.0]
 		TauAdapt: 100
 	}
-	Exp {
+	LogExp {
 		Threshold: 0.5
 		Slope: 0.1
 	}
 	SupervisedSpike {
 		TauFirstMoment: 10.0
-		TauSecondMoment: 1.0
+		TauSecondMoment: 5.0
 	}
 	MinMaxNorm {
 		MinWeight: 0.0
@@ -32,5 +32,5 @@ Connection {
 		SynapseProb: 1.0		# [0.01, 1.0]
 	}
 	Weight: {Value: 0.1}
-	LearningRate: 1e-02
+	LearningRate: 1e-03
 }

@@ -149,12 +149,12 @@ namespace NDnn {
 			double Irf = ReceptiveField.CalculateResponse(Iinput);
 			// ENSURE(!std::isnan(Isyn), "Isyn is nan");
 			Neuron.CalculateDynamics(t, Irf, Isyn);
-
+			
 		    Neuron.MutSpikeProbability() = Activation.SpikeProbability(Neuron.Membrane()) * Neuron.ProbabilityModulation();
 			if(t.Dt * Neuron.SpikeProbability() > Rand->GetUnif()) {
 		        Neuron.MutFired() = true;
 		    }
-
+		    
 	    	LearningRule.CalculateDynamics(t);
 			LearningRule.MutNorm().CalculateDynamics(t);
 			IntrinsicPlasticity.CalculateDynamics(t);
@@ -263,6 +263,7 @@ namespace NDnn {
 			serial(IntrinsicPlasticity);
 			serial(Reinforcement);
 		}
+		
 		const auto& GetPredefinedSynapseConst() const {
 			return PredefineSynapseConst;
 		}
@@ -299,6 +300,7 @@ namespace NDnn {
 			return LearningRule.MutNorm();
 		}
 		
+		
 	private:
 		TPtr<TRandEngine> Rand;
 
@@ -311,7 +313,7 @@ namespace NDnn {
 		typename TConf::template TNeuronLearningRule<TSelf> LearningRule;
 		typename TConf::template TNeuronIntrinsicPlasticity<TSelf> IntrinsicPlasticity;
 		typename TConf::template TNeuronReinforcement<TSelf> Reinforcement;
-
+		
 		TActVector<typename TConf::TNeuronSynapse> Synapses;
 
 		TSpikeNeuronImplInner Inner;

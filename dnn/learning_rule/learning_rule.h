@@ -28,6 +28,10 @@ namespace NDnn {
 			return NeuronImpl->GetNeuron();
 		}
 
+		typename TNeuronImpl::TNeuronType& MutNeuron() {
+			return NeuronImpl->GetNeuron();
+		}
+
 		const auto& GetSynapses() const {
 			return NeuronImpl->GetSynapses();
 		}

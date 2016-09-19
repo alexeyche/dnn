@@ -71,6 +71,7 @@ class TDnnSim(object):
         self.evaluation_data = kwargs.get("evaluation_data", None)
         self.no_learning = kwargs.get("no_learning", False)
         self.target_spikes = kwargs.get("target_spikes", None)
+        self.target_ts = kwargs.get("target_ts", None)
         self.evo = kwargs.get("evo", False)
         if self.evo:
             self.slave = True
@@ -264,6 +265,10 @@ class TDnnSim(object):
             cmd += [
                 "--target-spikes", self.target_spikes
             ]
+        if self.target_ts:
+            cmd += [
+                "--target-time-series", self.target_ts
+            ]
         return { "cmd" : cmd, "print_root_log_on_fail" : self.slave, "stdout": pj(self.working_dir, "{}.log".format(self.current_epoch)) }
 
     def construct_eval_script_cmd(self):
@@ -302,7 +307,11 @@ class TDnnSim(object):
         evals = []
         for self.current_epoch in xrange(self.current_epoch, self.current_epoch+self.epochs):
             logging.info("Running epoch {}:".format(self.current_epoch))
-            run_proc(**self.construct_cmd())
+            o = run_proc(**self.construct_cmd())
+            for l in o.split("\n"):
+                m = re.match(".*Mean error: ([^ ]+).*", l)
+                if m:
+                    logging.info("Mean error: {}".format(m.group(1)))
             if self.evaluation_data:
                 logging.info("running on evaluation data ...")
                 run_proc(**self.construct_eval_run_cmd())
@@ -428,6 +437,10 @@ def main(argv):
                         '--target-spikes', 
                         required=False,
                         help='Target spikes for supervised learning')
+    parser.add_argument('-tts', 
+                        '--target-ts', 
+                        required=False,
+                        help='Target time series for supervised learning')
     parser.add_argument('-it', 
                         '--input-ts', 
                         required=False,
@@ -478,6 +491,7 @@ def main(argv):
         "connection_seed" : args.connection_seed,
         "evaluation_script" : args.evaluation_script,
         "evo" : args.evo,
+        "target_ts" : args.target_ts,
         "target_spikes" : args.target_spikes,
     }
     TDnnSim(**args).run()

@@ -9,6 +9,7 @@ set(DIRS
     stdp_pca_model
     stdp_analytic
     supervised_task
+    feedback_stdp
 )
 
 foreach(dir ${DIRS})

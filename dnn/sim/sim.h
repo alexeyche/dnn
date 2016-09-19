@@ -102,6 +102,11 @@ namespace NDnn {
 			return std::get<layerId>(Layers)[neuronId].GetLearningRule();
 		}
 
+		template <size_t layerId, size_t neuronId>
+		auto GetCostFunction() {
+			return std::get<layerId>(Layers)[neuronId].GetCostFunction();
+		}
+
 
 		template <size_t layerId, size_t neuronId, size_t synapseId>
 		auto GetSynapse() {

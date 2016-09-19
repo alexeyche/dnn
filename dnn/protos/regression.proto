@@ -1,0 +1,7 @@
+package NDnnProto;
+
+
+message TRegressionCostConst {
+	optional double LearningRate = 1;
+}
+

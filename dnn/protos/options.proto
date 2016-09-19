@@ -64,6 +64,10 @@ message TDnnOptions {
         (description) = "Target spikes for supervised learning",
         (short_option) = "-ts"
     ];
+    optional string TargetTimeSeries = 16 [
+        (description) = "Target time series for supervised learning (smooth spikes)",
+        (short_option) = "-tts"
+    ];
 }
 
 message TDumptoolOptions {
