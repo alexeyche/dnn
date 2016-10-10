@@ -50,6 +50,9 @@ public:
 
     Rcpp::List ReadFromFile(TString protofile);
 
+
+    Rcpp::NumericMatrix ReadModelWeights(TString protofile);
+
     void WriteToFile(Rcpp::List l, TString protofile);
 
     void Print() {

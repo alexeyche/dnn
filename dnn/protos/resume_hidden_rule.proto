@@ -1,0 +1,15 @@
+package NDnnProto;
+
+import "ground/protos/distr.proto";
+
+message TResumeHiddenRuleConst {
+	optional double TauLearn = 1;
+	optional NGroundProto.TDistr ErrorWeightsDistr = 2;
+	optional double Bias = 3;
+	optional double ErrorBias = 4;
+}
+
+message TResumeHiddenRuleState {
+	repeated double ErrorWeights = 1;
+	optional double ErrorTrace = 2;
+}

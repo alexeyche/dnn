@@ -57,6 +57,7 @@ namespace NDnn {
 			const double fired = GetTarget(t);
             
             double error = fired - p;
+            CurrentError = error;
 
     		auto synIdIt = TPar::s.FirstMoment.abegin();
 		    while (synIdIt != TPar::s.FirstMoment.aend()) {
@@ -95,8 +96,12 @@ namespace NDnn {
             // }
 
 
-            TGlobalCtx::Inst().SetError(TPar::SpaceInfo().GlobalId, error*error);
+            TGlobalCtx::Inst().SetCumulativeError(TPar::SpaceInfo().GlobalId, error*error);
     	}
+
+        const double& GetCurrentError() const {
+            return CurrentError;
+        }
 
     	double GetTarget(const TTime& t) const {
     		if (!TargetSet) {
@@ -122,6 +127,7 @@ namespace NDnn {
     	bool TargetSet = false;
     	TVector<double> Target;
     	mutable ui32 CurrentId = 0;
+        double CurrentError = 0.0;
 	};
 
 } // namespace NDnn

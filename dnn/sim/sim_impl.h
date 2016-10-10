@@ -147,7 +147,10 @@ namespace NDnn {
 		barrier.Wait();
 
 		for (; t < Conf.Duration; ++t) {
-			if (masterThread) TGlobalCtx().Inst().SetCurrentClassId(Network.GetClassId(t));
+			if (masterThread) { 
+				TGlobalCtx().Inst().SetCurrentClassId(Network.GetClassId(t));
+				TGlobalCtx().Inst().SwapErrors();
+			}
 			barrier.Wait();
 
 			for(ui32 neuronId=idxFrom; neuronId<idxTo; ++neuronId) {
@@ -206,9 +209,13 @@ namespace NDnn {
 				});
 			});
 		}
+		TGlobalCtx::Inst().ClearConnectionInfo();
 		ForEach(Layers, [&](auto& layer) {
 			for (auto& n: layer) {
 				n.InitReceptiveField(rand);
+				for (const auto& syn: n.GetSynapses()) {
+					TGlobalCtx::Inst().SetConnectionInfo(syn.IdPre(), n.GetGlobalId(), syn.Weight() > 0.0 ? 1.0 : -1.0);	
+				}
 			}
 		});
 	}

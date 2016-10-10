@@ -50,7 +50,7 @@
 
 //             // TPar::Neuron().MutMembrane() = std::fabs(Error);
 
-//             TGlobalCtx::Inst().SetError(TPar::SpaceInfo().GlobalId, Error*Error);
+//             TGlobalCtx::Inst().SetCumulativeError(TPar::SpaceInfo().GlobalId, Error*Error);
 //         }
 
 //         void SetTarget(const TVector<double>& seq) {

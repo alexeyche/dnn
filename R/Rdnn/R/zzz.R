@@ -17,3 +17,8 @@ proto.write = function(l, f) {
     f = path.expand(f)
     return(Module("dnnMod")$TProto$new()$write(l, f))
 }
+
+read.model.weights = function(f) {
+    f = path.expand(f)
+    return(Module("dnnMod")$TProto$new()$read_model_weights(f))
+}

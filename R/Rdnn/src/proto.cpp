@@ -299,3 +299,39 @@ void TProto::WriteToFile(Rcpp::List l, TString protofile) {
     }
     ERR("Failed to find appropriate entity for data in R structure with class " << name);
 }
+
+Rcpp::NumericMatrix TProto::ReadModelWeights(TString protofile) {
+    std::ifstream input(protofile, std::ios::binary);
+    TBinSerial serial(input);
+
+    if (serial.ReadProtobufType() != EProto::CONFIG) {
+        ERR("Need model config as input");
+    }
+
+    Rcpp::List l;
+    NDnnProto::TConfig config;
+    if (!serial.ReadProtobufMessage(config)) {
+        ERR("Failed to read config protobuf: " << protofile);
+    }
+
+    ui32 net_size = 0;
+    for (const auto& layer: config.layer()) {
+        net_size += layer.spikeneuronimplinnerstate_size();
+    }
+ 
+    Rcpp::NumericMatrix weights(net_size, net_size);
+
+    ui32 neuronId = 0;
+    for (const auto& layer: config.layer()) {
+        ui32 layerSynapseCounter = 0;
+        for (const auto& neuronInner: layer.spikeneuronimplinnerstate()) {
+            for (ui32 synId=0; synId < neuronInner.synapsessize(); ++synId, ++layerSynapseCounter) {
+                auto synInner = layer.synapseinnerstate(layerSynapseCounter);
+                weights(neuronId, synInner.idpre()) = synInner.weight();
+            }
+            ++neuronId;
+        }
+    }
+
+    return weights;
+}

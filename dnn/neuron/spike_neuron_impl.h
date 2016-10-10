@@ -147,7 +147,7 @@ namespace NDnn {
 		        }
 		    }
 			double Irf = ReceptiveField.CalculateResponse(Iinput);
-			// ENSURE(!std::isnan(Isyn), "Isyn is nan");
+			
 			Neuron.CalculateDynamics(t, Irf, Isyn);
 			
 		    Neuron.MutSpikeProbability() = Activation.SpikeProbability(Neuron.Membrane()) * Neuron.ProbabilityModulation();

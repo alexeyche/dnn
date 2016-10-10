@@ -3,6 +3,7 @@
 #include "reward_control.h"
 
 #include <ground/base/base.h>
+#include <ground/matrix.h>
 
 #include <ground/ptr.h>
 #include <ground/maybe.h>
@@ -13,6 +14,12 @@ namespace NDnn {
 	template <typename ...T>
 	class TSim;
 
+
+	struct TDestinationInfo {
+		ui32 DestNeuronId;
+		double SynapseSign;
+	};
+
 	class TGlobalCtx {
 
 	template <typename ...T>
@@ -21,7 +28,7 @@ namespace NDnn {
 	public:
 		static TGlobalCtx& Inst();
 
-		void Init(TRewardControl& rewardControl, const TVector<ui32>& sizeOfLayers) {
+		void Init(TRewardControl& rewardControl, const TVector<ui32>& sizeOfLayers, const TVector<TVector<TDestinationInfo>>& adjancentNeuronInfo) {
 			RewardControl.Set(rewardControl);
 			
 			ui32 layerId = 0;
@@ -34,7 +41,12 @@ namespace NDnn {
 				++layerId;
 			}
 			LayerSize = sizeOfLayers.size();
-			Errors.resize(cumulativeSize, 0.0);
+			
+			CumulativeError.resize(cumulativeSize, 0.0);
+			Error.resize(cumulativeSize, 0.0);
+			LastTickError.resize(cumulativeSize, 0.0);
+			
+			AdjacentNeurons = adjancentNeuronInfo;
 		}
 
 		const double& GetReward() const {
@@ -66,14 +78,60 @@ namespace NDnn {
 			return LayerSize;
 		}
 
-		void SetError(ui32 globalNeuronId, double error) {
-			Errors[globalNeuronId] += error;
+		void SetError(ui32 lastLayerNeuronId, double error) {
+			Error[lastLayerNeuronId] = error;
+			CumulativeError[lastLayerNeuronId] += error * error;
 		}
 
-		const TVector<double>& GetErrors() const {
-			return Errors;
+		void SetCumulativeError(ui32 globalNeuronId, double error) {
+			CumulativeError[globalNeuronId] += error;
 		}
 
+		const TVector<double>& GetCumulativeError() const {
+			return CumulativeError;
+		}
+		
+		const TVector<double>& GetError() const {
+			return LastTickError;
+		}
+		
+		const double& GetError(ui32 lastLayerNeuronId) const {
+			return LastTickError[lastLayerNeuronId];
+		}
+		
+		void SwapErrors() {
+			LastTickError.swap(Error);
+		}
+
+		void SetConnectionInfo(ui32 from, ui32 to, double sign) {
+			AdjacentNeurons[from].push_back(TDestinationInfo{to, sign});
+		}
+
+		TVector<double> GetCausedErrors(ui32 globalNeuronId) {
+			TVector<double> errors;
+			for (const auto& adj: AdjacentNeurons[globalNeuronId]) {
+				errors.push_back(LastTickError[adj.DestNeuronId]);
+			}
+			return errors;
+		} 
+
+		TVector<double> GetConnectionSign(ui32 from) const {
+			TVector<double> signs;
+			for (const auto& adj: AdjacentNeurons[from]) {
+				signs.push_back(adj.SynapseSign);
+			}
+			return signs;
+		}
+
+		const TVector<TVector<TDestinationInfo>>& GetAdjacentNeuronInfo() const {
+			return AdjacentNeurons;
+		}
+
+		void ClearConnectionInfo() {
+			for (auto& info: AdjacentNeurons) {
+				info.clear();
+			}
+		}
 
 	private:
 		void SetPastTime(double pastTime) {
@@ -90,8 +148,10 @@ namespace NDnn {
 		double PastTime = 0;
 		TVector<ui32> LayerId;
 		
-		TVector<double> Errors;
-
+		TVector<double> CumulativeError;
+		TVector<double> Error;
+		TVector<double> LastTickError;
+		TVector<TVector<TDestinationInfo>> AdjacentNeurons;  
 		ui32 LayerSize;
 	};
 

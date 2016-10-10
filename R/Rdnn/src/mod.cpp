@@ -7,5 +7,6 @@ RCPP_MODULE(dnnMod) {
     .method("read", &TProto::ReadFromFile, "Reading protobuf")
     .method("write", &TProto::WriteToFile, "Write protobuf")
     .method("print", &TProto::Print, "Print debug info")
+    .method("read_model_weights", &TProto::ReadModelWeights, "Read model weights")
     ;
 }

@@ -41,6 +41,8 @@ import "dnn/protos/supervised_spike.proto";
 import "dnn/protos/exp.proto";
 import "dnn/protos/regression.proto";
 import "dnn/protos/chronotron_rule.proto";
+import "dnn/protos/resume_rule.proto";
+import "dnn/protos/resume_hidden_rule.proto";
 
 
 message TRewardControl {
@@ -114,6 +116,10 @@ message TLayer {
     repeated THedonisticSynapseState HedonisticSynapseState = 55;
     repeated TChronotronRuleConst ChronotronRule = 56;
     repeated TChronotronRuleState ChronotronRuleState = 57;
+    repeated TResumeRuleConst ResumeRule = 58;
+    repeated TResumeRuleState ResumeRuleState = 59;
+    repeated TResumeHiddenRuleConst ResumeHiddenRule = 60;
+    repeated TResumeHiddenRuleState ResumeHiddenRuleState = 61;
 }
 
 message TConnection {

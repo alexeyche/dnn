@@ -62,7 +62,7 @@ namespace NDnn {
 				sizeOfLayers.push_back(l.Size());
 			});
 
-			TGlobalCtx::Inst().Init(RewardControl, sizeOfLayers);
+			TGlobalCtx::Inst().Init(RewardControl, sizeOfLayers, TVector<TVector<TDestinationInfo>>(PopulationSize));
 			TGlobalCtx::Inst().SetPastTime(Conf.PastTime);
 		}
 
@@ -86,7 +86,7 @@ namespace NDnn {
 					Network.AddLayer(l);
 					sizeOfLayers.push_back(l.Size());
 				});
-				TGlobalCtx::Inst().Init(RewardControl, sizeOfLayers);
+				TGlobalCtx::Inst().Init(RewardControl, sizeOfLayers, TGlobalCtx::Inst().GetAdjacentNeuronInfo());
 				TGlobalCtx::Inst().SetPastTime(Conf.PastTime);
 			}
 			return *this;

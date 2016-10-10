@@ -1,0 +1,11 @@
+package NDnnProto;
+
+message TResumeRuleConst {
+	optional double TauLearn = 1;
+	optional double Bias = 2;
+}
+
+message TResumeRuleState {
+	optional double TargetTrace = 1;
+	optional double ActualTrace = 2;
+}

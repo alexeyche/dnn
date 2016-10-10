@@ -27,7 +27,7 @@ if(length(grep("RStudio", args))>0) {
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
-    #EP=1
+#    EP=1
 }
 
 pfx_f = function(s) s
@@ -179,7 +179,6 @@ if (file.exists(STAT_FNAME)) {
     stat_pic = sprintf("%s/3_%s", tmp_d, pfx_f("stat.png"))
     if(SAVE_PIC_IN_FILES) png(stat_pic, width=1024, height=768*6)
     stat_to_plot = stat
-    stat = stat[10:17]
     if (length(stat_to_plot) > 8) {
        stat_to_plot = stat[1:8]
     }
@@ -249,6 +248,40 @@ if(file.exists(annoying_file)) {
 #     gr_pl(t(m.sort(w[257:nrow(w),1:256])))
 #     gr_pl(t(m.sort(t(abs(ica.signal$M)))))
 # }
+read_weights = function(last_ep) {
+    w_acc = array(0.0, c(nrow(w), ncol(w), last_ep))
+    for (ep in 1:last_ep) {
+        mod = sprintf("%d_model.pb", ep)
+        if (file.exists(mod)) {
+            cat("Reading", ep, "\n")
+            w_acc[,,ep] = read.model.weights(mod)
+        }
+    }
+    return(w_acc)    
+}
+
+read_stats = function(last_ep) {
+    stat = proto.read(sprintf("%d_stat.pb", 1))
+    for (ep in 2:last_ep) {
+        new_stat = proto.read(sprintf("%d_stat.pb", ep))
+        for (si in 1:length(new_stat)) {
+            stat[[si]]$values = c(stat[[si]]$values, new_stat[[si]]$values)
+        }
+    }
+    return(stat)
+}
+
+#stat = read_stats(75)
+
+
+# w_acc = read_weights(10)
+# nid=253
+# plot(w_acc[nid,1,], type="l", ylim=c(min(w_acc[nid,,]), max(w_acc[nid,,])))
+# for(nn in 2:dim(w_acc)[2]) {
+#     lines(w_acc[nid,nn,])
+# }
+
+ma = function(x,n=5){filter(x,rep(1/n,n), sides=2)}
 
 sigmoid = function(x, tt=0.1, s=100) {
     1/(1+exp(-(x-tt)/s))

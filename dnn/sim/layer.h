@@ -4,6 +4,7 @@
 #include <dnn/neuron/spike_neuron_impl.h>
 #include <dnn/neuron/defaults.h>
 #include <dnn/connection/builder.h>
+#include <dnn/sim/global_ctx.h>
 
 #include <array>
 #include <type_traits>
@@ -103,7 +104,7 @@ namespace NDnn {
 					syn.MutIdPre() = npre.GetGlobalId();
 					syn.MutDendriteDelay() = rand.DrawValue(conn.dendritedelay());
 					syn.MutLearningRate() = conn.learningrate();
-					
+					double v=  syn.Weight() > 0.0 ? 1.0 : -1.0;
 					npost.AddSynapse(std::move(syn));
 				}
 			}
