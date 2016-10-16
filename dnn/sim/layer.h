@@ -73,12 +73,20 @@ namespace NDnn {
 			return Neurons.end();
 		}
 
+		auto begin() const {
+			return Neurons.cbegin();
+		}
+		auto end() const {
+			return Neurons.cend();
+		}
+
 		void SerialProcess(TMetaProtoSerial& serial) override final {
 			serial.DuplicateSingleRepeated(Size());
 			for (auto& n: Neurons) {
 				serial(n);
 			}
 		}
+
 		template <typename TDstLayer>
 		void Connect(TDstLayer& dstLayer, const NDnnProto::TConnection& conn, TRandEngine& rand) {
 			auto connectionPtr = BuildConnection(conn, rand);

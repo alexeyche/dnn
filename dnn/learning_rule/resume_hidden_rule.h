@@ -15,13 +15,11 @@ namespace NDnn {
             serial(TauLearn);
             serial(ErrorWeightsDistr);
             serial(Bias);
-            serial(ErrorBias);
 	    }
 
         double TauLearn = 20.0;
         NGroundProto::TDistr ErrorWeightsDistr;
         double Bias = 0.0;
-        double ErrorBias = 0.0;
 	};
 
 	struct TResumeHiddenRuleState: public IProtoSerial<NDnnProto::TResumeHiddenRuleState>  {
@@ -48,10 +46,8 @@ namespace NDnn {
                 TVector<double> signs = TGlobalCtx::Inst().GetConnectionSign(TPar::SpaceInfo().GlobalId);
                 for (ui32 errorId=0; errorId < signs.size(); ++errorId) {
                     TPar::s.ErrorWeights.push_back(std::fabs(TPar::Neuron().GetRand()->DrawValue(TPar::c.ErrorWeightsDistr)) * signs[errorId]);
-                    // TPar::s.ErrorWeights.push_back(TPar::Neuron().GetRand()->DrawValue(TPar::c.ErrorWeightsDistr));
                 }
             }
-            TPar::s.ErrorTrace = 0.0;
 		}
 
 		void PropagateSynapseSpike(const TSynSpike& sp) {
@@ -67,7 +63,9 @@ namespace NDnn {
     		for (ui32 errorId=0; errorId < TPar::s.ErrorWeights.size(); ++errorId) {
                 error += TPar::s.ErrorWeights[errorId] * errors.at(errorId);
             }
-            
+
+            TGlobalCtx::Inst().SetError(TPar::SpaceInfo().GlobalId, error);
+
             CurrentError = error;
 
             TPar::s.ErrorTrace += t.Dt * ( - TPar::s.ErrorTrace/TPar::c.TauLearn + error );
@@ -78,7 +76,7 @@ namespace NDnn {
 
                 double& w = syn.MutWeight();
                 
-                w += norm.Derivative(w, syn.LearningRate() * (TPar::c.Bias + syn.Potential()) * (TPar::s.ErrorTrace + TPar::c.ErrorBias));
+                w += norm.Derivative(w, syn.LearningRate() * (TPar::c.Bias + syn.Potential()) * TPar::s.ErrorTrace);
 
                 ++synIdIt;
             }

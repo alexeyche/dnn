@@ -78,9 +78,9 @@ namespace NDnn {
 			return LayerSize;
 		}
 
-		void SetError(ui32 lastLayerNeuronId, double error) {
-			Error[lastLayerNeuronId] = error;
-			CumulativeError[lastLayerNeuronId] += error * error;
+		void SetError(ui32 globalNeuronId, double error) {
+			Error[globalNeuronId] = error;
+			CumulativeError[globalNeuronId] += error * error;
 		}
 
 		void SetCumulativeError(ui32 globalNeuronId, double error) {

@@ -92,6 +92,10 @@ namespace NDnn {
 			return *this;
 		}
 
+		const ui32 GetPopulationSize() const {
+			return PopulationSize;
+		}
+
 		template <size_t layerId, size_t neuronId>
 		auto GetNeuron() {
 			return std::get<layerId>(Layers)[neuronId].GetNeuron();
@@ -101,12 +105,6 @@ namespace NDnn {
 		auto GetLearningRule() {
 			return std::get<layerId>(Layers)[neuronId].GetLearningRule();
 		}
-
-		template <size_t layerId, size_t neuronId>
-		auto GetCostFunction() {
-			return std::get<layerId>(Layers)[neuronId].GetCostFunction();
-		}
-
 
 		template <size_t layerId, size_t neuronId, size_t synapseId>
 		auto GetSynapse() {

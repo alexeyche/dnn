@@ -25,6 +25,35 @@ Layer {
 		ErrorWeightsDistr {
 			Value: 0.1
 		}
+		Bias: 0.1
+	}
+	MinMaxNorm {
+		MinWeight: 0.0
+		MaxWeight: 5.0
+	}
+}
+Layer {
+	BasicSynapse {
+        PspDecay: 15.0
+    }
+	IntegrateAndFire {
+		TauMem: 5.0
+		TauRef: 5.0
+		NoiseAmp: 0.0
+	}
+	Determ {
+		Threshold: 0.5
+	}
+	LogExp {
+		Threshold: 0.1
+		Slope: 0.01
+	}
+	ResumeHiddenRule {
+		TauLearn: 5.0
+		ErrorWeightsDistr {
+			Value: 0.1
+		}
+		Bias: 0.1
 	}
 	MinMaxNorm {
 		MinWeight: 0.0
@@ -49,6 +78,7 @@ Layer {
 	}
 	ResumeRule {
 		TauLearn: 1.0
+		Bias: 0.1
 	}
 	MinMaxNorm {
 		MinWeight: 0.0
@@ -60,7 +90,7 @@ Connection {
 	Stochastic {
 		Prob: 0.5
 	}
-	Weight: {Norm {Mean: 0.0  Sd: 0.25}}
+	Weight: {Norm {Mean: 0.0  Sd: 0.1}}
 	LearningRate: 0.001
 }
 Connection {
@@ -68,6 +98,14 @@ Connection {
 	Stochastic {
 		Prob: 0.5
 	}
-	Weight: {Norm {Mean: 0.0  Sd: 0.25}}
+	Weight: {Norm {Mean: 0.0  Sd: 0.1}}
+	LearningRate: 0.001
+}
+Connection {
+	From: 2 To: 3
+	Stochastic {
+		Prob: 0.5
+	}
+	Weight: {Norm {Mean: 0.0  Sd: 0.1}}
 	LearningRate: 0.001
 }

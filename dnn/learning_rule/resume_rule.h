@@ -57,6 +57,7 @@ namespace NDnn {
             TPar::s.ActualTrace += t.Dt * ( - TPar::s.ActualTrace/TPar::c.TauLearn + neuron.Fired() );
 
             const double error = TPar::s.TargetTrace - TPar::s.ActualTrace;
+
             TGlobalCtx::Inst().SetError(TPar::SpaceInfo().GlobalId, error);
 
             CurrentError = error;

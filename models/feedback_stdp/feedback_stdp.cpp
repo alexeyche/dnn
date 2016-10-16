@@ -41,6 +41,7 @@ int main(int argc, const char** argv) {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 100, TNeuronConfig<>>,
             TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm>>,
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm>>,
             TLayer<TIntegrateAndFire, 10, TNeuronConfig<TBasicSynapse, TDeterm>>
         >(opts);
 
@@ -49,13 +50,11 @@ int main(int argc, const char** argv) {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 100, TNeuronConfig<>>,
             TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TResumeHiddenRule, TMinMaxNorm, TNoIntrinsicPlasticity, TNoReinforcement>>,
+            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TResumeHiddenRule, TMinMaxNorm, TNoIntrinsicPlasticity, TNoReinforcement>>,
             TLayer<TIntegrateAndFire, 10, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TResumeRule, TMinMaxNorm, TNoIntrinsicPlasticity, TNoReinforcement>>
         >(opts);
 
-        // for (auto& n: sim.GetMutLayer<2>()) {
-        //     n.GetMutCostFunction().SetTarget(opts.TargetTimeSeries->GetVector(n.GetSpaceInfo().LocalId));
-        // }
-        for (auto& n: sim.GetMutLayer<2>()) {
+        for (auto& n: sim.GetMutLayer<3>()) {
             n.GetMutLearningRule().SetTarget((*opts.TargetSpikes)[n.GetSpaceInfo().LocalId]);
         }
 
@@ -85,10 +84,10 @@ int main(int argc, const char** argv) {
 
         double mean_error = 0;
         const auto& errors = TGlobalCtx::Inst().GetCumulativeError();
-
-        for (const auto& error: errors) {
-            mean_error += error/sim.GetDuration();
+        for (const auto& n: sim.GetLayer<3>()) {
+            mean_error += errors[n.GetSpaceInfo().GlobalId]/sim.GetDuration();
         }
+
         mean_error = mean_error/sim.GetLayer<2>().Size();
         L_INFO << "Mean error: " << mean_error;
     }
