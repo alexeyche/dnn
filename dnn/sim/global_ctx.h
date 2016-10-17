@@ -10,7 +10,7 @@
 
 namespace NDnn {
 	using namespace NGround;
-	
+
 	template <typename ...T>
 	class TSim;
 
@@ -30,7 +30,7 @@ namespace NDnn {
 
 		void Init(TRewardControl& rewardControl, const TVector<ui32>& sizeOfLayers, const TVector<TVector<TDestinationInfo>>& adjancentNeuronInfo) {
 			RewardControl.Set(rewardControl);
-			
+
 			ui32 layerId = 0;
 			ui32 cumulativeSize = 0;
 			for (const auto& layerSize: sizeOfLayers) {
@@ -41,11 +41,11 @@ namespace NDnn {
 				++layerId;
 			}
 			LayerSize = sizeOfLayers.size();
-			
+
 			CumulativeError.resize(cumulativeSize, 0.0);
 			Error.resize(cumulativeSize, 0.0);
 			LastTickError.resize(cumulativeSize, 0.0);
-			
+
 			AdjacentNeurons = adjancentNeuronInfo;
 		}
 
@@ -69,11 +69,11 @@ namespace NDnn {
 		const double& GetPastTime() const {
 			return PastTime;
 		}
-		
+
 		const ui32& GetNeuronLayerId(const ui32& globalNeuronId) const {
 			return LayerId[globalNeuronId];
 		}
-		
+
 		const ui32& GetLayerSize() const {
 			return LayerSize;
 		}
@@ -90,15 +90,15 @@ namespace NDnn {
 		const TVector<double>& GetCumulativeError() const {
 			return CumulativeError;
 		}
-		
+
 		const TVector<double>& GetError() const {
 			return LastTickError;
 		}
-		
+
 		const double& GetError(ui32 lastLayerNeuronId) const {
 			return LastTickError[lastLayerNeuronId];
 		}
-		
+
 		void SwapErrors() {
 			LastTickError.swap(Error);
 		}
@@ -113,7 +113,7 @@ namespace NDnn {
 				errors.push_back(LastTickError[adj.DestNeuronId]);
 			}
 			return errors;
-		} 
+		}
 
 		TVector<double> GetConnectionSign(ui32 from) const {
 			TVector<double> signs;
@@ -137,7 +137,7 @@ namespace NDnn {
 		void SetPastTime(double pastTime) {
 			PastTime = pastTime;
 		}
-		
+
 		void SetCurrentClassId(TMaybe<ui32>&& id) {
 			CurrentClassId = id;
 		}
@@ -147,11 +147,11 @@ namespace NDnn {
 		TMaybe<ui32> CurrentClassId;
 		double PastTime = 0;
 		TVector<ui32> LayerId;
-		
+
 		TVector<double> CumulativeError;
 		TVector<double> Error;
 		TVector<double> LastTickError;
-		TVector<TVector<TDestinationInfo>> AdjacentNeurons;  
+		TVector<TVector<TDestinationInfo>> AdjacentNeurons;
 		ui32 LayerSize;
 	};
 

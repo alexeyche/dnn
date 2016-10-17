@@ -34,7 +34,7 @@ Layer {
 		}
 		Layer {
 			Id: 1
-			ExcUnit: 1.0
+			ExcUnit: 1.0		# [0.01, 10.0]
 			InhUnit: 1.0        # [0.01, 10.0]
 		}
 	}

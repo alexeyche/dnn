@@ -6,7 +6,7 @@ c(spikes, epoch) := read.spikes.wd()
 sp = spikes
 sp$values = sp$values[-(1:input_neurons)]
 
-win = 25
+win = 100
 rv = get.rate.vectors(sp, win)
 
 
@@ -26,7 +26,7 @@ for (i in rv$info) {
 
 
 dups = duplicated(t(rv$values))
-ans.tsne = Rtsne(t(rv$values[, !dups]), perplexity = 10)
+ans.tsne = Rtsne(t(rv$values[, !dups]))
 cols = cols[!dups]
 plot(ans.tsne$Y, col=cols)
 

@@ -57,7 +57,7 @@ namespace NDnn {
     		auto& syns = TPar::GetMutSynapses();
     		const auto& norm = TPar::Norm();
     		const auto& neuron = TPar::Neuron();
-    
+
             double error = 0.0;
             const auto& errors = TGlobalCtx().Inst().GetCausedErrors(TPar::SpaceInfo().GlobalId);
     		for (ui32 errorId=0; errorId < TPar::s.ErrorWeights.size(); ++errorId) {
@@ -75,17 +75,17 @@ namespace NDnn {
                 auto& syn = syns[synIdIt];
 
                 double& w = syn.MutWeight();
-                
+
                 w += norm.Derivative(w, syn.LearningRate() * (TPar::c.Bias + syn.Potential()) * TPar::s.ErrorTrace);
 
                 ++synIdIt;
             }
     	}
-    
+
         const double& GetCurrentError() const {
             return CurrentError;
         }
-    
+
     private:
         double CurrentError = 0.0;
 

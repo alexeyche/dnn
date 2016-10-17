@@ -1,7 +1,3 @@
-SimConfiguration {
-	Jobs: 8
-	Dt: 1.0
-}
 Layer {
 }
 Layer {
@@ -9,7 +5,7 @@ Layer {
         PspDecay: 10.0
     }
 	SRMNeuron {
-		AmpAdapt: 1
+		AmpAdapt: 0
 		TauAdapt: 500
 	}
 	LogExp {
@@ -17,15 +13,11 @@ Layer {
 		Slope: 0.1
 	}
 	Stdp {
-		TauPlus: 14.0            
-		TauMinus: 34.0			 
-		Aplus: 1.0			    
+		TauPlus: 14.0
+		TauMinus: 34.0
+		Aplus: 1.0
 		Aminus: 0.5
 		TauMomentum: 100
-	}
-	MaxEntropyIP {
-		TargetRate: 10.0
-		LearningRate: 1e-06
 	}
 	SumNorm {
 		ExcUnit: 0.3			# [0.01, 1.0]

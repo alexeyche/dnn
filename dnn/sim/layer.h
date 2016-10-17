@@ -33,7 +33,7 @@ namespace NDnn {
 		TNeuronImplType& operator[](ui32 id) {
 			return Neurons[id];
 		}
-		
+
 		bool HasInput() const {
 			return !std::is_same<typename TConf::TNeuronReceptiveField, TNoInput>::value;
 		}
@@ -109,6 +109,17 @@ namespace NDnn {
 					}
 
 					syn.MutWeight() = connRecipe.Amplitude * rand.DrawValue(conn.weight());
+					switch (connRecipe.SourceNeuronType) {
+						case SNT_MIXED:
+							break;
+						case SNT_INHIBITORY:
+							syn.MutWeight() = - std::fabs(syn.Weight());
+							break;
+						case SNT_EXCITATORY:
+							syn.MutWeight() = std::fabs(syn.Weight());
+							break;
+					}
+
 					syn.MutIdPre() = npre.GetGlobalId();
 					syn.MutDendriteDelay() = rand.DrawValue(conn.dendritedelay());
 					syn.MutLearningRate() = conn.learningrate();

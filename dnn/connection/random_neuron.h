@@ -22,17 +22,17 @@ namespace NDnn {
     public:
         TConnectionRecipe GetConnectionRecipe(const TNeuronSpaceInfo& left, const TNeuronSpaceInfo& right) override final {
         	TConnectionRecipe recipe;
-            
+
             auto decisionPtr = NeuronDecisions.find(right.GlobalId);
             if (decisionPtr == NeuronDecisions.end()) {
                 auto res = NeuronDecisions.emplace(right.GlobalId, c.NeuronProb > Rand->GetUnif());
                 decisionPtr = res.first;
             }
-            
+
             if (decisionPtr->second) {
-                recipe.Exists = c.SynapseProb > Rand->GetUnif();    
+                recipe.Exists = c.SynapseProb > Rand->GetUnif();
             }
-        	
+
             return recipe;
         }
 

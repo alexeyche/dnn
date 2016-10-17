@@ -52,7 +52,7 @@ namespace NDnn {
     		auto& syns = TPar::GetMutSynapses();
     		const auto& norm = TPar::Norm();
     		const auto& neuron = TPar::Neuron();
-    		
+
             TPar::s.TargetTrace += t.Dt * ( - TPar::s.TargetTrace/TPar::c.TauLearn + GetTarget(t) );
             TPar::s.ActualTrace += t.Dt * ( - TPar::s.ActualTrace/TPar::c.TauLearn + neuron.Fired() );
 
@@ -67,11 +67,11 @@ namespace NDnn {
                 auto& syn = syns[synIdIt];
 
                 double& w = syn.MutWeight();
-                
+
                 w += norm.Derivative(w, syn.LearningRate() * (TPar::c.Bias + syn.Potential()) * error);
 
                 ++synIdIt;
-            }            
+            }
     	}
 
     	double GetTarget(const TTime& t) const {
@@ -79,7 +79,7 @@ namespace NDnn {
     			return static_cast<double>(TPar::Neuron().Fired());
     		}
             double val = 0.0;
-            // if (CurrentId < Target.size()) L_INFO << CurrentId << " " << Target.size() << " " << t.T << " >= " << Target[CurrentId] << ", " << t.T+t.Dt << " < " << Target[CurrentId]; 
+            // if (CurrentId < Target.size()) L_INFO << CurrentId << " " << Target.size() << " " << t.T << " >= " << Target[CurrentId] << ", " << t.T+t.Dt << " < " << Target[CurrentId];
     		while ((CurrentId < Target.size()) && (std::numeric_limits<double>::epsilon() + Target[CurrentId] >= t.T) && (Target[CurrentId] < (t.T+t.Dt))) {
                 ++CurrentId;
     			val = 1.0;
