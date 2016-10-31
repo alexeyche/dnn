@@ -36,6 +36,7 @@ namespace NDnn {
             
             return (1.0/c.Slope) * exp_x1/(exp_x1 + exp_x2 + 1.0);
         }
+
     };
 
 } // namespace NDnn

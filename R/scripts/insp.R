@@ -18,6 +18,8 @@ WD = convStr(Sys.getenv('WD'), getwd())
 T0 = convNum(Sys.getenv('T0'), 0)
 T1 = convNum(Sys.getenv('T1'), 1000)
 
+ma = function(x,n=5){filter(x,rep(1/n,n), sides=2)}
+
 args <- commandArgs(trailingOnly = FALSE)
 if(length(grep("RStudio", args))>0) {    
     #WD = simruns.path(system(sprintf("ls -t %s | head -n 1", simruns.path()), intern=TRUE))
@@ -27,7 +29,7 @@ if(length(grep("RStudio", args))>0) {
     
     system(sprintf("ls -t %s | head -n 1", WD))
     EP=as.numeric(strsplit(system(sprintf("basename $(ls -t %s/*.pb | head -n 1)", WD), intern=TRUE), "_")[[1]][1])
-#    EP=1
+    #EP=1
 }
 
 pfx_f = function(s) s
@@ -178,24 +180,23 @@ if (file.exists(STAT_FNAME)) {
     stat = proto.read(STAT_FNAME)
     stat_pic = sprintf("%s/3_%s", tmp_d, pfx_f("stat.png"))
     if(SAVE_PIC_IN_FILES) png(stat_pic, width=1024, height=768*6)
-    stat_to_plot = stat
-    if (length(stat_to_plot) > 8) {
-       stat_to_plot = stat[1:8]
-    }
-    par(mfrow=c(length(stat_to_plot),1), mar=rep(2,4))
-    for (s in stat_to_plot) {
-        plot(
-            seq(s$from, s$to, length.out=length(s$values)), 
-            s$values, 
-            type="l", 
-            main=sprintf("%s", s$name),
-            xlab="Time", ylab=s$name
-        )
-    }
-    if(SAVE_PIC_IN_FILES) {
-        dev.off()
-        write(paste("Stat pic filename: ", stat_pic), stderr())
-        pic_files = c(pic_files, stat_pic)
+    for (si in seq(1,length(stat), 8)) {
+        stat_to_plot = stat[si:(si+8-1)]
+        par(mfrow=c(length(stat_to_plot),1), mar=rep(2,4))
+        for (s in stat_to_plot) {
+            plot(
+                seq(s$from, s$to, length.out=length(s$values)), 
+                s$values, 
+                type="l", 
+                main=sprintf("%s", s$name),
+                xlab="Time", ylab=s$name
+            )
+        }
+        if(SAVE_PIC_IN_FILES) {
+            dev.off()
+            write(paste("Stat pic filename: ", stat_pic), stderr())
+            pic_files = c(pic_files, stat_pic)
+        }
     }
     par(mfrow=c(1,1))
 } else {
@@ -281,14 +282,28 @@ read_stats = function(last_ep) {
 #     lines(w_acc[nid,nn,])
 # }
 
-ma = function(x,n=5){filter(x,rep(1/n,n), sides=2)}
 
 sigmoid = function(x, tt=0.1, s=100) {
     1/(1+exp(-(x-tt)/s))
 }
-logexp = function(x, t=0.1, s=1.0) {
-    log( (1 + exp((x-t)/s))/(1 + exp((-t)/s)))
+
+dsigmoid = function(x, ...) {
+    s = sigmoid(x, ...)
+    return(s*(1-s))
 }
+
+logexp = function(x, t=0.1, s=1.0) {
+    log( (1.0 + exp((x-t)/s))/(1.0 + exp((-t)/s)))
+}
+
+dlogexp = function(x, t=0.1, s=1.0) {
+    exp_x1 = exp((u - t) / s);
+    exp_x2 = exp(- t / s);
+    
+    return((1.0/s) * exp_x1/(exp_x1 + exp_x2 + 1.0))
+}
+
+
 exp.act = function(x, t=0.2, s=0.05, p=1.0) {
   p * exp((x-t)/s)
 }

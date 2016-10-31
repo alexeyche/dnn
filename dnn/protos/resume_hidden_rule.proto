@@ -6,9 +6,12 @@ message TResumeHiddenRuleConst {
 	optional double TauLearn = 1;
 	optional NGroundProto.TDistr ErrorWeightsDistr = 2;
 	optional double Bias = 3;
+	optional double TauSpike = 4;
+	optional double Aminus = 5;
 }
 
 message TResumeHiddenRuleState {
 	repeated double ErrorWeights = 1;
 	optional double ErrorTrace = 2;
+	optional double Y = 3;
 }

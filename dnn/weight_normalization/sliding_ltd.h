@@ -52,7 +52,7 @@ namespace NDnn {
 
         double Ltd(double w) const {
             if(!TPar::s.Saturation) {
-                return 0.0;
+                return 1.0;
             }
             return TPar::c.Modulation * std::pow(1000.0*TPar::s.Pmean, TPar::c.Power) * TPar::c.__TargetRate;
         }

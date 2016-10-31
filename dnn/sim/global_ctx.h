@@ -29,6 +29,7 @@ namespace NDnn {
 		static TGlobalCtx& Inst();
 
 		void Init(TRewardControl& rewardControl, const TVector<ui32>& sizeOfLayers, const TVector<TVector<TDestinationInfo>>& adjancentNeuronInfo) {
+			ENSURE(sizeOfLayers.size() > 0, "Empty layers");
 			RewardControl.Set(rewardControl);
 
 			ui32 layerId = 0;
@@ -47,6 +48,7 @@ namespace NDnn {
 			LastTickError.resize(cumulativeSize, 0.0);
 
 			AdjacentNeurons = adjancentNeuronInfo;
+			LastLayerSize = sizeOfLayers.back();
 		}
 
 		const double& GetReward() const {
@@ -83,6 +85,10 @@ namespace NDnn {
 			CumulativeError[globalNeuronId] += error * error;
 		}
 
+		const double& GetMeanError() const {
+			return LastTickMeanError;
+		}
+
 		void SetCumulativeError(ui32 globalNeuronId, double error) {
 			CumulativeError[globalNeuronId] += error;
 		}
@@ -101,6 +107,13 @@ namespace NDnn {
 
 		void SwapErrors() {
 			LastTickError.swap(Error);
+			LastTickMeanError = 0.0;
+
+			for (ui32 ni=LastTickError.size()-LastLayerSize; ni < LastTickError.size(); ++ni) {
+				LastTickMeanError += LastTickError[ni];
+			}
+			LastTickMeanError = LastTickMeanError/LastLayerSize;
+			
 		}
 
 		void SetConnectionInfo(ui32 from, ui32 to, double sign) {
@@ -153,6 +166,8 @@ namespace NDnn {
 		TVector<double> LastTickError;
 		TVector<TVector<TDestinationInfo>> AdjacentNeurons;
 		ui32 LayerSize;
+		double LastTickMeanError = 0.0;
+		ui32 LastLayerSize = 0;
 	};
 
 

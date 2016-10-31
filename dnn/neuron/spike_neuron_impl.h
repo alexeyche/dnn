@@ -139,7 +139,7 @@ namespace NDnn {
 		    while (synIdIt != Synapses.aend()) {
 		    	auto& synapse = Synapses[synIdIt];
 		    	double x = synapse.WeightedPotential();
-		    	if (fabs(x) < 0.0001) {
+		    	if (std::fabs(synapse.Potential()) < 0.0001) {
 		        	Synapses.SetInactive(synIdIt);
 		        } else {
 			    	Isyn += x;

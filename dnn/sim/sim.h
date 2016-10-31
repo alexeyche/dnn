@@ -169,7 +169,7 @@ namespace NDnn {
 			return Conf.Duration;
 		}
 
-		ui32 LayersSize() const {
+		constexpr ui32 LayersSize() const {
 			return std::tuple_size<decltype(Layers)>::value;
 		}
 

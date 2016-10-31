@@ -43,7 +43,7 @@ import "dnn/protos/regression.proto";
 import "dnn/protos/chronotron_rule.proto";
 import "dnn/protos/resume_rule.proto";
 import "dnn/protos/resume_hidden_rule.proto";
-
+import "dnn/protos/rate_norm.proto";
 
 message TRewardControl {
     optional TRewardControlConst RewardControl = 1;
@@ -120,6 +120,8 @@ message TLayer {
     repeated TResumeRuleState ResumeRuleState = 59;
     repeated TResumeHiddenRuleConst ResumeHiddenRule = 60;
     repeated TResumeHiddenRuleState ResumeHiddenRuleState = 61;
+    repeated TRateNormConst RateNorm = 62;
+    repeated TRateNormState RateNormState = 63;
 }
 
 message TConnection {

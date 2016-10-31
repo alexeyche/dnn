@@ -5,6 +5,7 @@
 #include <dnn/protos/stdp.pb.h>
 #include <dnn/protos/config.pb.h>
 #include <ground/act_vector.h>
+#include <dnn/sim/global_ctx.h>
 
 namespace NDnn {
 
@@ -66,8 +67,31 @@ namespace NDnn {
 		}
 	};
 
+	class TNoModulation {
+	public:
+		static double GetModulation(const TNeuronSpaceInfo& /*info*/) {
+			return 1.0;
+		}
+	};
 
-	template <typename TSpikePolicy, typename TNeuron>
+
+	class TMeanErrorModulation {
+	public:
+		static double GetModulation(const TNeuronSpaceInfo& info) {
+			static TVector<double> signs = TGlobalCtx::Inst().GetConnectionSign(info.GlobalId);
+            static double dstSign = 1.0;
+            if (signs.size() > 0) {
+                dstSign = signs[0];
+                for (const auto& sign: signs) {
+                    ENSURE(std::fabs(sign - dstSign) < std::numeric_limits<double>::epsilon(), "Got mixed connection for neuron " << info.GlobalId);
+                }
+            }
+			return TGlobalCtx::Inst().GetMeanError() * dstSign;
+		}
+	};
+
+
+	template <typename TSpikePolicy, typename TModulation, typename TNeuron>
 	class TStdpBase: public TLearningRule<TStdpConst, TStdpState, TNeuron> {
 	public:
 		using TPar = TLearningRule<TStdpConst, TStdpState, TNeuron>;
@@ -102,7 +126,7 @@ namespace NDnn {
                 double dw =  (
                     TPar::c.Aplus  * TPar::s.X[synIdIt] * neuron.Fired() * norm.Ltp(w) -
                     TPar::c.Aminus * TPar::s.Y * syn.Fired() * norm.Ltd(w)
-                );
+                ) * TModulation::GetModulation(TPar::SpaceInfo());
 
                 // TPar::s.FirstMoment.Get(synapseId) += t.Dt * ( - TPar::s.FirstMoment.Get(synapseId) + dw)/TPar::c.TauFirstMoment;
                 // TPar::s.SecondMoment.Get(synapseId) += t.Dt * ( - TPar::s.SecondMoment.Get(synapseId) + dw*dw)/TPar::c.TauSecondMoment;
@@ -127,10 +151,14 @@ namespace NDnn {
 	};
 
 	template <typename TNeuron>
-	using TNearestStdp = TStdpBase<TNearestSpikePolicy, TNeuron>;
+	using TNearestStdp = TStdpBase<TNearestSpikePolicy, TNoModulation, TNeuron>;
 
 	template <typename TNeuron>
-	using TAllToAllStdp = TStdpBase<TAllToAllSpikePolicy, TNeuron>;
+	using TAllToAllStdp = TStdpBase<TAllToAllSpikePolicy, TNoModulation, TNeuron>;
+
+	template <typename TNeuron>
+	using TMeanErrorNearestStdp = TStdpBase<TNearestSpikePolicy, TMeanErrorModulation, TNeuron>;
+
 
 	template <typename TNeuron>
 	using TStdp = TNearestStdp<TNeuron>;

@@ -29,6 +29,7 @@
 #include <dnn/weight_normalization/unit_norm.h>
 #include <dnn/weight_normalization/log_norm.h>
 #include <dnn/weight_normalization/sum_norm.h>
+#include <dnn/weight_normalization/rate_norm.h>
 #include <dnn/intrinsic_plasticity/max_entropy.h>
 
 using namespace NDnn;
@@ -40,8 +41,7 @@ int main(int argc, const char** argv) {
     if (opts.NoLearning) {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 100, TNeuronConfig<>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm>>,
+            TLayer<TIntegrateAndFire, 1000, TNeuronConfig<TBasicSynapse, TDeterm>>,
             TLayer<TIntegrateAndFire, 10, TNeuronConfig<TBasicSynapse, TDeterm>>
         >(opts);
 
@@ -49,30 +49,36 @@ int main(int argc, const char** argv) {
     } else {
         auto sim = BuildModel<
             TLayer<TSpikeSequenceNeuron, 100, TNeuronConfig<>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TResumeHiddenRule, TMinMaxNorm, TNoIntrinsicPlasticity, TNoReinforcement>>,
-            TLayer<TIntegrateAndFire, 100, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TResumeHiddenRule, TMinMaxNorm, TNoIntrinsicPlasticity, TNoReinforcement>>,
+            TLayer<TIntegrateAndFire, 1000, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TResumeHiddenRule, TMinMaxNorm, TNoIntrinsicPlasticity, TNoReinforcement>>,
             TLayer<TIntegrateAndFire, 10, TNeuronConfig<TBasicSynapse, TDeterm, TNoInput, TResumeRule, TMinMaxNorm, TNoIntrinsicPlasticity, TNoReinforcement>>
         >(opts);
 
-        for (auto& n: sim.GetMutLayer<3>()) {
+        constexpr auto layer_size = sim.LayersSize();
+
+        for (auto& n: sim.GetMutLayer<layer_size-1>()) {
             n.GetMutLearningRule().SetTarget((*opts.TargetSpikes)[n.GetSpaceInfo().LocalId]);
         }
 
 
         if (opts.StatFile) {
-            sim.ListenStat("Error", [&]() { return sim.GetLearningRule<1, 0>().GetCurrentError(); }, 0, std::numeric_limits<ui32>::max());
-            sim.ListenStat("Error", [&]() { return sim.GetLearningRule<1, 1>().GetCurrentError(); }, 0, std::numeric_limits<ui32>::max());
-            sim.ListenStat("Error", [&]() { return sim.GetLearningRule<1, 2>().GetCurrentError(); }, 0, std::numeric_limits<ui32>::max());
-
-            // sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 0, 0>().Weight(); }, 0, std::numeric_limits<ui32>::max());
-            // sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 0, 3>().Weight(); }, 0, std::numeric_limits<ui32>::max());
-            // sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 0, 4>().Weight(); }, 0, std::numeric_limits<ui32>::max());
-            // sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 0, 5>().Weight(); }, 0, std::numeric_limits<ui32>::max());
-            // sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 0, 6>().Weight(); }, 0, std::numeric_limits<ui32>::max());
-            // sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 0, 7>().Weight(); }, 0, std::numeric_limits<ui32>::max());
-            // sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 0, 8>().Weight(); }, 0, std::numeric_limits<ui32>::max());
-            // sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 0, 9>().Weight(); }, 0, std::numeric_limits<ui32>::max());
-            // sim.ListenStat("Weight", [&]() { return sim.GetSynapse<1, 0, 10>().Weight(); }, 0, std::numeric_limits<ui32>::max());
+            
+            sim.ListenStat("Error", [&]() { return TGlobalCtx::Inst().GetMeanError(); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("Potential", [&]() { return sim.GetSynapse<2, 0, 0>().Potential(); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("Potential", [&]() { return sim.GetSynapse<2, 0, 1>().Potential(); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("Potential", [&]() { return sim.GetSynapse<2, 0, 2>().Potential(); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<2, 0, 0>().Weight(); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<2, 0, 1>().Weight(); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<2, 0, 2>().Weight(); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<2, 0, 3>().Weight(); }, 0, std::numeric_limits<ui32>::max());
+            
+            sim.ListenStat("Error", [&]() { return TGlobalCtx::Inst().GetMeanError(); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("Potential", [&]() { return sim.GetSynapse<2, 1, 0>().Potential(); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("Potential", [&]() { return sim.GetSynapse<2, 1, 1>().Potential(); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("Potential", [&]() { return sim.GetSynapse<2, 1, 2>().Potential(); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<2, 1, 0>().Weight(); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<2, 1, 1>().Weight(); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<2, 1, 2>().Weight(); }, 0, std::numeric_limits<ui32>::max());
+            sim.ListenStat("Weight", [&]() { return sim.GetSynapse<2, 1, 3>().Weight(); }, 0, std::numeric_limits<ui32>::max());
 
 
             // sim.ListenStat("Error", [&]() { return sim.GetLearningRule<2, 0>().GetCurrentError(); }, 0, std::numeric_limits<ui32>::max());
@@ -84,11 +90,11 @@ int main(int argc, const char** argv) {
 
         double mean_error = 0;
         const auto& errors = TGlobalCtx::Inst().GetCumulativeError();
-        for (const auto& n: sim.GetLayer<3>()) {
+        for (const auto& n: sim.GetLayer<layer_size-1>()) {
             mean_error += errors[n.GetSpaceInfo().GlobalId]/sim.GetDuration();
         }
 
-        mean_error = mean_error/sim.GetLayer<2>().Size();
+        mean_error = mean_error/sim.GetLayer<layer_size-1>().Size();
         L_INFO << "Mean error: " << mean_error;
     }
     return 0;

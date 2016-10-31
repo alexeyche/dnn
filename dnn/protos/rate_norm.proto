@@ -1,0 +1,17 @@
+package NDnnProto;
+
+
+message TRateNormConst {
+    optional double Rmin = 1;
+    optional double Rmax = 2;
+    optional double TauMean = 3;
+    optional double F = 4;
+    optional double MinWeight = 5;
+    optional double MaxWeight = 6;
+}
+
+message TRateNormState {
+	optional double Rate = 1;
+	optional bool Saturation = 2;
+}
+

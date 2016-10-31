@@ -6,7 +6,7 @@ Layer {
 }
 Layer {
 	BasicSynapse {
-        PspDecay: 15.0
+        PspDecay: 10.0
     }
 	IntegrateAndFire {
 		TauMem: 5.0
@@ -14,55 +14,35 @@ Layer {
 		NoiseAmp: 0.0
 	}
 	Determ {
-		Threshold: 0.5
+		Threshold: 0.05
 	}
 	LogExp {
 		Threshold: 0.1
 		Slope: 0.01
 	}
 	ResumeHiddenRule {
-		TauLearn: 5.0
+		TauLearn: 1.0
 		ErrorWeightsDistr {
 			Value: 0.1
 		}
-		Bias: 0.1
+		TauSpike: 25.0
+		Aminus: 0.005
+	}
+	RateNorm {
+		Rmin: 1.0
+		Rmax: 25.0
+		MaxWeight: 2.0
+		TauMean: 1000.0
+		F: 0.00001
 	}
 	MinMaxNorm {
 		MinWeight: 0.0
-		MaxWeight: 5.0
+		MaxWeight: 0.25
 	}
 }
 Layer {
 	BasicSynapse {
-        PspDecay: 15.0
-    }
-	IntegrateAndFire {
-		TauMem: 5.0
-		TauRef: 5.0
-		NoiseAmp: 0.0
-	}
-	Determ {
-		Threshold: 0.5
-	}
-	LogExp {
-		Threshold: 0.1
-		Slope: 0.01
-	}
-	ResumeHiddenRule {
-		TauLearn: 5.0
-		ErrorWeightsDistr {
-			Value: 0.1
-		}
-		Bias: 0.1
-	}
-	MinMaxNorm {
-		MinWeight: 0.0
-		MaxWeight: 5.0
-	}
-}
-Layer {
-	BasicSynapse {
-        PspDecay: 15.0
+        PspDecay: 10.0
     }
 	IntegrateAndFire {
 		TauMem: 5.0
@@ -78,34 +58,27 @@ Layer {
 	}
 	ResumeRule {
 		TauLearn: 1.0
-		Bias: 0.1
 	}
 	MinMaxNorm {
 		MinWeight: 0.0
-		MaxWeight: 5.0
+		MaxWeight: 0.25
 	}
 }
 Connection {
 	From: 0 To: 1
 	Stochastic {
 		Prob: 0.5
+		InhibitoryNeuronProb: 0.1
 	}
-	Weight: {Norm {Mean: 0.0  Sd: 0.1}}
+	Weight: {Norm {Mean: 0.02  Sd: 0.001}}
 	LearningRate: 0.001
 }
 Connection {
 	From: 1 To: 2
 	Stochastic {
 		Prob: 0.5
+		InhibitoryNeuronProb: 0.1
 	}
-	Weight: {Norm {Mean: 0.0  Sd: 0.1}}
-	LearningRate: 0.001
-}
-Connection {
-	From: 2 To: 3
-	Stochastic {
-		Prob: 0.5
-	}
-	Weight: {Norm {Mean: 0.0  Sd: 0.1}}
+	Weight: {Norm {Mean: 0.02  Sd: 0.001}}
 	LearningRate: 0.001
 }
