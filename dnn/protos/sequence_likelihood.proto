@@ -1,0 +1,6 @@
+package NDnnProto;
+
+
+message TSequenceLikelihoodConst {
+}
+

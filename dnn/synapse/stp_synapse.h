@@ -52,7 +52,7 @@ namespace NDnn {
             s.p += t.Dt * (Weight() - s.p)/c.F;
         }
 
-    	
+
         double Potential() const {
             return s.p * s.r;
         }

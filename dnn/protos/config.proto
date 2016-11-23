@@ -44,6 +44,8 @@ import "dnn/protos/chronotron_rule.proto";
 import "dnn/protos/resume_rule.proto";
 import "dnn/protos/resume_hidden_rule.proto";
 import "dnn/protos/rate_norm.proto";
+import "dnn/protos/sequence_likelihood.proto";
+import "dnn/protos/sequence_learning.proto";
 
 message TRewardControl {
     optional TRewardControlConst RewardControl = 1;
@@ -122,6 +124,9 @@ message TLayer {
     repeated TResumeHiddenRuleState ResumeHiddenRuleState = 61;
     repeated TRateNormConst RateNorm = 62;
     repeated TRateNormState RateNormState = 63;
+    repeated TSequenceLikelihoodConst SequenceLikelihood = 64;
+    repeated TSequenceLearningConst SequenceLearning = 65;
+    repeated TSequenceLearningState SequenceLearningState = 66;
 }
 
 message TConnection {

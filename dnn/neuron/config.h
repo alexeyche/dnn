@@ -22,7 +22,7 @@ namespace NDnn {
 
 		template <typename T>
 		using TNeuronLearningRule = TLearningRuleType<T>;
-		
+
 		template <typename T>
 		using TWeightNormalization = TWeightNormalizationType<T>;
 

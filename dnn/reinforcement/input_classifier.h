@@ -25,10 +25,10 @@ namespace NDnn {
     public:
         using TPar = TReinforcement<TInputClassifierConst, TNeuron>;
 
-        void ModulateReward() {
+        void ModulateReward(const TTime& /*t*/) {
             if (TPar::Neuron().Fired()) {
                 TMaybe<ui32> currentClassId = TGlobalCtx::Inst().GetCurrentClassId();
-                
+
                 if (currentClassId) {
                     if (currentClassId.GetRef() == TPar::SpaceInfo().LocalId) {
                         TGlobalCtx::Inst().PropagateReward(TPar::c.Ltp);

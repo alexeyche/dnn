@@ -43,7 +43,7 @@ namespace NDnn {
 		const TState& State() const {
 			return s;
 		}
-		
+
 		const TNeuronSpaceInfo& SpaceInfo() const {
 			return NeuronImpl->GetSpaceInfo();
 		}
@@ -60,6 +60,9 @@ namespace NDnn {
 			return NeuronImpl->GetActivationFunction();
 		}
 
+		const auto& Reinforcement() {
+			return NeuronImpl->GetReinforcement();
+		}
 	protected:
 		TConstants c;
 		TState s;

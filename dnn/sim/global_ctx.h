@@ -113,7 +113,7 @@ namespace NDnn {
 				LastTickMeanError += LastTickError[ni];
 			}
 			LastTickMeanError = LastTickMeanError/LastLayerSize;
-			
+
 		}
 
 		void SetConnectionInfo(ui32 from, ui32 to, double sign) {

@@ -128,10 +128,10 @@ namespace NDnn {
 		}
 
 		void CollectReward() {
-			StatGatherer.ListenStat("Reward", [&]() { return TGlobalCtx::Inst().GetReward(); }, 0, Conf.Duration);	
+			StatGatherer.ListenStat("Reward", [&]() { return TGlobalCtx::Inst().GetReward(); }, 0, Conf.Duration);
 			StatGatherer.ListenStat("RewardDelta", [&]() { return TGlobalCtx::Inst().GetRewardDelta(); }, 0, Conf.Duration);
 		}
- 
+
 		template <size_t layerId, size_t neuronId>
 		void ListenBasicStats(ui32 from, ui32 to) {
 			StatGatherer.ListenStat("Membrane", [&]() { return GetNeuron<layerId, neuronId>().Membrane(); }, from, to);
@@ -202,7 +202,7 @@ namespace NDnn {
 				const TVector<double>& spikes = ts[n.GetLocalId()];
 				n.GetNeuron().SetSpikeSequence(spikes);
 				if (spikes.size() > 0) {
-					max_spike = std::max(max_spike, spikes.back());	
+					max_spike = std::max(max_spike, spikes.back());
 				}
 			}
 			Conf.Duration = ts.Info.GetDuration();
@@ -225,7 +225,7 @@ namespace NDnn {
 			ui32 requiredDimSize = 0;
 			ForEach(Layers, [&](auto& layer) {
 				if (layer.HasInput()) {
-					requiredDimSize += layer.Size();	
+					requiredDimSize += layer.Size();
 				}
 			});
 			Conf.Duration = ts.Length() * Conf.Dt;
@@ -242,9 +242,9 @@ namespace NDnn {
 				Dispatcher.SetInputTimeSeries(std::forward<const TTimeSeries>(dupTs));
 			} else {
 				ENSURE(ts.Dim() == requiredDimSize, "Input time series is not statisfy to input layer size: " << ts.Dim() << " != " << requiredDimSize);
-				Dispatcher.SetInputTimeSeries(std::forward<const TTimeSeries>(ts));	
+				Dispatcher.SetInputTimeSeries(std::forward<const TTimeSeries>(ts));
 			}
-			
+
 		}
 
 		const TSpikesList& GetSpikes() const {
@@ -258,7 +258,7 @@ namespace NDnn {
 		}
 
 		void Run();
-		
+
 	private:
 		double GetInputFromDispatcher(ui32 layerId, ui32 neuronId);
 

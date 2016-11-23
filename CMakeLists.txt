@@ -81,7 +81,7 @@ macro(DEFINE_MODEL BIN CPP)
   add_executable(${BIN}
       ${CPP}
   )
-  
+
   include_directories(${PROTOBUF_INCLUDE_DIR})
   target_link_libraries(${BIN} ${PROTOBUF_LIBRARY} dnn m)
 

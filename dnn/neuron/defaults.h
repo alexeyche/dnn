@@ -1,10 +1,10 @@
-#pragma once	
+#pragma once
 
 #include <ground/serial/proto_serial.h>
 
 namespace NDnn {
 
-	
+
 	template <typename TConstants>
 	class TReceptiveField;
 
@@ -61,7 +61,7 @@ namespace NDnn {
 
 		static_assert(std::is_same<TWeightNormalizationType, TNoWeightNormalization<TNeuronImpl>>::value,
 			"Trying to use weight normalization with empty learning rule");
-		
+
 		void SerialProcess(TProtoSerial& serial) override final {
 		}
 
@@ -82,7 +82,7 @@ namespace NDnn {
 
 		const TEmpty& State() const {
 		}
-		
+
 		const TNeuronSpaceInfo& SpaceInfo() const {
 			throw TErrException() << "Not implemented";
 		}
@@ -127,7 +127,7 @@ namespace NDnn {
 
 		void CalculateDynamics(const TTime& t) {
 		}
-		
+
 		void SetNeuronImpl(T& neuron) {
 		}
 
@@ -147,7 +147,7 @@ namespace NDnn {
 
 		void CalculateDynamics(const TTime& t) {
 		}
-		
+
 		void SetNeuronImpl(T& neuron) {
 		}
 	};
@@ -158,9 +158,9 @@ namespace NDnn {
 		void SerialProcess(TProtoSerial& serial) {
 		}
 
-		void ModulateReward() {
+		void ModulateReward(const TTime&) {
 		}
-		
+
 		void SetNeuronImpl(T& neuron) {
 		}
 	};
@@ -173,7 +173,7 @@ namespace NDnn {
 
 		void CalculateError() {
 		}
-		
+
 		void SetNeuronImpl(T& neuron) {
 		}
 	};

@@ -30,6 +30,7 @@ set(DIRS
     spikework
     metrics
     intrinsic_plasticity
+    reinforcement
 )
 
 

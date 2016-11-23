@@ -80,7 +80,7 @@ namespace NDnn {
 		TPtr<TRandEngine> GetRand() const {
 			return Rand;
 		}
-		
+
 	private:
 		TSpikeNeuronInnerState InnerState;
 

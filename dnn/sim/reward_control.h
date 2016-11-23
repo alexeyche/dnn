@@ -9,7 +9,7 @@
 
 namespace NDnn {
     using namespace NGround;
-    
+
     namespace {
 
         double AtomicDoubleAdd(std::atomic<double> &f, double d) {
@@ -58,8 +58,8 @@ namespace NDnn {
         {}
 
         void CalculateDynamics(const TTime& t) {
-            s.MeanR += t.Dt * ( - (s.MeanR - s.R)/c.TauMeanTrace );
-            s.R += t.Dt * ( - (s.R - GatheredReward.load())/c.TauTrace );
+            s.MeanR += t.Dt * (s.R - s.MeanR)/c.TauMeanTrace;
+            s.R += t.Dt * (GatheredReward.load() - s.R)/c.TauTrace;
 
             GatheredReward.store(0.0);
         }
@@ -85,11 +85,11 @@ namespace NDnn {
         TRewardControl(const TRewardControl &other) {
             (*this) = other;
         }
-        
+
         const double& GetReward() const {
             return s.R;
         }
-        
+
         double GetRewardDelta() const {
             return s.R - s.MeanR;
         }

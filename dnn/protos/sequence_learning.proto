@@ -1,0 +1,11 @@
+package NDnnProto;
+
+message TSequenceLearningConst {
+    optional double TauFirstMoment = 1;
+    optional double TauSecondMoment = 2;
+}
+
+message TSequenceLearningState {
+    repeated double FirstMoment = 1;
+    repeated double SecondMoment = 2;
+}

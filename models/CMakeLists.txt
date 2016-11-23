@@ -10,6 +10,7 @@ set(DIRS
     stdp_analytic
     supervised_task
     feedback_stdp
+    seq_model
 )
 
 foreach(dir ${DIRS})

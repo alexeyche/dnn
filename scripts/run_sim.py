@@ -39,8 +39,8 @@ class TDnnSim(object):
     USER_JSON_FILE = pj(SCRIPTS_DIR, "user.json")
     USER_JSON = json.load(open(USER_JSON_FILE))
     USER = os.environ["USER"]
-    
-    EVO_RE = re.compile("[\s]*(?P<Name>[a-zA-Z]+):[\s]*(?P<Given>[-.e0-9]+)[\s]*#[\s]*\[(?P<From>[-.e0-9]+),[\s]*(?P<To>[-.e0-9]+)\].*")    
+
+    EVO_RE = re.compile("[\s]*(?P<Name>[a-zA-Z]+):[\s]*(?P<Given>[-.e0-9]+)[\s]*#[\s]*\[(?P<From>[-.e0-9]+),[\s]*(?P<To>[-.e0-9]+)\].*")
 
     LOG_FILE_BASE = "run_sim.log"
 
@@ -75,7 +75,7 @@ class TDnnSim(object):
         self.evo = kwargs.get("evo", False)
         if self.evo:
             self.slave = True
-            
+
         if self.evaluation_data:
             self.evaluation = True
         self.seed = kwargs.get("seed")
@@ -105,7 +105,7 @@ class TDnnSim(object):
             os.makedirs(self.working_dir)
         else:
             ask = not force
-        
+
         if not self.slave:
             last = os.path.join(self.runs_dir, "..", "last")
             if os.path.exists(last) or os.path.islink(last):
@@ -118,7 +118,7 @@ class TDnnSim(object):
 
         if ask:
             self.continue_in_wd()
-        
+
         if force:
             self.clean()
 
@@ -130,16 +130,16 @@ class TDnnSim(object):
         self.input_ts = kwargs.get("input_ts", None)
         self.input_spikes = kwargs.get("input_spikes", None)
 
-        if self.input_ts is None and self.input_spikes is None:
-            raise Exception("Need input time series or input spikes in model")
-        if self.input_ts and self.input_spikes:
-            raise Exception("Choose one of the inputs: time series or spikes, can't work with both")
+        # if self.input_ts is None and self.input_spikes is None:
+        #     raise Exception("Need input time series or input spikes in model")
+        # if self.input_ts and self.input_spikes:
+        #     raise Exception("Choose one of the inputs: time series or spikes, can't work with both")
 
         if self.input_ts:
-            shutil.copy(self.input_ts, pj(self.working_dir, "input_time_series.pb")) 
+            shutil.copy(self.input_ts, pj(self.working_dir, "input_time_series.pb"))
         if self.input_spikes:
-            shutil.copy(self.input_spikes, pj(self.working_dir, "input_spikes_list.pb")) 
-                    
+            shutil.copy(self.input_spikes, pj(self.working_dir, "input_spikes_list.pb"))
+
         wd_config = pj(self.working_dir, os.path.basename(self.config))
         if wd_config != self.config or not os.path.exists(wd_config):
             shutil.copy(self.config, self.working_dir)
@@ -149,7 +149,7 @@ class TDnnSim(object):
             pars = sys.stdin.readline()
             pars = [ p.strip() for p in pars.split(" ") if p.strip() ]
             config = open(self.config).readlines()
-            
+
             emin, emax = float(os.environ.get("EVOLVE_MIN", "0.0")), float(os.environ.get("EVOLVE_MAX", "1.0"))
 
             patch_left = len(pars)
@@ -162,12 +162,12 @@ class TDnnSim(object):
                         val = m.group("Given")
                         fr = m.group("From")
                         to = m.group("To")
-                        
+
                         new_val = float(pars.pop(0))
                         logging.info("Found patch for field {} with value {} {} {}".format(field, new_val, fr, to))
                         if new_val > emax or new_val < emin:
                             raise Exception("Need input value between {} or {}, got {}".format(emin, emax, new_val))
-                        
+
                         new_val = scale_to(new_val, emin, emax, float(fr), float(to))
                         new_line = ""
                         spm = re.match("^([\s]*)", l)
@@ -183,7 +183,7 @@ class TDnnSim(object):
                 raise Exception("Too many variables in input to patch, {} variables left to patch".format(patch_left))
 
     def get_fname(self, f, ep=None):
-        return os.path.join(self.working_dir, "{}_{}".format(ep if not ep is None else self.current_epoch, f)) 
+        return os.path.join(self.working_dir, "{}_{}".format(ep if not ep is None else self.current_epoch, f))
 
     def get_opt(self, n):
         return str_to_opt(n), str(self.__dict__[n])
@@ -195,7 +195,7 @@ class TDnnSim(object):
             "--verbose"
         ]
         cmd += list(self.get_opt("config"))
-        cmd += list(self.get_opt("jobs")) 
+        cmd += list(self.get_opt("jobs"))
 
         if not self.T_max is None:
             cmd += ["--tmax", self.T_max]
@@ -276,7 +276,7 @@ class TDnnSim(object):
             self.evaluation_script,
         ]
         return {"cmd": cmd}
-    
+
     def construct_inspect_cmd(self):
         env = {
             "T0" : os.environ.get("T0", "0"),
@@ -356,7 +356,7 @@ class TDnnSim(object):
                     break
                 elif ans in ["N", "n"]:
                     self.clean()
-                    break                        
+                    break
                 else:
                     logging.warning("incomprehensible answer")
 
@@ -375,26 +375,26 @@ class TDnnSim(object):
         if not found:
             raise Exception("Failed to find directory. Too much runs here ({})".format(i))
         return self.working_dir
-    
+
 def main(argv):
     parser = argparse.ArgumentParser(description='Tool for simulating dnn')
-    parser.add_argument('-e', 
-                        '--epochs', 
+    parser.add_argument('-e',
+                        '--epochs',
                         required=False,
                         help='Number of epochs to run', default=TDnnSim.EPOCHS,type=int)
-    parser.add_argument('-j', 
-                        '--jobs', 
+    parser.add_argument('-j',
+                        '--jobs',
                         required=False,
                         help='Number of parallell jobs (default: %(default)s)', default=TDnnSim.JOBS, type=int)
-    parser.add_argument('-T', 
-                        '--T-max', 
+    parser.add_argument('-T',
+                        '--T-max',
                         required=False,
                         help='Run only specific amount of simulation time (ms)')
-    parser.add_argument('-o', 
-                        '--old-dir', 
+    parser.add_argument('-o',
+                        '--old-dir',
                         action='store_true',
                         help='Do not create new dir for that simulation')
-    parser.add_argument('-s', 
+    parser.add_argument('-s',
                         '--stat',
                         action='store_true',
                         help='Save statistics')
@@ -417,52 +417,52 @@ def main(argv):
     parser.add_argument('-f', '--force',
                         action='store_true',
                         help="Don't ask questions, just use directory")
-    parser.add_argument('-r', 
-                        '--runs-dir', 
+    parser.add_argument('-r',
+                        '--runs-dir',
                         required=False,
                         help='Runs dir (default: %(default)s)', default=TDnnSim.RUNS_DIR)
-    parser.add_argument('-w', 
+    parser.add_argument('-w',
                         '--working-dir',
                         required=False,
                         help='Working dir (default: %%runs_dir%%/%%md5_of_config%%_%%number_of_experiment%%)')
-    parser.add_argument('-c', 
-                        '--config', 
+    parser.add_argument('-c',
+                        '--config',
                         required=False,
                         help='Path to config.pb.txt (default: run_sim.py will try to find pb.txt file in model directory)')
-    parser.add_argument('-is', 
-                        '--input-spikes', 
+    parser.add_argument('-is',
+                        '--input-spikes',
                         required=False,
                         help='Input spikes that required for model')
-    parser.add_argument('-ts', 
-                        '--target-spikes', 
+    parser.add_argument('-ts',
+                        '--target-spikes',
                         required=False,
                         help='Target spikes for supervised learning')
-    parser.add_argument('-tts', 
-                        '--target-ts', 
+    parser.add_argument('-tts',
+                        '--target-ts',
                         required=False,
                         help='Target time series for supervised learning')
-    parser.add_argument('-it', 
-                        '--input-ts', 
+    parser.add_argument('-it',
+                        '--input-ts',
                         required=False,
                         help='Input time series that required for model')
-    parser.add_argument('-nev', 
+    parser.add_argument('-nev',
                         '--no-evaluation',
                         action='store_true',
                         help='Turning on evaluation mode, where program writing score on each epoch')
-    parser.add_argument('-nl', 
+    parser.add_argument('-nl',
                         '--no-learning',
                         action='store_true',
                         help='Pass no learning flag to each sim run')
-    parser.add_argument('-evd', 
+    parser.add_argument('-evd',
                         '--evaluation-data',
                         required=False,
                         help='Run evaluation on special testing data. If not pointed evaluation will be runned on train data')
-    parser.add_argument('-evs', 
+    parser.add_argument('-evs',
                         '--evaluation-script',
                         required=False,
                         help='Run evaluation script in current working directory, inspection will be turned off')
     parser.add_argument('model', nargs=1, help="Path to model binary")
-    
+
     args = parser.parse_args(argv)
     if len(argv) == 0:
         parser.print_help()
@@ -495,6 +495,6 @@ def main(argv):
         "target_spikes" : args.target_spikes,
     }
     TDnnSim(**args).run()
-    
+
 if __name__ == '__main__':
     main(sys.argv[1:])

@@ -67,7 +67,7 @@ namespace NDnn {
     		const auto& norm = TPar::Norm();
     		const auto& neuron = TPar::Neuron();
     		const auto& act = TPar::ActivationFunction();
-    		
+
     		const double& p = neuron.SpikeProbability();
     		const double& M = neuron.ProbabilityModulation();
 			const double p_deriv = act.SpikeProbabilityDerivative(neuron.Membrane());

@@ -1,0 +1,48 @@
+SimConfiguration {
+    Jobs: 8
+    Dt: 1.0
+}
+Layer {
+    BasicSynapse {
+        PspDecay: 10.0
+    }
+    SRMNeuron {
+        Urest: -5.0
+        AmpAdapt: 0.0
+    }
+    Sigmoid {
+        Threshold: 0.05
+    }
+    SequenceLearning {
+    }
+}
+Layer {
+    BasicSynapse {
+        PspDecay: 10.0
+    }
+    SRMNeuron {
+        Urest: -5.0
+        AmpAdapt: 0.0
+    }
+    Sigmoid {
+        Threshold: 0.05
+    }
+    SequenceLearning {
+    }
+}
+Connection {
+    From: 0 To: 1
+    Stochastic {
+        Prob: 0.5
+    }
+    Weight: {Value: 0.0}
+    LearningRate: 0.001
+}
+Connection {
+    From: 1 To: 0
+    Stochastic {
+        Prob: 0.5
+    }
+    Weight: {Value: 0.0}
+    LearningRate: 0.001
+}
